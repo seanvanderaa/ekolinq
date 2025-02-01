@@ -1,0 +1,561 @@
+#header-content {
+    display: flex;
+    flex-direction: row;
+    column-gap: 36px;
+    width: 100%;
+    max-width: 960px;
+    align-items: center;
+    justify-content: center;
+}
+
+#header {
+    position: relative;
+    background-image: url('/static/images/pexels-kelly-1179532-2876511.jpg');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100vw;
+    margin: 0px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 80vh;
+    padding-bottom: 150px;
+    padding-top: 50px;
+    max-height: 500px;
+    overflow-y: visible;
+}
+
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Adjust the opacity (0.5) for desired darkness */
+    z-index: 1; /* Ensure it is layered below the content */
+}
+
+#header-content {
+    position: relative; /* To ensure content appears above the overlay */
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    column-gap: 36px;
+}
+
+#header-left {
+    flex: 1;
+}
+
+#header-right {
+    flex: 1;
+    background-color: #3131319c;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+#request-form {
+    bottom: -280px;
+    z-index: 100;
+    width: 960px;
+    background: linear-gradient(to bottom, #FAFAFA, #ebf1e4);
+    height: 460px;
+    position: absolute;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#request-form-input {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--crim);
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+#request-form-input input {
+    height: 60px;
+    width: 360px;
+    border: 1px solid var(--border-grey);
+    border-radius: 5px;
+    font-family: var(--mont);
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 36px;
+    margin-top: 16px;
+}
+
+.info-text {
+    visibility: hidden;
+    position: absolute;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: -60px;
+    right: -140px;
+    white-space: wrap;
+    z-index: 10;
+    font-size: 16px;
+    width: 200px;
+    cursor: pointer;
+    /* Fade effect */
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    font-family: var(--crim);
+    /* Prevents interaction when hidden */
+    pointer-events: none;
+}
+
+.info-icon:hover + .info-text,
+.info-text:hover {
+    visibility: visible; /* Use visibility instead of display */
+    opacity: 1;
+    pointer-events: auto; /* Enables interaction when visible */
+}
+
+.main-btn {
+    position: relative; /* Allows pseudo-element positioning */
+    border-radius: 100px;
+    background-color: var(--m-green);
+    color: white;
+    height: 48px;
+    width: 200px;
+    font-family: var(--mont);
+    border: none;
+    font-weight: 600;
+    font-size: 16px;
+    overflow: hidden; /* Prevents content overflow during animation */
+    transition: color 0.4s ease, transform .2s ease; /* Smooth transition for text color */
+}
+
+.main-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%; /* Start position off-screen */
+    width: 100%;
+    height: 100%;
+    background-color: var(--yel); /* Color for wipe effect */
+    transition: left 0.4s ease; /* Transition for wipe effect */
+    z-index: 0; /* Behind the text */
+}
+
+.main-btn:hover::before {
+    left: 0; /* Move the wipe effect to cover the button */
+}
+
+.main-btn:hover {
+    color: black; /* Change text color */
+    cursor: pointer;
+    transform: scale(1.04);
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure text stays above the wipe */
+.main-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+#ekolinq-info {
+    margin-top: 260px;
+}
+
+#impact {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#impact-left {
+    flex: 1;
+}
+
+.fade-overlay {
+    position: relative; /* so pseudo-elements can be absolutely positioned inside */
+    /* (Optionally) set a fixed height if needed, 
+       or let the content define its height. */
+
+  }
+  
+  .fade-overlay::before,
+  .fade-overlay::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 200px;            /* Adjust as needed to control the fade distance */
+    pointer-events: none;    /* let clicks pass through to the squares */
+    z-index: 2;            /* on top of the squares */
+  }
+  
+  /* Top fade: from white -> transparent */
+  .fade-overlay::before {
+    top: 0;
+    background: linear-gradient(
+      to bottom,
+      #FAFAFA,
+      rgba(255, 255, 255, 0)
+    );
+  }
+  
+  /* Bottom fade: from white -> transparent */
+  .fade-overlay::after {
+    bottom: 0;
+    background: linear-gradient(
+      to top,
+      #FAFAFA,
+      rgba(255, 255, 255, 0)
+    );
+  }
+  
+
+#impact-right {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap; /* Allows wrapping to multiple rows */
+    gap: 6px; /* Spacing between squares */
+    max-width: calc(4 * 120px + 3 * 4px); /* Width for 4 columns including gaps */
+}
+
+.impact-square {
+    width: 120px; /* Fixed width for each square */
+    height: 120px; /* Fixed height for each square */
+    border: 1px solid var(--border-grey);
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.highlight-square {
+    width: 120px;
+    height: 120px;
+    position: relative; 
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0);
+    transition: background-color 0.2s ease;
+  }
+  
+  .highlight-square::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 4px;
+  
+    /* The base “flowing” gradient */
+    background: linear-gradient(-45deg, 
+                  var(--m-green), 
+                  var(--yel),
+                  var(--d-green)
+                );
+    background-size: 200% 200%;
+    animation: flowing-border 3s linear infinite;
+  
+    -webkit-mask:
+      linear-gradient(rgba(255, 255, 255, 0.95) 0 0) content-box,
+      linear-gradient(#fff 0 0) padding-box;
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  
+  /* Continuous gradient movement */
+  @keyframes flowing-border {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+
+.highlight-square:hover {
+    cursor: pointer;
+    background-color: #eff4eb8e;
+    box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.05);
+}
+
+.reveal-text {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    text-align: center;
+    /* If you want a background color around the text itself:
+       background-color: #ffeeba; 
+       transition: background-color 0.4s ease-in-out, opacity 0.4s ease-in-out; */
+}
+  
+  /* Visible text */
+.reveal-text.active {
+    opacity: 1;
+/* background-color: #ffeeba; */
+}
+
+
+
+#problem {
+    display: flex;
+    flex-direction: row;
+    column-gap: 64px;
+    margin-top: 100px;
+}
+
+#problem-left {
+    margin-right: 48px;
+    flex: 1;
+    width: 100%;
+    background-image: url('/static/images/GettyImages-1061829496.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+}
+
+#mobile-section-title {
+    display: none;
+}
+
+#desktop-section-title {
+    display: block;
+}
+
+#problem-right {
+    flex: 1;
+}
+
+#image-belt {
+    position: relative;
+    width: 100vw;
+    background-image: url('/static/images/andymoves-new.seesite.biz_--_791792745.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    padding: 100px 0px;
+}
+
+#image-belt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Adjust the opacity (0.5) for desired darkness */
+    z-index: 1; /* Ensure it is layered below the content */
+}
+
+#items {
+    position: relative;
+    z-index: 2;
+    max-width: 860px;
+    border-radius: 50px;
+    background-color: #3131319c;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 50px;
+    color: white;
+}
+
+#items-header {
+    max-width: 50%;
+}
+
+#items-info {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    column-gap: 36px;
+    margin-top: 24px;
+}
+
+#collection-event {
+    padding: 64px 96px;
+    background: linear-gradient(to bottom, #FAFAFA, #D5E1E7);
+    border-radius: 50px;
+    text-align: center;
+}
+
+#get-in-touch {
+    align-self: center;
+    color: white; background-color: var(--m-blue);
+}
+
+#get-in-touch:hover {
+    background-color: var(--m-green);
+}
+
+#shared-vision {
+    flex-direction: column;
+}
+
+.initiatives {
+    flex-direction: column;
+    flex: 1;
+}
+
+.section-title {
+    color: var(--m-green);
+    font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    #header-content {
+        flex-direction: column;
+        width: 90%;
+        margin-top: 20vh;
+        column-gap: 0px;
+        row-gap: 24px;
+        padding: 0px;
+        z-index: 1;
+    }
+
+    #header-right #header-left {
+        margin: 0px;
+    }
+    
+    #header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Adjust the opacity (0.5) for desired darkness */
+        z-index: 1; /* Ensure it is layered below the content */
+    }
+    
+    #request-form {
+        bottom: -460px;
+        box-sizing: border-box;
+        z-index: 100;
+        width: calc(95% - 2em);
+        background: none;
+        box-shadow: none !important;
+        height: auto;
+    }
+    
+    #request-form-input input {
+        width: 100%;
+    }
+
+    .info-text {
+        top: 60px;
+        right: -40px;
+    }
+
+    #ekolinq-info {
+        margin-top: 540px;
+        border-top: 1px solid rgba(0, 0, 0, 0.25);
+    }
+    
+    #impact {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    #impact-left {
+        flex: 1;
+    }
+    
+    .fade-overlay {
+        display: none;
+    }
+    
+    #problem {
+        flex-direction: column;
+        row-gap: 24px;
+    }
+    
+    #problem-left {
+        min-height: 220px !important;
+        margin-top: 12px;
+    }
+
+    #mobile-section-title {
+        display: block;
+        margin: 0px;
+    }
+
+    #desktop-section-title {
+        display: none;
+    }
+    
+    #problem-right {
+        flex: 1;
+    }
+
+    #problem-right h2 {
+        margin-top: 12px !important;
+    }
+    
+    #image-belt {
+        position: relative;
+        box-sizing: border-box;
+        width: 100vw;
+        padding: 3em 1em;
+    }
+    
+    #items {
+        padding: 20px;
+    }
+
+    #items-header {
+        max-width: 100%;
+    }
+    
+    #items-info {
+        flex-direction: column;
+    }
+
+    #items-info ul {
+        padding-left: 24px;
+    }
+    
+    #collection-event {
+        padding: 3em 2em;
+        flex-direction: column;
+    }
+
+    #mobile-image-removed {
+        display: none;
+    }
+    
+    #shared-vision {
+        flex-direction: column;
+    }
+    
+    #shared-vision-orgs {
+        flex-direction: column;
+    }
+
+    .initiatives {
+        flex-direction: column;
+        flex: 1;
+    }
+    
+    .section-title {
+        color: var(--m-green);
+        font-weight: 600;
+    }
+}

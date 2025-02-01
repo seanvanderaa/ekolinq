@@ -1,0 +1,234 @@
+<!-- templates/select_date.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select a Timeframe | EkoLinq</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/confirmation_styles.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<body>
+
+  <!-- Header & Navigation (same as your code) -->
+  <header>
+    <div id="nav">
+      <div id="nav-left">
+        <a href="/"><img src="/static/images/EkoLinqLogo_White.png" alt="" style="height: 30px;"></a>
+      </div>
+      <div id="nav-right" style="color: white;">
+        <p class="nav-item">What is textile waste?</p>
+        <p class="nav-item">About us</p>
+        <p class="nav-item">Contact</p>
+        <p class="nav-item" style="color: var(--yel);">Edit a request</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="content-width" id="confirmation-wrapper">
+        <h1 style="font-size: 36px; font-weight: 500; margin-top: 0px;">You're all set!</h1>
+        <p style="margin-bottom: 24px; margin-top: 0px; max-width: 550px; word-break: break-word;">Thanks for choosing to get rid of waste the right way. We’ve sent you an email with all of the information you need.</p>
+        <div class="confirmation-info">
+            <p>Pick Up Date and Time</p>
+            <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+                <h4 id="pickup-info" style="margin: 0px;">
+                    <!-- Render the values directly into the HTML as attributes or content -->
+                    <span id="request-date" data-date="{{ pickup.request_date }}"></span>
+                    <span id="request-time" data-time="{{ pickup.request_time }}"></span>
+                </h4>
+                <a href="{{ url_for('select_date', request_id=request_id) }}">
+                  <div id="edit-time" class="edit-pencil">
+                      <i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i>
+                  </div>
+              </a>
+              
+            </div>
+        </div>
+        <div class="confirmation-info">
+            <p id="address-header">Address</p>
+            <div>
+              <div id="address-info" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0px;">{{ pickup.address }}, {{ pickup.city }}, {{ pickup.zipcode }} </h4>
+                <div id="edit-address" class="edit-pencil"><i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i></div>
+              </div>
+              <form style="display: none" action="/update_address" id="edit-address-form" method="POST">
+                  <div class="form-group" style="max-width: 300px;">
+                    <label for="address">Address<span style="color: red;">*</span></label>
+                    <input 
+                      type="text" 
+                      id="address" 
+                      name="address" 
+                      value="{{ pickup.address }}" 
+                      required 
+                    />
+                  </div>
+                  <div class="form-group" style="max-width: 220px;">
+                    <label for="city">City<span style="color: red;">*</span></label>
+                    <input 
+                      type="text" 
+                      id="city" 
+                      name="city" 
+                      value="{{ pickup.city }}" 
+                      required 
+                    />
+                  </div>
+                  <div class="form-group" style="max-width: 120px;">
+                    <label for="zip">Zip Code<span style="color: red;">*</span></label>
+                    <input 
+                      type="text" 
+                      id="zip" 
+                      name="zip" 
+                      value="{{ pickup.zipcode }}" 
+                      required 
+                    />
+                  </div>
+                  <input 
+                      type="hidden" 
+                      id="request_id" 
+                      name="request_id" 
+                      value="{{ request_id }}" 
+                  />
+                  <button id="update-address" class="download-btn" style="padding: 14px 16px;">Update</button>
+              </form>
+            </div>
+        </div>
+
+        <h3 style="font-family: var(--crim)">Here’s what you can and can’t give us:</h3>
+        <div id="items-info">
+            <div style="flex: 1;" class="items">
+              <div style="display: flex; flex-direction: row; align-items: center;">
+                <i style="color: var(--m-green); font-size: 32px; margin: 0px; padding: 0px; margin-right: 12px;" class="bi bi-check-lg align-center"></i>
+                <h3 style="font-family: var(--crim); margin: 0px">Accepted Items</h3>
+              </div>
+              <ul>
+                <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+                <li>Coats, jackets, gloves, hats, scarves</li>
+                <li>Shoes, boots, heels, sneakers, sandals, socks</li>
+                <li>Bras, underwear, slips, camisoles, tights</li>
+                <li>Handbags, belts, ties, headbands</li>
+                <li>Towels, sheets, comforters, blankets, tablecloths</li>
+                <li>Wallets, totes, backpacks, stuffed animals</li>
+              </ul>
+            </div>
+            <div style="flex: 1;" class="items">
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <i style="color: red; font-size: 32px; margin: 0px; padding: 0px; margin-right: 12px;" class="bi bi-x-lg align-center"></i>
+                    <h3 style="font-family: var(--crim); margin: 0px">NOT Accepted</h3>
+                </div>              
+                <ul>
+                    <li>Textiles that are wet, moldy, contaminated with chemicals or bio-hazardous waste</li>
+                    <li>Mattresses, furniture, or other similar oversized Items</li>
+                    <li>E-waste</li>
+                </ul>
+            </div>
+          </div>
+    </div>
+  </main>
+  <!-- Footer -->
+  <footer id="footer">
+    <div id="footer-content" class="content-width">
+      <div id="footer-left" style="flex: 1;">
+        <img src="/static/images/EKOLINQ-LOGO.png" height="40" alt="">
+        <p style="font-family: var(--crim); margin: 0px; margin-top: 24px;">hello@ekolinq.com</p>
+        <p style="font-family: var(--crim); margin: 0px; margin-top: 24px;">866.346.4765</p>
+      </div>
+      <div id="footer-right" style="flex: 1;">
+        <p class="footer-nav-item">What's textile waste?</p>
+        <p class="footer-nav-item">About us</p>
+        <p class="footer-nav-item">Contact</p>
+        <p class="footer-nav-item">Edit a request</p>
+      </div>
+    </div>
+  </footer>
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const editAddressText = document.getElementById('address-info');
+        const editAddressForm = document.getElementById('edit-address-form');
+        const editAddressPencil = document.getElementById('edit-address');
+        const addressHeader = document.getElementById('address-header');
+
+
+
+        editAddressPencil.addEventListener('click', displayForm);
+
+        function displayForm() {
+          if (editAddressText.style.display === "flex") {
+            editAddressText.style.display = "none";
+            addressHeader.textContent = `Edit Address`;
+            editAddressForm.style.display = "flex";
+          }
+          else {
+            editAddressText.style.display = "flex";
+            addressHeader.textContent = `Address`;
+            editAddressForm.style.display = "none";
+          }
+        }
+
+      });
+      // Retrieve the raw data directly from the DOM
+      const requestDateEl = document.getElementById('request-date');
+      const requestTimeEl = document.getElementById('request-time');
+      const request_date = requestDateEl.getAttribute('data-date'); // e.g., "2025-01-12"
+      const request_time = requestTimeEl.getAttribute('data-time'); // e.g., "08:00-12:00"
+
+      // Format the date
+      const formatDate = (dateStr) => {
+          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const months = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
+
+          const date = new Date(dateStr);
+          const dayName = days[date.getUTCDay()];
+          const monthName = months[date.getUTCMonth()];
+          const day = date.getUTCDate();
+
+          // Add ordinal suffix for the day
+          const ordinal = (n) => n + (["th", "st", "nd", "rd"][(n % 10 > 3 || Math.floor(n % 100 / 10) === 1) ? 0 : n % 10] || "th");
+          return `${dayName}, ${monthName} ${ordinal(day)}`;
+      };
+
+      // Format the time
+      const formatTime = (timeStr) => {
+          const [start, end] = timeStr.split('-').map(t => {
+              const [hour, minute] = t.split(':').map(Number);
+              const period = hour >= 12 ? 'pm' : 'am';
+              const adjustedHour = hour % 12 || 12;
+              return `${adjustedHour}:${minute.toString().padStart(2, '0')}${period}`;
+          });
+          return `${start}-${end}`;
+      };
+
+      // Combine formatted date and time
+      const formattedDate = formatDate(request_date);
+      const formattedTime = formatTime(request_time);
+
+      // Update the content
+      document.getElementById('pickup-info').textContent = `${formattedDate} between ${formattedTime}`;
+      
+      const updateAddressForm = document.getElementById('edit-address-form');
+
+      updateAddressForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const zipcode = document.getElementById('zip').value;
+
+
+        try {
+          const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
+          const data = await response.json();
+
+          if (data.valid) {
+            // If ZIP is valid, submit for real
+            updateAddressForm.submit(); 
+          } else {
+            alert(`${data.reason}`);
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error verifying ZIP code. Please try again.');
+        }
+      });
+  </script>
+</body>
+</html>

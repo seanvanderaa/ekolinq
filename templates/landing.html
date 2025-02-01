@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+{% endblock %}
+{% block content %}
+<div id="header">
+    <div id="header-content">
+      <div id="header-left">
+        <h1 style="color: white;">Everyone can play a role in reducing waste.</h1>
+        <h1 style="color: var(--yel);">We're here to make it easy.</h1>
+      </div>
+      <div id="header-right">
+        <h2 style="margin: 0px; color: white; font-weight: 200;">EkoLinq provides <b style="font-weight: 600;">free,
+            contactless curbside pickups</b> to individuals and businesses to redirect textile waste away from
+          landfills.</h2>
+        <p style="color: var(--subtle-text); font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 300;"><a
+            style="text-decoration: underline; text-decoration-style: dotted;">Learn more</a> about what we do.</p>
+      </div>
+    </div>
+    <div id="request-form" class="box-shadow">
+      <p style="margin: 0px; margin-bottom: 6px; color: var(--d-green); font-weight: 500;">Have textiles
+        you need to get rid of?</p>
+      <h1 style="margin: 0px; margin-bottom: 20px; color: var(--d-green); font-weight: 600;">Schedule a
+        free pick-up.</h1>
+      <p style="max-width: 420px;margin: 0px; margin-bottom: 16px;">EkoLinq is helping move California's Tri-Valley
+        region toward a more sustainable future. <b>Enter your zip code to find a time for pick-up.</b></p>
+      <form action="/find-time" method="GET" id="request-form-input">
+        <div style="position: relative; display: inline-block; margin: 0px; width: 100%;">
+          <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter Zip Code"
+            class="align-center" required>
+          <span class="info-icon">i</span>
+          <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
+            only serves the Tri-Valley.</div>
+        </div>
+        <button class="main-btn" type="submit"><span>Find a Time</span></button>
+      </form>
+    </div>
+  </div>
+  <div id="ekolinq-info" class="content-width">
+    <div id="impact" class="block-margin">
+      <div id="impact-left">
+        <p class="section-title">OUR IMPACT</p>
+        <h2 style="margin: 0px; margin-top: 24px;">EkoLinq has diverted over</h2>
+        <h1
+          style="font-size: 64px; margin: 0px; font-family: var(--mont); font-weight: 600; color: var(--m-blue); margin: 12px 0px;">
+          587,000</h1>
+        <h2 style="margin: 0px;">pounds of textile waste away from landfill and contributed over</h2>
+        <h1
+          style="font-size: 64px; margin: 0px; font-family: var(--mont); font-weight: 600; color: var(--m-green); margin: 12px 0px;">
+          $32,000</h1>
+        <h2 style="margin: 0px;">to schools, non-profits, and businesses throughout the Tri-Valley.</h2>
+        <p style="margin-top: 24px;">Rather than spending years decomposing in landfill, EkoLinq ensures that clothing
+          is either recycled—broken down into fabric fibers and used in items like mattress filling or car seats—or
+          reused. We always prioritize clothing reuse where possible. These efforts help reduce textile waste and greenhouse gas emissions, aligning with California’s goal of advancing a circular economy for clothing and textiles. To further our mission of environmental sustainability,
+          we also donate a portion of our profits to other carbon capture initiatives.</p>
+      </div>
+      <div class="fade-overlay">
+        <div id="impact-right">
+          <div class="impact-square fade-up"></div>
+          <div class="impact-square fade-up"></div>
+          <div class="impact-square fade-up"></div>
+          <div class="impact-square align-center highlight-square" data-reveal-target="pickup-reveal">
+            <img src="/static/images/ekolinq-icon-collect.svg" alt="" height="80px;">
+          </div>
+          <div class="impact-square align-center " id="fundraiser-reveal">
+            <p class="reveal-text">Fundraising collection events</p>
+          </div>
+          <div class="impact-square align-center highlight-square" data-reveal-target="collect-reveal">
+            <img src="/static/images/ekolinq-icon-bin.svg" alt="" height="80px;">
+          </div>
+          <div class="impact-square align-center " id="pickup-reveal">
+            <p class="reveal-text">Residential and business site pick-ups.</p>
+          </div>
+          <div class="impact-square align-center highlight-square" data-reveal-target="fundraiser-reveal">
+            <img src="/static/images/ekolinq-icon-fundraise.svg" alt="" height="80px;">
+          </div>
+          <div class="impact-square align-center " id="collect-reveal">
+            <p class="reveal-text">Collection bins and drop boxes</p>
+          </div>
+          <div class="impact-square fade-down"></div>
+          <div class="impact-square fade-down"></div>
+          <div class="impact-square fade-down"></div>
+        </div>
+      </div>
+    </div>
+    <div id="problem" class="block-margin">
+      <p class="section-title" id="mobile-section-title">THE PROBLEM</p>
+      <div id="problem-left">
+      </div>
+      <div id="problem-right">
+        <p class="section-title" id="desktop-section-title">THE PROBLEM</p>
+        <h2 style="margin: 0px; margin-top: 24px;">The U.S. produces over 100 pounds of textile waste per person per
+          year.</h2>
+        <p style="margin-top: 24px;">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+          times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
+          largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
+          disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
+          into the soil and groundwater, potentially harming aquatic ecosystems and human health.</p>
+        <p style="margin-top: 24px;">By donating your unwanted textiles, you can help break this cycle of waste and
+          environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
+          significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
+          future.</p>
+        <button class="action-btn" style="margin-top: 36px;"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn More</button>
+      </div>
+    </div>
+  </div>
+  <div id="image-belt" class="align-center block-margin">
+    <div id="items">
+      <div id="items-header">
+        <div>
+          <h2 style="color: var(--yel);">What does EkoLinq accept?</h2>
+          <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
+            list below for any specific items you’re curious about.</p>
+        </div>
+      </div>
+      <div id="items-info">
+        <div style="flex: 1;">
+          <h3 style="font-family: var(--crim);">Accepted Items</h3>
+          <ul>
+            <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+            <li>Coats, jackets, gloves, hats, scarves</li>
+            <li>Shoes, boots, heels, sneakers, sandals, socks</li>
+            <li>Bras, underwear, slips, camisoles, tights</li>
+            <li>Handbags, belts, ties, headbands</li>
+            <li>Towels, sheets, comforters, blankets, tablecloths</li>
+            <li>Wallets, totes, backpacks, stuffed animals</li>
+          </ul>
+        </div>
+        <div style="flex: 1;">
+          <h3 style="font-family: var(--crim);">Unaccepted Items</h3>
+          <ul>
+            <li>Textiles that are wet, moldy, contaminated with chemicals or bio-hazardous waste</li>
+            <li>Mattresses, furniture, or other similar oversized items</li>
+            <li>E-waste</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content-width">
+    <div id="collection-event" class="align-center block-margin box-shadow">
+      <div style="flex: 1;" class="align-center">
+        <img src="/static/images/Group 26.png" height="80" alt="">
+      </div>
+      <div style="flex: 2; display: flex; flex-direction: column; justify-content: center; max-width: 300px;">
+        <h2 style="color: var(--m-blue); flex: 1; margin: 0px;">Interested in hosting a collection event?</h2>
+        <p style="margin: 0px; margin-top: 16px;">You bring the people, we take the waste. Collection events are a great way to engage your community toward a sustainable future.</p>
+        <button id="get-in-touch" class="action-btn" style="margin-top: 36px;"><i style="font-weight: bold;" class="bi bi-arrow-up-right btn-icon align-center"></i>Get in Touch</button>
+      </div>
+      <div style="flex: 1;" class="align-center" id="mobile-image-removed">
+        <img src="/static/images/Group 30.png" height="60" alt="">
+      </div>
+    </div>
+    <div id="shared-vision" class="align-center block-margin" style="text-align: center">
+      <hr style="border-bottom: .5px solid rgba(0, 0, 0, 0.3); width: 60px; margin-bottom: 36px;">
+      <h2 style="margin: 0px;">Sharing a vision</h2>
+      <p style="font-weight: 500; max-width: 400px; margin: 24px;">EkoLinq contributes at least 5% of profits to eco-friendly, carbon capture initiatives such as:</p>
+      <div id="shared-vision-orgs" class="align-center" style="gap: 36px; margin-top: 24px;">
+        <div class="initiatives" class="align-center">
+          <img src="/static/images/tradewater.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
+        </div>
+        <div class="initiatives" class="align-center">
+          <img src="/static/images/onetree.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
+        </div>
+        <div class="initiatives" class="align-center">
+          <img src="/static/images/climeworks.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
+        </div>
+      </div>
+    </div> 
+  </div>
+  {% endblock %}
+
+  {% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+  {% endblock %}

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/request_styles.css') }}">
+  <title>Request a Pickup | EkoLinq</title>
+</head>
+<body>
+
+  <!-- Header & Navigation -->
+  <header>
+    <div id="nav">
+      <div id="nav-left">
+        <a href="/"><img src="/static/images/EkoLinqLogo_White.png" alt="" style="height: 30px;"></a>
+      </div>
+      <div id="nav-right" style="color: white;">
+        <p class="nav-item">What is textile waste?</p>
+        <p class="nav-item">About us</p>
+        <p class="nav-item">Contact</p>
+        <p class="nav-item" style="color: var(--yel);">Edit a request</p>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="init-form" class="content-width  request-form">
+      <h1 style="margin: 0px;">Request a Pickup</h1>
+      <p style="max-width: 450px; color: var(--subtle-text-wbg);">
+        After filling in the below information, you’ll be able to select 
+        a timeframe for us to pick up your textiles.
+      </p>
+
+      <!-- Main form -->
+      <form action="/request_init" method="POST" id="init-form-info" enctype="multipart/form-data">
+        <div id="form-group-1" class="form-group-div">
+          <div class="form-group" style="max-width: 260px;">
+            <label for="firstName">First Name</label>
+            <input 
+              type="text" 
+              id="firstName" 
+              name="firstName" 
+              placeholder="Jane" 
+            />
+          </div>
+          <div class="form-group" style="max-width: 260px;">
+            <label for="lastName">Last Name</label>
+            <input 
+              type="text" 
+              id="lastName" 
+              name="lastName" 
+              placeholder="Doe" 
+            />
+          </div>
+  
+          <div class="form-group" style="max-width: 300px;">
+            <label for="email">Email<span style="color: red;">*</span></label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="jdoe@gmail.com" 
+              required 
+            />
+          </div>
+        </div>
+        <div id="form-group-2" class="form-group-div">
+          <div class="form-group" style="max-width: 300px;">
+            <label for="address">Address<span style="color: red;">*</span></label>
+            <input 
+              type="text" 
+              id="address" 
+              name="address" 
+              placeholder="100 Pleasanton Ave." 
+              required 
+            />
+          </div>
+          <div class="form-group" style="max-width: 220px;">
+            <label for="city">City<span style="color: red;">*</span></label>
+            <input 
+              type="text" 
+              id="city" 
+              name="city" 
+              value="{{ city }}" 
+              required 
+            />
+          </div>
+          <div class="form-group" style="max-width: 120px;">
+            <label for="zip">Zip Code<span style="color: red;">*</span></label>
+            <input 
+              type="text" 
+              id="zip" 
+              name="zip" 
+              value="{{ zipcode }}" 
+              required 
+            />
+          </div>
+        </div>
+        <div class="form-group" style="max-width: 550px;">
+          <label for="notes">
+            Any additional notes about where you’ll leave your items?
+          </label>
+          <textarea 
+            id="notes" 
+            name="notes" 
+            placeholder="They'll be in front of the garage."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <!-- Gated checkbox + label --> <!-- NEED TO LIMIT TO 400 CHARACTERS AND ADD A COUNTER -->
+        <div style="margin-top: 32px; position: relative; display: inline-block">
+          <input type="checkbox" name="gated" value="gated" id="gated">
+          <label for="gated">
+            Do we need a gate code or permission to access your address?
+          </label>
+          <span class="info-icon" style="top: 0px; margin: 0px;">i</span>
+          <div class="info-text" style="top: -90px;">
+            If checked, you'll be asked to provide us with a bit more information 
+            about gate access.
+          </div>
+        </div>
+        <br/>
+
+        <!-- Gated Access Information (shown/hidden via JS) -->
+        <div id="gated-popup" style="display: none;">
+          <p>Please select how you’d like to provide access details:</p>
+          <div id="gatedOptions-wrapper" style="margin-bottom: 16px;">
+            <select id="gatedOptions" name="gatedOptions">
+              <option value="">-- Select Option --</option>
+              <option value="code">Provide a gate code</option>
+              <option value="qr">Upload a QR code</option>
+              <option value="notice">I will notify our community access attendant</option>
+            </select>
+          </div>
+          <!-- Gate Code Section -->
+          <div id="gate-code-section" style="display: none; margin-bottom: 16px;">
+            <label for="gateCodeInput">Gate Code</label>
+            <input style="margin-left: 12px; font-size: 16px; padding: 12px 16px; border: 1px solid var(--border-grey); border-radius: 5px;"
+              type="text" 
+              id="gateCodeInput" 
+              name="gateCodeInput" 
+              placeholder="Enter gate code"
+            />
+          </div>
+          <!-- QR Code Section -->
+          <div id="qr-code-section" style="display: none; margin-bottom: 16px; flex-direction: column;">
+            <label for="qrCodeInput" style="margin-bottom: 16px; margin-top: 16px;">Upload QR Code</label>
+            <input style="padding: 20px; background-color: #ccc;"
+              type="file" 
+              id="qrCodeInput" 
+              name="qrCodeInput" 
+              accept="image/*"
+            />
+          </div>
+          <!-- Notice Section -->
+          <div id="notice-section" style="display: none; margin-bottom: 16px;">
+            <p style="font-style: italic;">
+              I promise that I will notify our gate attendant that a van from EkoLinq will be picking up items from my residence. Failure to do so often means we cannot do your pickup.
+            </p>
+          </div>
+
+          <!-- Hidden fields for final gating data (if needed) -->
+          <input type="hidden" id="selectedGatedOption" name="selectedGatedOption" value="">
+          <input type="hidden" id="finalGateCode" name="finalGateCode" value="">
+          <input type="hidden" id="finalNotice" name="finalNotice" value="">
+        </div>
+
+        <button type="submit" style="margin-top: 36px;" id="init-submit-btn" class="submit-btn">
+          <span>Next Step: <span style="font-weight: 400;">Select a Timeframe</span></span>
+        </button>
+      </form>
+
+      <h2 style="margin-top: 56px; margin-bottom: 32px;">Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <div class="faq-item align-center" id="faq-items">
+          <h3 style="margin: 16px 0px;">What kinds of items do you accept?</h3>
+          <img src="/static/images/Cloth Items.png" alt="" height="80" style="opacity: .8;">
+        </div>
+        <div class="faq-item align-center" id="faq-result">
+          <h3 style="margin: 16px 0px;">What do you do with my textile waste?</h3>
+          <img src="/static/images/van black.png" alt="" height="80" style="opacity: .8;">
+        </div>
+        <div class="faq-item align-center" id="faq-better">
+          <h3 style="margin: 16px 0px;">Why is it better to use EkoLinq?</h3>
+          <img src="/static/images/EkoLinq Logo Black.png" alt="" height="70" style="margin-top: 10px; opacity: .8;">
+        </div>
+      </div>
+      <div class="overlay" id="overlay"></div>
+      <div class="faq-popup" id="faq-items-popup" style="display: none;">
+        <h3 style="margin: 16px 0px;">What kinds of items do you accept?</h3>
+        <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. But, we do not extiles that are wet, moldy, contaminated with chemicals or bio-hazardous waste. Additionally, we do not accept mattresses, furniture, or other similar oversized items</p>
+        <button class="popup-close download-btn">Close</button>
+      </div>
+      <div class="faq-popup" id="faq-result-popup" style="display: none;">
+        <h3 style="margin: 16px 0px;">What do you do with my textile waste?</h3>
+        <p>Whenever possible, we try to recycle all textile waste donated to us. If this isn't possible, or if the clothes are better off being recycled, they are turned into shoddy—fibers used for fillings or in lower-grade textile products. Regardless, 100% of the textiles we collect are diverted from landfill.</p>
+        <button class="popup-close download-btn">Close</button>
+      </div>
+      <div class="faq-popup" id="faq-better-popup" style="display: none;">
+        <h3 style="margin: 16px 0px;">Why is it better to use EkoLinq?</h3>
+        <p>EkoLinq is heavily involved in our local ecosystem—whether through collaborations with other businesses, donating proceeds from our work to community members, or by providing a better outlet for textile waste, EkoLinq aims to have a positive impact in the Tri-Valley.</p>
+        <button class="popup-close download-btn">Close</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div id="footer-content" class="content-width">
+      <div id="footer-left" style="flex: 1;">
+        <img src="/static/images/EKOLINQ-LOGO.png" height="40" alt="">
+        <p style="font-family: var(--crim); margin: 0px; margin-top: 24px;">hello@ekolinq.com</p>
+        <p style="font-family: var(--crim); margin: 0px; margin-top: 24px;">866.346.4765</p>
+      </div>
+      <div id="footer-right" style="flex: 1;">
+        <p class="footer-nav-item">What's textile waste?</p>
+        <p class="footer-nav-item">About us</p>
+        <p class="footer-nav-item">Contact</p>
+        <p class="footer-nav-item">Edit a request</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const overlay = document.getElementById('overlay');
+      
+      // Add click event to each FAQ item to open the respective popup
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const popupId = item.id + '-popup';
+          const popup = document.getElementById(popupId);
+          if(popup) {
+            overlay.style.display = 'block';    // Show overlay
+            popup.style.display = 'block';      // Show corresponding popup
+          }
+        });
+      });
+      
+      // Add click events to close buttons to hide popup and overlay
+      const closeButtons = document.querySelectorAll('.popup-close');
+      closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          overlay.style.display = 'none';        // Hide overlay
+          const popups = document.querySelectorAll('.faq-popup');
+          popups.forEach(p => p.style.display = 'none');  // Hide all popups
+        });
+      });
+    });
+    const initForm           = document.getElementById('init-form-info');
+    const gatedCheckbox      = document.getElementById('gated');
+    const gatedPopup         = document.getElementById('gated-popup');
+    const gatedOptionsSelect = document.getElementById('gatedOptions');
+
+    // Sections within the gated container
+    const gateCodeSection = document.getElementById('gate-code-section');
+    const qrCodeSection   = document.getElementById('qr-code-section');
+    const noticeSection   = document.getElementById('notice-section');
+
+    // Inputs
+    const gateCodeInput = document.getElementById('gateCodeInput');
+    const qrCodeInput   = document.getElementById('qrCodeInput');
+
+    // Hidden fields (if needed to pass final gating info)
+    const selectedGatedOption = document.getElementById('selectedGatedOption');
+    const finalGateCode       = document.getElementById('finalGateCode');
+    const finalNotice         = document.getElementById('finalNotice');
+
+    // Toggle the gated-info section on checkbox change
+    gatedCheckbox.addEventListener('change', () => {
+      if (gatedCheckbox.checked) {
+        gatedPopup.style.display = 'block';
+      } else {
+        gatedPopup.style.display = 'none';
+        // Reset gating fields
+        gatedOptionsSelect.value = '';
+        gateCodeInput.value      = '';
+        qrCodeInput.value        = '';
+        selectedGatedOption.value= '';
+        finalGateCode.value      = '';
+        finalNotice.value        = '';
+        // Also hide all sub-sections
+        gateCodeSection.style.display = 'none';
+        qrCodeSection.style.display   = 'none';
+        noticeSection.style.display   = 'none';
+      }
+    });
+
+    // Show/hide relevant sub-section based on dropdown selection
+    gatedOptionsSelect.addEventListener('change', function() {
+      const val = gatedOptionsSelect.value;
+      gateCodeSection.style.display = 'none';
+      qrCodeSection.style.display   = 'none';
+      noticeSection.style.display   = 'none';
+
+      if (val === 'code') {
+        gateCodeSection.style.display = 'block';
+      } else if (val === 'qr') {
+        qrCodeSection.style.display   = 'flex';
+      } else if (val === 'notice') {
+        noticeSection.style.display   = 'block';
+      }
+    });
+
+    // Form submission handler
+    initForm.addEventListener('submit', async function (event) {
+      // Basic gating validation: if gated is checked, ensure we have what we need
+      if (gatedCheckbox.checked) {
+        // Must choose one option
+        if (!gatedOptionsSelect.value) {
+          event.preventDefault();
+          alert('Please select a gate access option.');
+          return;
+        }
+        if (gatedOptionsSelect.value === 'code') {
+          // Must provide gate code
+          if (!gateCodeInput.value.trim()) {
+            event.preventDefault();
+            alert('Please enter your gate code or uncheck the gated box.');
+            return;
+          }
+        }
+        if (gatedOptionsSelect.value === 'qr') {
+          // Must upload a file
+          if (!qrCodeInput.files || qrCodeInput.files.length === 0) {
+            event.preventDefault();
+            alert('Please upload a QR code image or uncheck the gated box.');
+            return;
+          }
+          if(qrCodeInput.files[0].size > 5242880) {
+            event.preventDefault();
+            alert("File is too big. Files must be under 5 megabytes.");
+            return;
+          }
+        }
+        // If notice is selected, no additional fields needed
+
+        // Optionally store final gating info into hidden fields
+        selectedGatedOption.value = gatedOptionsSelect.value;
+        finalGateCode.value       = (gatedOptionsSelect.value === 'code') ? gateCodeInput.value : '';
+        finalNotice.value         = (gatedOptionsSelect.value === 'notice') ? 'true' : '';
+      } 
+      
+      // Next, do any other checks you need (e.g. verifying ZIP code)
+      event.preventDefault(); // Keep it for the async call below (avoid default submit)
+
+      const zipcode = document.getElementById('zip').value;
+      try {
+        const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
+        const data = await response.json();
+
+        if (data.valid) {
+          // If ZIP is valid, submit for real
+          initForm.submit(); 
+        } else {
+          alert(`${data.reason}`);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error verifying ZIP code. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>

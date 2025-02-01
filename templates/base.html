@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}EkoLinq{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Common CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Additional head content can go here -->
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Include a site-wide navbar -->
+  {% include 'partials/_navbar.html' %}
+
+  <!-- Main content will be inserted here -->
+  <div id="main-content">
+      {% block content %}{% endblock %}
+  </div>
+
+  <!-- Include a site-wide footer -->
+  {% include 'partials/_footer.html' %}
+
+  <!-- JS Scripts that are needed everywhere can go here -->
+  {% block scripts %}
+  <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+  {% endblock %}
+  
+</body>
+</html>

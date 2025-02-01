@@ -1,0 +1,69 @@
+body {
+    background-color: var(--d-green);
+}
+
+#admin-panel-wrapper {
+    margin-top: 10vh;
+    border-radius: 50px;
+    padding: 40px;
+    background-color: var(--off-white);
+}
+
+th, td, tr {
+    font-family: var(--mont);
+    padding: 8px 12px;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+input {
+    font-family: var(--mont);
+    padding: 8px 12px;
+    border: 2px solid var(--m-green);
+    border-radius: 5px;
+}
+
+input:placeholder-shown {
+    border: 1px solid var(--border-grey);
+}
+
+#save-sched-btn {
+    background-color: var(--m-green);
+    color: white;
+}
+
+#save-sched-btn:hover {
+    cursor: pointer;
+    background-color: var(--m-blue);
+}
+
+table {
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+
+th {
+    border-bottom: 1px solid grey;
+}
+
+#table-wrapper tr {
+    max-height: 20px;
+    overflow-y: scroll;
+}
+
+#login-wrapper {
+    width: 400px;
+    background-color: var(--off-white);
+    flex-direction: column;
+    padding: 40px;
+    border-radius: 50px;
+    margin: auto;
+    margin-top: 10vh;
+}
+
+#login-wrapper form {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+}
