@@ -391,11 +391,6 @@
 
 #get-in-touch {
     align-self: center;
-    color: white; background-color: var(--m-blue);
-}
-
-#get-in-touch:hover {
-    background-color: var(--m-green);
 }
 
 #shared-vision {
@@ -412,7 +407,7 @@
     font-weight: 600;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     body {
         overflow-x: hidden;
     }
@@ -443,12 +438,11 @@
     }
     
     #request-form {
-        bottom: -460px;
+        bottom: -520px;
         box-sizing: border-box;
         z-index: 100;
-        width: calc(95% - 2em);
-        background: none;
-        box-shadow: none !important;
+        width: 95%;
+        padding: 3em 2em;
         height: auto;
     }
     
@@ -462,8 +456,7 @@
     }
 
     #ekolinq-info {
-        margin-top: 540px;
-        border-top: 1px solid rgba(0, 0, 0, 0.25);
+        margin-top: 520px;
     }
     
     #impact {
