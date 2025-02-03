@@ -338,7 +338,7 @@
 #image-belt {
     position: relative;
     width: 100vw;
-    background-image: url('/static/images/andymoves-new.seesite.biz_--_791792745.jpg');
+    background-image: url('/static/images/Textiles2.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -407,9 +407,14 @@
     font-weight: 600;
 }
 
+
 @media (max-width: 768px) {
     body {
         overflow-x: hidden;
+    }
+
+    #header {
+        padding-bottom: 300px;
     }
 
     #header-content {
@@ -438,7 +443,7 @@
     }
     
     #request-form {
-        bottom: -520px;
+        bottom: -370px;
         box-sizing: border-box;
         z-index: 100;
         width: 95%;
@@ -456,7 +461,7 @@
     }
 
     #ekolinq-info {
-        margin-top: 520px;
+        margin-top: 380px;
     }
     
     #impact {

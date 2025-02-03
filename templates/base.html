@@ -20,13 +20,43 @@
   <div id="main-content">
       {% block content %}{% endblock %}
   </div>
+  <div class="overlay" id="overlay"></div>
+  <div id="contactPopup">
+    <!-- Close button -->
+    <button class="close-btn" id="closePopupBtn" onclick="closeContactPopup()">&times;</button>
+    
+    <!-- Contact form area -->
+    <div id="contact-form-wrapper">
+      <h2>Contact Us</h2>
+      <p>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</p>
+      <form id="contactForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
 
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="4" required></textarea>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <!-- Confirmation area -->
+    <div id="contact-form-confirmation" class="align-center" style="display: none; flex-direction: column;">
+      <h2>Thanks for getting in touch!</h2>
+      <p style="margin-top: 8px;">We'll follow up with you shortly.</p>
+      <button onclick="closeContactPopup()" id="close-confirmation-btn" style="margin-top: 16px">Close</button>
+    </div>
+  </div>
   <!-- Include a site-wide footer -->
   {% include 'partials/_footer.html' %}
 
   <!-- JS Scripts that are needed everywhere can go here -->
   {% block scripts %}
   <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/site.js') }}"></script>
   {% endblock %}
   
 </body>

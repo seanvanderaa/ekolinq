@@ -91,6 +91,7 @@ li {
     display: none;
     background-color: transparent;
     border: none;
+    transition: opacity 0.5s ease;
 }
 
 .navbar__menu {
@@ -103,12 +104,21 @@ li {
     margin: 0px;
     text-decoration: none;
     list-style: none;
+    cursor: pointer;
 }
 
 .navbar__menu a {
     color: white;
     font-family: var(--crim);
     font-size: 16px;
+    padding: 8px 12px;
+    transition: border .2s ease;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 5px;
+}
+
+.navbar__menu a:hover {
+    border: 1px solid var(--border-grey);
 }
 
 .content-width {
@@ -140,6 +150,88 @@ li {
 
 .info-icon:hover {
     cursor: pointer;
+}
+
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* hidden by default */
+    z-index: 1000;
+  }
+
+  /* The popup form container */
+  #contactPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: none; /* hidden by default */
+    z-index: 1001;
+    width: 40%;
+    min-width: 300px;
+    max-width: 500px;
+  }
+
+  /* Close button styling */
+  #contactPopup .close-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    float: right;
+    cursor: pointer;
+  }
+
+  /* Form elements styling */
+  #contactPopup form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+  #contactPopup form label {
+    margin-top: 10px;
+    font-weight: 500;
+    font-family: var(--mont);
+  }
+  #contactPopup form input,
+  #contactPopup form textarea {
+    margin-top: 5px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: var(--mont);
+  }
+  #contactPopup form textarea {
+    resize: vertical;
+  }
+
+  #contactPopup form button[type="submit"], #close-confirmation-btn {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--m-green);
+    font-family: var(--mont);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform .2s ease, background-color .2s ease, color .2s ease;
+  }
+
+#contactPopup form button[type="submit"]:hover, #close-confirmation-btn:hover {
+    transform: scale(1.02);
+    background-color: var(--yel);
+    color: black;
 }
 
 #footer {
