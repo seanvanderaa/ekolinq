@@ -7,38 +7,38 @@
 {% endblock %}
 {% block content %}
 <div id="header">
-    <div id="header-content">
-      <div id="header-left">
-        <h1 style="color: white;">Everyone can play a role in reducing waste.</h1>
-        <h1 style="color: var(--yel);">We're here to make it easy.</h1>
-      </div>
-      <div id="header-right">
-        <h2 style="margin: 0px; color: white; font-weight: 200;">EkoLinq provides <b style="font-weight: 600;">free,
-            contactless curbside pickups</b> to individuals and businesses to redirect textile waste away from
-          landfills.</h2>
-        <p style="color: var(--subtle-text); font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 300;"><a
-            style="text-decoration: underline; text-decoration-style: dotted;">Learn more</a> about what we do.</p>
-      </div>
+  <div id="header-content">
+    <div id="header-left">
+      <h1 style="color: white;">Everyone can play a role in reducing waste.</h1>
+      <h1 style="color: var(--yel);">We're here to make it easy.</h1>
     </div>
-    <div id="request-form" class="box-shadow">
-      <p style="margin: 0px; margin-bottom: 6px; color: var(--d-green); font-weight: 500;">Have textiles
-        you need to get rid of?</p>
-      <h1 style="margin: 0px; margin-bottom: 20px; color: var(--d-green); font-weight: 600;">Schedule a
-        free pick-up.</h1>
-      <p style="max-width: 420px;margin: 0px; margin-bottom: 16px;">EkoLinq is helping move California's Tri-Valley
-        region toward a more sustainable future. <b>Enter your zip code to find a time for pick-up.</b></p>
-      <form action="/find-time" method="GET" id="request-form-input">
-        <div style="position: relative; display: inline-block; margin: 0px; width: 100%;">
-          <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter Zip Code"
-            class="align-center" required>
-          <span class="info-icon">i</span>
-          <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
-            only serves the Tri-Valley.</div>
-        </div>
-        <button class="main-btn" type="submit"><span>Find a Time</span></button>
-      </form>
+    <div id="header-right">
+      <h2 style="margin: 0px; color: white; font-weight: 200;">EkoLinq provides <b style="font-weight: 600;">free,
+          contactless curbside pickups</b> to individuals and businesses to redirect textile waste away from
+        landfills.</h2>
+      <p style="color: var(--subtle-text); font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 300;"><a
+          style="text-decoration: underline; text-decoration-style: dotted;">Learn more</a> about what we do.</p>
     </div>
   </div>
+  <div id="request-form" class="box-shadow">
+    <p style="margin: 0px; margin-bottom: 6px; color: var(--d-green); font-weight: 500;">Have textiles
+      you need to get rid of?</p>
+    <h1 style="margin: 0px; margin-bottom: 20px; color: var(--d-green); font-weight: 600;">Schedule a
+      free pick-up.</h1>
+    <p style="max-width: 420px;margin: 0px; margin-bottom: 16px;">EkoLinq is helping move California's Tri-Valley
+      region toward a more sustainable future. <b>Enter your zip code to find a time for pick-up.</b></p>
+    <form action="/find-time" method="GET" id="request-form-input">
+      <div style="position: relative; display: inline-block; margin: 0px; width: 100%;">
+        <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter Zip Code"
+          class="align-center" required>
+        <span class="info-icon">i</span>
+        <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
+          only serves the Tri-Valley.</div>
+      </div>
+      <button class="main-btn" type="submit"><span>Find a Time</span></button>
+    </form>
+  </div>
+</div>
   <div id="ekolinq-info" class="content-width">
     <div id="impact" class="block-margin">
       <div id="impact-left">
@@ -94,12 +94,12 @@
         <p class="section-title" id="desktop-section-title">THE PROBLEM</p>
         <h2 style="margin: 0px; margin-top: 24px;">The U.S. produces over 100 pounds of textile waste per person per
           year.</h2>
-        <p style="margin-top: 24px;">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+        <p style="margin-top: 24px;" id="problem-right-text">When textiles decompose in landfills, they release methane, a greenhouse gas 28
           times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
           largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
           disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
-          into the soil and groundwater, potentially harming aquatic ecosystems and human health.</p>
-        <p style="margin-top: 24px;">By donating your unwanted textiles, you can help break this cycle of waste and
+          into the soil and groundwater, potentially harming aquatic ecosystems and human health.
+          <br><br>By donating your unwanted textiles, you can help break this cycle of waste and
           environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
           significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
           future.</p>
@@ -161,15 +161,15 @@
       <div id="shared-vision-orgs" class="align-center" style="gap: 36px; margin-top: 24px;">
         <div class="initiatives" class="align-center">
           <img src="/static/images/tradewater.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
-          <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
+          <p style="max-width: 280px;">Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
         </div>
         <div class="initiatives" class="align-center">
           <img src="/static/images/onetree.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
-          <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
+          <p style="max-width: 280px;">One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
         </div>
         <div class="initiatives" class="align-center">
           <img src="/static/images/climeworks.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
-          <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
+          <p style="max-width: 280px;">Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
         </div>
       </div>
     </div> 

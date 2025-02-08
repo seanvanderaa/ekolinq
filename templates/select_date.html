@@ -21,36 +21,38 @@
         <!-- Hidden inputs to hold the selected date/time -->
         <input type="hidden" name="chosen_date" id="chosen_date" value="">
         <input type="hidden" name="chosen_time" id="chosen_time" value="">
+        <div id="date-selection-scroll">
+          <div id="date-selection-wrapper" class="align-center">
 
-        <div id="date-selection-wrapper" class="align-center">
-
-          {% if days_list %}
-            {% for d in days_list %}
-            <div class="day-wrapper align-center">
-              <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
-                {{ d.day_of_week|upper }}
-              </h4>
-              <p style="margin: 0px; margin-top: 6px; margin-bottom: 24px;">
-                {{ d.date_str }}
-              </p>
-              
-              <!-- Loop over the available slots for that day -->
-              {% for slot in d.slots %}
-                <!-- We'll combine e.g. "08:00" and "12:00" into "08:00-12:00" -->
-                <div class="timeframe-selector align-center" 
-                     data-date="{{ d.date_obj.isoformat() }}" 
-                     data-time="{{ slot[0] ~ '-' ~ slot[1] }}">
-                  <h4 style="font-weight: 400;">
-                    {{ slot[0] }} - {{ slot[1] }}
-                  </h4>
-                </div>
+            {% if days_list %}
+              {% for d in days_list %}
+              <div class="day-wrapper align-center" {% if loop.first %}style="margin-left: 1px;"{% endif %}>
+                <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
+                  {{ d.day_of_week|upper }}
+                </h4>
+                <p style="margin: 0px; margin-top: 6px; margin-bottom: 24px;">
+                  {{ d.date_str }}
+                </p>
+                
+                <!-- Loop over the available slots for that day -->
+                {% for slot in d.slots %}
+                  <!-- We'll combine e.g. "08:00" and "12:00" into "08:00-12:00" -->
+                  <div class="timeframe-selector align-center" 
+                       data-date="{{ d.date_obj.isoformat() }}" 
+                       data-time="{{ slot[0] ~ '-' ~ slot[1] }}">
+                    <h4 style="font-weight: 400;">
+                      {{ slot[0] }} - {{ slot[1] }}
+                    </h4>
+                  </div>
+                {% endfor %}
+              </div>
               {% endfor %}
-            </div>
-            {% endfor %}
-          {% else %}
-            <p>No available slots in this week.</p>
-          {% endif %}
+            {% else %}
+              <p>No available slots in this week.</p>
+            {% endif %}
+          </div>
         </div>
+
 
         <!-- Prev/Next Week buttons -->
         <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">

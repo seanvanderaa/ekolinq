@@ -97,6 +97,17 @@ main {
     font-family: var(--mont);
 }
 
+#update-address {
+    background-color: var(--m-green);
+    color: white;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+#update-address:hover {
+    background-color: var(--yel);
+    color: black;
+}
+
 footer {
     margin-top: 0px !important;
     box-shadow: none !important;

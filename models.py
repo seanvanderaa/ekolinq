@@ -32,8 +32,6 @@ def add_request(**kwargs):
     db.session.commit()
     return new_pickup.id
 
-
-
 class ServiceSchedule(db.Model):
     __tablename__ = 'service_schedule'
     
@@ -59,3 +57,14 @@ def get_service_schedule():
     (or however many you choose to store).
     """
     return ServiceSchedule.query.order_by(ServiceSchedule.id).all()
+
+
+class ContactEntries(db.Model):
+    __tablename__ = 'contact_form_entries'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    submitDate = db.Column(db.String(50), nullable=True)
+    name = db.Column(db.String(200), nullable=True)
+    email = db.Column(db.String(200), nullable=True)
+    message = db.Column(db.String(1000), nullable=True)

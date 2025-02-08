@@ -29,7 +29,7 @@
     <div id="contact-form-wrapper">
       <h2>Contact Us</h2>
       <p>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</p>
-      <form id="contactForm">
+      <form id="contactForm" action="/contact-form-entry" method="GET">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name">
 
@@ -39,7 +39,7 @@
         <label for="message">Message:</label>
         <textarea id="message" name="message" rows="4" required></textarea>
 
-        <button type="submit">Submit</button>
+        <button type="submit" id="contactFormBtn">Submit</button>
       </form>
     </div>
 

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}What's textile waste? | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/waste_styles.css') }}">
+{% endblock %}
+{% block content %}
+<main>
+  <div id="header">
+    <div id="header-content" style="color: white;" class="content-width align-left">
+      <h1 style="font-size: 64px; text-align: left; width: 100%; margin: 0px;">The basics of textile waste</h1>
+      <h3>Every year, over 100lbs of textile waste are produced per person in the U.S. alone.</h3>
+    </div>
+  </div>
+  <div id="waste-main-content" class="content-width" >
+    <p class="section-title">OVERVIEW</p>
+    <h2 style="margin: 0px; margin-top: 24px;">Both businesses and consumers are contributors</h2>
+    <p style="margin-top: 24px;">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+      times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
+      largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
+      disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
+      into the soil and groundwater, potentially harming aquatic ecosystems and human health.</p>
+    <p style="margin-top: 24px;">By donating your unwanted textiles, you can help break this cycle of waste and
+      environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
+      significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
+      future.</p>
+    <div id="info-blocks">
+      <div class="info-block" class="align-center">
+        <img src="../static/images/mountain.png" height="60">
+        <h3>Lorem ipsum dolor</h3>
+        <p>And here's a brief explanation on how this is the case.</p>
+      </div>
+      <div class="info-block" class="align-center">
+        <img src="../static/images/mountain.png" height="60">
+        <h3>Lorem ipsum dolor</h3>
+        <p>And here's a brief explanation on how this is the case.</p>
+      </div>
+      <div class="info-block" class="align-center">
+        <img src="../static/images/mountain.png" height="60">
+        <h3>Lorem ipsum dolor</h3>
+        <p>And here's a brief explanation on how this is the case.</p>
+      </div>
+    </div>
+    <p class="section-title">SECTION TWO</p>
+    <div id="section-two">
+      <div style="flex: 2;">
+        <h2 style="margin: 0px; margin-top: 24px;">Both businesses and consumers are contributors</h2>
+        <p style="margin-top: 24px;">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+          times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
+          largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
+          disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
+          into the soil and groundwater, potentially harming aquatic ecosystems and human health.</p>
+        <p style="margin-top: 24px;">By donating your unwanted textiles, you can help break this cycle of waste and
+          environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
+          significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
+          future.</p>
+      </div>
+      <div id="sect-two-img" style="flex: 1.5;"></div>
+    </div>
+
+    <div id="section-three">
+      <p class="section-title" style="margin-top: 0px;">SECTION THREE</p>
+      <div>
+        <h2 style="margin: 0px; margin-top: 24px;">Both businesses and consumers are contributors</h2>
+        <p style="margin-top: 24px;">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+          times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
+          largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
+          disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
+          into the soil and groundwater, potentially harming aquatic ecosystems and human health.
+          By donating your unwanted textiles, you can help break this cycle of waste and
+          environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
+          significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
+          future.</p>
+      </div>
+    </div>
+    <p class="section-title">OTHER RESOURCES</p>
+    <div id="resource-files">
+      <div id="resource-file-header">
+        <p style="flex: 2;">Resource Name</h3>
+        <p style="flex: 1;">Author(s)</p>
+        <p style="flex: 2;">Brief Description</p>
+      </div>
+      <div class="resource-file">
+        <h3 style="flex: 2;">File/reference name</h3>
+        <p style="flex: 1;">Author</p>
+        <p style="flex: 2;">Brief description about this file and its contents, what you can derive from it, and why you might want to read it.</p>
+      </div>
+      <div class="resource-file">
+        <h3 style="flex: 2;">File/reference name</h3>
+        <p style="flex: 1;">Author</p>
+        <p style="flex: 2;">Brief description about this file and its contents, what you can derive from it, and why you might want to read it.</p>
+      </div>
+      <div class="resource-file">
+        <h3 style="flex: 2;">File/reference name</h3>
+        <p style="flex: 1;">Author</p>
+        <p style="flex: 2;">Brief description about this file and its contents, what you can derive from it, and why you might want to read it.</p>
+      </div>
+      <div class="resource-file">
+        <h3 style="flex: 2;">File/reference name</h3>
+        <p style="flex: 1;">Author</p>
+        <p style="flex: 2;">Brief description about this file and its contents, what you can derive from it, and why you might want to read it.</p>
+      </div>
+      <div class="resource-file">
+        <h3 style="flex: 2;">File/reference name</h3>
+        <p style="flex: 1;">Author</p>
+        <p style="flex: 2;">Brief description about this file and its contents, what you can derive from it, and why you might want to read it.</p>
+      </div>
+    </div>
+
+
+  </div>
+</main>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/waste.js') }}"></script>
+{% endblock %}

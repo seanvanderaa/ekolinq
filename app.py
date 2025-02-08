@@ -5,6 +5,7 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from helpers.address import verifyZip
+from helpers.contact import submitContact
 from datetime import date, timedelta
 import os
 import csv
@@ -31,13 +32,10 @@ def create_app():
     @app.route('/', methods=['GET'])
     def home():
         return render_template('landing.html')
-
-    @app.route('/verify_zip', methods=['GET'])
-    def verify_zip():
-        zip_code = request.args.get('zipcode')
-        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"]
-        # Use jsonify here to properly format the JSON response
-        return jsonify(verifyZip(approved_zips, zip_code))
+    
+    @app.route('/textile-waste', methods=['GET'])
+    def textileWaste():
+        return render_template('textile_waste.html')
 
     @app.route('/request_pickup')
     def request_pickup():
@@ -336,7 +334,23 @@ def create_app():
                 "status": "error",
                 "message": "An unexpected error occurred."
             }), 500
-
+        
+    
+    @app.route('/contact-form-entry', methods=['GET'])
+    def contactFormEntry():
+        print("Here!")
+        name = request.args.get('name')
+        email = request.args.get('email')
+        message = request.args.get('message')
+        print(name)
+        return jsonify(submitContact(name, email, message))
+    
+    @app.route('/verify_zip', methods=['GET'])
+    def verify_zip():
+        zip_code = request.args.get('zipcode')
+        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"]
+        # Use jsonify here to properly format the JSON response
+        return jsonify(verifyZip(approved_zips, zip_code))
 
     @app.cli.command('reset-db')
     def reset_db():
