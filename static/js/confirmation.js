@@ -3,10 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const editAddressForm = document.getElementById('edit-address-form');
     const editAddressPencil = document.getElementById('edit-address');
     const addressHeader = document.getElementById('address-header');
-
-
+    const closeUpdate = document.getElementById('cancel-update-address');
 
     editAddressPencil.addEventListener('click', displayForm);
+    closeUpdate.addEventListener('click', displayForm)
+
 
     function displayForm() {
       if (editAddressText.style.display === "flex") {

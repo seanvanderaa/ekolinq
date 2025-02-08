@@ -60,4 +60,22 @@ document.addEventListener("DOMContentLoaded", function () {
         // Assuming base_date_str is already in "Jan. 26" format
         weekSpecElement.textContent = baseDate;
     }
+    const outer = document.getElementById('date-selection-scroll');
+    const inner = document.getElementById('date-selection-wrapper');
+
+    function updateAlignment() {
+      // If content is wider than the outer container, use flex-start
+      if (inner.scrollWidth > outer.clientWidth) {
+        inner.style.justifyContent = 'flex-start';
+      } else {
+        // Otherwise, keep it centered
+        inner.style.justifyContent = 'center';
+      }
+    }
+
+    // Check on load
+    updateAlignment();
+
+    // And recheck on window resize (or any other event you like)
+    window.addEventListener('resize', updateAlignment);
 });
