@@ -29,7 +29,7 @@
       region toward a more sustainable future. <b>Enter your zip code to find a time for pick-up.</b></p>
     <form action="/find-time" method="GET" id="request-form-input">
       <div style="position: relative; display: inline-block; margin: 0px; width: 100%;">
-        <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter Zip Code"
+        <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter ZIP Code"
           class="align-center" required>
         <span class="info-icon">i</span>
         <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
@@ -103,7 +103,11 @@
           environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
           significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
           future.</p>
-        <button class="action-btn" style="margin-top: 36px;"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn More</button>
+          <button onclick="window.location.href='{{ url_for('textileWaste') }}'" 
+                  class="action-btn" style="margin-top: 36px;">
+            <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn More
+          </button>
+          
       </div>
     </div>
   </div>

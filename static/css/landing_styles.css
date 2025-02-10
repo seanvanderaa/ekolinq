@@ -583,20 +583,10 @@
     
     #request-form {
         bottom: -370px;
-        box-sizing: border-box;
-        z-index: 100;
-        width: 95%;
-        padding: 3em 2em;
-        height: auto;
     }
 
     #request-form-input {
         width: 80%;
-        max-width: 420px;
-    }
-    
-    #request-form-input input {
-        width: 100%;
     }
 
     .info-text {
