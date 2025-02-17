@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}ADMIN | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/routeOverview_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="content-width">
+  <h1>Pick Ups Overview</h1>
+  
+  <!-- Next (Soonest) Pickup -->
+  <div id="next-pickup">
+    <div class="align-center pickup-header">
+        <h4 style="margin: 0px;">Next Pick Up</h4>
+        {% if next_pickup %} <p style="margin: 0px; margin-left: 24px;">{{ next_pickup.formatted_date }}</p>{% endif %}
+    </div>
+    <div class="pickup-content" style="border: none;">
+        {% if next_pickup %}
+        <div style="padding-bottom: 8px">
+            {% for timeframe in next_pickup.timeframes %}
+            <div>
+              <p>{{ timeframe.count }} pickup{% if timeframe.count > 1 %}s{% endif %} <span class="subtle-date" style="margin-left: 12px;">{{ timeframe.timeframe }}</span> </p>
+            </div>
+          {% endfor %}
+        </div>
+        <a href="{{ url_for('live_route') }}?date={{ next_pickup.date }}" ><div class="pickup-date-btn"><p style="margin: 0px;">Start Pick Ups</p></div></a>
+      {% else %}
+        <p>No upcoming pickups available.</p>
+      {% endif %}
+    </div>
+
+  </div>
+  
+  <!-- Additional Upcoming Pickups -->
+  <div id="upcoming-pickups">
+    <div id="upcoming-dates-header" class="align-left dropdown-header">
+        <h4 style="margin: 0px;">Upcoming Pickups</h4>
+        <i class="bi bi-chevron-down" id="upcoming-pickups-icon"></i>
+    </div>
+
+    {% if upcoming_dates %}
+    <div id="upcoming-dates" style="display: none" class="pickups-listing">
+        {% for pickup in upcoming_dates %}
+        <div style="margin-bottom: 24px;">
+            <div class="pickup-header" style="background-color: var(--l-blue); color: black;">
+                <h4>{{ pickup.formatted_date }}</h4>
+            </div>
+            <div class="pickup-content">
+                {% for timeframe in pickup.timeframes %}
+                <div>
+                    <p>{{ timeframe.count }} pickups ({{ timeframe.timeframe }})</p>
+                </div>
+                {% endfor %}
+              <a href="{{ url_for('live_route') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
+            </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No upcoming pickups available.</p>
+    {% endif %}
+    </div>
+
+  </div>
+  
+  <!-- Past Pickups -->
+  <div id="past-pickups">
+    <div id="past-pickups-header" class="align-left dropdown-header">
+        <h4 style="margin: 0px;">Past Pickups</h4>
+        <i class="bi bi-chevron-down" id="past-pickups-icon"></i>
+    </div>
+    {% if past_dates %}
+    <div id="past-dates" style="display: none;" class="pickups-listing">
+        {% for pickup in past_dates %}
+        <div class="pickup-date">
+          <h3>{{ pickup.formatted_date }}</h3>
+          <ul>
+            {% for timeframe in pickup.timeframes %}
+              <li>
+                {{ timeframe.count }} pickups ({{ timeframe.timeframe }})
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="{{ url_for('live_route') }}?date={{ pickup.date }}" class="btn">View Info</a>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No past pickups available.</p>
+    {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
+{% endblock %}
+

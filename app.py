@@ -6,7 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from helpers.address import verifyZip
 from helpers.contact import submitContact
-from datetime import date, timedelta
+from helpers.helpers import format_date
+from datetime import date, timedelta, datetime
+from sqlalchemy import func
 import os
 import csv
 import io
@@ -215,8 +217,8 @@ def create_app():
                 session['logged_in'] = True
                 return redirect(url_for('admin'))
             else:
-                return render_template('admin_login.html', error="Incorrect password")
-        return render_template('admin_login.html')
+                return render_template('admin/admin_login.html', error="Incorrect password")
+        return render_template('admin/admin_login.html')
 
     @app.route('/admin', methods=['GET', 'POST'])
     def admin():
@@ -247,7 +249,7 @@ def create_app():
         # If GET, just load and display the current schedule + requests
         schedule_data = get_service_schedule()
         requests = PickupRequest.query.order_by(PickupRequest.id.desc()).all()
-        return render_template('admin.html', schedule_data=schedule_data, requests=requests)
+        return render_template('admin/admin.html', schedule_data=schedule_data, requests=requests)
 
     @app.route('/admin/download_csv')
     def download_csv():
@@ -335,6 +337,112 @@ def create_app():
                 "message": "An unexpected error occurred."
             }), 500
         
+    @app.route('/route-overview')
+    def route_overview():
+        # Get today's date in YYYY-MM-DD format.
+        today = date.today().strftime("%Y-%m-%d")
+        
+        # --- Upcoming Pickups ---
+        # Query upcoming pickups grouped by date and timeframe.
+        upcoming_rows = (
+            db.session.query(
+                PickupRequest.request_date,
+                PickupRequest.request_time,
+                func.count(PickupRequest.id).label('pickup_count')
+            )
+            .filter(PickupRequest.request_date >= today)
+            .group_by(PickupRequest.request_date, PickupRequest.request_time)
+            .order_by(PickupRequest.request_date.asc())
+            .all()
+        )
+        
+        # Group the upcoming results by date.
+        upcoming_grouped = {}
+        for row in upcoming_rows:
+            date_str = row.request_date
+            if date_str not in upcoming_grouped:
+                upcoming_grouped[date_str] = []
+            upcoming_grouped[date_str].append({
+                'timeframe': row.request_time,
+                'count': row.pickup_count
+            })
+            
+        # Sort upcoming dates ascending.
+        upcoming_dates_sorted = sorted(upcoming_grouped.items(), key=lambda x: x[0])
+        
+        # Separate out the earliest upcoming date as "next_pickup".
+        if upcoming_dates_sorted:
+            next_date, next_timeframes = upcoming_dates_sorted[0]
+            next_pickup = {
+                'date': next_date,
+                'formatted_date': format_date(next_date),
+                'timeframes': next_timeframes
+            }
+            remaining_upcoming = []
+            for date_str, timeframes in upcoming_dates_sorted[1:]:
+                remaining_upcoming.append({
+                    'date': date_str,
+                    'formatted_date': format_date(date_str),
+                    'timeframes': timeframes
+                })
+        else:
+            next_pickup = None
+            remaining_upcoming = []
+        
+        # --- Past Pickups ---
+        # Query past pickups grouped by date and timeframe.
+        past_rows = (
+            db.session.query(
+                PickupRequest.request_date,
+                PickupRequest.request_time,
+                func.count(PickupRequest.id).label('pickup_count')
+            )
+            .filter(PickupRequest.request_date < today)
+            .group_by(PickupRequest.request_date, PickupRequest.request_time)
+            .order_by(PickupRequest.request_date.desc())
+            .all()
+        )
+        
+        past_grouped = {}
+        for row in past_rows:
+            date_str = row.request_date
+            if date_str not in past_grouped:
+                past_grouped[date_str] = []
+            past_grouped[date_str].append({
+                'timeframe': row.request_time,
+                'count': row.pickup_count
+            })
+        
+        # Sort past dates descending.
+        past_dates_sorted = sorted(past_grouped.items(), key=lambda x: x[0], reverse=True)
+        past_dates_final = []
+        for date_str, timeframes in past_dates_sorted:
+            past_dates_final.append({
+                'date': date_str,
+                'formatted_date': format_date(date_str),
+                'timeframes': timeframes
+            })
+        
+        return render_template(
+            "admin/route_overview.html",
+            next_pickup=next_pickup,
+            upcoming_dates=remaining_upcoming,
+            past_dates=past_dates_final
+        )
+
+    @app.route('/live-route')
+    def live_route():
+        """
+        Expects a query parameter 'date' (in YYYY-MM-DD format) and renders
+        a page listing all the pickup addresses for that date.
+        """
+        selected_date = request.args.get('date')
+        if not selected_date:
+            return "Date parameter is required", 400
+
+        # Query pickups for the given date.
+        pickups = PickupRequest.query.filter(PickupRequest.request_date == selected_date).all()
+        return render_template('admin/live_route.html', date=selected_date, pickups=pickups)
     
     @app.route('/contact-form-entry', methods=['GET'])
     def contactFormEntry():
