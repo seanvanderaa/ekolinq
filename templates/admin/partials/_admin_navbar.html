@@ -1,0 +1,18 @@
+<nav class="navbar">
+    <div class="navbar__logo">
+      <a href="/">
+        <img src="{{ url_for('static', filename='images/EkoLinqLogo_White.png') }}" alt="Company Logo" height="30">
+      </a>
+    </div>
+    <button class="navbar__toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbar-menu">
+      <i class="bi bi-list" style="color: white; font-size: 24px;"></i>
+    </button>
+    
+    <ul class="navbar__menu" id="navbar-menu">
+      <li class="navbar__item"><a href="/textile-waste" class="navbar__link">What's textile waste?</a></li>
+      <li class="navbar__item"><a href="#about" class="navbar__link">About</a></li>
+      <li class="navbar__item"><a onclick="openContactPopup()" id="navbar-contact-btn" class="navbar__link">Contact us</a></li>
+      <li class="navbar__item"><a href="#contact" class="navbar__link" style="color: var(--yel);">Edit a request</a></li>
+    </ul>
+</nav>
+  

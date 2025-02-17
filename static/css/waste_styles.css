@@ -4,15 +4,6 @@ main {
     padding-bottom: 160px;
     overflow-x: hidden;
 }
-#header-content {
-    display: flex;
-    flex-direction: row;
-    column-gap: 36px;
-    width: 100%;
-    max-width: 960px;
-    align-items: center;
-    justify-content: center;
-}
 
 #header {
     position: relative;
@@ -56,7 +47,7 @@ main {
     -webkit-backdrop-filter: blur(5px);
     box-sizing: border-box;
     padding: 40px;
-    border-radius: 50px;
+    border-radius: 20px;
 }
 
 #info-blocks {
