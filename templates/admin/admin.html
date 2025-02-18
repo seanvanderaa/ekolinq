@@ -5,7 +5,6 @@
 
 {% block extra_head %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
 {% endblock %}
 
@@ -15,7 +14,7 @@
     <h1 style="margin: 0px; margin-bottom: 24px;">Scheduling Overview</h1>
     <h2 style="margin: 0px; margin-bottom: 0px;">Timeframe Configuration</h2>
     <p style="max-width: 550px; word-break: break-word;">If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
-    <form method="POST" action="{{ url_for('admin') }}">
+    <form id="date-timeframe-form" method="POST" action="{{ url_for('admin') }}">
       <table cellpadding="5" cellspacing="0">
         <thead>
           <tr>
