@@ -1,0 +1,39 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}ADMIN | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/liveRoute_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="content-width">
+  {% if pickups %}
+    {% for pickup in pickups %}
+      <div class="pickup-stop">
+        <div class="pickup-header">
+            <h4>Stop {{ loop.index }}</h4>
+        </div>
+        <div class="pickup-content">
+          <p>{{ pickup.address }}</p>
+          <p>{{ pickup.city }}, CA</p>
+          <button onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">Open Maps
+          </button>
+          <button class="mark-complete" data-pickup-id="{{ pickup.id }}">
+            Mark Complete
+          </button>
+        </div>
+
+
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No pickups scheduled for this route.</p>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
+{% endblock %}
