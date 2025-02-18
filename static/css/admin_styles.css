@@ -3,13 +3,19 @@ body {
 }
 
 main {
-    padding-top: 150px;
+    padding: 150px 0px;
 }
 
 #admin-panel-wrapper {
     border-radius: 50px;
+    box-sizing: border-box;
     padding: 40px;
     background-color: var(--off-white);
+}
+
+#date-timeframe-form {
+    overflow-x: scroll;
+    width: 100%;
 }
 
 th, td, tr {
@@ -69,4 +75,8 @@ th {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
+}
+
+@media only screen and (max-width: 768px) {
+
 }
