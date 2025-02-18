@@ -339,6 +339,8 @@ def create_app():
         
     @app.route('/route-overview')
     def route_overview():
+        if not session.get('logged_in'):
+            return redirect(url_for('admin_login'))
         # Get today's date in YYYY-MM-DD format.
         today = date.today().strftime("%Y-%m-%d")
         
