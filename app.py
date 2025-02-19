@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
+from helpers.routing import get_optimized_route
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 import os
@@ -249,7 +250,7 @@ def create_app():
         # If GET, just load and display the current schedule + requests
         schedule_data = get_service_schedule()
         requests = PickupRequest.query.order_by(PickupRequest.id.desc()).all()
-        return render_template('admin/admin.html', schedule_data=schedule_data, requests=requests)
+        return render_template('admin/admin_overview.html', schedule_data=schedule_data, requests=requests)
 
     @app.route('/admin/download_csv')
     def download_csv():
@@ -434,17 +435,107 @@ def create_app():
 
     @app.route('/live-route')
     def live_route():
-        """
-        Expects a query parameter 'date' (in YYYY-MM-DD format) and renders
-        a page listing all the pickup addresses for that date.
-        """
         selected_date = request.args.get('date')
         if not selected_date:
             return "Date parameter is required", 400
 
-        # Query pickups for the given date.
-        pickups = PickupRequest.query.filter(PickupRequest.request_date == selected_date).all()
-        return render_template('admin/live_route.html', date=selected_date, pickups=pickups)
+        formatted_date = format_date(selected_date)
+
+        # Query "Requested" pickups
+        pickups_requested = PickupRequest.query.filter_by(
+            request_date=selected_date,
+            status='Requested'
+        ).all()
+
+        # Query "Complete" pickups
+        pickups_completed = PickupRequest.query.filter_by(
+            request_date=selected_date,
+            status='Complete'
+        ).all()
+
+        # Extract addresses from the requested pickups
+        requested_addresses = [p.address + ", " + p.city + " CA" for p in pickups_requested]
+
+        # Now call our route-optimization function
+        try:
+            sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
+                addresses=requested_addresses,
+                # Optional: provide start_location if you have a depot location
+                start_location="5381 Mallard Dr., Pleasanton, CA",
+                api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
+            )
+        except Exception as e:
+            # Handle errors from the Directions API gracefully
+            print(f"Error retrieving route info: {e}")
+            sorted_addresses = requested_addresses
+            total_time_seconds = 0
+            leg_times = []
+
+        # Optionally, if you want your pickups in the order the API recommends:
+        # We can reorder 'pickups_requested' to match the 'sorted_addresses'.
+        # This requires matching addresses. For a simple approach:
+        def sort_key(pr):
+            full_addr = pr.address + ", " + pr.city + " CA"
+            try:
+                return sorted_addresses.index(full_addr)
+            except ValueError:
+                return 999999  # if something doesn't match, push it to the bottom
+
+        pickups_requested.sort(key=sort_key)
+
+        # Convert total_time_seconds to a user-friendly string, e.g. "1 hr 23 min"
+        # A simple method:
+        def seconds_to_hms(sec):
+            hours = sec // 3600
+            mins = (sec % 3600) // 60
+            if hours > 0:
+                return f"{hours} hr {mins} min"
+            else:
+                return f"{mins} min"
+
+        total_time_str = seconds_to_hms(total_time_seconds)
+        # Similarly, we could create a list of each leg’s time as strings
+        leg_times_str = [seconds_to_hms(t) for t in leg_times]
+
+        return render_template(
+            'admin/live_route.html',
+            date=formatted_date,
+            pickups_requested=pickups_requested,
+            pickups_completed=pickups_completed,
+            total_time_str=total_time_str,
+            leg_times_str=leg_times_str
+        )
+
+
+    
+    @app.route('/toggle_pickup_status', methods=['POST'])
+    def toggle_pickup_status():
+        pickup_id = request.form.get('pickup_id')
+
+        if not pickup_id:
+            return "Error: No pickup_id provided", 400
+
+        pickup = PickupRequest.query.get(pickup_id)
+        if not pickup:
+            return "Error: Pickup not found", 404
+
+        # Toggle the status
+        if pickup.status == "Complete":
+            pickup.status = "Requested"
+        else:
+            pickup.status = "Complete"
+
+        db.session.commit()
+
+        # If you prefer a redirect (page reload):
+        # return redirect(url_for('live_route', date=pickup.request_date))
+
+        # Or return JSON so the front-end can handle it without a reload:
+        return jsonify({
+            "message": "Status updated successfully",
+            "new_status": pickup.status
+        })
+
     
     @app.route('/contact-form-entry', methods=['GET'])
     def contactFormEntry():
