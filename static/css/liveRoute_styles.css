@@ -1,14 +1,59 @@
 body {
     background-color: var(--d-green);
+    padding-top: 120px;
 }
 
 main {
-    margin-top: 150px !important;
     border-radius: 20px;
     max-width: 660px !important;
     box-sizing: border-box;
     padding: 40px;
     background-color: white;
+}
+
+#completed-pickups {
+    margin-bottom: 36px;
+}
+
+#listed-completed-pickups {
+    width: 100%;
+    padding: 12px 12px;
+    padding-top: 24px;
+    box-sizing: border-box;
+    border-radius: 0px 0px 10px 10px;
+    background-color: rgb(140, 140, 140);
+    flex-direction: column;
+}
+
+.completed-stop {
+    width: 100%;
+}
+
+.completed-header {
+    background-color: rgb(201, 201, 201);
+    padding: 6px 24px !important;
+    color: black;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.completed-header h4 {
+    margin: 0px;
+
+    font-size: 16px !important;
+}
+
+.completed-content {
+    background-color: white;
+}
+
+.dropdown-header {
+    justify-content: space-between;
+    padding: 16px 24px;
+    background-color: var(--l-green);
+    color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 12px;
 }
 
 .pickup-stop {
@@ -23,6 +68,10 @@ main {
     justify-content: flex-start;
 }
 
+.pickup-header.disabled {
+    background-color: var(--l-green);
+}
+
 .pickup-header h4, .dropdown-header h4 {
     font-size: 20px;
     margin: 0px;
@@ -34,10 +83,77 @@ main {
 }
 
 .pickup-content {
-    padding: 24px 24px;
+    padding: 12px 24px;
     border: 1px solid var(--border-grey);
     border-top: none;
     border-radius: 0px 0px 10px 10px;
     width: 100%;
     box-sizing: border-box;
+}
+
+.button-wrapper {
+    flex-direction: column;
+    row-gap: 12px;
+    margin-top: 32px;
+}
+
+.button-wrapper button {
+    width: 220px;
+    max-width: 100%;
+    padding: 24px 0px;
+    font-family: var(--mont);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color .2s ease;
+}
+
+.button-wrapper button:disabled {
+    background-color: grey;
+    color: white;
+    cursor: not-allowed !important;
+}
+
+.button-wrapper button:hover {
+    cursor: pointer;
+}
+
+.open-map {
+    background-color: var(--yel);
+    color: black;
+}
+
+.open-map:hover {
+    background-color: var(--l-green);
+}
+
+.mark-complete {
+    background-color: var(--m-green);
+    color: white;
+}
+
+.mark-complete:hover {
+    background-color: var(--m-blue);
+}
+
+.mark-incomplete {
+    background-color: var(--m-blue) !important;
+    color: white !important;
+    padding: 8px 0px !important;
+}
+
+.mark-incomplete:hover {
+    background-color: var(--yel) !important;
+    color: black !important;
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        background-color: white;
+        padding-top: 120px;
+    }
+    main {
+        padding: 0em;
+        margin-top: 80px;
+    }
 }
