@@ -10,6 +10,7 @@ from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
+from sqlalchemy import or_
 import os
 import csv
 import io
@@ -448,9 +449,9 @@ def create_app():
         ).all()
 
         # Query "Complete" pickups
-        pickups_completed = PickupRequest.query.filter_by(
-            request_date=selected_date,
-            status='Complete'
+        complete_incomplete_pickups = PickupRequest.query.filter(
+            PickupRequest.request_date == selected_date,
+            or_(PickupRequest.status == 'Complete', PickupRequest.status == 'Incomplete')
         ).all()
 
         # Extract addresses from the requested pickups
@@ -501,11 +502,71 @@ def create_app():
             'admin/live_route.html',
             date=formatted_date,
             pickups_requested=pickups_requested,
-            pickups_completed=pickups_completed,
+            pickups_completed=complete_incomplete_pickups,
             total_time_str=total_time_str,
             leg_times_str=leg_times_str
         )
 
+    @app.route('/view-route-info')
+    def view_route_info():
+        selected_date = request.args.get('date')
+        if not selected_date:
+            return "Date parameter is required", 400
+
+        formatted_date = format_date(selected_date)
+
+        # Query "Requested" pickups
+        all_pickups = PickupRequest.query.filter_by(
+            request_date=selected_date,
+        ).all()
+
+        requested_addresses = [p.address + ", " + p.city + " CA" for p in all_pickups]
+
+        # Now call our route-optimization function
+        try:
+            sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
+                addresses=requested_addresses,
+                # Optional: provide start_location if you have a depot location
+                start_location="5381 Mallard Dr., Pleasanton, CA",
+                api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
+            )
+        except Exception as e:
+            # Handle errors from the Directions API gracefully
+            print(f"Error retrieving route info: {e}")
+            sorted_addresses = requested_addresses
+            total_time_seconds = 0
+            leg_times = []
+
+        # Optionally, if you want your pickups in the order the API recommends:
+        # We can reorder 'pickups_requested' to match the 'sorted_addresses'.
+        # This requires matching addresses. For a simple approach:
+        def sort_key(pr):
+            full_addr = pr.address + ", " + pr.city + " CA"
+            try:
+                return sorted_addresses.index(full_addr)
+            except ValueError:
+                return 999999  # if something doesn't match, push it to the bottom
+
+        all_pickups.sort(key=sort_key)
+
+        # Convert total_time_seconds to a user-friendly string, e.g. "1 hr 23 min"
+        # A simple method:
+        def seconds_to_hms(sec):
+            hours = sec // 3600
+            mins = (sec % 3600) // 60
+            if hours > 0:
+                return f"{hours} hr {mins} min"
+            else:
+                return f"{mins} min"
+
+        total_time_str = seconds_to_hms(total_time_seconds)
+
+        return render_template(
+            'admin/view_route_info.html',
+            date=formatted_date,
+            all_pickups = all_pickups,
+            total_time_str = total_time_str,
+        )
 
     
     @app.route('/toggle_pickup_status', methods=['POST'])
@@ -520,10 +581,36 @@ def create_app():
             return "Error: Pickup not found", 404
 
         # Toggle the status
-        if pickup.status == "Complete":
+        if pickup.status == "Complete" or pickup.status == "Incomplete":
             pickup.status = "Requested"
         else:
             pickup.status = "Complete"
+
+        db.session.commit()
+
+        # If you prefer a redirect (page reload):
+        # return redirect(url_for('live_route', date=pickup.request_date))
+
+        # Or return JSON so the front-end can handle it without a reload:
+        return jsonify({
+            "message": "Status updated successfully",
+            "new_status": pickup.status
+        })
+    
+    @app.route('/mark-pickup-not-possible', methods=['POST'])
+    def mark_pickup_not_possible():
+        pickup_id = request.form.get('pickup_id')
+
+        if not pickup_id:
+            return "Error: No pickup_id provided", 400
+
+        pickup = PickupRequest.query.get(pickup_id)
+        if not pickup:
+            return "Error: Pickup not found", 404
+
+        # Toggle the status
+        if pickup.status:
+            pickup.status = "Incomplete"
 
         db.session.commit()
 

@@ -53,7 +53,7 @@
                     <p>{{ timeframe.count }} pickups ({{ timeframe.timeframe }})</p>
                 </div>
                 {% endfor %}
-              <a href="{{ url_for('live_route') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
+              <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
             </div>
         </div>
       {% endfor %}
@@ -73,16 +73,20 @@
     {% if past_dates %}
     <div id="past-dates" style="display: none;" class="pickups-listing">
         {% for pickup in past_dates %}
-        <div class="pickup-date">
-          <h3>{{ pickup.formatted_date }}</h3>
-          <ul>
-            {% for timeframe in pickup.timeframes %}
-              <li>
-                {{ timeframe.count }} pickups ({{ timeframe.timeframe }})
-              </li>
-            {% endfor %}
-          </ul>
-          <a href="{{ url_for('live_route') }}?date={{ pickup.date }}" class="btn">View Info</a>
+        <div style="margin-bottom: 24px;">
+          <div class="pickup-header" style="background-color: var(--subtle-text); color: black;">
+            <h4>{{ pickup.formatted_date }}</h4>
+          </div>
+          <div class="pickup-content">
+            <ul>
+              {% for timeframe in pickup.timeframes %}
+                <li>
+                  {{ timeframe.count }} pickups ({{ timeframe.timeframe }})
+                </li>
+              {% endfor %}
+            </ul>
+            <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
+          </div>
         </div>
       {% endfor %}
     {% else %}

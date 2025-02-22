@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const markCompleteButtons = document.querySelectorAll('.mark-complete');
-    const markIncompleteButtons = document.querySelectorAll('.mark-incomplete')
+    const markIncompleteButtons = document.querySelectorAll('.mark-incomplete');
+    const markPickupImpossibleButtons = document.querySelectorAll('.mark-pickup-not-possible');
   
     markCompleteButtons.forEach(button => {
       button.addEventListener('click', async function() {
@@ -33,6 +34,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+
+    markPickupImpossibleButtons.forEach(button => {
+      button.addEventListener('click', async function() {
+        const pickupId = this.getAttribute('data-pickup-id');
+  
+        try {
+          const formData = new FormData();
+          formData.append('pickup_id', pickupId);
+  
+          const response = await fetch('/mark-pickup-not-possible', {
+            method: 'POST',
+            body: formData
+          });
+  
+          if (!response.ok) {
+            alert('Error updating status');
+            return;
+          }
+  
+          // At this point we don't really need the JSON data since we're reloading,
+          // but here's how you'd parse it if needed:
+          // const data = await response.json();
+  
+          // Simply reload the entire page:
+          window.location.reload();
+  
+        } catch (error) {
+          console.error(error);
+          alert('Something went wrong');
+        }
+      });
+    })
     document.getElementById('completed-header')
     .addEventListener('click', function() {
         completedHeader = document.getElementById('completed-header'); 
