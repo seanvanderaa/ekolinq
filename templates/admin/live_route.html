@@ -25,13 +25,13 @@
         {% for pickup in pickups_completed %}
           <div class="pickup-stop completed-stop">
             <div class="completed-header">
-              <h4>Completed Stop</h4>
+              <h4>Request Status: {{ pickup.status }}</h4>
             </div>
             <div class="pickup-content completed-content">
               <p>{{ pickup.address }} {{ pickup.city }}, CA</p>
               <div class="align-center button-wrapper">
                 <!-- Button says "Mark as Incomplete" to move back to queue -->
-                <button class="mark-complete mark-incomplete"
+                <button class="mark-complete mark-incomplete button-wrapper-btn"
                         data-pickup-id="{{ pickup.id }}"
                         data-current-status="Complete">
                   <i class="bi bi-x-octagon" style="margin-right: 6px"></i> Mark as Incomplete
@@ -57,16 +57,22 @@
           <p>{{ pickup.address }}</p>
           <p>{{ pickup.city }}, CA</p>
           <div class="align-center button-wrapper">
-            <button {% if loop.index != 1 %} disabled {% endif %} class="open-map"
+            <button {% if loop.index != 1 %} disabled {% endif %} class="open-map button-wrapper-btn"
                     onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">
               <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
             </button>
             <!-- If it’s not the first in the list, disable the "Mark Complete" button -->
-            <button class="mark-complete"
+            <button class="mark-complete button-wrapper-btn"
                     data-pickup-id="{{ pickup.id }}"
                     data-current-status="Requested"
                     {% if loop.index != 1 %} disabled {% endif %}>
               <i class="bi bi-check-circle" style="margin-right: 6px;"></i> Mark Complete
+            </button>
+            <button class="mark-pickup-not-possible"
+                    data-pickup-id="{{ pickup.id }}"
+                    data-current-status="Requested"
+                    {% if loop.index != 1 %} disabled {% endif %}
+                    style="text-decoration: underline; color: var(--m-blue); font-size: 12px; margin: 0px; margin-bottom: 12px;">Can't complete pickup
             </button>
           </div>
         </div>

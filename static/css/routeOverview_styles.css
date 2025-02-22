@@ -69,7 +69,7 @@ main {
 }
 
 .view-date-btn:hover {
-    border: none;
+    border: 1px solid var(--m-green);
 }
 
 .dropdown-header {

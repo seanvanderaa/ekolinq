@@ -97,7 +97,7 @@ main {
     margin-top: 32px;
 }
 
-.button-wrapper button {
+.button-wrapper-btn {
     width: 220px;
     max-width: 100%;
     padding: 24px 0px;
@@ -108,14 +108,30 @@ main {
     transition: background-color .2s ease;
 }
 
-.button-wrapper button:disabled {
-    background-color: grey;
-    color: white;
+.button-wrapper-btn:disabled {
+    background-color: grey !important;
+    color: white !important;
     cursor: not-allowed !important;
 }
 
-.button-wrapper button:hover {
+.button-wrapper-btn:hover {
     cursor: pointer;
+}
+
+.mark-pickup-not-possible {
+    padding: 0px;
+    background-color: rgba(0,0,0,0);
+    text-decoration: underline;
+    color: var(--m-blue);
+    border: none;
+}
+
+.mark-pickup-not-possible:hover {
+    cursor:pointer;
+}
+
+.mark-pickup-not-possible:disabled {
+    cursor: not-allowed !important;
 }
 
 .open-map {

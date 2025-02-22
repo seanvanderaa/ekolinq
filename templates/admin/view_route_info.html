@@ -1,0 +1,51 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %} Route Info {{ date }} | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/liveRoute_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="content-width">
+  <h2 style="color: var(--m-green); font-family: var(--pub); margin: 0px;">
+    Route Overview <span style="font-size: 14px; color: var(--subtle-text-wbg)"><i>Est. {{ total_time_str }}</i></span>
+  </h2>
+  <p style="margin-top: 8px; color: var(--subtle-text-wbg)">{{ date }}</p>
+
+  <!-- Requested section -->
+  {% if all_pickups %}
+    {% for pickup in all_pickups %}
+      <div class="pickup-stop" {% if loop.index == 1 %}style="margin-bottom: 64px;"{% endif %}>
+        <div class="pickup-header {% if loop.index != 1 %}disabled{% endif %}">
+          <h4>Stop {{ loop.index }}</h4>
+        </div>        
+        <div class="pickup-content">
+          <p>{{ pickup.address }}</p>
+          <p>{{ pickup.city }}, CA</p>
+          <div class="align-center button-wrapper">
+            <button {% if loop.index != 1 %} disabled {% endif %} class="open-map"
+                    onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">
+              <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
+            </button>
+            <!-- If it’s not the first in the list, disable the "Mark Complete" button -->
+            <button class="mark-complete"
+                    data-pickup-id="{{ pickup.id }}"
+                    data-current-status="Requested"
+                    {% if loop.index != 1 %} disabled {% endif %}>
+              <i class="bi bi-check-circle" style="margin-right: 6px;"></i> Mark Complete
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <h3>Either there are no pickups scheduled for this route or you have completed all of the stops.</h3>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/liveRoute.js') }}"></script>
+{% endblock %}
