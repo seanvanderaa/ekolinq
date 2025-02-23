@@ -104,3 +104,32 @@ th {
 @media only screen and (max-width: 768px) {
 
 }
+
+#date-form {
+    column-gap: 24px;
+}
+
+#total-pickups {
+    display: flex;
+    flex-direction: column;
+}
+
+#header {
+    justify-content: space-between;
+    margin-bottom: 36px;
+    align-items: flex-start;
+}
+
+#date-form {
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.form-group label {
+    font-family: var(--mont);
+}
