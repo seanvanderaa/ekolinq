@@ -1,0 +1,38 @@
+{% for req in requests %}
+<tr>
+  <td style="min-width: 120px;">{{ req.status }}</td>
+  <td style="min-width: 150px;">{{ req.date_filed }}</td>
+  <td style="min-width: 150px;">{{ req.request_date }}</td>
+  <td style="min-width: 150px;">{{ req.request_time }}</td>
+  <td style="min-width: 300px;">{{ req.email }}</td>
+  <td style="min-width: 250px;">{{ req.address }}</td>
+  <td style="min-width: 150px;">{{ req.city }}</td>
+  <td style="min-width: 75px;">{{ req.zipcode }}</td>
+  <td style="min-width: 300px; word-break: break-word;">{{ req.notes }}</td>
+  <td style="min-width: 100px;">{{ req.gated }}</td>
+  <td style="min-width: 100px;">
+    {% if req.qr_code %}
+      <b>True</b>
+    {% else %}
+      False
+    {% endif %}
+  </td>
+  <td style="min-width: 100px;">
+    {% if req.gate_code %}
+      <b>{{ req.gate_code }}</b>
+    {% else %}
+      False
+    {% endif %}
+  </td>
+  <td style="min-width: 100px;">
+    {% if req.notify %}
+      <b>True</b>
+    {% else %}
+      False
+    {% endif %}
+  </td>
+  <td style="min-width: 150px;">{{ req.fname }}</td>
+  <td style="min-width: 200px;">{{ req.lname }}</td>
+  <td style="min-width: 50px;">{{ req.id }}</td>
+</tr>
+{% endfor %}

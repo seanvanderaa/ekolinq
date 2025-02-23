@@ -1,0 +1,62 @@
+<!-- templates/admin.html -->
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Scheduling Overview | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="content-width" id="admin-panel-wrapper">
+    <h1 style="margin: 0px; margin-bottom: 24px;">Scheduling Overview</h1>
+    <h2 style="margin: 0px; margin-bottom: 0px;">Timeframe Configuration</h2>
+    <p style="max-width: 550px; word-break: break-word;">If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
+    <form id="date-timeframe-form" method="POST" action="{{ url_for('admin_schedule') }}">
+      <table cellpadding="5" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Day of Week</th>
+            <th>Available?</th>
+            <th>Slot 1 (Start-End)</th>
+            <th>Slot 2 (Start-End)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sched in schedule_data %}
+            <tr>
+              <td>{{ sched.day_of_week }}</td>
+              <td>
+                <input type="checkbox" name="day_{{ loop.index }}_available" 
+                        {% if sched.is_available %} checked {% endif %}>
+              </td>
+              <td>
+                <input type="hidden" name="record_{{ loop.index }}_id" value="{{ sched.id }}">
+                <input type="text" name="day_{{ loop.index }}_slot1_start" 
+                        value="{{ sched.slot1_start or '' }}" placeholder="08:00" size="5"> -
+                <input type="text" name="day_{{ loop.index }}_slot1_end" 
+                        value="{{ sched.slot1_end or '' }}" placeholder="12:00" size="5">
+              </td>
+              <td>
+                <input type="text" name="day_{{ loop.index }}_slot2_start" 
+                        value="{{ sched.slot2_start or '' }}" placeholder="13:00" size="5"> -
+                <input type="text" name="day_{{ loop.index }}_slot2_end" 
+                        value="{{ sched.slot2_end or '' }}" placeholder="17:00" size="5">
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      <button type="submit" class="download-btn" id="save-sched-btn">Save Schedule</button>
+    </form>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
+{% endblock %}
