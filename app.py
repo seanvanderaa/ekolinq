@@ -268,7 +268,60 @@ def create_app():
     @app.route('/admin-console', methods=['GET', 'POST'])
     @login_required
     def admin_console():
-        return render_template('admin/admin_console.html')
+        today = datetime.today().date()
+        # Default to the current week: from Monday to today.
+        start_of_week = today - timedelta(days=today.weekday())
+        start_date = start_of_week
+        end_date = today
+
+        # Process form submission for a custom date range
+        if request.method == 'POST':
+            start_date_str = request.form.get('start_date')
+            end_date_str = request.form.get('end_date')
+            if start_date_str and end_date_str:
+                try:
+                    start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+                    end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+                except ValueError:
+                    # Optionally add error handling for invalid dates.
+                    pass
+
+        # Build the complete date range for the period
+        num_days = (end_date - start_date).days + 1
+        date_range = [start_date + timedelta(days=i) for i in range(num_days)]
+        daily_counts_dict = {d.strftime("%Y-%m-%d"): 0 for d in date_range}
+
+        # Query daily pickup counts within the chosen range.
+        query_result = db.session.query(
+            PickupRequest.request_date,
+            db.func.count(PickupRequest.id)
+        ).filter(
+            PickupRequest.request_date >= start_date.strftime("%Y-%m-%d"),
+            PickupRequest.request_date <= end_date.strftime("%Y-%m-%d")
+        ).group_by(
+            PickupRequest.request_date
+        ).order_by(
+            PickupRequest.request_date
+        ).all()
+
+        for row in query_result:
+            # Assuming request_date is stored in "YYYY-MM-DD" format.
+            daily_counts_dict[row[0]] = row[1]
+
+        # Convert to a JSON-serializable list of [date, count] pairs.
+        daily_counts = [[d.strftime("%Y-%m-%d"), daily_counts_dict[d.strftime("%Y-%m-%d")]] for d in date_range]
+
+        # Calculate total pickups for the same date range.
+        pickups_total = PickupRequest.query.filter(
+            PickupRequest.request_date >= start_date.strftime("%Y-%m-%d"),
+            PickupRequest.request_date <= end_date.strftime("%Y-%m-%d")
+        ).count()
+
+        return render_template('admin/admin_console.html',
+                            daily_counts=daily_counts,
+                            pickups_this_week=pickups_total,
+                            start_date=start_date.strftime("%Y-%m-%d"),
+                            end_date=end_date.strftime("%Y-%m-%d"))
 
     @app.route('/admin-schedule', methods=['GET', 'POST'])
     @login_required

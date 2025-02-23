@@ -1,4 +1,3 @@
-<!-- templates/admin.html -->
 {% extends "admin/admin_base.html" %}
 
 {% block title %}Admin Console | EkoLinq{% endblock %}
@@ -6,22 +5,87 @@
 {% block extra_head %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
 <main>
   <div class="content-width" id="admin-panel-wrapper">
-    <h1 style="margin: 0px; margin-bottom: 24px;">Admin Console</h1>
-    <!-- Show a table of all PickupRequests -->
-    <div style="display: flex; flex-direction: row; align-items: center; column-gap: 24px; margin: 36px 0px;">
-      <h2 style="margin: 0px;">Pickup Requests</h2>
+    <div>
+        <div id="header" class="align-left">
+            <h1 style="margin: 0px;">Admin Console</h1>
+            <!-- Static Pickup Count for This Week -->
+            <div style="margin-bottom: 16px;" id="total-pickups">
+                <p style="font-size: 12px;"><i>Total pickups requested this timeframe</i></p>
+                <p style="margin: 0px; padding: 12px 24px; background-color: var(--m-green); color: white; box-sizing: content-box; text-align: center; border-radius: 5px; font-size: 24px; font-weight: 600">{{ pickups_this_week }}</p>
+            </div>
+        </div>
+      <!-- Graph Canvas -->
+      <div style="margin-bottom: 36px;">
+        <form method="POST" class="align-left" id="date-form">
+          <div class="form-group">
+              <label for="start_date">Start Date:</label>
+              <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+          </div>
+          <div class="form-group">
+              <label for="end_date">End Date:</label>
+              <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+          </div>
+          <button type="submit" class="download-btn" style="margin-left: 12px; height: 100%; padding: 10px 24px;">Filter</button>
+        </form>
+      </div>
+      <div>
+         <canvas id="pickupChart" width="800" height="300"></canvas>
+      </div>
     </div>
   </div>
-  
 </main>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
+  <script>
+    // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
+    const dailyCounts = {{ daily_counts|tojson }};
+    const labels = dailyCounts.map(item => item[0]);
+    const data = dailyCounts.map(item => item[1]);
+    
+    const ctx = document.getElementById('pickupChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Pickups per Day',
+          data: data,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: true,
+          tension: 0.1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Pickups'
+            },
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+  </script>
   <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
 {% endblock %}

@@ -122,6 +122,10 @@ li {
     border-bottom: 2px solid var(--yel);
 }
 
+#home-button {
+
+}
+
 .content-width {
     margin: 0px auto;
     max-width: 960px;
@@ -472,6 +476,10 @@ li {
     .navbar__menu.active {
         max-height: 300px; /* Arbitrary max height for the dropdown */
         padding: 36px 0px;
+    }
+
+    #home-button {
+        display: none;
     }
 
     .content-width {
