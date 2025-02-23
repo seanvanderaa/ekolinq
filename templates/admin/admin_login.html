@@ -13,7 +13,9 @@
         <p style="color:red;">{{ error }}</p>
       {% endif %}
       <form method="POST">
-        <label for="admin_password">Enter admin password:</label>
+        <label for="admin_password">Enter username:</label>
+        <input type="username" id="admin_username" name="admin_username" />
+        <label for="admin_password">Enter password:</label>
         <input type="password" id="admin_password" name="admin_password" />
         <button type="submit" class="download-btn">Login</button>
       </form>

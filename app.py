@@ -1,16 +1,20 @@
 # app.py
-from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app
+from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, redirect
 from models import db, PickupRequest, ServiceSchedule, add_request, get_service_schedule
 from config import Config
+import requests
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
+from helpers.emailer import send_email
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
+from pycognito import Cognito
+from functools import wraps
 import os
 import csv
 import io
@@ -32,6 +36,14 @@ def create_app():
     with app.app_context():
         db.create_all()
         seed_schedule_if_necessary()
+
+    def login_required(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not session.get('logged_in'):
+                return redirect(url_for('admin_login'))
+            return f(*args, **kwargs)
+        return decorated_function
 
     @app.route('/', methods=['GET'])
     def home():
@@ -206,28 +218,61 @@ def create_app():
                             base_date_str = base_date_str)
 
     
-    @app.route('/admin/login', methods=['GET', 'POST'])
+    @app.route('/admin/login')
     def admin_login():
-        """
-        A simple form to collect an admin password, then store a session variable.
-        """
-        if request.method == 'POST':
-            entered_password = request.form.get('admin_password')
-            # This ideally comes from secure config or environment
-            correct_password = os.environ.get('ADMIN_PASSWORD', 'mysecret')
-            if entered_password == correct_password:
-                session['logged_in'] = True
-                return redirect(url_for('admin'))
-            else:
-                return render_template('admin/admin_login.html', error="Incorrect password")
-        return render_template('admin/admin_login.html')
+        client_id = os.environ.get("COGNITO_CLIENT_ID")
+        domain = os.environ.get("COGNITO_DOMAIN")  # e.g., myflaskadmin.auth.us-east-1.amazoncognito.com
+        redirect_uri = "http://localhost:3000/callback"
+        cognito_auth_url = f"https://{domain}/login?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}"
+        return redirect(cognito_auth_url)
+    
+    @app.route('/callback')
+    def callback():
+        code = request.args.get('code')
+        client_id = os.environ.get("COGNITO_CLIENT_ID")
+        client_secret = os.environ.get("COGNITO_CLIENT_SECRET")
+        domain = os.environ.get("COGNITO_DOMAIN")
+        redirect_uri = "http://localhost:3000/callback"
+        
+        token_url = f"https://{domain}/oauth2/token"
+        data = {
+            'grant_type': 'authorization_code',
+            'client_id': client_id,
+            'code': code,
+            'redirect_uri': redirect_uri
+        }
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        
+        # Include Authorization header if a client secret is used
+        if client_secret:
+            import base64
+            auth_str = f"{client_id}:{client_secret}"
+            b64_auth_str = base64.b64encode(auth_str.encode()).decode()
+            headers['Authorization'] = f"Basic {b64_auth_str}"
+        
+        response = requests.post(token_url, data=data, headers=headers)
+        print("Status:", response.status_code)
+        print("Response:", response.text)
 
-    @app.route('/admin', methods=['GET', 'POST'])
-    def admin():
-        # Check if logged in
-        if not session.get('logged_in'):
-            return redirect(url_for('admin_login'))
+        if response.status_code == 200:
+            tokens = response.json()
+            # Save tokens or user info in session as needed
+            session['logged_in'] = True
+            session['tokens'] = tokens
+            return redirect(url_for('admin'))
+        else:
+            return "Error logging in", 400
+        
+    @app.route('/admin-console', methods=['GET', 'POST'])
+    @login_required
+    def admin_console():
+        return render_template('admin/admin_console.html')
 
+    @app.route('/admin-schedule', methods=['GET', 'POST'])
+    @login_required
+    def admin_schedule():
         # If this is a POST, we are updating the schedule
         if request.method == 'POST':
             for day in range(1,8):
@@ -246,19 +291,80 @@ def create_app():
                     schedule_record.slot2_start  = slot2_start
                     schedule_record.slot2_end    = slot2_end
             db.session.commit()
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin_schedule'))
 
-        # If GET, just load and display the current schedule + requests
         schedule_data = get_service_schedule()
-        requests = PickupRequest.query.order_by(PickupRequest.id.desc()).all()
-        return render_template('admin/admin_overview.html', schedule_data=schedule_data, requests=requests)
+        return render_template('admin/admin_schedule.html', schedule_data=schedule_data)
+    
+    @app.route('/admin-pickups', methods=['GET', 'POST'])
+    @login_required
+    def admin_pickups():
+        schedule_data = get_service_schedule()
+
+        # Start with a base query for PickupRequest
+        query = PickupRequest.query
+
+        # Apply status filter if provided
+        status_filter = request.args.get('status_filter')
+        if status_filter:
+            query = query.filter(PickupRequest.status == status_filter)
+
+        # Apply date range filters (assuming you are filtering by date_filed)
+        start_date = request.args.get('start_date')
+        if start_date:
+            query = query.filter(PickupRequest.request_date >= start_date)
+        end_date = request.args.get('end_date')
+        if end_date:
+            query = query.filter(PickupRequest.request_date <= end_date)
+
+        # Apply sorting based on user selection
+        sort_by = request.args.get('sort_by')
+        if sort_by == 'date_filed':
+            query = query.order_by(PickupRequest.date_filed.desc())
+        elif sort_by == 'date_requested':
+            query = query.order_by(PickupRequest.request_date.desc())
+        else:
+            # Default sort (for example, by latest record)
+            query = query.order_by(PickupRequest.id.desc())
+
+        requests = query.all()
+
+        return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests)
+
+    @app.route('/admin/filtered_requests')
+    @login_required
+    def filtered_requests():
+        query = PickupRequest.query
+
+        # Status filter
+        status_filter = request.args.get('status_filter')
+        if status_filter:
+            query = query.filter(PickupRequest.status == status_filter)
+
+        # Date range filters (assuming filtering by date_filed)
+        start_date = request.args.get('start_date')
+        if start_date:
+            query = query.filter(PickupRequest.date_filed >= start_date)
+        end_date = request.args.get('end_date')
+        if end_date:
+            query = query.filter(PickupRequest.date_filed <= end_date)
+
+        # Sorting
+        sort_by = request.args.get('sort_by')
+        if sort_by == 'date_filed':
+            query = query.order_by(PickupRequest.date_filed.desc())
+        elif sort_by == 'date_requested':
+            query = query.order_by(PickupRequest.request_date.desc())
+        else:
+            query = query.order_by(PickupRequest.id.desc())
+
+        requests = query.all()
+        return render_template('admin/partials/_pickup_requests_table.html', requests=requests)
+
 
     @app.route('/admin/download_csv')
+    @login_required
     def download_csv():
-        # Check if logged in
-        if not session.get('logged_in'):
-            return redirect(url_for('admin_login'))
-
         # Query all pickup requests
         pickup_requests = PickupRequest.query.all()
 
@@ -340,10 +446,8 @@ def create_app():
             }), 500
         
     @app.route('/route-overview')
+    @login_required
     def route_overview():
-        if not session.get('logged_in'):
-            return redirect(url_for('admin_login'))
-        # Get today's date in YYYY-MM-DD format.
         today = date.today().strftime("%Y-%m-%d")
         
         # --- Upcoming Pickups ---
@@ -435,6 +539,7 @@ def create_app():
         )
 
     @app.route('/live-route')
+    @login_required
     def live_route():
         selected_date = request.args.get('date')
         if not selected_date:
@@ -508,6 +613,7 @@ def create_app():
         )
 
     @app.route('/view-route-info')
+    @login_required
     def view_route_info():
         selected_date = request.args.get('date')
         if not selected_date:
@@ -570,6 +676,7 @@ def create_app():
 
     
     @app.route('/toggle_pickup_status', methods=['POST'])
+    @login_required
     def toggle_pickup_status():
         pickup_id = request.form.get('pickup_id')
 
@@ -598,6 +705,7 @@ def create_app():
         })
     
     @app.route('/mark-pickup-not-possible', methods=['POST'])
+    @login_required
     def mark_pickup_not_possible():
         pickup_id = request.form.get('pickup_id')
 
@@ -623,15 +731,33 @@ def create_app():
             "new_status": pickup.status
         })
 
+    def validate_contact(name, email, message):
+        # Simple validation: all fields must be provided
+        if not name or not email or not message:
+            return False, "Name, email, and message are required."
+        return True, ""
     
     @app.route('/contact-form-entry', methods=['GET'])
-    def contactFormEntry():
-        print("Here!")
+    def contact_form_entry():
+        # Retrieve form data from query parameters (consider using POST for forms)
         name = request.args.get('name')
         email = request.args.get('email')
         message = request.args.get('message')
-        print(name)
-        return jsonify(submitContact(name, email, message))
+        print(name, email, message)
+
+        valid, reason = validate_contact(name, email, message)
+        if valid:
+            # Send the email using the separate module
+            email_sent = send_email(name, email, message)
+            return jsonify({
+                "valid": email_sent,
+                "reason": "" if email_sent else "Email sending failed."
+            })
+        else:
+            return jsonify({
+                "valid": False,
+                "reason": reason
+            })
     
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():
@@ -669,5 +795,6 @@ def seed_schedule_if_necessary():
 # If you want app.py to be the main entry point:
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True)
+    app.run(host="localhost", port=3000, debug=True)
+
 

@@ -1,0 +1,27 @@
+<!-- templates/admin.html -->
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Admin Console | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="content-width" id="admin-panel-wrapper">
+    <h1 style="margin: 0px; margin-bottom: 24px;">Admin Console</h1>
+    <!-- Show a table of all PickupRequests -->
+    <div style="display: flex; flex-direction: row; align-items: center; column-gap: 24px; margin: 36px 0px;">
+      <h2 style="margin: 0px;">Pickup Requests</h2>
+    </div>
+  </div>
+  
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
+{% endblock %}

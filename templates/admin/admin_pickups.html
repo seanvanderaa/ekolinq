@@ -1,0 +1,126 @@
+<!-- templates/admin.html -->
+{% extends "admin/admin_base.html" %}
+
+{% block title %}All Pick Ups | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="content-width" id="admin-panel-wrapper">
+    <h1 style="margin: 0px; margin-bottom: 24px;">Pick Ups Overview</h1>
+    <!-- Show a table of all PickupRequests -->
+    <div style="display: flex; flex-direction: row; align-items: center; column-gap: 24px; margin: 36px 0px;">
+      <h2 style="margin: 0px;">Pickup Requests</h2>
+      <p style="margin: 0px;" class="download-btn">
+        <a href="{{ url_for('download_csv') }}" style="text-decoration: none; color: black;">Download Pickup Requests as CSV</a>
+      </p>
+    </div>
+    <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}" style="margin-bottom: 24px;">
+      <div class="filter-form-group-wrapper">
+        <div class="filter-form-group">
+          <label for="sort-by">Sort By:</label>
+          <select name="sort_by" id="sort-by">
+            <option value="">Default</option>
+            <option value="date_filed">Date Filed</option>
+            <option value="date_requested">Date Requested</option>
+          </select>
+        </div>
+        <div class="filter-form-group">
+          <label for="status-filter">Status:</label>
+          <select name="status_filter" id="status-filter">
+            <option value="">All</option>
+            <option value="Unfinished">Unfinished</option>
+            <option value="Requested">Requested</option>
+            <option value="Complete">Complete</option>
+            <option value="Incomplete">Incomplete</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-form-group-wrapper">
+        <div class="filter-form-group">
+          <label for="start-date">Start Date:</label>
+          <input type="date" id="start-date" name="start_date">
+        </div>
+        <div class="filter-form-group">
+          <label for="end-date">End Date:</label>
+          <input type="date" id="end-date" name="end_date">
+        </div>
+      </div>
+    </form>
+    <div id="table-wrapper" style="overflow-x: scroll; padding-bottom: 50px;">
+      <table id="requests-table" border="1" cellpadding="5" cellspacing="0" >
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Date Filed</th>
+            <th>Request Date</th>
+            <th>Request Time</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Zip</th>
+            <th>Notes</th>
+            <th>Gated</th>
+            <th>QR Code</th>
+            <th>Gate Code</th>
+            <th>Will Notify</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in requests %}
+          <tr>
+            <td style="min-width: 120px;">{{ req.status }}</td>
+            <td style="min-width: 150px;">{{ req.date_filed }}</td>
+            <td style="min-width: 150px;">{{ req.request_date }}</td>
+            <td style="min-width: 150px;">{{ req.request_time }}</td>
+            <td style="min-width: 300px;">{{ req.email }}</td>
+            <td style="min-width: 250px;">{{ req.address }}</td>
+            <td style="min-width: 150px;">{{ req.city }}</td>
+            <td style="min-width: 75px;">{{ req.zipcode }}</td>
+            <td style="min-width: 300px; word-break: break-word;">{{ req.notes }}</td>
+            <td style="min-width: 100px;">{{ req.gated }}</td>
+            <td style="min-width: 100px;">
+              {% if req.qr_code %}
+                <b>True</b>
+              {% else %}
+                False
+              {% endif %}
+            </td>
+            <td style="min-width: 100px;">
+              {% if req.gate_code %}
+                <b>{{ req.gate_code }}</b>
+              {% else %}
+                False
+              {% endif %}
+            </td>
+            <td style="min-width: 100px;">
+              {% if req.notify %}
+                <b>True</b>
+              {% else %}
+                False
+              {% endif %}
+            </td>
+            <td style="min-width: 150px;">{{ req.fname }}</td>
+            <td style="min-width: 200px;">{{ req.lname }}</td>
+            <td style="min-width: 50px;">{{ req.id }}</td>
+          </tr>
+          {% endfor %}          
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
+{% endblock %}

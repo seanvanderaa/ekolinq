@@ -3,7 +3,7 @@
 {% block title %} Route Info {{ date }} | EkoLinq{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/liveRoute_styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/routeInfo_styles.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -14,29 +14,17 @@
   <p style="margin-top: 8px; color: var(--subtle-text-wbg)">{{ date }}</p>
 
   <!-- Requested section -->
+  <div>
+    <h3>Stops</h3>
+  </div>
   {% if all_pickups %}
     {% for pickup in all_pickups %}
-      <div class="pickup-stop" {% if loop.index == 1 %}style="margin-bottom: 64px;"{% endif %}>
-        <div class="pickup-header {% if loop.index != 1 %}disabled{% endif %}">
-          <h4>Stop {{ loop.index }}</h4>
-        </div>        
-        <div class="pickup-content">
-          <p>{{ pickup.address }}</p>
-          <p>{{ pickup.city }}, CA</p>
-          <div class="align-center button-wrapper">
-            <button {% if loop.index != 1 %} disabled {% endif %} class="open-map"
-                    onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">
-              <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
-            </button>
-            <!-- If it’s not the first in the list, disable the "Mark Complete" button -->
-            <button class="mark-complete"
-                    data-pickup-id="{{ pickup.id }}"
-                    data-current-status="Requested"
-                    {% if loop.index != 1 %} disabled {% endif %}>
-              <i class="bi bi-check-circle" style="margin-right: 6px;"></i> Mark Complete
-            </button>
-          </div>
-        </div>
+      <div class="pickup-stop">      
+        <p style="margin: 0px; margin-bottom: 8px;">{{ pickup.address }}</p>
+        <p style="margin: 0px; margin-bottom: 8px;">{{ pickup.city }}, CA</p>
+        {% if pickup.email %}
+        <p style="margin: 0px;">{{ pickup.email }}, CA</p>
+        {% endif %}
       </div>
     {% endfor %}
   {% else %}

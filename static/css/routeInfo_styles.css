@@ -1,0 +1,56 @@
+body {
+    background-color: var(--d-green);
+    padding-top: 120px;
+}
+
+main {
+    border-radius: 20px;
+    max-width: 660px !important;
+    box-sizing: border-box;
+    padding: 40px;
+    background-color: white;
+}
+
+.pickup-stop {
+    margin-bottom: 24px;
+    border-left: 3px solid var(--m-green);
+    padding: 10px 0px 10px 20px;
+}
+
+.pickup-header {
+    padding: 16px 24px;
+    background-color: var(--l-green);
+    color: black;
+    border-radius: 10px 10px 0px 0px;
+    justify-content: flex-start;
+}
+
+.pickup-header h4, .dropdown-header h4 {
+    font-size: 20px;
+    margin: 0px;
+}
+
+.pickup-header p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.pickup-content {
+    padding: 12px 24px;
+    border: 1px solid var(--border-grey);
+    border-top: none;
+    border-radius: 0px 0px 10px 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        background-color: white;
+        padding-top: 120px;
+    }
+    main {
+        padding: 0em;
+        margin-top: 80px;
+    }
+}

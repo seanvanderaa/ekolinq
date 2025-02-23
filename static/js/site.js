@@ -28,29 +28,26 @@ overlay.addEventListener('click', closeContactPopup);
 // Handle form submission
 document.getElementById('contactForm').addEventListener('submit', async function (event) {
   event.preventDefault(); // Prevent default form submission
-  const submitBtn = document.getElementById('contactFormBtn');
 
+  const submitBtn = document.getElementById('contactFormBtn');
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
   const message = document.getElementById('message').value;
 
   submitBtn.style.backgroundColor = "var(--m-blue)";
 
-  // Make an AJAX request to the Flask endpoint
-  const response = await fetch(`/contact-form-entry?name=${name}?email=${email}?message=${message}`);
+  // Construct the URL correctly using & to separate parameters
+  const url = `/contact-form-entry?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`;
+  console.log(url); // Check the URL in the console
+
+  const response = await fetch(url);
   const data = await response.json();
 
   if (data.valid) {
     contactFormWrapper.style.display = 'none';
     contactFormConf.style.display = 'flex';
-  }
-
-  else {
+  } else {
     alert(`${data.reason}`);
   }
-
-  // Process the form data here (e.g., via AJAX) if desired
-
-  // Hide the form wrapper and show the confirmation message
-
 });
+
