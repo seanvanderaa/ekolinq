@@ -7,13 +7,15 @@ main {
     border-radius: 50px;
     box-sizing: border-box;
     padding: 40px;
-    padding-top: 20px;
     background-color: var(--off-white);
 }
 
-#date-timeframe-form {
-    overflow-x: scroll;
-    width: 100%;
+#header {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    column-gap: 24px; 
+    margin: 36px 0px;
 }
 
 th, td, tr {
@@ -32,16 +34,6 @@ input, select {
 
 input:placeholder-shown {
     border: 1px solid var(--border-grey);
-}
-
-#save-sched-btn {
-    background-color: var(--m-green);
-    color: white;
-}
-
-#save-sched-btn:hover {
-    cursor: pointer;
-    background-color: var(--m-blue);
 }
 
 #filter-form {
@@ -82,23 +74,6 @@ th {
     overflow-y: scroll;
 }
 
-#login-wrapper {
-    width: 400px;
-    background-color: var(--off-white);
-    flex-direction: column;
-    padding: 40px;
-    border-radius: 50px;
-    margin: auto;
-    margin-top: 10vh;
-}
-
-#login-wrapper form {
-    margin-top: 24px;
-    display: flex;
-    flex-direction: column;
-    row-gap: 16px;
-}
-
 @media only screen and (max-width: 768px) {
     body {
         background-color: var(--off-white);
@@ -107,5 +82,17 @@ th {
     main {
         padding: 0em;
         margin-top: 80px;
+    }
+
+    #header {
+        flex-direction: column;
+        row-gap: 24px;
+        align-items: flex-start;
+    }
+
+    #filter-form {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 12px;
     }
 }

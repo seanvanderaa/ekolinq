@@ -1,0 +1,92 @@
+body {
+    background-color: var(--d-green);
+    padding-top: 120px;
+}
+
+main {  
+    border-radius: 50px;
+    box-sizing: border-box;
+    padding: 40px;
+    padding-top: 20px;
+    background-color: var(--off-white);
+}
+
+#date-timeframe-form {
+    overflow-x: scroll;
+    width: 100%;
+}
+
+input, select {
+    font-family: var(--mont);
+    padding: 8px 8px;
+    border: 2px solid var(--m-green);
+    border-radius: 5px;
+}
+
+input:placeholder-shown {
+    border: 1px solid var(--border-grey);
+}
+
+#date-form {
+    column-gap: 24px;
+}
+
+#total-pickups {
+    display: flex;
+    flex-direction: column;
+}
+
+#header {
+    justify-content: space-between;
+    margin-bottom: 36px;
+}
+
+#date-form {
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.form-group label {
+    font-family: var(--mont);
+}
+
+#pickupChart {
+    width: 100%;
+    height: 40vh;
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        background-color: var(--off-white);
+        padding-top: 120px;
+    }
+    main {
+        padding: 0em;
+        margin-top: 80px;
+    }
+
+    #header {
+        flex-direction: column;
+        row-gap: 24px;
+    }
+
+    #pickupChart {
+        width: 100%;
+    }
+
+    #date-form {
+        margin-top: 36px;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 24px;
+    }
+
+    #filter-h4 {
+        text-align: center;
+    }
+}

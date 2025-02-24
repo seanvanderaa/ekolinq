@@ -21,7 +21,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const upcomingContent = document.getElementById("upcoming-dates");
     const upcomingIcon = document.getElementById("upcoming-pickups-icon");
     if (upcomingHeader && upcomingContent) {
-      upcomingHeader.addEventListener("click", function() {
+      const eventType = ("ontouchstart" in window || navigator.maxTouchPoints) ? "touchstart" : "click";
+      upcomingHeader.addEventListener(eventType, function() {
         toggleContent(upcomingContent, upcomingHeader, upcomingIcon);
       });
     }
@@ -31,28 +32,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const pastContent = document.getElementById("past-dates");
     const pastIcon = document.getElementById("past-pickups-icon");
     if (pastHeader && pastContent) {
-      pastHeader.addEventListener("click", function() {
+      const eventType = ("ontouchstart" in window || navigator.maxTouchPoints) ? "touchstart" : "click";
+
+      pastHeader.addEventListener(eventType, function() {
         toggleContent(pastContent, pastHeader, pastIcon);
       });
     }
-    const filterForm = document.getElementById('filter-form');
-    const tableBody = document.querySelector('#requests-table tbody');
-  
-    // Function to fetch filtered requests and update the table
-    function updateTable() {
-      const formData = new FormData(filterForm);
-      const queryString = new URLSearchParams(formData).toString();
-      
-      fetch(filterForm.action + '?' + queryString)
-        .then(response => response.text())
-        .then(html => {
-          tableBody.innerHTML = html;
-        })
-        .catch(error => console.error('Error fetching filtered data:', error));
-    }
-  
-    // Add event listeners for each input/select element
-    filterForm.querySelectorAll('select, input').forEach(el => {
-      el.addEventListener('change', updateTable);
-    });
   });

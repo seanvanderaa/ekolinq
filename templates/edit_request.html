@@ -14,11 +14,11 @@
         After filling in the below information, you’ll be able to select 
         a timeframe for us to pick up your textiles.
       </p>
+
+      <!-- Main form -->
       <form action="/request_init" method="POST" id="init-form-info" enctype="multipart/form-data">
-        <hr style="margin-top: 24px;">
-        <h3 style="margin-bottom: 0px;">Contact Info</h3>
         <div id="form-group-1" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group" style="max-width: 260px;">
             <label for="firstName">First Name</label>
             <input 
               type="text" 
@@ -27,7 +27,7 @@
               placeholder="Jane" 
             />
           </div>
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group" style="max-width: 260px;">
             <label for="lastName">Last Name</label>
             <input 
               type="text" 
@@ -36,9 +36,8 @@
               placeholder="Doe" 
             />
           </div>
-        </div>
-        <div id="form-group-1" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
+  
+          <div class="form-group" style="max-width: 300px;">
             <label for="email">Email<span style="color: red;">*</span></label>
             <input 
               type="email" 
@@ -48,20 +47,9 @@
               required 
             />
           </div>
-          <div class="form-group" style="max-width: 50%;">
-            <label for="email">Phone Number</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              placeholder="(408) 888-8888"  
-            />
-          </div>
         </div>
-        <hr style="margin-top: 48px;">
-        <h3 style="margin-bottom: 0px;">Address</h3>
         <div id="form-group-2" class="form-group-div">
-          <div class="form-group" style="max-width: 100%;">
+          <div class="form-group" style="max-width: 300px;">
             <label for="address">Address<span style="color: red;">*</span></label>
             <input 
               type="text" 
@@ -71,9 +59,7 @@
               required 
             />
           </div>
-        </div>
-        <div id="form-group-2" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group" style="max-width: 220px;">
             <label for="city">City<span style="color: red;">*</span></label>
             <input 
               type="text" 
@@ -83,7 +69,7 @@
               required 
             />
           </div>
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group" style="max-width: 120px;">
             <label for="zip">Zip Code<span style="color: red;">*</span></label>
             <input 
               type="text" 

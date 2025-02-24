@@ -8,7 +8,7 @@ main {
     max-width: 660px !important;
     box-sizing: border-box;
     padding: 40px;
-    background-color: white;
+    background-color: var(--off-white);
 }
 
 #completed-pickups {
@@ -165,7 +165,7 @@ main {
 
 @media only screen and (max-width: 768px) {
     body {
-        background-color: white;
+        background-color: var(--off-white);
         padding-top: 120px;
     }
     main {
