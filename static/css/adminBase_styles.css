@@ -122,10 +122,6 @@ li {
     border-bottom: 2px solid var(--yel);
 }
 
-#home-button {
-
-}
-
 .content-width {
     margin: 0px auto;
     max-width: 960px;

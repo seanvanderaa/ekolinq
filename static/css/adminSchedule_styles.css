@@ -7,7 +7,6 @@ main {
     border-radius: 50px;
     box-sizing: border-box;
     padding: 40px;
-    padding-top: 20px;
     background-color: var(--off-white);
 }
 
@@ -107,5 +106,10 @@ th {
     main {
         padding: 0em;
         margin-top: 80px;
+    }
+
+    #date-timeframe-form {
+        margin-top: 24px;
+        padding-bottom: 16px;
     }
 }

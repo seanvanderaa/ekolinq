@@ -1,9 +1,9 @@
 body {
     background-color: var(--d-green);
+    padding-top: 120px;
 }
 
 main {
-    margin-top: 150px !important;
     border-radius: 20px;
     max-width: 660px !important;
     box-sizing: border-box;
@@ -100,3 +100,13 @@ main {
     color: var(--subtle-text-wbg);
 }
 
+@media only screen and (max-width: 768px) {
+    body {
+        background-color: var(--off-white);
+        padding-top: 120px;
+    }
+    main {
+        padding: 0em;
+        margin-top: 80px;
+    }
+}

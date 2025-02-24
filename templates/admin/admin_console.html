@@ -4,14 +4,13 @@
 
 {% block extra_head %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminConsole_styles.css') }}">
 <!-- Include Chart.js from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
-<main>
-  <div class="content-width" id="admin-panel-wrapper">
+<main class="content-width">
     <div>
         <div id="header" class="align-left">
             <h1 style="margin: 0px;">Admin Console</h1>
@@ -22,7 +21,11 @@
             </div>
         </div>
       <!-- Graph Canvas -->
-      <div style="margin-bottom: 36px;">
+      <div>
+         <canvas id="pickupChart"></canvas>
+      </div>
+      <div style="margin-top: 24px;">
+        <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTER CHART</h4>
         <form method="POST" class="align-left" id="date-form">
           <div class="form-group">
               <label for="start_date">Start Date:</label>
@@ -32,14 +35,10 @@
               <label for="end_date">End Date:</label>
               <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
           </div>
-          <button type="submit" class="download-btn" style="margin-left: 12px; height: 100%; padding: 10px 24px;">Filter</button>
+          <button type="submit" class="download-btn" style="height: 100%; padding: 10px 24px;">Filter</button>
         </form>
       </div>
-      <div>
-         <canvas id="pickupChart" width="800" height="300"></canvas>
-      </div>
     </div>
-  </div>
 </main>
 {% endblock %}
 
@@ -47,10 +46,10 @@
   {{ super() }}
   <script>
     // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
-    const dailyCounts = {{ daily_counts|tojson }};
+    const dailyCounts = JSON.parse('{{ daily_counts|tojson }}');
     const labels = dailyCounts.map(item => item[0]);
     const data = dailyCounts.map(item => item[1]);
-    
+
     const ctx = document.getElementById('pickupChart').getContext('2d');
     new Chart(ctx, {
       type: 'line',
@@ -59,8 +58,8 @@
         datasets: [{
           label: 'Pickups per Day',
           data: data,
-          borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: '#098223',
+          backgroundColor: '#BBCEA8',
           fill: true,
           tension: 0.1
         }]
@@ -87,5 +86,4 @@
       }
     });
   </script>
-  <script src="{{ url_for('static', filename='js/admin/routeOverview.js') }}"></script>
 {% endblock %}
