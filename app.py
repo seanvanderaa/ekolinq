@@ -261,7 +261,7 @@ def create_app():
             # Save tokens or user info in session as needed
             session['logged_in'] = True
             session['tokens'] = tokens
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin_console'))
         else:
             return "Error logging in", 400
         
