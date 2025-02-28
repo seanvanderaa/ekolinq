@@ -60,6 +60,7 @@
           <th>Request Date</th>
           <th>Request Time</th>
           <th>Email</th>
+          <th>Phone Number</th>
           <th>Address</th>
           <th>City</th>
           <th>Zip</th>
@@ -81,6 +82,7 @@
           <td style="min-width: 150px;">{{ req.request_date }}</td>
           <td style="min-width: 150px;">{{ req.request_time }}</td>
           <td style="min-width: 300px;">{{ req.email }}</td>
+          <td style="min-width: 200px;">{{ req.phone_number }}</td>
           <td style="min-width: 250px;">{{ req.address }}</td>
           <td style="min-width: 150px;">{{ req.city }}</td>
           <td style="min-width: 75px;">{{ req.zipcode }}</td>
@@ -109,7 +111,7 @@
           </td>
           <td style="min-width: 150px;">{{ req.fname }}</td>
           <td style="min-width: 200px;">{{ req.lname }}</td>
-          <td style="min-width: 50px;">{{ req.id }}</td>
+          <td style="min-width: 50px;">{{ req.request_id }}</td>
         </tr>
         {% endfor %}          
       </tbody>

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<main class="content-width">
+<main class="content-width" style="border: 1px solid red;">
   <h1 style="margin-top: 0px;">Pick Ups Overview</h1>
   <div id="next-pickup">
     <div class="align-center pickup-header">
@@ -52,10 +52,11 @@
             </div>
         </div>
       {% endfor %}
+    </div>
     {% else %}
       <p>No upcoming pickups available.</p>
+
     {% endif %}
-    </div>
   </div>
   <div id="past-pickups">
     <div id="past-pickups-header" class="align-left dropdown-header">
