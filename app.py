@@ -32,6 +32,9 @@ def create_app():
     # 4) Initialize your extensions
     db.init_app(app)
 
+    from flask_migrate import Migrate
+    migrate = Migrate(app, db)
+
     # 5) Create tables once if needed
     with app.app_context():
         db.create_all()
@@ -78,6 +81,7 @@ def create_app():
             fname   = request.form.get('firstName')
             lname   = request.form.get('lastName')
             email   = request.form.get('email')
+            phone   = request.form.get('phone')
             address = request.form.get('address')
             city    = request.form.get('city')
             zip_    = request.form.get('zip')
@@ -111,6 +115,7 @@ def create_app():
                 fname=fname,
                 lname=lname,
                 email=email,
+                phone_number=phone,
                 address=address,
                 city=city,
                 zipcode=zip_,
@@ -811,6 +816,15 @@ def create_app():
                 "valid": False,
                 "reason": reason
             })
+    
+    @app.route('/edit-request', methods=['GET', 'POST'])
+    def edit_request():
+        if request.method=="GET":
+            return render_template('edit_request.html', partial="/partials/_editRequest_init.html")
+        else:
+            return render_template('edit_request.html', partial="/partials/_editRequest_info.html")
+
+
     
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():
