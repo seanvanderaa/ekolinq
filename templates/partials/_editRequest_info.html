@@ -1,3 +1,83 @@
-<div class="content-width" id="edit-info">
-
+<div class="content-width" id="edit-info-wrapper">
+    <h1>Edit Your Request</h1>
+    <p style="max-width: 520px; margin-top: 0px; margin-bottom: 48px;">Edit the address or select a new time for your pickup. If you have any questions about making changes to your request, please don't hesitate to <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">contact us.</a></p>
+    <div class="confirmation-info">
+        <p>Pick Up Date and Time</p>
+        <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+            <h4 id="pickup-info" style="margin: 0px;">
+                <span id="request-date" data-date="{{ pickup.request_date }}"></span>
+                <span id="request-time" data-time="{{ pickup.request_time }}"></span>
+            </h4>
+            <a href="{{ url_for('select_date', request_id=pickup.id) }}">
+              <div id="edit-time" class="edit-pencil">
+                  <i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i>
+              </div>
+            </a>
+        </div>
+    </div>
+    <div class="confirmation-info">
+        <p id="address-header">Address</p>
+        <div>
+          <div id="address-info" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+            <h4 style="margin: 0px;">{{ pickup.address }}, {{ pickup.city }}, {{ pickup.zipcode }} </h4>
+            <div id="edit-address" class="edit-pencil"><i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i></div>
+          </div>
+          <form style="display: none" action="/update_address" id="edit-address-form" method="POST">
+              <div class="form-group" style="max-width: 300px;">
+                <label for="address">Address<span style="color: red;">*</span></label>
+                <input 
+                  type="text" 
+                  id="address" 
+                  name="address" 
+                  value="{{ pickup.address }}" 
+                  required 
+                />
+              </div>
+              <div class="form-group" style="max-width: 220px;">
+                <label for="city">City<span style="color: red;">*</span></label>
+                <input 
+                  type="text" 
+                  id="city" 
+                  name="city" 
+                  value="{{ pickup.city }}" 
+                  required 
+                />
+              </div>
+              <div class="form-group" style="max-width: 120px;">
+                <label for="zip">Zip Code<span style="color: red;">*</span></label>
+                <input 
+                  type="text" 
+                  id="zip" 
+                  name="zip" 
+                  value="{{ pickup.zipcode }}" 
+                  required 
+                />
+              </div>
+              <input 
+                  type="hidden" 
+                  id="request_id" 
+                  name="request_id" 
+                  value="{{ pickup.id }}" 
+              />
+              <input 
+                  type="hidden" 
+                  id="page]" 
+                  name="page" 
+                  value="edit_request" 
+              />
+              <button id="update-address" class="download-btn" type="submit" style="padding: 14px 16px;">Update</button>
+              <button id="cancel-update-address" class="download-btn" type="button" style="padding: 14px 16px;">Cancel</button>
+          </form>
+        </div>
+    </div>
+    <div class="align-right" style="width: 100%;" id="cancel-wrapper">
+        <button id="cancel-request-init" class="warning-btn" style="margin-top: 64px;"><i class="bi bi-ban" style="margin-right: 8px;"></i>Cancel Request</button>
+        <div style="display: flex;" id="cancel-confirm-wrapper">
+            <p style="text-align: right">Are you sure you want to cancel this request?<br> This action cannot be undone.</p>
+            <div id="cancel-confirm-btn-wrapper" class="align-right">
+                <button class="download-btn" id="cancel-btn">Yes, cancel.</button>
+                <button class="download-btn" id="cancel-back-btn">No, go back.</button>
+            </div>
+        </div>
+    </div>
 </div>

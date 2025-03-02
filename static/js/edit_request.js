@@ -22,7 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-  });
+    const cancelRequestInit = document.getElementById('cancel-request-init');
+
+});
   // Retrieve the raw data directly from the DOM
   const requestDateEl = document.getElementById('request-date');
   const requestTimeEl = document.getElementById('request-time');
