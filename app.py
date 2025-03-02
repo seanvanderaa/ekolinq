@@ -142,6 +142,7 @@ def create_app():
         if not request_id:
             return "Session expired, please restart.", 400
         
+        print(request_id)
         pickup = db.session.get(PickupRequest, request_id)
         if not pickup:
             return "Request not found.", 404
@@ -149,12 +150,6 @@ def create_app():
         # Grab the schedule data (all 7 days).
         schedule_data = get_service_schedule()
 
-        # Convert schedule_data into a dictionary for quick lookup, e.g.:
-        #  {
-        #    'monday': ServiceSchedule(...),
-        #    'tuesday': ServiceSchedule(...),
-        #    ...
-        #  }
         schedule_map = {}
         for s in schedule_data:
             # e.g. "monday", "tuesday", ...
@@ -171,14 +166,6 @@ def create_app():
         base_date = date.today() + timedelta(weeks=offset)
         base_date_str = base_date.strftime("%b. %d")
 
-        # Build a list of day-objects for the next 7 days from base_date
-        # each day-object will contain: 
-        #   {
-        #     'date_obj': datetime.date(2025, 1, 11), # example
-        #     'date_str': "Jan. 11",
-        #     'day_of_week': "Saturday",
-        #     'slots': [("08:00","12:00"), ("13:00","17:00")]  # from schedule
-        #   }
         days_list = []
         for i in range(7):
             day_date = base_date + timedelta(days=i)  # date object
@@ -465,6 +452,7 @@ def create_app():
             address    = request.form.get('address')
             city       = request.form.get('city')
             zip_code   = request.form.get('zip')
+            page       = request.form.get('page')
 
             # Validate required fields
             if not request_id or not address or not city or not zip_code:
@@ -493,7 +481,10 @@ def create_app():
             
             # Log success and return 200
             current_app.logger.info(f"Successfully updated address for request_id={request_id}")
-            return render_template('confirmation.html', request_id=request_id, pickup=pickup)
+            if page == "edit_request":
+                return render_template('edit_request.html', partial="/partials/_editRequest_info.html", pickup=pickup)
+            else:
+                return render_template('confirmation.html', request_id=request_id, pickup=pickup)
 
         except Exception as e:
             # Log the error
@@ -819,12 +810,69 @@ def create_app():
     
     @app.route('/edit-request', methods=['GET', 'POST'])
     def edit_request():
-        if request.method=="GET":
-            return render_template('edit_request.html', partial="/partials/_editRequest_init.html")
+        if request.method == "GET":
+            # User is just landing on the "edit request" page
+            return render_template('edit_request.html',
+                                partial="/partials/_editRequest_init.html")
         else:
-            return render_template('edit_request.html', partial="/partials/_editRequest_info.html")
+            # This block is called after the user’s form is submitted for real
+            request_id = request.form.get('request_id', '').strip()
+            pickup= PickupRequest.query.filter_by(request_id=request_id).first()
+
+            # If found, pass that data to the template (if you want to display or edit it)
+            return render_template('edit_request.html',
+                                partial="/partials/_editRequest_info.html",
+                                pickup=pickup)
 
 
+    @app.route('/edit-request/check', methods=['POST'])
+    def edit_request_check():
+        request_id = request.form.get('request_id', '').strip()
+
+        # Validate format: must be exactly 6 digits
+        if not request_id.isdigit() or len(request_id) != 6:
+            return jsonify({
+                'success': False,
+                'error': 'Your code must be exactly 6 digits and cannot contain any other characters. Please check and try again.'
+            }), 400
+
+        # Attempt to find matching row in DB
+        pickup_request = PickupRequest.query.filter_by(request_id=request_id).first()
+        if not pickup_request:
+            return jsonify({
+                'success': False,
+                'error': (
+                    "Not found. Please make sure the number matches exactly "
+                    "what appears in your confirmation email, and try again."
+                )
+            }), 404
+
+        if pickup_request.request_date:
+            try:
+                # Parse the date string
+                request_date_obj = datetime.strptime(pickup_request.request_date, '%Y-%m-%d').date()
+                if request_date_obj < datetime.today().date():
+                    # Already in the past
+                    return jsonify({
+                        'success': False,
+                        'error': (
+                            "Your request date has already passed "
+                            "and can no longer be edited. "
+                            "If you think this is an error, please contact us."
+                        )
+                    }), 400
+            except ValueError:
+                # If parsing failed for some reason (invalid format)
+                return jsonify({
+                    'success': False,
+                    'error': (
+                        "We couldn't verify the request date. "
+                        "Please contact us for further assistance."
+                    )
+                }), 400
+
+        # If we get here, everything’s good
+        return jsonify({'success': True}), 200
     
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():

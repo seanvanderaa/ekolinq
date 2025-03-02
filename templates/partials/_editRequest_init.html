@@ -1,8 +1,59 @@
+<!-- edit_request.html -->
 <div id="request-id-modal" class="content-width align-center">
-    <h2>Edit a Request</h2>
-    <p style="max-width: 400px;">Enter your six-digit request confirmation number below to edit the details of your request. You can find this number in your confirmation email.</p>
-    <form action="/edit-request" method="POST">
-      <input type="text" name="request_id" id="request_id" placeholder="000000">
-      <button type="submit" class="action-btn align-center">Submit</button>
-    </form>
+  <h2>Edit a Request</h2>
+  <p style="max-width: 400px;">
+    Enter your six-digit request confirmation number below to edit the details of your request. 
+    You can find this number in your confirmation email.
+    <br><br>
+    <span style="font-style: italic;">
+      Can't find your confirmation email?
+      <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
+    </span>
+  </p>
+  
+  <form id="edit-request-form" action="/edit-request" method="POST">
+    <input type="text" name="request_id" id="request_id" placeholder="000000">
+    <button type="submit" class="action-btn align-center">Submit</button>
+  </form>
 </div>
+
+<script>
+  // Attach a submit handler to the form
+  const editRequestForm = document.getElementById('edit-request-form');
+  
+  editRequestForm.addEventListener('submit', async function(e) {
+    e.preventDefault(); // Prevent normal form submission
+
+    const requestIdInput = document.getElementById('request_id');
+    const requestId = requestIdInput.value.trim();
+
+    // Basic front-end check for 6 digits
+    if (!/^\d{6}$/.test(requestId)) {
+      alert("Your code must be exactly 6 digits. Please check and try again.");
+      return;
+    }
+
+    // Now send an AJAX (fetch) request to check the ID
+    const formData = new FormData();
+    formData.append('request_id', requestId);
+
+    try {
+      const response = await fetch('/edit-request/check', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        // If the server returned an error (404, 400, etc.), parse JSON and show the error
+        const data = await response.json();
+        alert(data.error || "An error occurred. Please try again.");
+      } else {
+        // If it’s OK, we can safely submit the form for real
+        editRequestForm.submit();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    }
+  });
+</script>

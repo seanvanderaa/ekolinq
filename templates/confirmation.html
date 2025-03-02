@@ -12,10 +12,13 @@
         <h1 style="font-size: 36px; font-weight: 500; margin-top: 0px;">You're all set!</h1>
         <p style="margin-bottom: 24px; margin-top: 0px; max-width: 550px; word-break: break-word;">Thanks for choosing to get rid of waste the right way. We’ve sent you an email with all of the information you need.</p>
         <div class="confirmation-info">
+          <p>Request ID</p>
+          <h4>{{ pickup.request_id }}</h4>
+      </div>
+        <div class="confirmation-info">
             <p>Pick Up Date and Time</p>
             <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
                 <h4 id="pickup-info" style="margin: 0px;">
-                    <!-- Render the values directly into the HTML as attributes or content -->
                     <span id="request-date" data-date="{{ pickup.request_date }}"></span>
                     <span id="request-time" data-time="{{ pickup.request_time }}"></span>
                 </h4>
@@ -23,8 +26,7 @@
                   <div id="edit-time" class="edit-pencil">
                       <i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i>
                   </div>
-              </a>
-              
+                </a>
             </div>
         </div>
         <div class="confirmation-info">
@@ -70,6 +72,12 @@
                       id="request_id" 
                       name="request_id" 
                       value="{{ request_id }}" 
+                  />
+                  <input 
+                      type="hidden" 
+                      id="page]" 
+                      name="page" 
+                      value="confirmation" 
                   />
                   <button id="update-address" class="download-btn" style="padding: 14px 16px;">Update</button>
                   <button id="cancel-update-address" class="download-btn" style="padding: 14px 16px;">Cancel</button>

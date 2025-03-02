@@ -33,7 +33,7 @@ body {
     width: 100%;
 }
 
-input {
+#request_id {
     height: 60px;
     width: 360px;
     border: 1px solid var(--border-grey);
@@ -43,4 +43,208 @@ input {
     font-size: 16px;
     margin-bottom: 36px;
     margin-top: 16px;
+}
+
+.confirmation-info p {
+    font-size: 14px;
+    color: var(--subtle-text-wbg);
+    margin: 0px;
+    margin-bottom: 4px;
+}
+
+.confirmation-info h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0px;
+    margin-bottom: 16px;
+}
+
+#edit-info-wrapper {
+    background-color: var(--off-white);
+    border-radius: 50px;
+    padding: 3em 3em; 
+    box-sizing: border-box;
+    font-family: var(--mont);
+}
+
+.edit-pencil {
+    margin-left: 16px;
+    padding: 5px;
+    border: 1px solid rgba(0,0,0,0);
+    transition: border .2s ease;
+    border-radius: 5px;
+}
+
+.edit-pencil:hover {
+    border: 1px solid var(--border-grey);
+    cursor: pointer;
+}
+
+#edit-address-form {
+    flex-direction: row;
+    align-items: flex-end;
+    font-family: var(--mont);
+    margin: 0px;
+    column-gap: 16px;
+    justify-content: flex-start;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.form-group-div {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    column-gap: 36px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 12px;
+
+}
+
+.form-group input {
+    font-size: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-grey);
+    border-radius: 5px;
+    font-family: var(--mont);
+}
+
+#update-address {
+    background-color: var(--m-green);
+    color: white;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+#update-address:hover {
+    background-color: var(--yel);
+    color: black;
+}
+
+#cancel-wrapper {
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+#cancel-confirm-wrapper {
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+#cancel-confirm-btn-wrapper {
+    column-gap: 24px;
+}
+
+#cancel-btn {
+    background-color: rgb(196, 0, 0);
+    color: white;
+}
+
+#cancel-btn:hover {
+    background-color: rgb(255, 2, 2);
+}
+
+
+@media only screen and (max-width: 768px) {
+    #nav {
+        background-color: var(--d-green);
+    }
+    
+    #confirmation-wrapper {
+        border-radius: 20px;
+        padding: 2em 1em;
+    }
+    
+    .confirmation-info p {
+        font-size: 14px;
+        color: var(--subtle-text-wbg);
+        margin: 0px;
+        margin-bottom: 4px;
+    }
+    
+    .confirmation-info h4 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0px;
+        margin-bottom: 16px;
+    }
+    
+    #items-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        row-gap: 36px;
+        overflow-x: scroll;
+    }
+    
+    .items {
+        padding: 24px;
+        border: 1px solid var(--border-grey);
+        border-radius: 10px;
+        height: 100%;
+    }
+    
+    .edit-pencil {
+        margin-left: 16px;
+        padding: 5px;
+        border: 1px solid rgba(0,0,0,0);
+        transition: border .2s ease;
+        border-radius: 5px;
+    }
+    
+    .edit-pencil:hover {
+        border: 1px solid var(--border-grey);
+        cursor: pointer;
+    }
+    
+    #edit-address-form {
+        flex-direction: column;
+        align-items: flex-start;
+        font-family: var(--mont);
+        margin: 0px;
+        row-gap: 16px;
+        justify-content: flex-start;
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .form-group-div {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        column-gap: 36px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 12px;
+    
+    }
+    
+    .form-group input {
+        font-size: 16px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-grey);
+        border-radius: 5px;
+        font-family: var(--mont);
+    }
+
+    #update-address {
+        margin-top: 16px;
+    }
 }
