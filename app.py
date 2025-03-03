@@ -190,6 +190,7 @@ def create_app():
                         })
 
         if request.method == 'POST':
+            path = request.args.get('path')
             chosen_date = request.form.get('chosen_date')  # e.g. "2025-01-11"
             chosen_time = request.form.get('chosen_time')  # e.g. "08:00-12:00"
             
@@ -198,6 +199,7 @@ def create_app():
             pickup.status = "Requested"
             pickup.date_filed = date.today()
             db.session.commit()
+
             return render_template('confirmation.html', request_id=request_id, pickup=pickup)
         
         # Render the template, passing in the offset, days_list, and the request_id so we can keep it
@@ -323,10 +325,10 @@ def create_app():
             for day in range(1,8):
                 record_id     = request.form.get(f'record_{day}_id')
                 is_available  = request.form.get(f'day_{day}_available') == 'on'
-                slot1_start   = request.form.get(f'day_{day}_slot1_start')
-                slot1_end     = request.form.get(f'day_{day}_slot1_end')
-                slot2_start   = request.form.get(f'day_{day}_slot2_start')
-                slot2_end     = request.form.get(f'day_{day}_slot2_end')
+                slot1_start   = "08:00" ## Note to self: This was the old system of multiple slots but configured to handle just a singular day
+                slot1_end     = "16:00" ## You're likely gonna wanna fix this sytem at some point down the line if we never use this type
+                slot2_start   = "" ## I know, I know this is bad practice
+                slot2_end     = ""
 
                 schedule_record = ServiceSchedule.query.get(record_id)
                 if schedule_record:
@@ -819,10 +821,57 @@ def create_app():
             request_id = request.form.get('request_id', '').strip()
             pickup= PickupRequest.query.filter_by(request_id=request_id).first()
 
+            # Grab the schedule data (all 7 days).
+            schedule_data = get_service_schedule()
+
+            schedule_map = {}
+            for s in schedule_data:
+                # e.g. "monday", "tuesday", ...
+                schedule_map[s.day_of_week.lower()] = s
+
+            # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
+            offset = request.args.get('week_offset', default=0, type=int)
+            if offset < 0: 
+                offset = 0
+            if offset > 2:
+                offset = 2
+
+            # The base date is "today" + X weeks
+            base_date = date.today() + timedelta(weeks=offset)
+            base_date_str = base_date.strftime("%b. %d")
+
+            days_list = []
+            for i in range(7):
+                day_date = base_date + timedelta(days=i)  # date object
+                day_of_week_str = day_date.strftime("%A").lower()  # e.g. "saturday"
+                
+                if day_of_week_str in schedule_map:
+                    sched = schedule_map[day_of_week_str]
+                    if sched.is_available:
+                        # Build up to 2 time slot entries if they exist
+                        slots = []
+                        if sched.slot1_start and sched.slot1_end:
+                            slots.append((sched.slot1_start, sched.slot1_end))
+                        if sched.slot2_start and sched.slot2_end:
+                            slots.append((sched.slot2_start, sched.slot2_end))
+
+                        if slots:
+                            days_list.append({
+                                'date_obj': day_date,
+                                'date_str': day_date.strftime("%b. %d"),  # e.g. "Jan. 11"
+                                'day_of_week': day_date.strftime("%A"),   # e.g. "Saturday"
+                                'slots': slots
+                            })
+
             # If found, pass that data to the template (if you want to display or edit it)
             return render_template('edit_request.html',
                                 partial="/partials/_editRequest_info.html",
-                                pickup=pickup)
+                                pickup=pickup,
+                                days_list=days_list,
+                                offset=offset,
+                                max_offset=2,
+                                request_id=request_id,
+                                base_date_str = base_date_str)
 
 
     @app.route('/edit-request/check', methods=['POST'])
@@ -880,6 +929,27 @@ def create_app():
         approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"]
         # Use jsonify here to properly format the JSON response
         return jsonify(verifyZip(approved_zips, zip_code))
+    
+    @app.route('/cancel-request', methods=["GET", "POST"])
+    def cancel_request():
+        request_id   = request.args.get('request_id')
+        pickup = db.session.get(PickupRequest, request_id)
+        pickup.status = "Cancelled"
+        db.session.commit()
+        print(pickup)
+        ### Send confirmation email of cancellation here
+        if pickup.status == "Cancelled":
+            return jsonify({
+                "valid": True,
+                "reason": "Request cancelled."
+            })
+        else:
+            return jsonify({
+                "valid": False,
+                "reason": "Unable to cancel your request. Please contact us for further support."
+            })
+
+
 
     @app.cli.command('reset-db')
     def reset_db():
