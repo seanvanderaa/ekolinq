@@ -9,6 +9,7 @@ main {
     background-repeat: no-repeat;
     height: 100vh;
     padding-top: 20vh;
+    min-height: calc(100vh - 650px);
 }
 
 #confirmation-wrapper {

@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const timeframeSelectors = document.querySelectorAll('.timeframe-selector');
+    const dateSelectors = document.querySelectorAll('.day-wrapper');
     const submitBtn = document.getElementById('timeframe-submit-btn');
     const submitBtnInfo = document.getElementById('submit-btn-info');
     const chosenDateInput = document.getElementById('chosen_date');
@@ -30,11 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Grab the date/time from data attributes
       const dayIso = el.getAttribute('data-date');  // e.g. "2025-01-11"
-      const timeRange = el.getAttribute('data-time'); // e.g. "08:00-12:00"
+      const timeRange = "08:00-16:00"; // e.g. "08:00-12:00"
 
       // Update hidden inputs
       chosenDateInput.value = dayIso;   // "2025-01-11"
-      chosenTimeInput.value = timeRange; // "08:00-12:00"
+      console.log(dayIso);
+      chosenTimeInput.value = "08:00-16:00"; // "08:00-12:00"
 
       // Also update the small text below the button:
       // e.g. "Between 08:00-12:00 on Jan. 11"
@@ -45,11 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // fallback
         dateLabel = dayIso; 
       }
-      submitBtnInfo.textContent = `Between ${timeRange} on ${dateLabel}`;
+      submitBtnInfo.textContent = `Between 8am-4pm on ${dateLabel}`;
     }
 
     // Attach the click event listener to each timeframe selector
-    timeframeSelectors.forEach(selector => {
+    dateSelectors.forEach(selector => {
       selector.addEventListener('click', handleClick);
     });
     const weekSpecElement = document.getElementById('week-specification');
@@ -78,4 +80,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // And recheck on window resize (or any other event you like)
     window.addEventListener('resize', updateAlignment);
+    const overlay = document.getElementById('overlay');
+    
+    // Add click event to each FAQ item to open the respective popup
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const popupId = item.id + '-popup';
+        const popup = document.getElementById(popupId);
+        if(popup) {
+          overlay.style.display = 'block';    // Show overlay
+          popup.style.display = 'block';      // Show corresponding popup
+        }
+      });
+    });
+    
+    // Add click events to close buttons to hide popup and overlay
+    const closeButtons = document.querySelectorAll('.popup-close');
+    closeButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        overlay.style.display = 'none';        // Hide overlay
+        const popups = document.querySelectorAll('.faq-popup');
+        popups.forEach(p => p.style.display = 'none');  // Hide all popups
+      });
+    });
 });

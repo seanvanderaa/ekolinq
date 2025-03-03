@@ -19,8 +19,6 @@
           <tr>
             <th>Day of Week</th>
             <th>Available?</th>
-            <th style="min-width: 140px;">Slot 1 (Start-End)</th>
-            <th style="min-width: 140px;">Slot 2 (Start-End)</th>
           </tr>
         </thead>
         <tbody>
@@ -30,19 +28,7 @@
               <td>
                 <input type="checkbox" name="day_{{ loop.index }}_available" 
                         {% if sched.is_available %} checked {% endif %}>
-              </td>
-              <td>
                 <input type="hidden" name="record_{{ loop.index }}_id" value="{{ sched.id }}">
-                <input type="text" name="day_{{ loop.index }}_slot1_start" 
-                        value="{{ sched.slot1_start or '' }}" placeholder="08:00" size="5"> -
-                <input type="text" name="day_{{ loop.index }}_slot1_end" 
-                        value="{{ sched.slot1_end or '' }}" placeholder="12:00" size="5">
-              </td>
-              <td>
-                <input type="text" name="day_{{ loop.index }}_slot2_start" 
-                        value="{{ sched.slot2_start or '' }}" placeholder="13:00" size="5"> -
-                <input type="text" name="day_{{ loop.index }}_slot2_end" 
-                        value="{{ sched.slot2_end or '' }}" placeholder="17:00" size="5">
               </td>
             </tr>
           {% endfor %}

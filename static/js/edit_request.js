@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeUpdate = document.getElementById('cancel-update-address');
 
     editAddressPencil.addEventListener('click', displayForm);
-    closeUpdate.addEventListener('click', displayForm)
+    closeUpdate.addEventListener('click', displayForm);
 
 
     function displayForm() {
@@ -23,8 +23,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const cancelRequestInit = document.getElementById('cancel-request-init');
+    const cancelRequestWrapper = document.getElementById('cancel-confirm-wrapper');
+    const cancelCancelRequest = document.getElementById('cancel-back-btn');
+
+    cancelRequestInit.addEventListener('click', cancelRequest);
+    cancelCancelRequest.addEventListener('click', cancelRequest);
+
+    function cancelRequest() {
+      if (cancelRequestWrapper.style.display === "flex") {
+        cancelRequestWrapper.style.display = "none";
+        cancelRequestInit.classList.remove('active');
+      }
+      else {
+        console.log("Here");
+        cancelRequestWrapper.style.display = "flex";
+        cancelRequestInit.classList.add('active');
+      }
+    }
 
 });
+
+document.getElementById('cancel-request-form').addEventListener('submit', async function (event) {
+  event.preventDefault(); // Prevent default form submission
+
+  const request_id = document.getElementById('form-request-id').value;
+
+  const url = `/cancel-request?request_id=${encodeURIComponent(request_id)}`;
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (data.valid) {
+    alert(`${data.reason}`);
+    window.location.href = '/'; 
+  } else {
+    alert(`${data.reason}`);
+  }
+});
+
   // Retrieve the raw data directly from the DOM
   const requestDateEl = document.getElementById('request-date');
   const requestTimeEl = document.getElementById('request-time');

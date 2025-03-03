@@ -61,7 +61,7 @@
               />
               <input 
                   type="hidden" 
-                  id="page]" 
+                  id="page" 
                   name="page" 
                   value="edit_request" 
               />
@@ -72,11 +72,14 @@
     </div>
     <div class="align-right" style="width: 100%;" id="cancel-wrapper">
         <button id="cancel-request-init" class="warning-btn" style="margin-top: 64px;"><i class="bi bi-ban" style="margin-right: 8px;"></i>Cancel Request</button>
-        <div style="display: flex;" id="cancel-confirm-wrapper">
+        <div style="display: none;" id="cancel-confirm-wrapper">
             <p style="text-align: right">Are you sure you want to cancel this request?<br> This action cannot be undone.</p>
             <div id="cancel-confirm-btn-wrapper" class="align-right">
-                <button class="download-btn" id="cancel-btn">Yes, cancel.</button>
-                <button class="download-btn" id="cancel-back-btn">No, go back.</button>
+              <form action="/cancel-request" id="cancel-request-form">
+                <input type="hidden" id="form-request-id" name="page" value="{{ pickup.id }}"/>
+                <button class="download-btn" id="cancel-btn" type="submit">Yes, cancel.</button>
+                <button class="download-btn" id="cancel-back-btn" type="button">No, go back.</button>
+              </form>
             </div>
         </div>
     </div>
