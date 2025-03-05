@@ -62,27 +62,6 @@ main {
     border-radius: 5px;
 }
 
-.submit-btn {
-    position: relative; /* Allows pseudo-element positioning */
-    border-radius: 100px;
-    background-color: var(--m-green);
-    color: white;
-    height: 48px;
-    padding: 0px 24px;
-    font-family: var(--mont);
-    border: none;
-    font-weight: 600;
-    font-size: 16px;
-    overflow: hidden; /* Prevents content overflow during animation */
-    transition: color 0.4s ease, transform .2s ease, background-color .2s ease; /* Smooth transition for text color */
-}
-
-.submit-btn:hover {
-    color: black; /* Change text color */
-    cursor: pointer;
-    background-color: var(--yel);
-}
-
 .faq-container {
     display: flex;
     flex-direction: row;

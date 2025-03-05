@@ -3,18 +3,25 @@
     <p style="max-width: 520px; margin-top: 0px; margin-bottom: 48px;">Edit the address or select a new time for your pickup. If you have any questions about making changes to your request, please don't hesitate to <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">contact us.</a></p>
     <div class="confirmation-info">
         <p>Pick Up Date and Time</p>
-        <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+        <div id="pickup-date-time" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
             <h4 id="pickup-info" style="margin: 0px;">
                 <span id="request-date" data-date="{{ pickup.request_date }}"></span>
                 <span id="request-time" data-time="{{ pickup.request_time }}"></span>
             </h4>
-            <a href="{{ url_for('select_date', request_id=pickup.id) }}">
+            <a href="{{ url_for('edit_request_time', request_id=pickup.id) }}">
               <div id="edit-time" class="edit-pencil">
                   <i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i>
               </div>
             </a>
         </div>
     </div>
+    {% if edit_request %}
+      {% include edit_request %}
+      <script>
+        const hideDiv = document.getElementById('pickup-date-time');
+        hideDiv.style.display = "none";
+      </script>
+    {% endif %}
     <div class="confirmation-info">
         <p id="address-header">Address</p>
         <div>
