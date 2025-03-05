@@ -40,6 +40,81 @@ document.addEventListener("DOMContentLoaded", function () {
         cancelRequestInit.classList.add('active');
       }
     }
+    const dateSelectors = document.querySelectorAll('.day-wrapper');
+    const submitBtn = document.getElementById('timeframe-submit-btn');
+    const submitBtnInfo = document.getElementById('submit-btn-info');
+    const chosenDateInput = document.getElementById('chosen_date');
+    const chosenTimeInput = document.getElementById('chosen_time');
+
+    // Function to handle time slot click
+    function handleClick(event) {
+      console.log('Clicked');
+      const el = event.currentTarget;
+
+      // If the user clicks an already-active slot, let’s unselect it
+      if (el.classList.contains('active')) {
+        el.classList.remove('active');
+        submitBtn.disabled = true;
+        submitBtnInfo.style.display = "none";
+        chosenDateInput.value = "";
+        chosenTimeInput.value = "";
+        return;
+      }
+
+      // Otherwise, unselect all timeframe-selectors, then select the clicked one
+      dateSelectors.forEach(selector => selector.classList.remove('active'));
+      el.classList.add('active');
+      
+      // Enable the submit button
+      submitBtn.disabled = false;
+      submitBtnInfo.style.display = "block";
+
+      // Grab the date/time from data attributes
+      const dayIso = el.getAttribute('data-date');  // e.g. "2025-01-11"
+      const timeRange = "08:00-16:00"; // e.g. "08:00-12:00"
+
+      // Update hidden inputs
+      chosenDateInput.value = dayIso;   // "2025-01-11"
+      console.log(dayIso);
+      chosenTimeInput.value = "08:00-16:00"; // "08:00-12:00"
+
+      // Also update the small text below the button:
+      // e.g. "Between 08:00-12:00 on Jan. 11"
+      // We can parse the date to something user-friendly, or pass that from Jinja.
+      // For simplicity, we’ll just do:
+      let dateLabel = el.parentNode.querySelector('p')?.innerText || '';
+      if (!dateLabel) {
+        // fallback
+        dateLabel = dayIso; 
+      }
+      submitBtnInfo.textContent = `Between 8am-4pm on ${dateLabel}`;
+    }
+
+    // Attach the click event listener to each timeframe selector
+    dateSelectors.forEach(selector => {
+      selector.addEventListener('click', handleClick);
+    });
+    const weekSpecElement = document.getElementById('date-selection-scroll');
+    if (weekSpecElement) {
+      const baseDate = weekSpecElement.getAttribute('data-base-date');
+      if (baseDate) {
+        weekSpecElement.textContent = baseDate;
+      }
+      const outer = weekSpecElement;
+      const inner = document.getElementById('date-selection-wrapper');
+    
+      function updateAlignment() {
+        if (inner && outer) {
+          if (inner.scrollWidth > outer.clientWidth) {
+            inner.style.justifyContent = 'flex-start';
+          } else {
+            inner.style.justifyContent = 'center';
+          }
+        }
+      }
+      updateAlignment();
+      window.addEventListener('resize', updateAlignment);
+    }
 
 });
 

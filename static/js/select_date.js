@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Otherwise, unselect all timeframe-selectors, then select the clicked one
-      timeframeSelectors.forEach(selector => selector.classList.remove('active'));
+      dateSelectors.forEach(selector => selector.classList.remove('active'));
       el.classList.add('active');
       
       // Enable the submit button

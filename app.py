@@ -190,7 +190,6 @@ def create_app():
                         })
 
         if request.method == 'POST':
-            path = request.args.get('path')
             chosen_date = request.form.get('chosen_date')  # e.g. "2025-01-11"
             chosen_time = request.form.get('chosen_time')  # e.g. "08:00-12:00"
             
@@ -287,15 +286,15 @@ def create_app():
 
         # Query daily pickup counts within the chosen range.
         query_result = db.session.query(
-            PickupRequest.request_date,
+            PickupRequest.date_filed,
             db.func.count(PickupRequest.id)
         ).filter(
-            PickupRequest.request_date >= start_date.strftime("%Y-%m-%d"),
-            PickupRequest.request_date <= end_date.strftime("%Y-%m-%d")
+            PickupRequest.date_filed >= start_date.strftime("%Y-%m-%d"),
+            PickupRequest.date_filed <= end_date.strftime("%Y-%m-%d")
         ).group_by(
-            PickupRequest.request_date
+            PickupRequest.date_filed
         ).order_by(
-            PickupRequest.request_date
+            PickupRequest.date_filed
         ).all()
 
         for row in query_result:
@@ -809,6 +808,55 @@ def create_app():
                 "valid": False,
                 "reason": reason
             })
+
+    @app.route('/edit-request/check', methods=['POST'])
+    def edit_request_check():
+        request_id = request.form.get('request_id', '').strip()
+
+        # Validate format: must be exactly 6 digits
+        if not request_id.isdigit() or len(request_id) != 6:
+            return jsonify({
+                'success': False,
+                'error': 'Your code must be exactly 6 digits and cannot contain any other characters. Please check and try again.'
+            }), 400
+
+        # Attempt to find matching row in DB
+        pickup_request = PickupRequest.query.filter_by(request_id=request_id).first()
+        if not pickup_request:
+            return jsonify({
+                'success': False,
+                'error': (
+                    "Not found. Please make sure the number matches exactly "
+                    "what appears in your confirmation email, and try again."
+                )
+            }), 404
+
+        if pickup_request.request_date:
+            try:
+                # Parse the date string
+                request_date_obj = datetime.strptime(pickup_request.request_date, '%Y-%m-%d').date()
+                if request_date_obj < datetime.today().date():
+                    # Already in the past
+                    return jsonify({
+                        'success': False,
+                        'error': (
+                            "Your request date has already passed "
+                            "and can no longer be edited. "
+                            "If you think this is an error, please contact us."
+                        )
+                    }), 400
+            except ValueError:
+                # If parsing failed for some reason (invalid format)
+                return jsonify({
+                    'success': False,
+                    'error': (
+                        "We couldn't verify the request date. "
+                        "Please contact us for further assistance."
+                    )
+                }), 400
+
+        # If we get here, everything’s good
+        return jsonify({'success': True}), 200
     
     @app.route('/edit-request', methods=['GET', 'POST'])
     def edit_request():
@@ -872,56 +920,68 @@ def create_app():
                                 max_offset=2,
                                 request_id=request_id,
                                 base_date_str = base_date_str)
+        
+    @app.route('/edit-request-time', methods=['GET'])
+    def edit_request_time():
+        request_id = request.args.get('request_id')
+        if not request_id:
+            return "Session expired, please restart.", 400
+        
+        print(request_id)
+        pickup = db.session.get(PickupRequest, request_id)
+        if not pickup:
+            return "Request not found.", 404
 
+        # Grab the schedule data (all 7 days).
+        schedule_data = get_service_schedule()
 
-    @app.route('/edit-request/check', methods=['POST'])
-    def edit_request_check():
-        request_id = request.form.get('request_id', '').strip()
+        schedule_map = {}
+        for s in schedule_data:
+            # e.g. "monday", "tuesday", ...
+            schedule_map[s.day_of_week.lower()] = s
 
-        # Validate format: must be exactly 6 digits
-        if not request_id.isdigit() or len(request_id) != 6:
-            return jsonify({
-                'success': False,
-                'error': 'Your code must be exactly 6 digits and cannot contain any other characters. Please check and try again.'
-            }), 400
+        # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
+        offset = request.args.get('week_offset', default=0, type=int)
+        if offset < 0: 
+            offset = 0
+        if offset > 2: 
+            offset = 2
 
-        # Attempt to find matching row in DB
-        pickup_request = PickupRequest.query.filter_by(request_id=request_id).first()
-        if not pickup_request:
-            return jsonify({
-                'success': False,
-                'error': (
-                    "Not found. Please make sure the number matches exactly "
-                    "what appears in your confirmation email, and try again."
-                )
-            }), 404
+        # The base date is "today" + X weeks
+        base_date = date.today() + timedelta(weeks=offset)
+        base_date_str = base_date.strftime("%b. %d")
 
-        if pickup_request.request_date:
-            try:
-                # Parse the date string
-                request_date_obj = datetime.strptime(pickup_request.request_date, '%Y-%m-%d').date()
-                if request_date_obj < datetime.today().date():
-                    # Already in the past
-                    return jsonify({
-                        'success': False,
-                        'error': (
-                            "Your request date has already passed "
-                            "and can no longer be edited. "
-                            "If you think this is an error, please contact us."
-                        )
-                    }), 400
-            except ValueError:
-                # If parsing failed for some reason (invalid format)
-                return jsonify({
-                    'success': False,
-                    'error': (
-                        "We couldn't verify the request date. "
-                        "Please contact us for further assistance."
-                    )
-                }), 400
+        days_list = []
+        for i in range(7):
+            day_date = base_date + timedelta(days=i)  # date object
+            day_of_week_str = day_date.strftime("%A").lower()  # e.g. "saturday"
+            
+            if day_of_week_str in schedule_map:
+                sched = schedule_map[day_of_week_str]
+                if sched.is_available:
+                    # Build up to 2 time slot entries if they exist
+                    slots = []
+                    if sched.slot1_start and sched.slot1_end:
+                        slots.append((sched.slot1_start, sched.slot1_end))
+                    if sched.slot2_start and sched.slot2_end:
+                        slots.append((sched.slot2_start, sched.slot2_end))
 
-        # If we get here, everything’s good
-        return jsonify({'success': True}), 200
+                    if slots:
+                        days_list.append({
+                            'date_obj': day_date,
+                            'date_str': day_date.strftime("%b. %d"),  # e.g. "Jan. 11"
+                            'day_of_week': day_date.strftime("%A"),   # e.g. "Saturday"
+                            'slots': slots
+                        })
+        return render_template('edit_request.html', 
+                            partial="/partials/_editRequest_info.html", 
+                            edit_request="/partials/_editRequest_editTime.html",                             
+                            pickup=pickup,
+                            days_list=days_list,
+                            offset=offset,
+                            max_offset=2,
+                            request_id=request_id,
+                            base_date_str = base_date_str)
     
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():
