@@ -1,8 +1,9 @@
-<form action="{{ url_for('select_date', request_id=pickup.id, week_offset=offset) }}" method="POST" id="timeframe-form" class="align-center">
+<form action="{{ url_for('edit_request', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
         
     <!-- Hidden inputs to hold the selected date/time -->
     <input type="hidden" name="chosen_date" id="chosen_date" value="">
     <input type="hidden" name="chosen_time" id="chosen_time" value="">
+    <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}">
     <div id="date-selection-scroll" data-base-date="{{ base_date_str }}">
       <div id="date-selection-wrapper" class="align-center">
 
@@ -57,4 +58,5 @@
         </span>
       </div>
     </button>
-  </form>
+    <button id="cancel-edit-date" type="button" class="download-btn" data-request-id="{{ pickup.request_id }}" data-cancel-url="{{ url_for('edit_request') }}">Cancel</button>
+    </form>

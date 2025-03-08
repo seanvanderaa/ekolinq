@@ -10,6 +10,7 @@ from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from helpers.emailer import send_email
+from helpers.scheduling import build_schedule
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -147,15 +148,6 @@ def create_app():
         if not pickup:
             return "Request not found.", 404
 
-        # Grab the schedule data (all 7 days).
-        schedule_data = get_service_schedule()
-
-        schedule_map = {}
-        for s in schedule_data:
-            # e.g. "monday", "tuesday", ...
-            schedule_map[s.day_of_week.lower()] = s
-
-        # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
         offset = request.args.get('week_offset', default=0, type=int)
         if offset < 0: 
             offset = 0
@@ -163,31 +155,10 @@ def create_app():
             offset = 2
 
         # The base date is "today" + X weeks
-        base_date = date.today() + timedelta(weeks=offset)
-        base_date_str = base_date.strftime("%b. %d")
-
-        days_list = []
-        for i in range(7):
-            day_date = base_date + timedelta(days=i)  # date object
-            day_of_week_str = day_date.strftime("%A").lower()  # e.g. "saturday"
-            
-            if day_of_week_str in schedule_map:
-                sched = schedule_map[day_of_week_str]
-                if sched.is_available:
-                    # Build up to 2 time slot entries if they exist
-                    slots = []
-                    if sched.slot1_start and sched.slot1_end:
-                        slots.append((sched.slot1_start, sched.slot1_end))
-                    if sched.slot2_start and sched.slot2_end:
-                        slots.append((sched.slot2_start, sched.slot2_end))
-
-                    if slots:
-                        days_list.append({
-                            'date_obj': day_date,
-                            'date_str': day_date.strftime("%b. %d"),  # e.g. "Jan. 11"
-                            'day_of_week': day_date.strftime("%A"),   # e.g. "Saturday"
-                            'slots': slots
-                        })
+        offset = request.args.get('week_offset', default=0, type=int)
+        
+        # We call the refactored helper function
+        days_list, base_date_str = build_schedule(offset)
 
         if request.method == 'POST':
             chosen_date = request.form.get('chosen_date')  # e.g. "2025-01-11"
@@ -854,6 +825,24 @@ def create_app():
                         "Please contact us for further assistance."
                     )
                 }), 400
+            
+        if pickup_request.status == "Cancelled":
+            return jsonify({
+                'success': False,
+                'error': (
+                    "Your request has previously been cancelled and can no longer be edited."
+                    " If you think this is a mistake, please contact us."
+                )
+            }), 400
+        
+        if pickup_request.status == "Completed":
+            return jsonify({
+                'success': False,
+                'error': (
+                    "Your request has been completed and can no longer be edited."
+                    " If you think this is a mistake, please contact us."
+                )
+            }), 400
 
         # If we get here, everything’s good
         return jsonify({'success': True}), 200
@@ -867,49 +856,20 @@ def create_app():
         else:
             # This block is called after the user’s form is submitted for real
             request_id = request.form.get('request_id', '').strip()
+            print(request_id)
             pickup= PickupRequest.query.filter_by(request_id=request_id).first()
 
-            # Grab the schedule data (all 7 days).
-            schedule_data = get_service_schedule()
-
-            schedule_map = {}
-            for s in schedule_data:
-                # e.g. "monday", "tuesday", ...
-                schedule_map[s.day_of_week.lower()] = s
-
-            # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
             offset = request.args.get('week_offset', default=0, type=int)
             if offset < 0: 
                 offset = 0
-            if offset > 2:
+            if offset > 2: 
                 offset = 2
 
             # The base date is "today" + X weeks
-            base_date = date.today() + timedelta(weeks=offset)
-            base_date_str = base_date.strftime("%b. %d")
-
-            days_list = []
-            for i in range(7):
-                day_date = base_date + timedelta(days=i)  # date object
-                day_of_week_str = day_date.strftime("%A").lower()  # e.g. "saturday"
-                
-                if day_of_week_str in schedule_map:
-                    sched = schedule_map[day_of_week_str]
-                    if sched.is_available:
-                        # Build up to 2 time slot entries if they exist
-                        slots = []
-                        if sched.slot1_start and sched.slot1_end:
-                            slots.append((sched.slot1_start, sched.slot1_end))
-                        if sched.slot2_start and sched.slot2_end:
-                            slots.append((sched.slot2_start, sched.slot2_end))
-
-                        if slots:
-                            days_list.append({
-                                'date_obj': day_date,
-                                'date_str': day_date.strftime("%b. %d"),  # e.g. "Jan. 11"
-                                'day_of_week': day_date.strftime("%A"),   # e.g. "Saturday"
-                                'slots': slots
-                            })
+            offset = request.args.get('week_offset', default=0, type=int)
+            
+            # We call the refactored helper function
+            days_list, base_date_str = build_schedule(offset)
 
             # If found, pass that data to the template (if you want to display or edit it)
             return render_template('edit_request.html',
@@ -926,19 +886,10 @@ def create_app():
         request_id = request.args.get('request_id')
         if not request_id:
             return "Session expired, please restart.", 400
-        
-        print(request_id)
+
         pickup = db.session.get(PickupRequest, request_id)
         if not pickup:
             return "Request not found.", 404
-
-        # Grab the schedule data (all 7 days).
-        schedule_data = get_service_schedule()
-
-        schedule_map = {}
-        for s in schedule_data:
-            # e.g. "monday", "tuesday", ...
-            schedule_map[s.day_of_week.lower()] = s
 
         # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
         offset = request.args.get('week_offset', default=0, type=int)
@@ -948,31 +899,11 @@ def create_app():
             offset = 2
 
         # The base date is "today" + X weeks
-        base_date = date.today() + timedelta(weeks=offset)
-        base_date_str = base_date.strftime("%b. %d")
+        offset = request.args.get('week_offset', default=0, type=int)
+        
+        # We call the refactored helper function
+        days_list, base_date_str = build_schedule(offset)
 
-        days_list = []
-        for i in range(7):
-            day_date = base_date + timedelta(days=i)  # date object
-            day_of_week_str = day_date.strftime("%A").lower()  # e.g. "saturday"
-            
-            if day_of_week_str in schedule_map:
-                sched = schedule_map[day_of_week_str]
-                if sched.is_available:
-                    # Build up to 2 time slot entries if they exist
-                    slots = []
-                    if sched.slot1_start and sched.slot1_end:
-                        slots.append((sched.slot1_start, sched.slot1_end))
-                    if sched.slot2_start and sched.slot2_end:
-                        slots.append((sched.slot2_start, sched.slot2_end))
-
-                    if slots:
-                        days_list.append({
-                            'date_obj': day_date,
-                            'date_str': day_date.strftime("%b. %d"),  # e.g. "Jan. 11"
-                            'day_of_week': day_date.strftime("%A"),   # e.g. "Saturday"
-                            'slots': slots
-                        })
         return render_template('edit_request.html', 
                             partial="/partials/_editRequest_info.html", 
                             edit_request="/partials/_editRequest_editTime.html",                             
