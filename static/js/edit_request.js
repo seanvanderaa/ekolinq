@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // e.g. "Between 08:00-12:00 on Jan. 11"
       // We can parse the date to something user-friendly, or pass that from Jinja.
       // For simplicity, we’ll just do:
-      let dateLabel = el.parentNode.querySelector('p')?.innerText || '';
+      let dateLabel = el.querySelector('p')?.innerText || '';
       if (!dateLabel) {
         // fallback
         dateLabel = dayIso; 
@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const weekSpecElement = document.getElementById('date-selection-scroll');
     if (weekSpecElement) {
       const baseDate = weekSpecElement.getAttribute('data-base-date');
-      if (baseDate) {
-        weekSpecElement.textContent = baseDate;
-      }
-      const outer = weekSpecElement;
+      const baseDateEl = document.createElement('div');
+      baseDateEl.textContent = baseDate;
+      weekSpecElement.appendChild(baseDateEl);      
+      const outer = weekSpecElement; 
       const inner = document.getElementById('date-selection-wrapper');
     
       function updateAlignment() {
@@ -115,8 +115,38 @@ document.addEventListener("DOMContentLoaded", function () {
       updateAlignment();
       window.addEventListener('resize', updateAlignment);
     }
-
-});
+    const cancelBtn = document.getElementById("cancel-edit-date");
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", function () {
+        // 1) Retrieve the POST target URL and the request_id
+        const targetUrl = cancelBtn.getAttribute("data-cancel-url"); 
+        const requestId = cancelBtn.getAttribute("data-request-id");
+    
+        // 2) Dynamically create a standalone form
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = targetUrl;
+    
+        // 3) Add hidden input(s) with the data you want to send
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "request_id";
+        hiddenInput.value = requestId;
+        form.appendChild(hiddenInput);
+    
+        // If you’re using CSRF, append it here:
+        // const csrfToken = document.querySelector('[name="csrf_token"]').value;
+        // const csrfInput = document.createElement("input");
+        // csrfInput.type = "hidden";
+        // csrfInput.name = "csrf_token";
+        // csrfInput.value = csrfToken;
+        // form.appendChild(csrfInput);
+    
+        // 4) Append the form to the document and submit it
+        document.body.appendChild(form);
+        form.submit();
+      });
+    }
 
 document.getElementById('cancel-request-form').addEventListener('submit', async function (event) {
   event.preventDefault(); // Prevent default form submission
@@ -153,6 +183,7 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
 
       // Add ordinal suffix for the day
       const ordinal = (n) => n + (["th", "st", "nd", "rd"][(n % 10 > 3 || Math.floor(n % 100 / 10) === 1) ? 0 : n % 10] || "th");
+      console.log(`${dayName}, ${monthName} ${ordinal(day)}`);
       return `${dayName}, ${monthName} ${ordinal(day)}`;
   };
 
@@ -197,3 +228,5 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
       alert('Error verifying ZIP code. Please try again.');
     }
   });
+});
+

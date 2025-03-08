@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // e.g. "Between 08:00-12:00 on Jan. 11"
       // We can parse the date to something user-friendly, or pass that from Jinja.
       // For simplicity, we’ll just do:
-      let dateLabel = el.parentNode.querySelector('p')?.innerText || '';
+      let dateLabel = el.querySelector('p')?.innerText || '';
       if (!dateLabel) {
         // fallback
         dateLabel = dayIso; 

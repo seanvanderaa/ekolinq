@@ -172,6 +172,8 @@ main {
 #timeframe-form {
     flex-direction: column;
     width: 100%;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
 }
 
 #date-selection-scroll {
@@ -270,6 +272,10 @@ main {
     cursor: not-allowed;
 }
 
+#cancel-edit-date {
+    margin-top: 16px;
+    padding: 8px 24px;
+}
 
 @media only screen and (max-width: 768px) {
     #nav {
