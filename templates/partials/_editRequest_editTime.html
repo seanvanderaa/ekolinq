@@ -1,8 +1,9 @@
-<form action="{{ url_for('edit_request', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
+<form action="{{ url_for('edit_request_time_submit', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
         
     <!-- Hidden inputs to hold the selected date/time -->
     <input type="hidden" name="chosen_date" id="chosen_date" value="">
     <input type="hidden" name="chosen_time" id="chosen_time" value="">
+    <input type="hidden" name="request_id" id="request_id" value="{{ pickup.request_id }}">
     <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}">
     <div id="date-selection-scroll" data-base-date="{{ base_date_str }}">
       <div id="date-selection-wrapper" class="align-center">
@@ -30,7 +31,7 @@
     <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
       {% if offset > 0 %}
         <a id="prev-week" class="week-btn" 
-           href="{{ url_for('edit_request_time', request_id=pickup.id, week_offset=offset-1) }}">
+           href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset-1) }}">
           < Previous Week
         </a>
       {% else %}
@@ -40,7 +41,7 @@
 
       {% if offset < max_offset %}
         <a id="next-week" class="week-btn" 
-           href="{{ url_for('edit_request_time', request_id=pickup.id, week_offset=offset+1) }}">
+           href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset+1) }}">
           Next Week >
         </a>
       {% else %}

@@ -847,17 +847,20 @@ def create_app():
         # If we get here, everything’s good
         return jsonify({'success': True}), 200
     
+
+    @app.route('/edit-request-init', methods=['GET'])
+    def edit_request_init():
+        if request.method == "GET":
+            return render_template('edit_request.html',
+                        partial="/partials/_editRequest_init.html")
+    
     @app.route('/edit-request', methods=['GET', 'POST'])
     def edit_request():
         if request.method == "GET":
-            # User is just landing on the "edit request" page
-            return render_template('edit_request.html',
-                                partial="/partials/_editRequest_init.html")
-        else:
             # This block is called after the user’s form is submitted for real
-            request_id = request.form.get('request_id', '').strip()
-            print(request_id)
-            pickup= PickupRequest.query.filter_by(request_id=request_id).first()
+            request_id = request.args.get('request_id', '').strip()
+            print("Main: ", request_id)
+            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
             offset = request.args.get('week_offset', default=0, type=int)
             if offset < 0: 
@@ -884,10 +887,11 @@ def create_app():
     @app.route('/edit-request-time', methods=['GET'])
     def edit_request_time():
         request_id = request.args.get('request_id')
+        print("Edit time: ", request_id)
         if not request_id:
             return "Session expired, please restart.", 400
 
-        pickup = db.session.get(PickupRequest, request_id)
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if not pickup:
             return "Request not found.", 404
 
@@ -913,6 +917,37 @@ def create_app():
                             max_offset=2,
                             request_id=request_id,
                             base_date_str = base_date_str)
+    
+    @app.route('/edit-request-time-submit', methods=['POST'])
+    def edit_request_time_submit():
+        request_id = request.form.get('request_id')
+        chosen_date = request.form.get('chosen_date')
+        chosen_time = request.form.get('chosen_time')
+        print("Submit:", request_id)
+
+        if not request_id:
+            #flash("Missing Request ID, please try again.", "error")
+            return redirect(url_for('edit_request'))
+
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+        if not pickup:
+            #flash("Request not found.", "error")
+            return redirect(url_for('edit_request'))
+
+        # Update fields
+        pickup.request_date = chosen_date
+        pickup.request_time = chosen_time
+        pickup.status = "Requested"
+        pickup.date_filed = date.today()
+        db.session.commit()
+
+        # Use Flask flash messaging if you want to show a success notice on the next page
+        #flash("Pickup request date/time updated successfully.", "success")
+
+        # Redirect to /edit-request with the request_id so it can show the newly updated info
+        return redirect(url_for('edit_request', request_id=request_id))
+
+
     
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():
