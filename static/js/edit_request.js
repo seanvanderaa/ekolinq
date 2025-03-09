@@ -96,10 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     const weekSpecElement = document.getElementById('date-selection-scroll');
     if (weekSpecElement) {
-      const baseDate = weekSpecElement.getAttribute('data-base-date');
-      const baseDateEl = document.createElement('div');
-      baseDateEl.textContent = baseDate;
-      weekSpecElement.appendChild(baseDateEl);      
+      const baseDate = weekSpecElement.getAttribute('data-base-date');   
       const outer = weekSpecElement; 
       const inner = document.getElementById('date-selection-wrapper');
     
