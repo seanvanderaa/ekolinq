@@ -2,7 +2,7 @@
 <div id="request-id-modal" class="content-width align-center">
   <h2>Edit a Request</h2>
   <p style="max-width: 400px;">
-    Enter your six-digit request confirmation number below to edit the details of your request. 
+    Enter your six-digit request confirmation number and your email below to edit the details of your request. 
     You can find this number in your confirmation email.
     <br><br>
     <span style="font-style: italic;">
@@ -12,7 +12,14 @@
   </p>
   
   <form id="edit-request-form" action="/edit-request" method="GET">
-    <input type="text" name="request_id" id="request_id" placeholder="000000">
+    <div class="form-group">
+      <label class="edit-request-label" for="request_id">Request ID</label>
+      <input type="text" name="request_id" id="request_id" placeholder="000000">
+    </div>
+    <div class="form-group">
+      <label class="edit-request-label" for="requester_email">Email</label>
+      <input type="email" name="requester_email" id="requester_email" placeholder="janedoe@gmail.com">
+    </div>
     <button type="submit" class="action-btn align-center">Submit</button>
   </form>
 </div>
