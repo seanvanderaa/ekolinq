@@ -301,6 +301,18 @@ main {
     #nav {
         background-color: var(--d-green);
     }
+
+    #request_id {
+        width: 100%;
+        box-sizing: border-box;
+        height: 64px;
+    }
+    
+    #requester_email {
+        width: 100%;
+        box-sizing: border-box;
+        height: 64px;
+    }
     
     #confirmation-wrapper {
         border-radius: 20px;
