@@ -783,6 +783,8 @@ def create_app():
     @app.route('/edit-request/check', methods=['POST'])
     def edit_request_check():
         request_id = request.form.get('request_id', '').strip()
+        email = request.form.get('requester_email', '').strip()
+        print(email)
 
         # Validate format: must be exactly 6 digits
         if not request_id.isdigit() or len(request_id) != 6:
@@ -801,6 +803,15 @@ def create_app():
                     "what appears in your confirmation email, and try again."
                 )
             }), 404
+        
+        if pickup_request.email != email:
+            return jsonify({
+                'success': False,
+                'error': (
+                    "The code and email do not match. Please verify the info you entered is correct and try again."
+                    " If you think this is a mistake, please contact us."
+                )
+            }), 400
 
         if pickup_request.request_date:
             try:
