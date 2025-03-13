@@ -2,6 +2,7 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, redirect
 from models import db, PickupRequest, ServiceSchedule, add_request, get_service_schedule
 from config import Config
+from extensions import mail  # <--- import our mail from the new file
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
@@ -9,7 +10,6 @@ from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
-from helpers.emailer import send_email
 from helpers.scheduling import build_schedule
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
@@ -30,6 +30,8 @@ def create_app():
     # 3) Load config from object
     app.config.from_object(Config)
 
+    mail.init_app(app)
+
     # 4) Initialize your extensions
     db.init_app(app)
 
@@ -38,6 +40,7 @@ def create_app():
 
     # 5) Create tables once if needed
     with app.app_context():
+        #db.drop_all() to reset the db
         db.create_all()
         seed_schedule_if_necessary()
 
@@ -60,7 +63,6 @@ def create_app():
     @app.route('/request_pickup')
     def request_pickup():
         zipcode = request.args.get('zipcode')
-        print(zipcode)
         ZIP_TO_CITY = {
             "94566": "Pleasanton",
             "94568": "Dublin",
@@ -128,9 +130,6 @@ def create_app():
                 status="Unfinished"
                 # You can also set request_date='', request_time='', date_filed='', etc.
             )
-
-            # For demonstration, let's redirect to a "pick your date" page
-            print('New ID: ', new_id)
             return redirect(url_for('select_date', request_id=new_id))
 
         # If GET, just show the initial form (template name is up to you)
@@ -143,7 +142,6 @@ def create_app():
         if not request_id:
             return "Session expired, please restart.", 400
         
-        print(request_id)
         pickup = db.session.get(PickupRequest, request_id)
         if not pickup:
             return "Request not found.", 404
@@ -170,7 +168,7 @@ def create_app():
             pickup.date_filed = date.today()
             db.session.commit()
 
-            return render_template('confirmation.html', request_id=request_id, pickup=pickup)
+            return redirect(url_for('confirmation', request_id=request_id, pickup=pickup))
         
         # Render the template, passing in the offset, days_list, and the request_id so we can keep it
         return render_template('select_date.html',
@@ -180,6 +178,17 @@ def create_app():
                             max_offset=2,
                             request_id=request_id,
                             base_date_str = base_date_str)
+    
+    @app.route('/confirmation')
+    def confirmation():
+        request_id = request.args.get('request_id')
+        pickup = db.session.get(PickupRequest, request_id)
+        
+        # Pass the full PickupRequest object to the email function
+        send_request_email(pickup)
+        
+        return render_template('confirmation.html', request_id=request_id, pickup=pickup)
+
 
     
     @app.route('/admin/login')
@@ -217,8 +226,6 @@ def create_app():
             headers['Authorization'] = f"Basic {b64_auth_str}"
         
         response = requests.post(token_url, data=data, headers=headers)
-        print("Status:", response.status_code)
-        print("Response:", response.text)
 
         if response.status_code == 200:
             tokens = response.json()
@@ -456,7 +463,7 @@ def create_app():
             if page == "edit_request":
                 return render_template('edit_request.html', partial="/partials/_editRequest_info.html", pickup=pickup)
             else:
-                return render_template('confirmation.html', request_id=request_id, pickup=pickup)
+                return redirect(url_for('confirmation', request_id=request_id, pickup=pickup))
 
         except Exception as e:
             # Log the error
@@ -751,40 +758,32 @@ def create_app():
             "message": "Status updated successfully",
             "new_status": pickup.status
         })
+    
+    from helpers.emailer import send_contact_email, send_request_email
 
     def validate_contact(name, email, message):
-        # Simple validation: all fields must be provided
         if not name or not email or not message:
             return False, "Name, email, and message are required."
         return True, ""
-    
+
     @app.route('/contact-form-entry', methods=['GET'])
     def contact_form_entry():
-        # Retrieve form data from query parameters (consider using POST for forms)
         name = request.args.get('name')
         email = request.args.get('email')
         message = request.args.get('message')
-        print(name, email, message)
 
         valid, reason = validate_contact(name, email, message)
         if valid:
-            # Send the email using the separate module
-            email_sent = send_email(name, email, message)
-            return jsonify({
-                "valid": email_sent,
-                "reason": "" if email_sent else "Email sending failed."
-            })
+            email_sent = send_contact_email(name, email, message)
+            return jsonify({"valid": email_sent,
+                            "reason": "" if email_sent else "Email sending failed."})
         else:
-            return jsonify({
-                "valid": False,
-                "reason": reason
-            })
+            return jsonify({"valid": False, "reason": reason})
 
     @app.route('/edit-request/check', methods=['POST'])
     def edit_request_check():
         request_id = request.form.get('request_id', '').strip()
         email = request.form.get('requester_email', '').strip()
-        print(email)
 
         # Validate format: must be exactly 6 digits
         if not request_id.isdigit() or len(request_id) != 6:
@@ -870,7 +869,8 @@ def create_app():
         if request.method == "GET":
             # This block is called after the user’s form is submitted for real
             request_id = request.args.get('request_id', '').strip()
-            print("Main: ", request_id)
+            if not request_id:
+                return redirect(url_for('edit_request_init')) #need to improve this security check
             pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
             offset = request.args.get('week_offset', default=0, type=int)
@@ -898,7 +898,6 @@ def create_app():
     @app.route('/edit-request-time', methods=['GET'])
     def edit_request_time():
         request_id = request.args.get('request_id')
-        print("Edit time: ", request_id)
         if not request_id:
             return "Session expired, please restart.", 400
 
@@ -934,7 +933,6 @@ def create_app():
         request_id = request.form.get('request_id')
         chosen_date = request.form.get('chosen_date')
         chosen_time = request.form.get('chosen_time')
-        print("Submit:", request_id)
 
         if not request_id:
             #flash("Missing Request ID, please try again.", "error")
@@ -973,7 +971,6 @@ def create_app():
         pickup = db.session.get(PickupRequest, request_id)
         pickup.status = "Cancelled"
         db.session.commit()
-        print(pickup)
         ### Send confirmation email of cancellation here
         if pickup.status == "Cancelled":
             return jsonify({

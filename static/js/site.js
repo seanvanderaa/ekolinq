@@ -38,7 +38,6 @@ document.getElementById('contactForm').addEventListener('submit', async function
 
   // Construct the URL correctly using & to separate parameters
   const url = `/contact-form-entry?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`;
-  console.log(url); // Check the URL in the console
 
   const response = await fetch(url);
   const data = await response.json();

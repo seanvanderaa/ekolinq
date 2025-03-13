@@ -28,6 +28,8 @@ class PickupRequest(db.Model):
     
     date_filed = db.Column(db.String(120), nullable=True)
 
+    emailed = db.Column(db.Boolean, default=False)
+
     request_id = db.Column(db.String(6), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), nullable=True)
 
