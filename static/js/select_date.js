@@ -104,4 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
         popups.forEach(p => p.style.display = 'none');  // Hide all popups
       });
     });
+
+    const loadingDiv = document.getElementById('loading-popup');
+
+    submitBtn.addEventListener('click', function() {
+      overlay.style.display = "block";
+      loadingDiv.style.display = "block";
+    });
 });

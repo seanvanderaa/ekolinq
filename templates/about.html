@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}What's textile waste? | EkoLinq{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about_styles.css') }}">
+{% endblock %}
+{% block content %}
+<main class="content-width">
+    <div id="header">
+        <div>
+            <h1>About us.</h1>
+            <h4></h4>
+        </div>
+        <img src="" alt="">
+    </div>
+
+</main>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/waste.js') }}"></script>
+{% endblock %}

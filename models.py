@@ -28,16 +28,8 @@ class PickupRequest(db.Model):
     
     date_filed = db.Column(db.String(120), nullable=True)
 
-    emailed = db.Column(db.Boolean, default=False)
-
     request_id = db.Column(db.String(6), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), nullable=True)
-
-def add_request(**kwargs):
-    new_pickup = PickupRequest(**kwargs)
-    db.session.add(new_pickup)
-    db.session.commit()
-    return new_pickup.id
 
 def generate_unique_request_id():
     # Generate a random 6-digit code as a string.
@@ -54,7 +46,6 @@ def assign_request_id(mapper, connection, target):
         target.request_id = generate_unique_request_id()
 
 
-
 class ServiceSchedule(db.Model):
     __tablename__ = 'service_schedule'
     
@@ -66,6 +57,23 @@ class ServiceSchedule(db.Model):
     slot1_end   = db.Column(db.String(5), nullable=True)  # e.g. "12:00"
     slot2_start = db.Column(db.String(5), nullable=True)  # e.g. "13:00"
     slot2_end   = db.Column(db.String(5), nullable=True)  # e.g. "17:00"
+
+class ContactEntries(db.Model):
+    __tablename__ = 'contact_form_entries'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    submitDate = db.Column(db.String(50), nullable=True)
+    name = db.Column(db.String(200), nullable=True)
+    email = db.Column(db.String(200), nullable=True)
+    message = db.Column(db.String(1000), nullable=True)
+
+class Config(db.Model):
+    __tablename__ = 'config'
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(64), unique=True, nullable=False)
+    value = db.Column(db.String(256), nullable=False)
 
 def reset_db():
     print("Dropping all tables...")
@@ -81,13 +89,12 @@ def get_service_schedule():
     """
     return ServiceSchedule.query.order_by(ServiceSchedule.id).all()
 
+def get_address():
+    config = Config.query.filter_by(key='admin_address').first()
+    return config.value if config else None
 
-class ContactEntries(db.Model):
-    __tablename__ = 'contact_form_entries'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    submitDate = db.Column(db.String(50), nullable=True)
-    name = db.Column(db.String(200), nullable=True)
-    email = db.Column(db.String(200), nullable=True)
-    message = db.Column(db.String(1000), nullable=True)
+def add_request(**kwargs):
+    new_pickup = PickupRequest(**kwargs)
+    db.session.add(new_pickup)
+    db.session.commit()
+    return new_pickup.id
