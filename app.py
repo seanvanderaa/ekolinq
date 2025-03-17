@@ -610,11 +610,12 @@ def create_app():
         requested_addresses = [p.address + ", " + p.city + " CA" for p in pickups_requested]
 
         # Now call our route-optimization function
+        adminAddress = DBConfig.query.filter_by(key='admin_address').first()
         try:
             sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
                 addresses=requested_addresses,
                 # Optional: provide start_location if you have a depot location
-                start_location="5381 Mallard Dr., Pleasanton, CA",
+                start_location=adminAddress.value,
                 api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
             )
         except Exception as e:
