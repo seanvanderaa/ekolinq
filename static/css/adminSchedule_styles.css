@@ -98,6 +98,15 @@ th {
     row-gap: 16px;
 }
 
+#address-form {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 12px;
+    margin-top: 48px;
+    font-family: var(--mont);
+    padding-bottom: 48px;
+}
+
 @media only screen and (max-width: 768px) {
     body {
         background-color: var(--off-white);

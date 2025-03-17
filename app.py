@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, redirect
-from models import db, PickupRequest, ServiceSchedule, add_request, get_service_schedule
+from models import db, PickupRequest, ServiceSchedule, Config as DBConfig, add_request, get_service_schedule, get_address
 from config import Config
 from extensions import mail  # <--- import our mail from the new file
 import requests
@@ -40,7 +40,7 @@ def create_app():
 
     # 5) Create tables once if needed
     with app.app_context():
-        #db.drop_all() to reset the db
+        #db.drop_all() #to reset the db
         db.create_all()
         seed_schedule_if_necessary()
 
@@ -59,6 +59,10 @@ def create_app():
     @app.route('/textile-waste', methods=['GET'])
     def textileWaste():
         return render_template('textile_waste.html')
+    
+    @app.route('/about', methods=['GET'])
+    def about():
+        return render_template('about.html')
 
     @app.route('/request_pickup')
     def request_pickup():
@@ -318,7 +322,22 @@ def create_app():
             return redirect(url_for('admin_schedule'))
 
         schedule_data = get_service_schedule()
-        return render_template('admin/admin_schedule.html', schedule_data=schedule_data)
+        address = get_address()
+        return render_template('admin/admin_schedule.html', schedule_data=schedule_data, address=address)
+    
+    @app.route('/admin-set-address', methods=["POST"])
+    @login_required
+    def admin_set_address():
+        new_address = request.form.get('admin-address')
+        config = DBConfig.query.filter_by(key='admin_address').first()
+        if config:
+            config.value = new_address
+        else:
+            config = DBConfig(key='admin_address', value=new_address)
+            db.session.add(config)
+        db.session.commit()
+        return redirect(url_for('admin_schedule'))
+
     
     @app.route('/admin-pickups', methods=['GET', 'POST'])
     @login_required

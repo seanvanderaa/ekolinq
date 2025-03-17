@@ -37,6 +37,12 @@
       <br/>
       <button type="submit" class="download-btn" id="save-sched-btn">Save Schedule</button>
     </form>
+    <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
+      <label for="admin-address">Set the Start and End Address for the Routing System</label>
+      <p style="margin: 0px;"><i>Must be in full address format (address, city, state, zip)</i></p>
+      <input type="text" id="admin-address" name="admin-address" style="width: 100%; box-sizing: border-box;" value="{{ address }}">
+      <button type="submit" class="download-btn" id="update-admin-address" style="margin-top: 16px;">Update Address</button>
+    </form>
 </main>
 {% endblock %}
 

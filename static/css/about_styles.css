@@ -1,0 +1,11 @@
+.navbar {
+    background-color: var(--d-green);
+}
+
+main {
+    background-color: var(--off-white);
+    color: black;
+    padding-bottom: 160px;
+    overflow-x: hidden;
+    padding-top: 150px;
+}
