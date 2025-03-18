@@ -71,6 +71,11 @@ main {
     top: -90px;
 }
 
+#qrCodeInput {
+    border-radius: 10px;
+    background-color: var(--l-grey);
+}
+
 .faq-container {
     display: flex;
     flex-direction: row;

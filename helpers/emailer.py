@@ -161,7 +161,7 @@ def send_request_email(pickup):
         <body>
             <div class="container">
                 <div>
-                    <img src="/Creativity/EkoLinq/Website/static/images/EKOLINQ-LOGO.png" alt="Not connected/publicly hosted yet, so this image won't appear, but it will be the EkoLinq logo." width="220px" style="display: block; margin: 24px auto; margin-bottom: 48px;">
+                    <img src="https://imgur.com/a/jfN3UzV" alt="Not connected/publicly hosted yet, so this image won't appear, but it will be the EkoLinq logo." width="220px" style="display: block; margin: 24px auto; margin-bottom: 48px;">
                 </div>
                 <p style="font-size: 18px;"><strong>Hello {first_name},</strong></p>
                 <p>
