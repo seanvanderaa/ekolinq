@@ -21,8 +21,8 @@
     background-position: center;
     background-repeat: no-repeat;
     height: 80vh;
-    padding-bottom: 150px;
-    padding-top: 50px;
+    padding-bottom: 200px;
+    padding-top: 92px;
     max-height: 500px;
     overflow-y: visible;
 }
@@ -36,6 +36,17 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6); /* Adjust the opacity (0.5) for desired darkness */
     z-index: 1; /* Ensure it is layered below the content */
+}
+
+.website-notice {
+    background-color: var(--m-green);
+    color: white;
+    z-index: 1000;
+    box-sizing: border-box;
+    padding: 0px 12px;
+    border-radius: 10px;
+    position: absolute;
+    top: 90px;
 }
 
 #header-content {
@@ -409,7 +420,8 @@
     }
 
     #header {
-        padding-bottom: 260px;
+        padding-bottom: 300px;
+        padding-top: 140px;
     }
 
     #header-content {
