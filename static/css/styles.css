@@ -537,7 +537,7 @@ li {
     #ekolinq-footer-img {
         min-height: 20px;
         background-color: transparent;
-        justify-content: flex-start;
+        justify-content: center;
     }
 
     #footer-img-desktop {

@@ -20,6 +20,13 @@ import os
 import csv
 import io
 
+# --------------------------------------------------
+# NEW IMPORTS FOR ERROR HANDLING
+# --------------------------------------------------
+import traceback
+from helpers.emailer import send_contact_email, send_request_email, error_report
+# --------------------------------------------------
+
 def create_app():
     # 1) Create a Flask app
     app = Flask(__name__)
@@ -103,8 +110,6 @@ def create_app():
             gate_code = request.form.get('finalGateCode') or None
             notify_val = request.form.get('finalNotice')
             notify = True if notify_val == 'true' else False
-
-
 
             # If user uploaded a QR code file, store the filename
             qr_code_file = request.files.get('qrCodeInput')
@@ -638,7 +643,6 @@ def create_app():
         pickups_requested.sort(key=sort_key)
 
         # Convert total_time_seconds to a user-friendly string, e.g. "1 hr 23 min"
-        # A simple method:
         def seconds_to_hms(sec):
             hours = sec // 3600
             mins = (sec % 3600) // 60
@@ -648,7 +652,6 @@ def create_app():
                 return f"{mins} min"
 
         total_time_str = seconds_to_hms(total_time_seconds)
-        # Similarly, we could create a list of each leg’s time as strings
         leg_times_str = [seconds_to_hms(t) for t in leg_times]
 
         return render_template(
@@ -691,20 +694,15 @@ def create_app():
             total_time_seconds = 0
             leg_times = []
 
-        # Optionally, if you want your pickups in the order the API recommends:
-        # We can reorder 'pickups_requested' to match the 'sorted_addresses'.
-        # This requires matching addresses. For a simple approach:
         def sort_key(pr):
             full_addr = pr.address + ", " + pr.city + " CA"
             try:
                 return sorted_addresses.index(full_addr)
             except ValueError:
-                return 999999  # if something doesn't match, push it to the bottom
+                return 999999
 
         all_pickups.sort(key=sort_key)
 
-        # Convert total_time_seconds to a user-friendly string, e.g. "1 hr 23 min"
-        # A simple method:
         def seconds_to_hms(sec):
             hours = sec // 3600
             mins = (sec % 3600) // 60
@@ -743,10 +741,6 @@ def create_app():
 
         db.session.commit()
 
-        # If you prefer a redirect (page reload):
-        # return redirect(url_for('live_route', date=pickup.request_date))
-
-        # Or return JSON so the front-end can handle it without a reload:
         return jsonify({
             "message": "Status updated successfully",
             "new_status": pickup.status
@@ -764,22 +758,18 @@ def create_app():
         if not pickup:
             return "Error: Pickup not found", 404
 
-        # Toggle the status
         if pickup.status:
             pickup.status = "Incomplete"
 
         db.session.commit()
 
-        # If you prefer a redirect (page reload):
-        # return redirect(url_for('live_route', date=pickup.request_date))
-
-        # Or return JSON so the front-end can handle it without a reload:
         return jsonify({
             "message": "Status updated successfully",
             "new_status": pickup.status
         })
     
-    from helpers.emailer import send_contact_email, send_request_email
+    # We already import these at the top:
+    # from helpers.emailer import send_contact_email, send_request_email
 
     def validate_contact(name, email, message):
         if not name or not email or not message:
@@ -834,10 +824,8 @@ def create_app():
 
         if pickup_request.request_date:
             try:
-                # Parse the date string
                 request_date_obj = datetime.strptime(pickup_request.request_date, '%Y-%m-%d').date()
                 if request_date_obj < datetime.today().date():
-                    # Already in the past
                     return jsonify({
                         'success': False,
                         'error': (
@@ -847,7 +835,6 @@ def create_app():
                         )
                     }), 400
             except ValueError:
-                # If parsing failed for some reason (invalid format)
                 return jsonify({
                     'success': False,
                     'error': (
@@ -874,7 +861,6 @@ def create_app():
                 )
             }), 400
 
-        # If we get here, everything’s good
         return jsonify({'success': True}), 200
     
 
@@ -887,10 +873,9 @@ def create_app():
     @app.route('/edit-request', methods=['GET', 'POST'])
     def edit_request():
         if request.method == "GET":
-            # This block is called after the user’s form is submitted for real
             request_id = request.args.get('request_id', '').strip()
             if not request_id:
-                return redirect(url_for('edit_request_init')) #need to improve this security check
+                return redirect(url_for('edit_request_init'))
             pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
             offset = request.args.get('week_offset', default=0, type=int)
@@ -899,13 +884,10 @@ def create_app():
             if offset > 2: 
                 offset = 2
 
-            # The base date is "today" + X weeks
             offset = request.args.get('week_offset', default=0, type=int)
             
-            # We call the refactored helper function
             days_list, base_date_str = build_schedule(offset)
 
-            # If found, pass that data to the template (if you want to display or edit it)
             return render_template('edit_request.html',
                                 partial="/partials/_editRequest_info.html",
                                 pickup=pickup,
@@ -925,17 +907,14 @@ def create_app():
         if not pickup:
             return "Request not found.", 404
 
-        # Figure out which "week" we’re on. We only allow offset from 0..2 (for 3 weeks).
         offset = request.args.get('week_offset', default=0, type=int)
         if offset < 0: 
             offset = 0
         if offset > 2: 
             offset = 2
 
-        # The base date is "today" + X weeks
         offset = request.args.get('week_offset', default=0, type=int)
         
-        # We call the refactored helper function
         days_list, base_date_str = build_schedule(offset)
 
         return render_template('edit_request.html', 
@@ -955,25 +934,18 @@ def create_app():
         chosen_time = request.form.get('chosen_time')
 
         if not request_id:
-            #flash("Missing Request ID, please try again.", "error")
             return redirect(url_for('edit_request'))
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if not pickup:
-            #flash("Request not found.", "error")
             return redirect(url_for('edit_request'))
 
-        # Update fields
         pickup.request_date = chosen_date
         pickup.request_time = chosen_time
         pickup.status = "Requested"
         pickup.date_filed = date.today()
         db.session.commit()
 
-        # Use Flask flash messaging if you want to show a success notice on the next page
-        #flash("Pickup request date/time updated successfully.", "success")
-
-        # Redirect to /edit-request with the request_id so it can show the newly updated info
         return redirect(url_for('edit_request', request_id=request_id))
 
 
@@ -982,7 +954,6 @@ def create_app():
     def verify_zip():
         zip_code = request.args.get('zipcode')
         approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"]
-        # Use jsonify here to properly format the JSON response
         return jsonify(verifyZip(approved_zips, zip_code))
     
     @app.route('/cancel-request', methods=["GET", "POST"])
@@ -991,7 +962,6 @@ def create_app():
         pickup = db.session.get(PickupRequest, request_id)
         pickup.status = "Cancelled"
         db.session.commit()
-        ### Send confirmation email of cancellation here
         if pickup.status == "Cancelled":
             return jsonify({
                 "valid": True,
@@ -1004,7 +974,6 @@ def create_app():
             })
 
 
-
     @app.cli.command('reset-db')
     def reset_db():
         """Drops all tables and recreates them."""
@@ -1014,6 +983,55 @@ def create_app():
             print("Creating all tables...")
             db.create_all()
             print("Database reset complete.")
+
+    # --------------------------------------------------
+    # NEW ERROR HANDLERS & /error ENDPOINT
+    # --------------------------------------------------
+    @app.errorhandler(404)
+    def handle_404(e):
+        """
+        Handle 'page not found' errors. We email the error details, then
+        redirect the user to the /error page.
+        """
+        error_report(
+            error_type="404 Not Found",
+            error_message=str(e),
+            traceback_info=traceback.format_exc(),
+            request_method=request.method,
+            request_path=request.path,
+            form_data=request.form.to_dict(),
+            args_data=request.args.to_dict(),
+            user_agent=request.headers.get('User-Agent'),
+            remote_addr=request.remote_addr,
+        )
+        return redirect(url_for('error'))
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        """
+        Handle any other uncaught exceptions (including 500 errors).
+        We email the error details, then redirect the user to /error.
+        """
+        error_report(
+            error_type=str(type(e)),
+            error_message=str(e),
+            traceback_info=traceback.format_exc(),
+            request_method=request.method,
+            request_path=request.path,
+            form_data=request.form.to_dict(),
+            args_data=request.args.to_dict(),
+            user_agent=request.headers.get('User-Agent'),
+            remote_addr=request.remote_addr,
+        )
+        return redirect(url_for('error'))
+
+    @app.route('/error')
+    def error():
+        """
+        A simple endpoint that displays an error page whenever something goes wrong.
+        """
+        return render_template('error.html')
+    # --------------------------------------------------
 
     return app
 
@@ -1035,5 +1053,3 @@ def seed_schedule_if_necessary():
 if __name__ == '__main__':
     app = create_app()
     app.run(host="localhost", port=3000, debug=True)
-
-

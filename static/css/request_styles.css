@@ -408,10 +408,15 @@ main {
         width: 100%;
     }
 
+    #date-selection-wrapper {
+        flex-direction: column;
+        row-gap: 12px;
+    }
+
     .day-wrapper {
         flex-direction: column;
         flex: 1;
-        max-width: 200px;
+        width: 100%;
         min-width: 160px;
     }
     

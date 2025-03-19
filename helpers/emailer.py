@@ -218,4 +218,7 @@ def send_request_email(pickup):
         # In production, consider logging this error instead of printing it.
         print(f"Error while sending email: {str(e)}")
         return False
+    
+def error_report():
+    return
 

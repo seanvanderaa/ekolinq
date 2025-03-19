@@ -27,7 +27,7 @@
 
             {% if days_list %}
               {% for d in days_list %}
-              <div class="day-wrapper align-center" {% if loop.first %}style="margin-left: 1px;"{% endif %} data-date="{{ d.date_obj.isoformat() }}" 
+              <div class="day-wrapper align-center" data-date="{{ d.date_obj.isoformat() }}" 
               data-time="08:00-16:00">
                 <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
                   {{ d.day_of_week|upper }}
