@@ -905,7 +905,7 @@ def create_app():
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if not pickup:
-            return "Request not found.", 404
+            return 404
 
         offset = request.args.get('week_offset', default=0, type=int)
         if offset < 0: 

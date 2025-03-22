@@ -6,11 +6,17 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
 {% endblock %}
 {% block content %}
-<main style="padding-top: 180px;">
-    <div class="content-width">
-        <h1>Uh oh! <i class="bi bi-bug"></i></h1>
-        <h3>There appears to be a bug, we're sorry about that!</h3>
-        <p>Please head back to the <a href="/" style="text-decoration: underline; color: var(--m-green)">homepage</a> and try again. If the issue persists, <span onclick="openContactPopup()" style="text-decoration: underline; color: var(--m-green); cursor: pointer">contact us.</span> That being said, we've already been notified something happened and will fix this as soon as we can!</p>
+<style>
+    .navbar {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+</style>
+<main style="padding-top: 180px;" class="content-width align-center">
+    <div class="align-center" style="flex-direction: column; max-width: 520px;">
+        <h1 style="font-size: 48px; margin-bottom: 12px; color: var(--m-green)">Uh oh! <i class="bi bi-bug"></i></h1>
+        <h3 style="text-align: center;">Something seems to have gone wrong, we're sorry about that!</h3>
+        <p style="text-align: center;">Please head back to the <a href="/" style="text-decoration: underline; color: var(--m-green)">homepage</a> and try again. If the issue persists, <span onclick="openContactPopup()" style="text-decoration: underline; color: var(--m-green); cursor: pointer">contact us.</span> That being said, we've already been notified something happened and will fix this as soon as we can.</p>
+        <button onclick="window.location.href='/'" class="submit-btn" style="margin-top: 24px;">Back to the Homepage</button>
     </div>
 </main>
 
