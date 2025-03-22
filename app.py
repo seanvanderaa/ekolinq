@@ -24,7 +24,7 @@ import io
 # NEW IMPORTS FOR ERROR HANDLING
 # --------------------------------------------------
 import traceback
-from helpers.emailer import send_contact_email, send_request_email, error_report
+from helpers.emailer import send_contact_email, send_request_email, send_error_report
 # --------------------------------------------------
 
 def create_app():
@@ -993,7 +993,8 @@ def create_app():
         Handle 'page not found' errors. We email the error details, then
         redirect the user to the /error page.
         """
-        error_report(
+        print("Here! 1")
+        send_error_report(
             error_type="404 Not Found",
             error_message=str(e),
             traceback_info=traceback.format_exc(),
@@ -1012,7 +1013,8 @@ def create_app():
         Handle any other uncaught exceptions (including 500 errors).
         We email the error details, then redirect the user to /error.
         """
-        error_report(
+        print("Here! 2")
+        send_error_report(
             error_type=str(type(e)),
             error_message=str(e),
             traceback_info=traceback.format_exc(),

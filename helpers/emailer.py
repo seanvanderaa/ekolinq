@@ -40,185 +40,217 @@ def send_request_email(pickup):
     Returns True if successful, False if an error occurred.
     """
     try:
-        # Format the first name and request ID
+        mail = current_app.extensions.get('mail')
+
         first_name = pickup.fname
         request_id = pickup.request_id
-
-        # Format the address as "123 Address, City, CA ZIP"
         address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
-        
-        # Format the date.
-        # Assume pickup.request_date is in "YYYY-MM-DD" format; if not, fallback to the raw string.
+
         try:
             dt = datetime.strptime(pickup.request_date, "%Y-%m-%d")
             formatted_date = dt.strftime("%A, %b. %d")
         except Exception:
             formatted_date = pickup.request_date
-        
-        # Combine date and time (assuming pickup.request_time is a string like "8am-4pm")
+
         formatted_date_time = f"{formatted_date} between {pickup.request_time}"
-        
- 
 
-
-        # Create the message
-        subject = f"""EkoLinq: Request Confirmation for {formatted_date}"""
+        subject = f"EkoLinq: Request Confirmation for {formatted_date}"
         recipients = [pickup.email]
         msg = Message(
             subject,
-            sender=current_app.config["MAIL_USERNAME"],  # or a dedicated no-reply address
+            sender=current_app.config["MAIL_USERNAME"],
             recipients=recipients,
-            bcc=['seanpvanderaa@gmail.com', current_app.config["MAIL_USERNAME"]]
+            bcc=["seanpvanderaa@gmail.com", current_app.config["MAIL_USERNAME"]]
         )
 
-               # Construct the email body using the provided template with corrected placeholders.
+        # Email-safe HTML with fallback font:
+        msg.html = f"""<html>
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Pick-up Request Confirmation</title>
+          <!-- Attempt to load Public Sans from Google Fonts. Some email clients will block this. -->
+          <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&display=swap" rel="stylesheet" />
+          <style>
+            /* Fallback approach: specify Public Sans first, then a system sans-serif */
+            body, p, h1, h2, h3, td, li, a {{
+              font-family: 'Public Sans', Arial, sans-serif !important;
+            }}
+          </style>
+        </head>
+        <body style="margin:0;padding:24px 0;background-color:#a1caa0;color:#000;font-family:'Public Sans',Arial,sans-serif;">
+          <div style="width:90%;max-width:600px;margin:30px auto;background:#fff;padding:20px 30px 32px;border:1px solid #ddd;border-radius:40px;">
+            <div style="text-align:center;">
+              <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="160" style="display:block;margin:36px auto 48px;" />
+            </div>
+            <h1 style="font-size:24px;margin-bottom:16px;">Request Confirmation</h1>
+            <p style="font-size:18px;margin-top:36px;"><strong>Hello {first_name},</strong></p>
+            <p style="font-size:16px;">Thanks for choosing to get rid of waste the right way. Below is the information for your pick-up request.</p>
+            <div style="background:#098223;color:#fff;padding:16px;border-radius:8px;margin:48px 0;">
+              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Request ID</p>
+              <p style="margin:0;font-weight:500;font-size:16px;">{request_id}</p>
+              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Address</p>
+              <p style="margin:0;font-weight:500;font-size:16px;">{address_formatted}</p>
+              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Date &amp; Time</p>
+              <p style="margin:0;font-weight:500;font-size:16px;">{formatted_date_time}</p>
+              <a href="https://ekolinq.com/edit-request" style="text-decoration:none;">
+                <p style="margin-top:36px;border-radius:5px;padding:12px 16px;color:#000;background-color:#EAB308;width:120px;text-align:center;font-weight:500;font-size:16px;">Edit Details</p>
+              </a>
+            </div>
+            <h3 style="margin-top:36px;font-size:20px;">Reminder: Here's what you can and can't give us</h3>
+            <table style="width:100%;border-collapse:separate;" cellspacing="4">
+              <tr>
+                <td style="vertical-align:top;width:50%;">
+                  <table style="width:100%;border:1px solid #c6c6c6;border-radius:10px;padding:10px;background:#fff;padding-bottom:24px;">
+                    <tr>
+                      <th style="font-size:20px;padding:10px;text-align:left;font-weight:bold;">
+                        <span style="color:#098223;font-size:24px;margin-right:12px;vertical-align:middle;">&#10003;</span>
+                        DO Accept
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px;">
+                        <ul style="padding-left:20px;margin:0;">
+                          <li style="margin:8px 0;font-size:16px;">Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+                          <li style="margin:8px 0;font-size:16px;">Coats, jackets, gloves, hats, scarves</li>
+                          <li style="margin:8px 0;font-size:16px;">Shoes, boots, heels, sneakers, sandals, socks</li>
+                          <li style="margin:8px 0;font-size:16px;">Bras, underwear, slips, camisoles, tights</li>
+                          <li style="margin:8px 0;font-size:16px;">Handbags, belts, ties, headbands</li>
+                          <li style="margin:8px 0;font-size:16px;">Towels, sheets, comforters, blankets, tablecloths</li>
+                          <li style="margin:8px 0;font-size:16px;">Wallets, totes, backpacks, stuffed animals</li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td style="vertical-align:top;width:50%;">
+                  <table style="width:100%;border:1px solid #c6c6c6;border-radius:10px;padding:10px;background:#fff;padding-bottom:24px;">
+                    <tr>
+                      <th style="font-size:20px;padding:10px;text-align:left;font-weight:bold;">
+                        <span style="color:red;font-size:24px;margin-right:12px;vertical-align:middle;">&#10005;</span>
+                        DON'T Accept
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px;">
+                        <ul style="padding-left:20px;margin:0;">
+                          <li style="margin:8px 0;font-size:16px;">Textiles that are wet, moldy, or contaminated with chemicals</li>
+                          <li style="margin:8px 0;font-size:16px;">Bio-hazardous waste</li>
+                          <li style="margin:8px 0;font-size:16px;">Mattresses, furniture, or other similar oversized items</li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:16px;margin-top:36px;">If you have any questions we can help answer, please respond to this email!</p>
+            <p style="font-size:16px;margin:24px 0 8px;">Thanks,</p>
+            <p style="font-size:16px;margin:8px 0;">EkoLinq Support Team</p>
+            <p style="font-size:16px;margin:8px 0;">(866) 346-4765</p>
+            <p style="font-size:16px;margin:16px 0 8px;"><a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a></p>
+            <p style="font-size:16px;margin:8px 0;"><a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a></p>
+          </div>
+        </body>
+        </html>"""
+
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error while sending email: {str(e)}")
+        return False
+
+
+
+
+def send_error_report(error_type, error_message, traceback_info, request_method, request_path, form_data, args_data, user_agent, remote_addr):
+    """
+    Sends an error report email with the provided error data.
+    Returns True if successful, False if an error occurred.
+    """
+    try:
+        mail = current_app.extensions.get('mail')
+        dt = datetime.today()  # or datetime.now()
+        formatted_date = dt.strftime("%A, %b. %d")
+
+        subject = f"Error Occurred: {error_type}, {formatted_date}"
+        # Replace with your actual email address.
+        recipients = ["seanpvanderaa@gmail.com"]
+        
+        msg = Message(
+            subject,
+            sender=current_app.config["MAIL_USERNAME"],
+            recipients=recipients
+        )
+
         msg.html = f"""
         <html>
         <head>
             <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Pick-up Request Confirmation</title>
-            <!-- Using Public Sans from Google Fonts -->
-            <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&display=swap" rel="stylesheet" />
-            <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" />
+            <title>Error Report</title>
             <style>
-            body {{
-                font-family: 'Public Sans', 'Open Sans', sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #D5E1E7;
-                color: #333;
-            }}
-            .container {{
-                width: 90%;
-                max-width: 600px;
-                margin: 30px auto;
-                background: #ffffff;
-                padding: 20px 30px;
-                border: 1px solid #dddddd;
-                border-radius: 8px;
-            }}
-            h1 {{
-                font-size: 22px;
-                margin-bottom: 16px;
-            }}
-            p {{
-                font-size: 16px;
-            }}
-            .pickup-details {{
-                background: #098223;
-                color: white;
-                padding: 15px;
-                padding-top: 7px;
-                border-radius: 8px;
-                margin: 36px 0;
-            }}
-            .pickup-details p {{
-                margin: 8px 0;
-                margin-bottom: 16px;
-            }}
-            .do-dont-table {{
-                width: 100%;
-                border-collapse: collapse;
-                margin: 36px 0;
-            }}
-            .do-dont-table th,
-            .do-dont-table td {{
-                padding: 10px;
-                vertical-align: top;
-                border: 1px solid #dddddd;
-            }}
-            .do-dont-table th {{
-                color: #fff;
-                font-size: 16px;
-            }}
-            .do-dont-table li {{
-                margin: 8px auto;
-            }}
-            .do-column {{
-                background-color: #098223;
-                width: 50%;
-            }}
-            .dont-column {{
-                background-color: #b14343;
-                width: 50%;
-            }}
-            a {{
-                color: #007bff;
-                text-decoration: none;
-            }}
-            a:hover {{
-                text-decoration: underline;
-            }}
-            .footer {{
-                font-size: 12px;
-                color: #777;
-                text-align: center;
-                margin-top: 30px;
-            }}
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f9f9f9;
+                    margin: 0;
+                    padding: 0;
+                }}
+                .container {{
+                    width: 90%;
+                    max-width: 600px;
+                    margin: 30px auto;
+                    background: #ffffff;
+                    padding: 20px;
+                    border: 1px solid #dddddd;
+                    border-radius: 8px;
+                }}
+                h1 {{
+                    font-size: 22px;
+                    margin-bottom: 16px;
+                    color: #d9534f;
+                }}
+                p {{
+                    font-size: 16px;
+                    line-height: 1.5;
+                }}
+                .detail {{
+                    background-color: #f1f1f1;
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin-bottom: 20px;
+                    font-family: "Courier New", monospace;
+                    white-space: pre-wrap;
+                }}
             </style>
         </head>
         <body>
             <div class="container">
-                <div>
-                    <img src="https://imgur.com/a/jfN3UzV" alt="Not connected/publicly hosted yet, so this image won't appear, but it will be the EkoLinq logo." width="220px" style="display: block; margin: 24px auto; margin-bottom: 48px;">
-                </div>
-                <p style="font-size: 18px;"><strong>Hello {first_name},</strong></p>
-                <p>
-                    Thank you for requesting a pick-up with <strong>EkoLinq</strong>! Below are the details of your request.
-                </p>
-                <div class="pickup-details">
-                    <h1>Details of Your Pick-Up</h1>
-                    <p><strong>Request ID:</strong><br> {request_id}</p>
-                    <p><strong>Address:</strong><br> {address_formatted}</p>
-                    <p><strong>Date &amp; Time:</strong><br> {formatted_date_time}</p>
-                    <p style="margin-top: 24px; font-size: 14px">Something not look right? <a href="https://ekolinq.com/edit-request" style="color: #EAB308" target="_blank">Edit your request.</a></p>
-                </div>
-                <p style="margin: 8px 0px; margin-top: 36px;"><strong>Below are the items that we do and don't accept.</strong> Please make sure any items you leave out are acceptable! Otherwise, they will not be picked up.</p>
-                <table class="do-dont-table">
-                    <tr>
-                        <th class="do-column">DO Accept</th>
-                        <th class="dont-column">DO NOT Accept</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <ul style="padding-left: 20px; margin: 0;">
-                                <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
-                                <li>Coats, jackets, gloves, hats, scarves</li>
-                                <li>Shoes, boots, heels, sneakers, sandals, socks</li>
-                                <li>Bras, underwear, slips, camisoles, tights</li>
-                                <li>Handbags, belts, ties, headbands</li>
-                                <li>Towels, sheets, comforters, blankets, tablecloths</li>
-                                <li>Wallets, totes, backpacks, stuffed animals</li>
-                            </ul>
-                        </td>
-                        <td>
-                            <ul style="padding-left: 20px; margin: 0;">
-                                <li>Textiles that are wet, moldy, or contaminated with chemicals</li>
-                                <li>Bio-hazardous waste</li>
-                                <li>Mattresses, furniture, or other similar oversized items</li>
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
-                <p style="margin: 8px 0px; margin-top: 36px;">If you have any questions that we can help answer, please respond to this email!</p>
-                <p style="margin: 8px 0px; margin-top: 24px;">Thanks,</p>
-                <p style="margin: 8px 0px">EkoLinq Support Team</p>
-                <p style="margin: 8px 0px">(866) 346-4765</p>
-                <p style="margin: 8px 0px; margin-top: 16px;"><a href="mailto:contact@ekolinq.com">contact@ekolinq.com</a></p>
-                <p style="margin: 8px 0px"><a href="https://ekolinq.com">www.ekolinq.com</a></p>
+                <h1>Error Report</h1>
+                <p><strong>Error Type:</strong> {error_type}</p>
+                <p><strong>Error Message:</strong> {error_message}</p>
+                <p><strong>Traceback Information:</strong></p>
+                <div class="detail">{traceback_info}</div>
+                <p><strong>Request Method:</strong> {request_method}</p>
+                <p><strong>Request Path:</strong> {request_path}</p>
+                <p><strong>Form Data:</strong></p>
+                <div class="detail">{form_data}</div>
+                <p><strong>Arguments Data:</strong></p>
+                <div class="detail">{args_data}</div>
+                <p><strong>User Agent:</strong> {user_agent}</p>
+                <p><strong>Remote Address:</strong> {remote_addr}</p>
             </div>
         </body>
         </html>
         """
 
+        # Send the email using your Flask-Mail configuration.
         mail.send(msg)
         return True
     except Exception as e:
-        # In production, consider logging this error instead of printing it.
-        print(f"Error while sending email: {str(e)}")
+        # In production, consider logging this error.
+        print(f"Error while sending error email: {str(e)}")
         return False
-    
+
 def error_report():
     return
 
