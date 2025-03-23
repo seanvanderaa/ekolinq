@@ -9,7 +9,7 @@ main {
     position: relative;
     background-image: url('/static/images/landfill_burning.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: 45% 30%;
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
@@ -17,7 +17,7 @@ main {
     flex-direction: column;
     width: 100vw;
     margin: 0px;
-    height: 80vh;
+    height: 82vh;
     padding-bottom: 150px;
     padding-top: 50px;
     max-height: 500px;
@@ -41,7 +41,7 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 80px;
+    margin-top: 120px;
     background-color: #00000087;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -116,12 +116,13 @@ main {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    margin-top: 36px;
+    margin-top: 12px;
     border-radius: 10px;
+    margin-bottom: 48px;
 }
 
 .resource-file {
-    padding: 0em 2em;
+    padding: 1em 2em;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -130,9 +131,13 @@ main {
     background-color: rgb(42, 42, 42);
 }
 
-.resource-file:hover {
+.resource-link {
+    text-decoration: none;
+    color: white;
+}
+
+.resource-link:hover {
     text-decoration: underline;
-    cursor: pointer;
 }
 
 .resource-file:nth-child(odd) {
@@ -183,7 +188,7 @@ main {
     background: linear-gradient(to bottom right, var(--m-green), var(--m-blue));
     height: 100%;
     border-radius: 50px;
-    margin-top: 80px;
+    margin-top: 56px;
     padding: 80px 40px;
     box-sizing: border-box;
     display: flex;
@@ -316,7 +321,7 @@ main {
         z-index: 100;
         width: 100%;
         margin: 0px;
-        margin-top: 80px;
+        margin-top: 48px;
         padding: 3em 2em;
         height: auto;
     }
