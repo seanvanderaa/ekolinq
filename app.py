@@ -198,7 +198,9 @@ def create_app():
         
         return render_template('confirmation.html', request_id=request_id, pickup=pickup)
 
-
+    @app.route('/admin')
+    def admin():
+        return redirect(url_for('admin_console'))
     
     @app.route('/admin/login')
     def admin_login():
@@ -768,8 +770,6 @@ def create_app():
             "new_status": pickup.status
         })
     
-    # We already import these at the top:
-    # from helpers.emailer import send_contact_email, send_request_email
 
     def validate_contact(name, email, message):
         if not name or not email or not message:
