@@ -1,5 +1,5 @@
 .navbar {
-    background-color: var(--d-green);
+    background-color: rgba(0,0,0,0.6);
 }
 
 main {
@@ -7,5 +7,146 @@ main {
     color: black;
     padding-bottom: 160px;
     overflow-x: hidden;
-    padding-top: 150px;
+    width: 100%;
 }
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f7f7f7;
+}
+  
+  /* Hero Section */
+  #about-hero {
+    background: url('../images/arb.jpg') no-repeat bottom center;
+    background-size: cover;
+    color: white;
+    height: 90vh;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  #about-hero-wrapper {
+    align-items: flex-start;
+  }
+
+  #about-hero-text {
+    background: linear-gradient(to bottom right, var(--m-green), var(--yel));
+    text-align: left;
+    border-radius: 20px;
+    max-width: 500px;
+    color: white;
+    padding: 100px 20px;
+
+  }
+  
+  #about-hero h1 {
+    font-size: 48px;
+    margin: 0px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  #about-hero p {
+    font-size: 20px;
+    margin: 0px;
+    width: 100%;
+  }
+  
+  /* Mission Section */
+  #mission {
+    background-color: #ffffff;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  #mission h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  #mission p {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Services Section */
+  #services {
+    background-color: #f0f0f0;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  #services h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+  
+  .service-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .service-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.3s;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .service-card img {
+    max-width: 80px;
+    margin-bottom: 15px;
+  }
+  
+  .service-card h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .service-card p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  /* Contact Section */
+  #contact {
+    background-color: #ffffff;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  #contact h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  #contact p {
+    font-size: 18px;
+  }
+  
+  #contact a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  #contact a:hover {
+    text-decoration: underline;
+  }
+  
