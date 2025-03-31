@@ -107,6 +107,8 @@ main {
 #edit-address-form {
     flex-direction: row;
     align-items: flex-end;
+    flex-wrap: wrap;
+    row-gap: 16px;
     font-family: var(--mont);
     margin: 0px;
     column-gap: 16px;

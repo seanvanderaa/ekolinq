@@ -17,11 +17,11 @@
         Available Day(s) for the Week of <span id="week-specification" data-base-date="{{ base_date_str }}">Jan. 26</span>
       </h4>      <!-- We wrap everything in a form so we can POST chosen_date/time -->
       <p style="margin: 0px;"><i>All pick ups happen between 8am-4pm.</i></p>
-      <form action="{{ url_for('select_date', request_id=pickup.id, week_offset=offset) }}" method="POST" id="timeframe-form" class="align-center">
-        
-        <!-- Hidden inputs to hold the selected date/time -->
-        <input type="hidden" name="chosen_date" id="chosen_date" value="">
-        <input type="hidden" name="chosen_time" id="chosen_time" value="">
+      <form action="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset) }}" method="POST" id="timeframe-form" class="align-center">
+        {{ form.hidden_tag() }}
+        <!-- Render hidden fields from the FlaskForm -->
+        {{ form.chosen_date(id="chosen_date") }}
+        {{ form.chosen_time(id="chosen_time") }}
         <div id="date-selection-scroll">
           <div id="date-selection-wrapper" class="align-center">
 
@@ -48,7 +48,7 @@
         <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
           {% if offset > 0 %}
             <a id="prev-week" class="week-btn" 
-               href="{{ url_for('select_date', request_id=pickup.id, week_offset=offset-1) }}">
+               href="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset-1) }}">
               < Previous Week
             </a>
           {% else %}
@@ -58,7 +58,7 @@
 
           {% if offset < max_offset %}
             <a id="next-week" class="week-btn" 
-               href="{{ url_for('select_date', request_id=pickup.id, week_offset=offset+1) }}">
+               href="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset+1) }}">
               Next Week >
             </a>
           {% else %}

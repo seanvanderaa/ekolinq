@@ -1,5 +1,5 @@
 <form action="{{ url_for('edit_request_time_submit', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
-        
+  {{ csrf_token() }}
     <!-- Hidden inputs to hold the selected date/time -->
     <input type="hidden" name="chosen_date" id="chosen_date" value="">
     <input type="hidden" name="chosen_time" id="chosen_time" value="">

@@ -20,6 +20,7 @@
   </div>
   <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTERS</h4>
   <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}" style="margin-bottom: 24px;">
+    {{ csrf_token() }}
     <div class="filter-form-group-wrapper">
       <div class="filter-form-group">
         <label for="sort-by">Sort By:</label>

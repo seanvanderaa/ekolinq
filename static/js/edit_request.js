@@ -207,7 +207,7 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
   updateAddressForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
-    const zipcode = document.getElementById('zip').value;
+    const zipcode = document.getElementById('zipcode').value;
 
 
     try {
