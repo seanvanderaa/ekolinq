@@ -14,6 +14,7 @@
     <h2 style="margin: 0px; margin-bottom: 0px;">Timeframe Configuration</h2>
     <p style="max-width: 550px; word-break: break-word;">If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
     <form id="date-timeframe-form" method="POST" action="{{ url_for('admin_schedule') }}">
+      {{ csrf_token() }}
       <table cellpadding="5" cellspacing="0">
         <thead>
           <tr>
@@ -38,6 +39,7 @@
       <button type="submit" class="download-btn" id="save-sched-btn">Save Schedule</button>
     </form>
     <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
+      {{ csrf_token() }}
       <label for="admin-address">Set the Start and End Address for the Routing System</label>
       <p style="margin: 0px;"><i>Must be in full address format (address, city, state, zip)</i></p>
       <input type="text" id="admin-address" name="admin-address" style="width: 100%; box-sizing: border-box;" value="{{ address }}">

@@ -13,6 +13,7 @@
         <p style="color:red;">{{ error }}</p>
       {% endif %}
       <form method="POST">
+        {{ csrf_token() }}
         <label for="admin_password">Enter username:</label>
         <input type="username" id="admin_username" name="admin_username" />
         <label for="admin_password">Enter password:</label>

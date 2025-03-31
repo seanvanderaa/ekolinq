@@ -27,6 +27,7 @@
       <div style="margin-top: 24px;">
         <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTER CHART</h4>
         <form method="POST" class="align-left" id="date-form">
+          {{ csrf_token() }}
           <div class="form-group">
               <label for="start_date">Start Date:</label>
               <input type="date" id="start_date" name="start_date" value="{{ start_date }}">

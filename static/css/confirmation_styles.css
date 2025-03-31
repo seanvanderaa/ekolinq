@@ -8,7 +8,7 @@ main {
     background-position: center;
     background-repeat: no-repeat;
     height: 100vh;
-    padding-top: 20vh;
+    padding: 20vh 0;
     min-height: calc(100vh - 650px);
 }
 
@@ -16,6 +16,7 @@ main {
     background-color: var(--off-white);
     border-radius: 50px;
     padding: 40px;
+    box-sizing: border-box;
 }
 
 .confirmation-info p {
@@ -63,6 +64,8 @@ main {
 #edit-address-form {
     flex-direction: row;
     align-items: flex-end;
+    flex-wrap: wrap;
+    row-gap: 16px;
     font-family: var(--mont);
     margin: 0px;
     column-gap: 16px;

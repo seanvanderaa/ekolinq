@@ -1,8 +1,9 @@
 # app.py
-from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, redirect
+from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app
+from flask_wtf import CSRFProtect
 from models import db, PickupRequest, ServiceSchedule, Config as DBConfig, add_request, get_service_schedule, get_address
 from config import Config
-from extensions import mail  # <--- import our mail from the new file
+from extensions import mail
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
@@ -11,15 +12,18 @@ from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from helpers.scheduling import build_schedule
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
 from pycognito import Cognito
 from functools import wraps
+from werkzeug.utils import secure_filename
 import os
 import csv
 import io
 
+csrf = CSRFProtect()
 # --------------------------------------------------
 # NEW IMPORTS FOR ERROR HANDLING
 # --------------------------------------------------
@@ -37,7 +41,12 @@ def create_app():
     # 3) Load config from object
     app.config.from_object(Config)
 
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax' 
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 5 MB
+
     mail.init_app(app)
+    csrf.init_app(app)
 
     # 4) Initialize your extensions
     db.init_app(app)
@@ -73,6 +82,7 @@ def create_app():
 
     @app.route('/request_pickup')
     def request_pickup():
+        form = RequestForm()
         zipcode = request.args.get('zipcode')
         ZIP_TO_CITY = {
             "94566": "Pleasanton",
@@ -86,43 +96,42 @@ def create_app():
         else:
             city = None
             zipcode = None
-        return render_template('request.html', zipcode = zipcode, city=city)
+        return render_template('request.html', zipcode = zipcode, city=city, form=form)
+
 
     @app.route('/request_init', methods=['GET', 'POST'])
     def request_init():
-        if request.method == 'POST':
-            # Grab form data (posted fields)
-            fname   = request.form.get('firstName')
-            lname   = request.form.get('lastName')
-            email   = request.form.get('email')
-            phone   = request.form.get('phone')
-            address = request.form.get('address')
-            city    = request.form.get('city')
-            zip_    = request.form.get('zip')
-            notes   = request.form.get('notes', '')
-            
-            # Check if 'gated' was checked in the form (it’ll be 'gated' if so, or None if not)
-            gated_val = request.form.get('gated')
-            gated = True if gated_val == 'gated' else False
+        form = RequestForm()
+        if form.validate_on_submit():
+            # Extract form data
+            fname   = form.firstName.data
+            lname   = form.lastName.data
+            email   = form.email.data
+            phone   = form.phone.data
+            address = form.address.data
+            city    = form.city.data
+            zip_    = form.zip.data
+            notes   = form.notes.data
 
-            # For gating details
-            selected_gated_option = request.form.get('selectedGatedOption')
-            gate_code = request.form.get('finalGateCode') or None
-            notify_val = request.form.get('finalNotice')
+            gated = form.gated.data
+            selected_gated_option = form.selectedGatedOption.data  # or form.gatedOptions.data if that fits your logic
+            gate_code = form.finalGateCode.data or None
+            notify_val = form.finalNotice.data
             notify = True if notify_val == 'true' else False
 
-            # If user uploaded a QR code file, store the filename
-            qr_code_file = request.files.get('qrCodeInput')
+            # Handle file upload
+            qr_code_file = form.qrCodeInput.data
             qr_code_filename = None
-            if qr_code_file and qr_code_file.filename:
+            if qr_code_file:
                 folder_path = 'static/images/qr_codes'
                 os.makedirs(folder_path, exist_ok=True)
-                qr_code_file.save(os.path.join(folder_path, qr_code_file.filename))
-                qr_code_filename = qr_code_file.filename
+                filename = secure_filename(qr_code_file.filename)
+                qr_code_file.save(os.path.join(folder_path, filename))
+                qr_code_filename = filename
 
             print(fname, lname, email, address, city, zip_, notes, gated, qr_code_filename, gate_code, notify)
             
-            # Insert into DB; we can fill in request_date/time/date_filed later or set them now
+            # Insert into DB (assuming add_request is defined elsewhere)
             new_id = add_request(
                 fname=fname,
                 lname=lname,
@@ -137,21 +146,23 @@ def create_app():
                 gate_code=gate_code,
                 notify=notify,
                 status="Unfinished"
-                # You can also set request_date='', request_time='', date_filed='', etc.
             )
-            return redirect(url_for('select_date', request_id=new_id))
-
-        # If GET, just show the initial form (template name is up to you)
-        return render_template('request_form.html')
+            pickup = db.session.get(PickupRequest, new_id)
+            pickup_code= pickup.request_id
+            return redirect(url_for('select_date', request_id=pickup_code))
+        
+        # If GET or if validation fails, render the form
+        return render_template('request.html', form=form)
 
 
     @app.route('/date', methods=['GET', 'POST'])
     def select_date():
         request_id = request.args.get('request_id')
+        print(request_id)
         if not request_id:
             return "Session expired, please restart.", 400
-        
-        pickup = db.session.get(PickupRequest, request_id)
+
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if not pickup:
             return "Request not found.", 404
 
@@ -161,16 +172,13 @@ def create_app():
         if offset > 2: 
             offset = 2
 
-        # The base date is "today" + X weeks
-        offset = request.args.get('week_offset', default=0, type=int)
-        
-        # We call the refactored helper function
         days_list, base_date_str = build_schedule(offset)
+        form = DateSelectionForm()
 
-        if request.method == 'POST':
-            chosen_date = request.form.get('chosen_date')  # e.g. "2025-01-11"
-            chosen_time = request.form.get('chosen_time')  # e.g. "08:00-12:00"
-            
+        if form.validate_on_submit():
+            chosen_date = form.chosen_date.data  # e.g., "2025-01-11"
+            chosen_time = form.chosen_time.data  # e.g., "08:00-16:00"
+
             pickup.request_date = chosen_date
             pickup.request_time = chosen_time
             pickup.status = "Requested"
@@ -179,24 +187,33 @@ def create_app():
 
             return redirect(url_for('confirmation', request_id=request_id, pickup=pickup))
         
-        # Render the template, passing in the offset, days_list, and the request_id so we can keep it
         return render_template('select_date.html',
+                            form=form,
                             pickup=pickup,
                             days_list=days_list,
                             offset=offset,
                             max_offset=2,
                             request_id=request_id,
-                            base_date_str = base_date_str)
+                            base_date_str=base_date_str)
     
     @app.route('/confirmation')
-    def confirmation():
-        request_id = request.args.get('request_id')
-        pickup = db.session.get(PickupRequest, request_id)
-        
-        # Pass the full PickupRequest object to the email function
-        send_request_email(pickup)
-        
-        return render_template('confirmation.html', request_id=request_id, pickup=pickup)
+    def confirmation():    
+        pickup = PickupRequest.query.filter_by(request_id=request.args.get('request_id')).first()
+        if pickup is None:
+            return "Request not found.", 404
+
+        #send_request_email(pickup)
+        update_address_form = UpdateAddressForm(obj=pickup)
+        # In your confirmation route
+        update_address_form.request_id.data = pickup.request_id
+        update_address_form.address.data = pickup.address
+        update_address_form.city.data    = pickup.city
+        update_address_form.zipcode.data = pickup.zipcode
+        update_address_form.page.data    = "confirmation"
+
+        return render_template('confirmation.html', pickup=pickup, request_id=pickup.request_id, form=update_address_form)
+
+
 
     @app.route('/admin')
     def admin():
@@ -444,38 +461,27 @@ def create_app():
     
     @app.route('/update_address', methods=['POST'])
     def update_address():
-        """
-        Updates the address, city, and zipcode for a given request_id.
-        Returns a JSON response indicating success or error and logs relevant information.
-        """
-        try:
-            # Log that we received a request
+        form = UpdateAddressForm()
+        if form.validate_on_submit():
+            # Retrieve validated data from the form
+            request_id = form.request_id.data
+            address    = form.address.data
+            city       = form.city.data
+            zip_code   = form.zipcode.data
+            page       = form.page.data
+
             current_app.logger.info("Received request to update address.")
 
-            # Grab the form fields
-            request_id = request.form.get('request_id')
-            address    = request.form.get('address')
-            city       = request.form.get('city')
-            zip_code   = request.form.get('zip')
-            page       = request.form.get('page')
-
-            # Validate required fields
-            if not request_id or not address or not city or not zip_code:
-                current_app.logger.warning("Missing required fields in the form data.")
-                return jsonify({
-                    "status": "error",
-                    "message": "Missing required fields."
-                }), 400
-            
             # Fetch the pickup request from the database
-            pickup = db.session.get(PickupRequest, request_id)
+            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+
             if not pickup:
                 current_app.logger.warning(f"No PickupRequest found for request_id={request_id}")
                 return jsonify({
                     "status": "error",
                     "message": f"No record found for request_id={request_id}"
                 }), 400
-            
+
             # Update the fields
             pickup.address = address
             pickup.city    = city
@@ -483,21 +489,20 @@ def create_app():
 
             # Commit changes to the database
             db.session.commit()
-            
-            # Log success and return 200
             current_app.logger.info(f"Successfully updated address for request_id={request_id}")
-            if page == "edit_request":
-                return render_template('edit_request.html', partial="/partials/_editRequest_info.html", pickup=pickup)
-            else:
-                return redirect(url_for('confirmation', request_id=request_id, pickup=pickup))
 
-        except Exception as e:
-            # Log the error
-            current_app.logger.error(f"Error updating address: {e}")
+            # Redirect based on the page value
+            if page == "edit_request":
+                return redirect(url_for('edit_request', request_id=request_id))
+            else:
+                return redirect(url_for('confirmation', request_id=request_id))
+        else:
+            current_app.logger.warning("Form validation failed for update address.")
             return jsonify({
                 "status": "error",
-                "message": "An unexpected error occurred."
-            }), 500
+                "message": "Invalid form submission."
+            }), 400
+
         
     @app.route('/route-overview')
     @login_required
@@ -888,6 +893,13 @@ def create_app():
             
             days_list, base_date_str = build_schedule(offset)
 
+            update_address_form = UpdateAddressForm(obj=pickup)
+            update_address_form.request_id.data = pickup.request_id
+            update_address_form.address.data = pickup.address
+            update_address_form.city.data    = pickup.city
+            update_address_form.zipcode.data = pickup.zipcode
+            update_address_form.page.data    = "edit_request"
+
             return render_template('edit_request.html',
                                 partial="/partials/_editRequest_info.html",
                                 pickup=pickup,
@@ -895,7 +907,8 @@ def create_app():
                                 offset=offset,
                                 max_offset=2,
                                 request_id=request_id,
-                                base_date_str = base_date_str)
+                                base_date_str = base_date_str,
+                                form=update_address_form)
         
     @app.route('/edit-request-time', methods=['GET'])
     def edit_request_time():
@@ -953,7 +966,7 @@ def create_app():
     @app.route('/verify_zip', methods=['GET'])
     def verify_zip():
         zip_code = request.args.get('zipcode')
-        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"]
+        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"] 
         return jsonify(verifyZip(approved_zips, zip_code))
     
     @app.route('/cancel-request', methods=["GET", "POST"])
@@ -1026,6 +1039,10 @@ def create_app():
             remote_addr=request.remote_addr,
         )
         return redirect(url_for('error'))
+    
+    @app.errorhandler(413)
+    def request_entity_too_large(error):
+        return "File is too large (must be under 5mb).", 413
 
     @app.route('/error')
     def error():

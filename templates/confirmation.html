@@ -36,52 +36,26 @@
                 <h4 style="margin: 0px;">{{ pickup.address }}, {{ pickup.city }}, {{ pickup.zipcode }} </h4>
                 <div id="edit-address" class="edit-pencil"><i class="bi bi-pencil" style="color: rgb(91, 91, 91)"></i></div>
               </div>
-              <form style="display: none" action="/update_address" id="edit-address-form" method="POST">
-                  <div class="form-group" style="max-width: 300px;">
-                    <label for="address">Address<span style="color: red;">*</span></label>
-                    <input 
-                      type="text" 
-                      id="address" 
-                      name="address" 
-                      value="{{ pickup.address }}" 
-                      required 
-                    />
-                  </div>
-                  <div class="form-group" style="max-width: 220px;">
-                    <label for="city">City<span style="color: red;">*</span></label>
-                    <input 
-                      type="text" 
-                      id="city" 
-                      name="city" 
-                      value="{{ pickup.city }}" 
-                      required 
-                    />
-                  </div>
-                  <div class="form-group" style="max-width: 120px;">
-                    <label for="zip">Zip Code<span style="color: red;">*</span></label>
-                    <input 
-                      type="text" 
-                      id="zip" 
-                      name="zip" 
-                      value="{{ pickup.zipcode }}" 
-                      required 
-                    />
-                  </div>
-                  <input 
-                      type="hidden" 
-                      id="request_id" 
-                      name="request_id" 
-                      value="{{ request_id }}" 
-                  />
-                  <input 
-                      type="hidden" 
-                      id="page]" 
-                      name="page" 
-                      value="confirmation" 
-                  />
-                  <button id="update-address" class="download-btn" style="padding: 14px 16px;">Update</button>
-                  <button id="cancel-update-address" class="download-btn" style="padding: 14px 16px;">Cancel</button>
+              <form style="display: none" action="{{ url_for('update_address') }}" id="edit-address-form" method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group" style="max-width: 300px;">
+                  <label for="address">Address<span style="color: red;">*</span></label>
+                  {{ form.address(id="address", required=True) }}
+                </div>
+                <div class="form-group" style="max-width: 220px;">
+                  <label for="city">City<span style="color: red;">*</span></label>
+                  {{ form.city(id="city", required=True) }}
+                </div>
+                <div class="form-group" style="max-width: 120px;">
+                  <label for="zip">Zip Code<span style="color: red;">*</span></label>
+                  {{ form.zipcode(id="zipcode",  required=True) }}
+                </div>
+                {{ form.request_id(id="request_id") }}
+                {{ form.page(id="page", value="confirmation") }}
+                <button id="update-address" class="download-btn" style="padding: 14px 16px;">Update</button>
+                <button id="cancel-update-address" class="download-btn" style="padding: 14px 16px;" type="button">Cancel</button>
               </form>
+                       
             </div>
         </div>
 
