@@ -1,13 +1,14 @@
 .navbar {
-    background-color: rgba(0,0,0,0.6);
+    background-color: var(--d-green);
 }
 
 main {
     background-color: var(--off-white);
     color: black;
-    padding-bottom: 160px;
+    padding-bottom: 80px;
     overflow-x: hidden;
     width: 100%;
+    padding-top: 60px;
 }
 
 /* General Styles */
@@ -16,137 +17,133 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
-    background-color: #f7f7f7;
+    background-color: #FAFAFA;
 }
-  
-  /* Hero Section */
-  #about-hero {
-    background: url('../images/arb.jpg') no-repeat bottom center;
-    background-size: cover;
-    color: white;
-    height: 90vh;
-    box-sizing: border-box;
-    justify-content: flex-start;
-    width: 100%;
-  }
 
-  #about-hero-wrapper {
-    align-items: flex-start;
-  }
+h4 {
+  font-size: 20px;
+}
 
-  #about-hero-text {
-    background: linear-gradient(to bottom right, var(--m-green), var(--yel));
-    text-align: left;
-    border-radius: 20px;
-    max-width: 500px;
-    color: white;
-    padding: 100px 20px;
-
-  }
-  
-  #about-hero h1 {
-    font-size: 48px;
-    margin: 0px;
-    margin-bottom: 20px;
-    width: 100%;
-  }
-  
-  #about-hero p {
-    font-size: 20px;
-    margin: 0px;
-    width: 100%;
-  }
-  
-  /* Mission Section */
-  #mission {
-    background-color: #ffffff;
-    padding: 60px 20px;
-    text-align: center;
-  }
-  
-  #mission h2 {
-    font-size: 36px;
-    margin-bottom: 20px;
-  }
-  
-  #mission p {
-    font-size: 18px;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  /* Services Section */
-  #services {
-    background-color: #f0f0f0;
-    padding: 60px 20px;
-    text-align: center;
-  }
-  
-  #services h2 {
-    font-size: 36px;
-    margin-bottom: 40px;
-  }
-  
-  .service-cards {
+#header {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: row;
+    align-items: flex-start;
+    column-gap: 100px;
+}
+
+#desk-icons {
+  display: block;
+}
+
+#mobile-icons {
+  margin-top: 24px;
+  display: none;
+}
+
+#header-icons {
+  margin-top: 24px;
+  column-gap: 20px;
+}
+
+#header-icons .bi {
+  font-size: 30px;
+  color: var(--border-grey);
+  transition: color .4s ease;
+}
+
+#header-icons .bi:hover {
+  color: var(--m-blue);
+}
+
+#block-text {
+  background-color: var(--l-green);
+  padding: 80px;
+  box-sizing: border-box;
+  border-radius: 20px;
+
+}
+
+#block-text-center {
+  max-width: 500px;
+  flex-direction: column;
+}
+
+#lightbulb {
+  height: 60px;
+  min-width: 60px;
+  background-color: #dfebd4;
+  border-radius: 100px;
+  font-size: 24px;
+}
+
+#final {
+  flex-direction: row;
+  column-gap: 100px;
+}
+
+#pleasanton {
+  height: 500px;
+  width: 450px;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.content-width {
+  margin-top: 160px;
+}
+
+@media (max-width: 980px) {
+  .content-width {
+      width: calc(95% - 2em);
   }
-  
-  .service-card {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    width: 300px;
-    text-align: center;
-    border-radius: 8px;
-    transition: transform 0.3s;
-  }
-  
-  .service-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .service-card img {
-    max-width: 80px;
-    margin-bottom: 15px;
-  }
-  
-  .service-card h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .service-card p {
-    font-size: 16px;
-    line-height: 1.5;
-  }
-  
-  /* Contact Section */
-  #contact {
-    background-color: #ffffff;
-    padding: 60px 20px;
-    text-align: center;
-  }
-  
-  #contact h2 {
-    font-size: 36px;
-    margin-bottom: 20px;
-  }
-  
-  #contact p {
-    font-size: 18px;
-  }
-  
-  #contact a {
-    color: #007BFF;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  #contact a:hover {
-    text-decoration: underline;
-  }
-  
+}
+
+@media only screen and (max-width: 768px) {
+
+main {
+  padding-top:60px;
+}
+
+.content-width {
+  margin-top: 120px !important;
+}
+
+#header {
+  flex-direction: column;
+}
+
+#header-icons {
+margin-top: 24px;
+column-gap: 20px;
+}
+
+#desk-icons {
+  display: none;
+}
+
+#mobile-icons {
+  display: block;
+}
+
+#block-text {
+background-color: transparent;
+padding: 0px;
+box-sizing: border-box;
+border-radius: 20px;
+}
+
+#final {
+flex-direction: column-reverse;
+row-gap: 48px;
+}
+
+#pleasanton {
+height: 500px;
+width: 100%;
+}
+
+.content-width {
+margin-top: 160px;
+}
+
+}
