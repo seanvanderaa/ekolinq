@@ -8,59 +8,48 @@
 
 {% block content %}
 <main>
-  <!-- Hero Section -->
-  <section id="about-hero" class="align-center">
-    <div id="about-hero-wrapper" class="content-width align-left">
-        <div id="about-hero-text">
-            <h1>About EkoLinq</h1>
-            <p>Your trusted partner for door-to-door textile waste collection and sustainable recycling.</p>
-          </div>
-    </div>
-  </section>
-
-  <!-- Mission Section -->
-  <section id="mission">
-    <div class="content-width">
-      <h2>Our Mission</h2>
-      <p>
-        We are committed to reducing textile waste by providing convenient, eco-friendly pickups. Our mission is to turn unwanted fabrics into resources for a circular economy while engaging and empowering communities.
-      </p>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section id="services">
-    <div class="content-width">
-      <h2>What We Do</h2>
-      <div class="service-cards">
-        <div class="service-card">
-          <img src="{{ url_for('static', filename='images/pickup.png') }}" alt="Door-to-door pickup icon">
-          <h3>Door-to-Door Pickup</h3>
-          <p>Schedule a convenient pickup from your home and let us handle the rest.</p>
+  <div class="content-width" id="header">
+    <div style="flex: 1;" id="header-left">
+      <h1 style="font-size: 56px; margin-top: 0px; margin-bottom: 36px;">About Us</h1>
+      <div id="desk-icons">
+        <div id="header-icons" class="align-left">
+          <img src="../static/images/neighborhood_fave_2024.svg" alt="">
+          <img src="../static/images/neighborhood_fave_2023.svg" alt="">
+          <img src="../static/images/neighborhood_fave_2022.svg" alt="">
         </div>
-        <div class="service-card">
-          <img src="{{ url_for('static', filename='images/recycle.png') }}" alt="Recycling process icon">
-          <h3>Recycling & Reuse</h3>
-          <p>Your textiles are responsibly recycled and repurposed into new products.</p>
-        </div>
-        <div class="service-card">
-          <img src="{{ url_for('static', filename='images/community.png') }}" alt="Community support icon">
-          <h3>Community Engagement</h3>
-          <p>We collaborate with local organizations to foster sustainable practices.</p>
-        </div>
+        <p style="font-size: 12px; color: var(--border-grey); max-width: 220px; margin-top: 16px;">EkoLinq has been a proud "Neighborhood Fave" on <a style="text-decoration: underline; color: var(--border-grey)" href="https://nextdoor.com/pages/ekolinq-irvine-ca/?init_source=search&query=EkoLinq">Nextdoor</a> for three consecutive years.</p>
       </div>
     </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact">
-    <div class="content-width">
-      <h2>Contact Us</h2>
-      <p>
-        Have questions or need more details about our services? <a href="/contact">Get in touch</a> with our team.
-      </p>
+    <h4 style="flex: 1; margin: 0px;">EkoLinq is a family-owned business dedicated to building a more sustainable future in California’s Tri-Valley region by keeping clothing in use and out of landfills. Founded in 2021, EkoLinq was born from a moment of inspiration after our founder read <a style="text-decoration: underline; color: black" href="https://www.goodreads.com/book/show/42972014-secondhand">Secondhand</a> by Adam Minter—a powerful look into the global secondhand economy and the urgent need for local solutions to textile waste.</h4>
+    <div id="mobile-icons">
+      <div id="header-icons" class="align-left">
+        <img src="../static/images/neighborhood_fave_2024.svg" alt="">
+        <img src="../static/images/neighborhood_fave_2023.svg" alt="">
+        <img src="../static/images/neighborhood_fave_2022.svg" alt="">
+      </div>
+      <p style="font-size: 12px; color: var(--border-grey); max-width: 220px; margin-top: 16px;">EkoLinq has been a proud "Neighborhood Fave" on <a style="text-decoration: underline; color: var(--border-grey)" href="https://nextdoor.com/pages/ekolinq-irvine-ca/?init_source=search&query=EkoLinq">Nextdoor</a> for three consecutive years.</p>
     </div>
-  </section>
+  </div>
+  <div class="content-width align-center" id="block-text">
+    <div id="block-text-center" class="align-center">
+      <div class="align-center" style="width: 100%;">
+        <div id="lightbulb" class="align-center"><i class="bi bi-lightbulb" style="margin: 0px;"></i></div>
+        <hr style="border-bottom: 1px solid black; width: 100%; margin-left: 32px;">
+      </div>
+      <h4>At EkoLinq, we believe the best path forward is simple: <b style="font-weight: 600;">reuse what we can and recycle what we can’t</b>. Our priority is to extend the life of clothing by encouraging reuse in its original form—this is not only the most environmentally friendly option but also the most impactful. When garments are too damaged to wear again, we work to ensure they are responsibly recycled so their materials can be transformed and used again.</h4>
+    </div>
+  </div>
+  <div class="content-width" id="final">
+    <div style="flex: 1;" id="final-left">
+      <h1 style="margin-top: 0px; margin-bottom: 24px;">Through community partnerships, education, and action, <strong style="font-weight: 600;">EkoLinq is helping shift the culture of waste in our region one garment at a time.</strong></h1>
+      <h4>If you’d like to be a part of our mission of helping the environment, <a href="/" style="text-decoration: underline; color: var(--m-green);">head to our homepage</a> to schedule a pickup of your textile waste.</h4>
+    </div>
+    <img id="pleasanton" src="../static/images/pleasanton.jpg" alt="">
+  </div>
+  <div class="content-width align-center" id="testimonial">
+    <h3 style="font-size: 30px; text-align: center; max-width: 740px; margin-top: 0px;">“Thank you for everything you all do—I’ve always hated throwing out my old clothes and now I know that they’re ending up in good hands.”</h3>
+    <h4 style="margin: 0px"><b>Pleasanton Community Member</b></h4>
+  </div>
 </main>
 {% endblock %}
 

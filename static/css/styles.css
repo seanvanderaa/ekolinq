@@ -2,7 +2,7 @@
 
 :root {
     --m-green: #098223;
-    --l-green: #BBCEA8;
+    --l-green: #d1e1c2;
     --d-green: #142602;
     --m-blue: #104378;
     --l-blue: #D5E1E7;
@@ -345,6 +345,14 @@ li {
     width: 100%;
     column-gap: 24px;
     justify-content: flex-end;
+}
+
+#footer-socials a {
+    transition: color .2s ease, transform .2s ease;
+}
+
+#footer-socials a:hover {
+    transform: scale(1.1);
 }
 
 .section-title {
