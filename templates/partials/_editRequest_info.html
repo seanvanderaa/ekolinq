@@ -55,11 +55,12 @@
         <div style="display: none;" id="cancel-confirm-wrapper">
             <p style="text-align: right">Are you sure you want to cancel this request?<br> This action cannot be undone.</p>
             <div id="cancel-confirm-btn-wrapper" class="align-right">
-              <form action="/cancel-request" id="cancel-request-form">
-                <input type="hidden" id="form-request-id" name="page" value="{{ pickup.id }}"/>
+              <form action="{{ url_for('cancel_request') }}" method="POST" id="cancel-request-form">
+                {{ cancel_form.hidden_tag() }}
+                {{ cancel_form.request_id(id="form-request-id", value=pickup.id) }}
                 <button class="download-btn" id="cancel-btn" type="submit">Yes, cancel.</button>
                 <button class="download-btn" id="cancel-back-btn" type="button">No, go back.</button>
-              </form>
+              </form>              
             </div>
         </div>
     </div>

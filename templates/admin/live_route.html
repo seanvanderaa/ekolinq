@@ -45,7 +45,7 @@
       {% endif %}
     </div>
   </div>
-
+  {{ pickup_status_form.hidden_tag() }}
   <!-- Requested section -->
   {% if pickups_requested %}
     {% for pickup in pickups_requested %}

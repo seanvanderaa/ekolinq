@@ -124,22 +124,22 @@ document.addEventListener("DOMContentLoaded", function () {
         form.method = "POST";
         form.action = targetUrl;
     
-        // 3) Add hidden input(s) with the data you want to send
+        // 3) Add hidden input for the request_id
         const hiddenInput = document.createElement("input");
         hiddenInput.type = "hidden";
         hiddenInput.name = "request_id";
         hiddenInput.value = requestId;
         form.appendChild(hiddenInput);
     
-        // If you’re using CSRF, append it here:
-        // const csrfToken = document.querySelector('[name="csrf_token"]').value;
-        // const csrfInput = document.createElement("input");
-        // csrfInput.type = "hidden";
-        // csrfInput.name = "csrf_token";
-        // csrfInput.value = csrfToken;
-        // form.appendChild(csrfInput);
+        // 4) Append the CSRF token hidden input
+        const csrfToken = document.querySelector('[name="csrf_token"]').value;
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrf_token";
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
     
-        // 4) Append the form to the document and submit it
+        // 5) Append the form to the document and submit it
         document.body.appendChild(form);
         form.submit();
       });
@@ -150,8 +150,12 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
 
   const request_id = document.getElementById('form-request-id').value;
 
-  const url = `/cancel-request?request_id=${encodeURIComponent(request_id)}`;
-  const response = await fetch(url);
+  const form = event.target;
+  const formData = new FormData(form);
+  const response = await fetch(form.action, {
+    method: "POST",
+    body: formData
+  });
   const data = await response.json();
 
   if (data.valid) {

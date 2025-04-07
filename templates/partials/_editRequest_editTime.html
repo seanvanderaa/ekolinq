@@ -1,17 +1,16 @@
 <form action="{{ url_for('edit_request_time_submit', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
-  {{ csrf_token() }}
-    <!-- Hidden inputs to hold the selected date/time -->
-    <input type="hidden" name="chosen_date" id="chosen_date" value="">
-    <input type="hidden" name="chosen_time" id="chosen_time" value="">
-    <input type="hidden" name="request_id" id="request_id" value="{{ pickup.request_id }}">
-    <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}">
-    <div id="date-selection-scroll" data-base-date="{{ base_date_str }}">
-      <div id="date-selection-wrapper" class="align-center">
-
-        {% if days_list %}
-          {% for d in days_list %}
-          <div class="day-wrapper align-center" {% if loop.first %}style="margin-left: 1px;"{% endif %} data-date="{{ d.date_obj.isoformat() }}" 
-          data-time="08:00-16:00">
+  {{ time_form.hidden_tag() }}
+  {{ time_form.chosen_date(id="chosen_date") }}
+  {{ time_form.chosen_time(id="chosen_time") }}
+  {{ time_form.request_id(id="request_id", value=pickup.request_id) }}
+  <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}">
+  
+  <div id="date-selection-scroll" data-base-date="{{ base_date_str }}">
+    <div id="date-selection-wrapper" class="align-center">
+      {% if days_list %}
+        {% for d in days_list %}
+          <div class="day-wrapper align-center" {% if loop.first %}style="margin-left: 1px;"{% endif %}
+               data-date="{{ d.date_obj.isoformat() }}" data-time="08:00-16:00">
             <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
               {{ d.day_of_week|upper }}
             </h4>
@@ -19,45 +18,44 @@
               {{ d.date_str }}
             </p>
           </div>
-          {% endfor %}
-        {% else %}
-          <p>No available slots in this week.</p>
-        {% endif %}
-      </div>
-    </div>
-
-
-    <!-- Prev/Next Week buttons -->
-    <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
-      {% if offset > 0 %}
-        <a id="prev-week" class="week-btn" 
-           href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset-1) }}">
-          < Previous Week
-        </a>
+        {% endfor %}
       {% else %}
-        <!-- If offset = 0, we can hide or disable the previous button -->
-        <span style="visibility: hidden;">Previous Week</span>
-      {% endif %}
-
-      {% if offset < max_offset %}
-        <a id="next-week" class="week-btn" 
-           href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset+1) }}">
-          Next Week >
-        </a>
-      {% else %}
-        <!-- If offset >= max_offset, hide or disable the next button -->
-        <span style="visibility: hidden;">Next Week</span>
+        <p>No available slots in this week.</p>
       {% endif %}
     </div>
+  </div>
 
-    <button type="submit" style="margin-top: 36px;" id="timeframe-submit-btn" class="submit-btn" disabled>
-      <div class="button-content">
-        <span>
-          <span style="font-weight: 500;">Change Pick Up Date</span>
-        </span>
-        <span id="submit-btn-info" style="display: none; font-size: 12px; font-weight: 300; margin-top: 6px;">
-        </span>
-      </div>
-    </button>
-    <button id="cancel-edit-date" type="button" class="download-btn" data-request-id="{{ pickup.request_id }}" data-cancel-url="{{ url_for('edit_request') }}">Cancel</button>
-    </form>
+  <!-- Prev/Next Week buttons -->
+  <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
+    {% if offset > 0 %}
+      <a id="prev-week" class="week-btn" 
+         href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset-1) }}">
+         < Previous Week
+      </a>
+    {% else %}
+      <span style="visibility: hidden;">Previous Week</span>
+    {% endif %}
+
+    {% if offset < max_offset %}
+      <a id="next-week" class="week-btn" 
+         href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset+1) }}">
+         Next Week >
+      </a>
+    {% else %}
+      <span style="visibility: hidden;">Next Week</span>
+    {% endif %}
+  </div>
+
+  <button type="submit" style="margin-top: 36px;" id="timeframe-submit-btn" class="submit-btn" disabled>
+    <div class="button-content">
+      <span>
+        <span style="font-weight: 500;">Change Pick Up Date</span>
+      </span>
+      <span id="submit-btn-info" style="display: none; font-size: 12px; font-weight: 300; margin-top: 6px;"></span>
+    </div>
+  </button>
+  <button id="cancel-edit-date" type="button" class="download-btn" 
+          data-request-id="{{ pickup.request_id }}" data-cancel-url="{{ url_for('edit_request') }}">
+    Cancel
+  </button>
+</form>

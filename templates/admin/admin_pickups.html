@@ -20,7 +20,6 @@
   </div>
   <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTERS</h4>
   <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}" style="margin-bottom: 24px;">
-    {{ csrf_token() }}
     <div class="filter-form-group-wrapper">
       <div class="filter-form-group">
         <label for="sort-by">Sort By:</label>
@@ -74,6 +73,7 @@
           <th>First Name</th>
           <th>Last Name</th>
           <th>ID</th>
+          <th>Completion Date/Time</th>
         </tr>
       </thead>
       <tbody>
@@ -114,6 +114,7 @@
           <td style="min-width: 150px;">{{ req.fname }}</td>
           <td style="min-width: 200px;">{{ req.lname }}</td>
           <td style="min-width: 50px;">{{ req.request_id }}</td>
+          <td style="min-width: 250px;">{{ req.pickup_complete_info }}</td>
         </tr>
         {% endfor %}          
       </tbody>
