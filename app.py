@@ -12,7 +12,7 @@ from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from helpers.scheduling import build_schedule
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -270,20 +270,22 @@ def create_app():
         today = datetime.today().date()
         # Default to the current week: from Monday to today.
         start_of_week = today - timedelta(days=today.weekday())
-        start_date = start_of_week
-        end_date = today
+        default_start_date = start_of_week
+        default_end_date = today
 
-        # Process form submission for a custom date range
-        if request.method == 'POST':
-            start_date_str = request.form.get('start_date')
-            end_date_str = request.form.get('end_date')
-            if start_date_str and end_date_str:
-                try:
-                    start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-                    end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-                except ValueError:
-                    # Optionally add error handling for invalid dates.
-                    pass
+        form = DateRangeForm()
+
+        # Process form submission
+        if form.validate_on_submit():
+            start_date = form.start_date.data
+            end_date = form.end_date.data
+        else:
+            # On GET (or if validation fails), use default dates
+            start_date = default_start_date
+            end_date = default_end_date
+            # Pre-populate the form fields with default dates
+            form.start_date.data = start_date
+            form.end_date.data = end_date
 
         # Build the complete date range for the period
         num_days = (end_date - start_date).days + 1
@@ -304,7 +306,6 @@ def create_app():
         ).all()
 
         for row in query_result:
-            # Assuming request_date is stored in "YYYY-MM-DD" format.
             daily_counts_dict[row[0]] = row[1]
 
         # Convert to a JSON-serializable list of [date, count] pairs.
@@ -316,51 +317,87 @@ def create_app():
             PickupRequest.request_date <= end_date.strftime("%Y-%m-%d")
         ).count()
 
-        return render_template('admin/admin_console.html',
-                            daily_counts=daily_counts,
-                            pickups_this_week=pickups_total,
-                            start_date=start_date.strftime("%Y-%m-%d"),
-                            end_date=end_date.strftime("%Y-%m-%d"))
+        return render_template(
+            'admin/admin_console.html',
+            daily_counts=daily_counts,
+            pickups_this_week=pickups_total,
+            form=form  # Pass the form to your template
+        )
 
     @app.route('/admin-schedule', methods=['GET', 'POST'])
     @login_required
     def admin_schedule():
-        # If this is a POST, we are updating the schedule
-        if request.method == 'POST':
-            for day in range(1,8):
-                record_id     = request.form.get(f'record_{day}_id')
-                is_available  = request.form.get(f'day_{day}_available') == 'on'
-                slot1_start   = "08:00" ## Note to self: This was the old system of multiple slots but configured to handle just a singular day
-                slot1_end     = "16:00" ## You're likely gonna wanna fix this sytem at some point down the line if we never use this type
-                slot2_start   = "" ## I know, I know this is bad practice
-                slot2_end     = ""
-
-                schedule_record = ServiceSchedule.query.get(record_id)
-                if schedule_record:
-                    schedule_record.is_available = is_available
-                    schedule_record.slot1_start  = slot1_start
-                    schedule_record.slot1_end    = slot1_end
-                    schedule_record.slot2_start  = slot2_start
-                    schedule_record.slot2_end    = slot2_end
-            db.session.commit()
-            return redirect(url_for('admin_schedule'))
-
         schedule_data = get_service_schedule()
         address = get_address()
-        return render_template('admin/admin_schedule.html', schedule_data=schedule_data, address=address)
+        admin_schedule_form = AdminScheduleForm()
+        admin_address_form = AdminAddressForm()
+
+        # Populate the schedule form on GET
+        if request.method == 'GET':
+            for i, sched in enumerate(schedule_data):
+                if i < len(admin_schedule_form.days):
+                    admin_schedule_form.days[i].record_id.data = sched.id
+                    admin_schedule_form.days[i].is_available.data = sched.is_available
+            admin_address_form.admin_address.data = address
+
+        # Process the POSTs—here you might want to distinguish which form is being submitted
+        if request.method == 'POST':
+            # Check which submit button was pressed.
+            if admin_schedule_form.submit.data and admin_schedule_form.validate_on_submit():
+                # Process schedule update
+                for day_form in admin_schedule_form.days:
+                    record_id = day_form.record_id.data
+                    is_available = day_form.is_available.data
+                    schedule_record = ServiceSchedule.query.get(record_id)
+                    if schedule_record:
+                        schedule_record.is_available = is_available
+                        schedule_record.slot1_start  = "08:00"
+                        schedule_record.slot1_end    = "16:00"
+                        schedule_record.slot2_start  = ""
+                        schedule_record.slot2_end    = ""
+                db.session.commit()
+                return redirect(url_for('admin_schedule'))
+            elif admin_address_form.submit.data and admin_address_form.validate_on_submit():
+                # Process address update
+                new_address = admin_address_form.admin_address.data
+                config = DBConfig.query.filter_by(key='admin_address').first()
+                if config:
+                    config.value = new_address
+                else:
+                    config = DBConfig(key='admin_address', value=new_address)
+                    db.session.add(config)
+                db.session.commit()
+                return redirect(url_for('admin_schedule'))
+            
+        zipped_data = list(zip(admin_schedule_form.days, schedule_data))
+
+        return render_template(
+            'admin/admin_schedule.html',
+            schedule_data=schedule_data,
+            address=address,
+            admin_schedule_form=admin_schedule_form,
+            admin_address_form=admin_address_form,
+            zipped_data=zipped_data
+        )
+
     
     @app.route('/admin-set-address', methods=["POST"])
     @login_required
     def admin_set_address():
-        new_address = request.form.get('admin-address')
-        config = DBConfig.query.filter_by(key='admin_address').first()
-        if config:
-            config.value = new_address
+        form = AdminAddressForm()
+        if form.validate_on_submit():
+            new_address = form.admin_address.data
+            config = DBConfig.query.filter_by(key='admin_address').first()
+            if config:
+                config.value = new_address
+            else:
+                config = DBConfig(key='admin_address', value=new_address)
+                db.session.add(config)
+            db.session.commit()
+            return redirect(url_for('admin_schedule'))
         else:
-            config = DBConfig(key='admin_address', value=new_address)
-            db.session.add(config)
-        db.session.commit()
-        return redirect(url_for('admin_schedule'))
+            return redirect(url_for('admin_schedule'))
+
 
     
     @app.route('/admin-pickups', methods=['GET', 'POST'])
@@ -600,6 +637,7 @@ def create_app():
     @app.route('/live-route')
     @login_required
     def live_route():
+        pickup_status_form = PickupStatusForm()
         selected_date = request.args.get('date')
         if not selected_date:
             return "Date parameter is required", 400
@@ -667,7 +705,8 @@ def create_app():
             pickups_requested=pickups_requested,
             pickups_completed=complete_incomplete_pickups,
             total_time_str=total_time_str,
-            leg_times_str=leg_times_str
+            leg_times_str=leg_times_str,
+            pickup_status_form=pickup_status_form
         )
 
     @app.route('/view-route-info')
@@ -727,12 +766,13 @@ def create_app():
             total_time_str = total_time_str,
         )
 
-    
     @app.route('/toggle_pickup_status', methods=['POST'])
     @login_required
     def toggle_pickup_status():
-        pickup_id = request.form.get('pickup_id')
-
+        form = PickupStatusForm()
+        if form.validate_on_submit():
+            pickup_id = form.pickup_id.data
+        
         if not pickup_id:
             return "Error: No pickup_id provided", 400
 
@@ -740,11 +780,15 @@ def create_app():
         if not pickup:
             return "Error: Pickup not found", 404
 
-        # Toggle the status
-        if pickup.status == "Complete" or pickup.status == "Incomplete":
+        # Toggle the status and update complete_date_time accordingly.
+        if pickup.status in ["Complete", "Incomplete"]:
+            # If current status is complete/incomplete, set to requested and reset the timestamp.
             pickup.status = "Requested"
+            pickup.pickup_complete_info = None
         else:
+            # Otherwise, set status to complete and log the current date and time.
             pickup.status = "Complete"
+            pickup.pickup_complete_info = datetime.now()  # or datetime.now() if you're not using UTC
 
         db.session.commit()
 
@@ -752,11 +796,14 @@ def create_app():
             "message": "Status updated successfully",
             "new_status": pickup.status
         })
+
     
     @app.route('/mark-pickup-not-possible', methods=['POST'])
     @login_required
     def mark_pickup_not_possible():
-        pickup_id = request.form.get('pickup_id')
+        form = PickupStatusForm()
+        if form.validate_on_submit():
+            pickup_id = form.pickup_id.data
 
         if not pickup_id:
             return "Error: No pickup_id provided", 400
@@ -767,6 +814,7 @@ def create_app():
 
         if pickup.status:
             pickup.status = "Incomplete"
+            pickup.pickup_complete_info = datetime.utcnow()
 
         db.session.commit()
 
@@ -883,16 +931,6 @@ def create_app():
                 return redirect(url_for('edit_request_init'))
             pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
-            offset = request.args.get('week_offset', default=0, type=int)
-            if offset < 0: 
-                offset = 0
-            if offset > 2: 
-                offset = 2
-
-            offset = request.args.get('week_offset', default=0, type=int)
-            
-            days_list, base_date_str = build_schedule(offset)
-
             update_address_form = UpdateAddressForm(obj=pickup)
             update_address_form.request_id.data = pickup.request_id
             update_address_form.address.data = pickup.address
@@ -900,23 +938,38 @@ def create_app():
             update_address_form.zipcode.data = pickup.zipcode
             update_address_form.page.data    = "edit_request"
 
+            cancel_form = CancelRequestForm()
+            cancel_form.request_id.data = pickup.request_id
+
             return render_template('edit_request.html',
                                 partial="/partials/_editRequest_info.html",
                                 pickup=pickup,
-                                days_list=days_list,
-                                offset=offset,
                                 max_offset=2,
                                 request_id=request_id,
-                                base_date_str = base_date_str,
-                                form=update_address_form)
+                                form=update_address_form,
+                                cancel_form=cancel_form)
+        else:
+            # Use a separate form for cancellation
+            cancel_form = CancelEditForm()
+            if cancel_form.validate_on_submit():
+                request_id = cancel_form.request_id.data
+                # Process cancellation (e.g., simply re-render the edit page)
+                pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+                # You might want to log a cancellation action, reset some state, or simply redirect:
+                return redirect(url_for('edit_request', request_id=request_id))
+            else:
+                current_app.logger.error("CancelEditForm validation errors: %s", cancel_form.errors)
+                return "Validation failed: " + str(cancel_form.errors), 400
         
     @app.route('/edit-request-time', methods=['GET'])
     def edit_request_time():
+        time_form = EditRequestTimeForm()
         request_id = request.args.get('request_id')
         if not request_id:
             return "Session expired, please restart.", 400
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+        time_form.request_id.data = pickup.request_id
         if not pickup:
             return 404
 
@@ -930,6 +983,11 @@ def create_app():
         
         days_list, base_date_str = build_schedule(offset)
 
+        update_address_form = UpdateAddressForm(obj=pickup)
+
+        cancel_form = CancelRequestForm()
+        cancel_form.request_id.data = pickup.request_id
+
         return render_template('edit_request.html', 
                             partial="/partials/_editRequest_info.html", 
                             edit_request="/partials/_editRequest_editTime.html",                             
@@ -938,28 +996,37 @@ def create_app():
                             offset=offset,
                             max_offset=2,
                             request_id=request_id,
-                            base_date_str = base_date_str)
+                            base_date_str = base_date_str,
+                            form = update_address_form,
+                            time_form=time_form,
+                            cancel_form=cancel_form)
     
     @app.route('/edit-request-time-submit', methods=['POST'])
     def edit_request_time_submit():
-        request_id = request.form.get('request_id')
-        chosen_date = request.form.get('chosen_date')
-        chosen_time = request.form.get('chosen_time')
+        form = EditRequestTimeForm()
+        print("at form")
+        if form.validate_on_submit():
+            print("form valid")
+            request_id = form.request_id.data
+            chosen_date = datetime.strptime(form.chosen_date.data, "%Y-%m-%d").date()
+            chosen_time = form.chosen_time.data
 
-        if not request_id:
+            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+            if not pickup:
+                # Optionally flash an error message here
+                return redirect(url_for('edit_request'))
+            
+            pickup.request_date = chosen_date
+            pickup.request_time = chosen_time
+            pickup.status = "Requested"
+            pickup.date_filed = date.today()
+            db.session.commit()
+
+            return redirect(url_for('edit_request', request_id=request_id))
+        else:
+            print("Form errors:", form.errors)
+            # Optionally log or flash the errors from form.errors here for debugging
             return redirect(url_for('edit_request'))
-
-        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
-        if not pickup:
-            return redirect(url_for('edit_request'))
-
-        pickup.request_date = chosen_date
-        pickup.request_time = chosen_time
-        pickup.status = "Requested"
-        pickup.date_filed = date.today()
-        db.session.commit()
-
-        return redirect(url_for('edit_request', request_id=request_id))
 
 
     
@@ -969,22 +1036,37 @@ def create_app():
         approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"] 
         return jsonify(verifyZip(approved_zips, zip_code))
     
-    @app.route('/cancel-request', methods=["GET", "POST"])
+    @app.route('/cancel-request', methods=["POST"])
     def cancel_request():
-        request_id   = request.args.get('request_id')
-        pickup = db.session.get(PickupRequest, request_id)
-        pickup.status = "Cancelled"
-        db.session.commit()
-        if pickup.status == "Cancelled":
-            return jsonify({
-                "valid": True,
-                "reason": "Request cancelled."
-            })
+        form = CancelRequestForm()
+        if form.validate_on_submit():
+            request_id = form.request_id.data
+            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+
+            if not pickup:
+                return jsonify({
+                    "valid": False,
+                    "reason": "Pickup not found."
+                }), 404
+            pickup.status = "Cancelled"
+            db.session.commit()
+            if pickup.status == "Cancelled":
+                return jsonify({
+                    "valid": True,
+                    "reason": "Request cancelled."
+                })
+            else:
+                return jsonify({
+                    "valid": False,
+                    "reason": "Unable to cancel your request. Please contact us for further support."
+                })
         else:
             return jsonify({
                 "valid": False,
-                "reason": "Unable to cancel your request. Please contact us for further support."
-            })
+                "reason": "Invalid form submission.",
+                "errors": form.errors
+            }), 400
+
 
 
     @app.cli.command('reset-db')
@@ -1006,19 +1088,18 @@ def create_app():
         Handle 'page not found' errors. We email the error details, then
         redirect the user to the /error page.
         """
-        print("Here! 1")
-        send_error_report(
-            error_type="404 Not Found",
-            error_message=str(e),
-            traceback_info=traceback.format_exc(),
-            request_method=request.method,
-            request_path=request.path,
-            form_data=request.form.to_dict(),
-            args_data=request.args.to_dict(),
-            user_agent=request.headers.get('User-Agent'),
-            remote_addr=request.remote_addr,
-        )
-        return redirect(url_for('error'))
+        # send_error_report(
+        #     error_type="404 Not Found",
+        #     error_message=str(e),
+        #     traceback_info=traceback.format_exc(),
+        #     request_method=request.method,
+        #     request_path=request.path,
+        #     form_data=request.form.to_dict(),
+        #     args_data=request.args.to_dict(),
+        #     user_agent=request.headers.get('User-Agent'),
+        #     remote_addr=request.remote_addr,
+        # )
+        return redirect(url_for('error', error_message=str(e), traceback=traceback.format_exc()))
 
     @app.errorhandler(Exception)
     def handle_exception(e):
@@ -1027,18 +1108,18 @@ def create_app():
         We email the error details, then redirect the user to /error.
         """
         print("Here! 2")
-        send_error_report(
-            error_type=str(type(e)),
-            error_message=str(e),
-            traceback_info=traceback.format_exc(),
-            request_method=request.method,
-            request_path=request.path,
-            form_data=request.form.to_dict(),
-            args_data=request.args.to_dict(),
-            user_agent=request.headers.get('User-Agent'),
-            remote_addr=request.remote_addr,
-        )
-        return redirect(url_for('error'))
+        # send_error_report(
+        #     error_type=str(type(e)),
+        #     error_message=str(e),
+        #     traceback_info=traceback.format_exc(),
+        #     request_method=request.method,
+        #     request_path=request.path,
+        #     form_data=request.form.to_dict(),
+        #     args_data=request.args.to_dict(),
+        #     user_agent=request.headers.get('User-Agent'),
+        #     remote_addr=request.remote_addr,
+        # )
+        return redirect(url_for('error', error_message=str(e), traceback=traceback.format_exc()))
     
     @app.errorhandler(413)
     def request_entity_too_large(error):
@@ -1046,10 +1127,13 @@ def create_app():
 
     @app.route('/error')
     def error():
+        error=request.args.get('error_message')
+        traceback=request.args.get('traceback')
+
         """
         A simple endpoint that displays an error page whenever something goes wrong.
         """
-        return render_template('error.html')
+        return render_template('error.html', error_message=error, traceback=traceback)
     # --------------------------------------------------
 
     return app

@@ -18,6 +18,10 @@
         <p style="text-align: center;">Please head back to the <a href="/" style="text-decoration: underline; color: var(--m-green)">homepage</a> and try again. If the issue persists, <span onclick="openContactPopup()" style="text-decoration: underline; color: var(--m-green); cursor: pointer">contact us.</span> That being said, we've already been notified something happened and will fix this as soon as we can.</p>
         <button onclick="window.location.href='/'" class="submit-btn" style="margin-top: 24px;">Back to the Homepage</button>
     </div>
+    <div id="error-message" class="content-width">
+        <p>{{ error_message }}</p>
+        <p>{{ traceback }}</p>
+    </div>
 </main>
 
 {% endblock %}

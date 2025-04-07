@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const markCompleteButtons = document.querySelectorAll('.mark-complete');
     const markIncompleteButtons = document.querySelectorAll('.mark-incomplete');
     const markPickupImpossibleButtons = document.querySelectorAll('.mark-pickup-not-possible');
+
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
   
     markCompleteButtons.forEach(button => {
       button.addEventListener('click', async function() {
@@ -10,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           const formData = new FormData();
           formData.append('pickup_id', pickupId);
+          formData.append('csrf_token', csrfToken);
+
   
           const response = await fetch('/toggle_pickup_status', {
             method: 'POST',
@@ -41,8 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
         try {
           const formData = new FormData();
-          formData.append('pickup_id', pickupId);
-  
+          formData.append('pickup_id', pickupId);  
+          formData.append('csrf_token', csrfToken);
+
           const response = await fetch('/mark-pickup-not-possible', {
             method: 'POST',
             body: formData

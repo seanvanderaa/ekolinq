@@ -13,38 +13,40 @@
     <h1 style="margin: 0px; margin-bottom: 24px;">Scheduling Overview</h1>
     <h2 style="margin: 0px; margin-bottom: 0px;">Timeframe Configuration</h2>
     <p style="max-width: 550px; word-break: break-word;">If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
-    <form id="date-timeframe-form" method="POST" action="{{ url_for('admin_schedule') }}">
-      {{ csrf_token() }}
-      <table cellpadding="5" cellspacing="0">
-        <thead>
+  <form id="date-timeframe-form" method="POST" action="{{ url_for('admin_schedule') }}">
+    {{ admin_schedule_form.hidden_tag() }}
+    <table cellpadding="5" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Day of Week</th>
+          <th>Available?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {# Iterate over both the form entries and the schedule_data #}
+        {% for day_form, sched in zipped_data %}
           <tr>
-            <th>Day of Week</th>
-            <th>Available?</th>
+            <td>{{ sched.day_of_week }}</td>
+            <td>
+              {{ day_form.is_available() }}
+              {{ day_form.record_id() }}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for sched in schedule_data %}
-            <tr>
-              <td>{{ sched.day_of_week }}</td>
-              <td>
-                <input type="checkbox" name="day_{{ loop.index }}_available" 
-                        {% if sched.is_available %} checked {% endif %}>
-                <input type="hidden" name="record_{{ loop.index }}_id" value="{{ sched.id }}">
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <br/>
-      <button type="submit" class="download-btn" id="save-sched-btn">Save Schedule</button>
-    </form>
-    <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
-      {{ csrf_token() }}
-      <label for="admin-address">Set the Start and End Address for the Routing System</label>
-      <p style="margin: 0px;"><i>Must be in full address format (address, city, state, zip)</i></p>
-      <input type="text" id="admin-address" name="admin-address" style="width: 100%; box-sizing: border-box;" value="{{ address }}">
-      <button type="submit" class="download-btn" id="update-admin-address" style="margin-top: 16px;">Update Address</button>
-    </form>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+    {{ admin_schedule_form.submit(class="download-btn", id="save-sched-btn") }}
+  </form>
+
+  <!-- Address Form -->
+  <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
+    {{ admin_address_form.hidden_tag() }}
+    <label for="admin-address">Set the Start and End Address for the Routing System</label>
+    <p style="margin: 0px;"><i>Must be in full address format (address, city, state, zip)</i></p>
+    {{ admin_address_form.admin_address(class="form-control", id="admin-address", style="width:100%; box-sizing: border-box;") }}
+    {{ admin_address_form.submit(class="download-btn", id="update-admin-address", style="margin-top:16px;") }}
+  </form>
 </main>
 {% endblock %}
 
