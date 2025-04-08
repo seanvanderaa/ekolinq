@@ -123,4 +123,10 @@ class CancelEditForm(FlaskForm):
     request_id = HiddenField("Request ID", validators=[DataRequired(), Regexp(r'^\d+$', message="Invalid request ID")])
 
 class CancelRequestForm(FlaskForm):
-        request_id = HiddenField("Request ID", validators=[DataRequired()])
+    request_id = HiddenField("Request ID", validators=[DataRequired()])
+
+class EditRequestInitForm(FlaskForm):
+    request_id = StringField("Request ID", validators=[DataRequired()])
+    requester_email = EmailField("Email", validators=[
+        DataRequired(), Email(), Length(max=120)
+    ])

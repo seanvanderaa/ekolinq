@@ -41,7 +41,7 @@
 .website-notice {
     background-color: var(--m-green);
     color: white;
-    z-index: 1000;
+    z-index: 1;
     box-sizing: border-box;
     padding: 0px 12px;
     border-radius: 10px;
