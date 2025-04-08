@@ -12,7 +12,7 @@ from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from helpers.scheduling import build_schedule
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -845,8 +845,10 @@ def create_app():
 
     @app.route('/edit-request/check', methods=['POST'])
     def edit_request_check():
-        request_id = request.form.get('request_id', '').strip()
-        email = request.form.get('requester_email', '').strip()
+        form = EditRequestInitForm()  # Note: even though the original form is submitted as GET, your AJAX call uses POST.
+        if form.validate_on_submit():
+            request_id = form.request_id.data
+            email = form.email.data
 
         # Validate format: must be exactly 6 digits
         if not request_id.isdigit() or len(request_id) != 6:
@@ -919,15 +921,24 @@ def create_app():
 
     @app.route('/edit-request-init', methods=['GET'])
     def edit_request_init():
-        if request.method == "GET":
-            return render_template('edit_request.html',
-                        partial="/partials/_editRequest_init.html")
+        edit_request_form = EditRequestInitForm()
+        return render_template(
+            'edit_request.html',
+            edit_request_form=edit_request_form,
+            partial="/partials/_editRequest_init.html"
+        )
+
     
     @app.route('/edit-request', methods=['GET', 'POST'])
     def edit_request():
         if request.method == "GET":
             request_id = request.args.get('request_id', '').strip()
+            print(request_id)
             if not request_id:
+                return redirect(url_for('edit_request_init'))
+            
+            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+            if not pickup:
                 return redirect(url_for('edit_request_init'))
             pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
