@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const editAddressPencil = document.getElementById('edit-address');
     const addressHeader = document.getElementById('address-header');
     const closeUpdate = document.getElementById('cancel-update-address');
+    const loadingDiv = document.getElementById('loading-popup');
+    const overlay = document.getElementById('overlay');
 
     editAddressPencil.addEventListener('click', displayForm);
     closeUpdate.addEventListener('click', displayForm);
@@ -220,6 +222,8 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
 
       if (data.valid) {
         // If ZIP is valid, submit for real
+        overlay.style.display = "block";
+        loadingDiv.style.display = "block";
         updateAddressForm.submit(); 
       } else {
         alert(`${data.reason}`);
@@ -228,6 +232,11 @@ document.getElementById('cancel-request-form').addEventListener('submit', async 
       console.error(err);
       alert('Error verifying ZIP code. Please try again.');
     }
+  });
+
+  submitBtn.addEventListener('click', function() {
+    overlay.style.display = "block";
+    loadingDiv.style.display = "block";
   });
 });
 
