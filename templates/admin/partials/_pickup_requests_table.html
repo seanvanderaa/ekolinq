@@ -1,5 +1,12 @@
 {% for req in requests %}
 <tr>
+  <td style="min-width: 100px;">
+    <form action="{{ url_for('delete_pickup') }}" method="POST" style="display:inline;">
+      {{ delete_form.csrf_token }}
+      <input type="hidden" name="pickup_id" value="{{ req.id }}">
+      <button type="submit" class="download-btn" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+    </form>
+  </td>
   <td style="min-width: 120px;">{{ req.status }}</td>
   <td style="min-width: 150px;">{{ req.date_filed }}</td>
   <td style="min-width: 150px;">{{ req.request_date }}</td>

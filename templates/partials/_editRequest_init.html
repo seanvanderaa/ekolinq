@@ -11,59 +11,63 @@
     </span>
   </p>
   
-  <form id="edit-request-form" action="/edit-request" method="GET">
+  <form id="edit-request-form" action="{{ url_for('edit_request') }}" method="POST">
+    {{ edit_request_form.hidden_tag() }}  {# This includes the CSRF token #}
+    
     <div class="form-group">
-      <label class="edit-request-label" for="request_id">Request ID</label>
-      <input type="text" name="request_id" id="request_id" placeholder="000000">
+      <label class="edit-request-label" for="{{ edit_request_form.request_id.id }}">Request ID</label>
+      {{ edit_request_form.request_id(id=edit_request_form.request_id.id, placeholder="000000") }}
     </div>
     <div class="form-group">
-      <label class="edit-request-label" for="requester_email">Email</label>
-      <input type="email" name="requester_email" id="requester_email" placeholder="janedoe@gmail.com">
+      <label class="edit-request-label" for="{{ edit_request_form.requester_email.id }}">Email</label>
+      {{ edit_request_form.requester_email(id=edit_request_form.requester_email.id, placeholder="janedoe@gmail.com") }}
     </div>
     <button type="submit" class="action-btn align-center">Submit</button>
   </form>
 </div>
-
 <script>
-  // Attach a submit handler to the form
-  const editRequestForm = document.getElementById('edit-request-form');
+  document.addEventListener("DOMContentLoaded", function () {
+    const editRequestForm = document.getElementById('edit-request-form');
+    editRequestForm.addEventListener('submit', async function(e) {
+      e.preventDefault(); // Prevent normal form submission
   
-  editRequestForm.addEventListener('submit', async function(e) {
-    e.preventDefault(); // Prevent normal form submission
-
-    const requestIdInput = document.getElementById('request_id');
-    const requestId = requestIdInput.value.trim();
-    const emailInput = document.getElementById('requester_email');
-    const email = emailInput.value.trim();
-
-    // Basic front-end check for 6 digits
-    if (!/^\d{6}$/.test(requestId)) {
-      alert("Your code must be exactly 6 digits. Please check and try again.");
-      return;
-    }
-
-    // Now send an AJAX (fetch) request to check the ID
-    const formData = new FormData();
-    formData.append('request_id', requestId);
-    formData.append('requester_email', email);
-
-    try {
-      const response = await fetch('/edit-request/check', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        // If the server returned an error (404, 400, etc.), parse JSON and show the error
-        const data = await response.json();
-        alert(data.error || "An error occurred. Please try again.");
-      } else {
-        // If it’s OK, we can safely submit the form for real
-        editRequestForm.submit();
+      const requestId = document.getElementById('{{ edit_request_form.request_id.id }}').value.trim();
+      const email = document.getElementById('{{ edit_request_form.requester_email.id }}').value.trim();
+      
+      // Basic front-end check for 6 digits
+      if (!/^\d{6}$/.test(requestId)) {
+        alert("Your code must be exactly 6 digits. Please check and try again.");
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
-    }
+  
+      // Build form data
+      const formData = new FormData();
+      formData.append('request_id', requestId);
+      formData.append('requester_email', email);
+  
+      // Include CSRF token from the hidden field
+      const csrfTokenElem = document.querySelector('input[name="csrf_token"]');
+      if (csrfTokenElem) {
+        formData.append('csrf_token', csrfTokenElem.value);
+      }
+  
+      try {
+        const response = await fetch('{{ url_for("edit_request_check") }}', {
+          method: 'POST',
+          body: formData
+        });
+  
+        if (!response.ok) {
+          const data = await response.json();
+          alert(data.error || "An error occurred. Please try again.");
+        } else {
+          // If valid, redirect to /edit-request?request_id=XXXX
+          window.location.href = "{{ url_for('edit_request') }}" + "?request_id=" + encodeURIComponent(requestId);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong. Please try again.");
+      }
+    });
   });
-</script>
+  </script>

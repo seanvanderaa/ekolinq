@@ -16,7 +16,7 @@ class RequestForm(FlaskForm):
         DataRequired(), Email(), Length(max=120)
     ])
     phone = StringField("Phone Number", validators=[
-        Optional(), Length(max=20),
+        DataRequired(), Length(max=20),
         Regexp(r'^\+?[0-9\-\s]*$', message="Invalid phone number format")
     ])
     
@@ -130,3 +130,7 @@ class EditRequestInitForm(FlaskForm):
     requester_email = EmailField("Email", validators=[
         DataRequired(), Email(), Length(max=120)
     ])
+
+class DeletePickupForm(FlaskForm):
+    pickup_id = HiddenField(validators=[DataRequired()])
+    submit = SubmitField('Delete')

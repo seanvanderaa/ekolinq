@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app
+from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash
 from flask_wtf import CSRFProtect
 from models import db, PickupRequest, ServiceSchedule, Config as DBConfig, add_request, get_service_schedule, get_address
 from config import Config
@@ -12,7 +12,8 @@ from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing import get_optimized_route
 from helpers.scheduling import build_schedule
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm
+from helpers.emailer import send_contact_email, send_request_email, send_error_report, send_editted_request_email
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -24,12 +25,9 @@ import csv
 import io
 
 csrf = CSRFProtect()
-# --------------------------------------------------
-# NEW IMPORTS FOR ERROR HANDLING
-# --------------------------------------------------
+
 import traceback
-from helpers.emailer import send_contact_email, send_request_email, send_error_report
-# --------------------------------------------------
+
 
 def create_app():
     # 1) Create a Flask app
@@ -202,7 +200,7 @@ def create_app():
         if pickup is None:
             return "Request not found.", 404
 
-        #send_request_email(pickup)
+        send_request_email(pickup)
         update_address_form = UpdateAddressForm(obj=pickup)
         # In your confirmation route
         update_address_form.request_id.data = pickup.request_id
@@ -403,6 +401,7 @@ def create_app():
     @app.route('/admin-pickups', methods=['GET', 'POST'])
     @login_required
     def admin_pickups():
+        delete_form = DeletePickupForm()
         schedule_data = get_service_schedule()
 
         # Start with a base query for PickupRequest
@@ -433,12 +432,13 @@ def create_app():
 
         requests = query.all()
 
-        return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests)
+        return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests, delete_form=delete_form)
 
     @app.route('/admin/filtered_requests')
     @login_required
     def filtered_requests():
         query = PickupRequest.query
+        delete_form = DeletePickupForm()
 
         # Status filter
         status_filter = request.args.get('status_filter')
@@ -463,7 +463,24 @@ def create_app():
             query = query.order_by(PickupRequest.id.desc())
 
         requests = query.all()
-        return render_template('admin/partials/_pickup_requests_table.html', requests=requests)
+        return render_template('admin/partials/_pickup_requests_table.html', requests=requests, delete_form=delete_form)
+    
+    @app.route('/admin/pickups/delete', methods=['POST'])
+    @login_required
+    def delete_pickup():
+        form = DeletePickupForm()
+        if form.validate_on_submit():
+            pickup_id = form.pickup_id.data
+            pickup = PickupRequest.query.get_or_404(pickup_id)
+            
+            db.session.delete(pickup)
+            db.session.commit()
+            
+            flash('Pickup request deleted successfully.', 'success')
+        else:
+            flash('Invalid form submission.', 'danger')
+        
+        return redirect(url_for('admin_pickups'))
 
 
     @app.route('/admin/download_csv')
@@ -530,6 +547,7 @@ def create_app():
 
             # Redirect based on the page value
             if page == "edit_request":
+                send_editted_request_email(pickup)
                 return redirect(url_for('edit_request', request_id=request_id))
             else:
                 return redirect(url_for('confirmation', request_id=request_id))
@@ -845,7 +863,7 @@ def create_app():
 
     @app.route('/edit-request/check', methods=['POST'])
     def edit_request_check():
-        form = EditRequestInitForm()  # Note: even though the original form is submitted as GET, your AJAX call uses POST.
+        form = EditRequestInitForm()
         if form.validate_on_submit():
             request_id = form.request_id.data
             email = form.email.data
@@ -930,6 +948,7 @@ def create_app():
 
     
     @app.route('/edit-request', methods=['GET', 'POST'])
+    @csrf.exempt
     def edit_request():
         if request.method == "GET":
             request_id = request.args.get('request_id', '').strip()
@@ -1032,6 +1051,8 @@ def create_app():
             pickup.status = "Requested"
             pickup.date_filed = date.today()
             db.session.commit()
+
+            send_editted_request_email(pickup)
 
             return redirect(url_for('edit_request', request_id=request_id))
         else:

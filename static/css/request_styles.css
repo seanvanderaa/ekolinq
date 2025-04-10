@@ -71,9 +71,16 @@ main {
     top: -90px;
 }
 
+#gateCodeInput {
+    padding: 12px;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
 #qrCodeInput {
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: var(--l-grey);
+    padding: 12px;
 }
 
 .faq-container {
