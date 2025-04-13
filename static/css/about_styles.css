@@ -24,11 +24,38 @@ h4 {
   font-size: 20px;
 }
 
+#header-wrapper {
+  position: relative; /* Create a positioning context for the pseudo-element */
+  padding: 160px 0px;
+  padding-top: 20px;
+  /* You can set a background gradient or color as a base layer */
+  background: linear-gradient(to bottom, #d1e1c2c6, rgba(255, 255, 255, 0.53));
+  z-index: 0;
+}
+
+/* The pseudo-element for the textured background */
+#header-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../images/texture.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  opacity: .4; /* Set the texture to 20% opacity */
+  z-index: -1; /* Place it behind the content */
+}
+
+
 #header {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     column-gap: 100px;
+    margin-bottom: 0px;
 }
 
 #desk-icons {
@@ -60,7 +87,24 @@ h4 {
   padding: 80px;
   box-sizing: border-box;
   border-radius: 20px;
+  z-index: 0;
+  position: relative;
+}
 
+#block-text::before {
+  content: "";
+  position: absolute;
+  border-radius: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../images/texture_flows.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  opacity: .2; /* Set the texture to 20% opacity */
+  z-index: -1; /* Place it behind the content */
 }
 
 #block-text-center {

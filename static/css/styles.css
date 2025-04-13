@@ -251,12 +251,12 @@ li {
     justify-content: space-between;
     max-width: 960px;
     width: 960px;
-    column-gap: 48px;
+    column-gap: 64px;
 }
 
 #ekolinq-footer-img {
-    min-height: 220px;
-    min-width: 220px;
+    min-height: 160px;
+    min-width: 160px;
     background-color: var(--m-green);
     border-radius: 20px;
 }
