@@ -1,6 +1,8 @@
 # config.py
 import os
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'my_dev_secret_key')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///ekolinq.db')
@@ -11,3 +13,4 @@ class Config:
     MAIL_USE_SSL = False  # set to True if your IONOS setup requires SSL instead of TLS
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    GOOGLE_SERVICE_ACCOUNT_JSON = os.path.join(BASEDIR, 'credentials', 'service_account.json')

@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash
 from flask_wtf import CSRFProtect
-from models import db, PickupRequest, ServiceSchedule, Config as DBConfig, add_request, get_service_schedule, get_address
+from models import db, PickupRequest, ServiceSchedule, DriverLocation, RouteSolution, Config as DBConfig, add_request, get_service_schedule, get_address
 from config import Config
 from extensions import mail
 import requests
@@ -10,9 +10,10 @@ from dotenv import load_dotenv
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
-from helpers.routing import get_optimized_route
+from helpers.routing_old import get_optimized_route
 from helpers.scheduling import build_schedule
 from helpers.emailer import send_contact_email, send_request_email, send_error_report, send_editted_request_email
+from helpers.routing import fetch_distance_matrix, solve_tsp, seconds_to_hms
 from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
@@ -23,6 +24,7 @@ from werkzeug.utils import secure_filename
 import os
 import csv
 import io
+import json
 
 csrf = CSRFProtect()
 
@@ -652,9 +654,9 @@ def create_app():
             past_dates=past_dates_final
         )
 
-    @app.route('/live-route')
+    @app.route('/live-route2')
     @login_required
-    def live_route():
+    def live_route2():
         pickup_status_form = PickupStatusForm()
         selected_date = request.args.get('date')
         if not selected_date:
@@ -726,6 +728,141 @@ def create_app():
             leg_times_str=leg_times_str,
             pickup_status_form=pickup_status_form
         )
+    
+    @app.route('/live-route', methods=['GET'])
+    @login_required
+    def live_route():
+        CACHE_MAX_AGE_MINUTES = 10
+        pickup_status_form = PickupStatusForm()
+        selected_date = request.args.get('date')
+        if not selected_date:
+            return "Date parameter is required", 400
+        
+        # 1) Query "Requested" pickups (we exclude Completed or Incomplete)
+        #    Adjust your logic if "Incomplete" is also something you'd want included.
+        pickups_requested = PickupRequest.query.filter_by(
+            request_date=selected_date,
+            status='Requested'
+        ).all()
+
+        # 2) Determine driver's current location
+        driver_loc = DriverLocation.query.first()  # or filter by user_id if multi-user
+        if driver_loc and driver_loc.full_address():
+            driver_current_location = driver_loc.full_address()
+        else:
+            # If the driver hasn't started or we haven't stored location, fall back to some default:
+            # e.g. your adminAddress or depot
+            admin_address = "1234 Admin St, SomeCity CA"  # or from DB
+            driver_current_location = admin_address
+
+        # 3) Build the list of addresses for the solver:
+        #    Index 0 in our matrix = driver's current location
+        addresses = [driver_current_location]
+        
+        #    Then add each requested pickup
+        for p in pickups_requested:
+            full_addr = f"{p.address}, {p.city} CA"
+            addresses.append(full_addr)
+
+        # 4) Attempt to load a cached route solution for this date
+        cached_solution = RouteSolution.query.filter_by(date=selected_date).first()
+        should_refresh = True  # default to True, we'll decide if we can skip refreshing
+        
+        if cached_solution:
+            # Check how old it is
+            age = datetime.now() - cached_solution.last_updated
+            if age < timedelta(minutes=CACHE_MAX_AGE_MINUTES):
+                # If it's still "fresh," we might want to skip re-calculation
+                # BUT we also need to confirm that the driver's location hasn't changed 
+                # or the addresses haven't changed, etc.
+                # For simplicity, let's just check if the addresses match what's in the cache. 
+                # If they match, we skip re-calc; if not, we recalc.
+                
+                cached_route_list = json.loads(cached_solution.route_json)
+                # Compare the length and the first location (driver loc).
+                # A more robust approach might compare sets of addresses.
+                if (len(cached_route_list) == len(addresses)) and (cached_route_list[0] == driver_current_location):
+                    should_refresh = False
+        
+        # 5) If we need to refresh, we build a new matrix and solve TSP
+        final_route = []
+        total_time_str = "0 min"
+        
+        if should_refresh:
+            # fetch matrix
+            try:
+                matrix = fetch_distance_matrix(addresses)
+            except Exception as e:
+                print(f"Distance matrix error: {e}")
+                # fallback: If there's an error, let's just skip optimization
+                # and pass the addresses as-is
+                final_route = addresses
+                total_time_str = "N/A"
+            else:
+                # Solve TSP
+                # If you want a round trip that ends back at driver's starting location, set round_trip=True
+                # If you want a route that ends at the last visited address, round_trip=False
+                route_indices = solve_tsp(matrix)
+                if route_indices is None:
+                    final_route = addresses  # fallback
+                else:
+                    final_route = [addresses[i] for i in route_indices]
+                    
+                    # compute total route time 
+                    total_sec = 0
+                    for i in range(len(route_indices) - 1):
+                        total_sec += matrix[route_indices[i]][route_indices[i+1]]
+                    total_time_str = seconds_to_hms(total_sec)
+            
+            # Update or create the cache entry in DB
+            if cached_solution is None:
+                cached_solution = RouteSolution(
+                    date=selected_date,
+                    route_json=json.dumps(final_route),
+                    total_time_str=total_time_str,
+                    last_updated=datetime.now()
+                )
+                db.session.add(cached_solution)
+            else:
+                cached_solution.route_json = json.dumps(final_route)
+                cached_solution.total_time_str = total_time_str
+                cached_solution.last_updated = datetime.now()
+            
+            db.session.commit()
+        
+        else:
+            # We can just use the cached data
+            solution_data = cached_solution.to_dict()
+            final_route = solution_data["route"]
+            total_time_str = solution_data["total_time_str"]
+        
+        # 6) Re-order the pickup requests so they match the final route order
+        #    final_route[0] is the driver’s current location, so we skip that in sorting.
+        #    if round_trip=True, final_route[-1] will also be the driver location.
+        route_map = {addr: idx for idx, addr in enumerate(final_route)}
+        
+        def sort_key(pr):
+            full_addr = f"{pr.address}, {pr.city} CA"
+            return route_map.get(full_addr, 999999)
+        
+        pickups_requested.sort(key=sort_key)
+
+        complete_incomplete_pickups = PickupRequest.query.filter(
+            PickupRequest.request_date == selected_date,
+            or_(PickupRequest.status == 'Complete', PickupRequest.status == 'Incomplete')
+        ).all()
+
+        # 7) Render or return your data
+        return render_template(
+            'admin/live_route.html',
+            date=selected_date,
+            pickups_requested=pickups_requested,
+            pickups_completed=complete_incomplete_pickups,
+            route=final_route,
+            pickup_status_form=pickup_status_form,
+            total_time_str=total_time_str
+        )
+
 
     @app.route('/view-route-info')
     @login_required
@@ -744,11 +881,12 @@ def create_app():
         requested_addresses = [p.address + ", " + p.city + " CA" for p in all_pickups]
 
         # Now call our route-optimization function
+        adminAddress = DBConfig.query.filter_by(key='admin_address').first()
         try:
             sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
                 addresses=requested_addresses,
                 # Optional: provide start_location if you have a depot location
-                start_location="5381 Mallard Dr., Pleasanton, CA",
+                start_location=adminAddress.value,
                 api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
             )
         except Exception as e:
@@ -787,10 +925,16 @@ def create_app():
     @app.route('/toggle_pickup_status', methods=['POST'])
     @login_required
     def toggle_pickup_status():
+        """
+        Toggles between 'Requested' and 'Complete' (or 'Incomplete') for a given pickup.
+        If new status is 'Complete', we also update driver location to this pickup's address.
+        """
         form = PickupStatusForm()
         if form.validate_on_submit():
             pickup_id = form.pickup_id.data
-        
+        else:
+            return "Error: Form validation failed", 400
+
         if not pickup_id:
             return "Error: No pickup_id provided", 400
 
@@ -798,15 +942,18 @@ def create_app():
         if not pickup:
             return "Error: Pickup not found", 404
 
-        # Toggle the status and update complete_date_time accordingly.
+        # Current status could be 'Requested', 'Complete', or 'Incomplete'.
+        # We want to toggle between 'Complete' and 'Requested' for this route.
         if pickup.status in ["Complete", "Incomplete"]:
-            # If current status is complete/incomplete, set to requested and reset the timestamp.
+            # If current status is Complete or Incomplete -> set back to Requested
             pickup.status = "Requested"
             pickup.pickup_complete_info = None
         else:
-            # Otherwise, set status to complete and log the current date and time.
+            # Otherwise, set to Complete and record the completion time
             pickup.status = "Complete"
-            pickup.pickup_complete_info = datetime.now()  # or datetime.now() if you're not using UTC
+            pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
+            # Because the pickup was just completed, update the driver's location
+            update_driver_location(pickup.address, pickup.city)
 
         db.session.commit()
 
@@ -815,13 +962,19 @@ def create_app():
             "new_status": pickup.status
         })
 
-    
+
     @app.route('/mark-pickup-not-possible', methods=['POST'])
     @login_required
     def mark_pickup_not_possible():
+        """
+        Marks the pickup as 'Incomplete'. This does NOT change the driver location,
+        because the pickup was never actually completed.
+        """
         form = PickupStatusForm()
         if form.validate_on_submit():
             pickup_id = form.pickup_id.data
+        else:
+            return "Error: Form validation failed", 400
 
         if not pickup_id:
             return "Error: No pickup_id provided", 400
@@ -830,17 +983,34 @@ def create_app():
         if not pickup:
             return "Error: Pickup not found", 404
 
-        if pickup.status:
-            pickup.status = "Incomplete"
-            pickup.pickup_complete_info = datetime.utcnow()
+        # Mark the pickup as incomplete
+        pickup.status = "Incomplete"
+        pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
+        update_driver_location(pickup.address, pickup.city)
 
+        # Notice: do not update driver location here since it's incomplete.
         db.session.commit()
 
         return jsonify({
             "message": "Status updated successfully",
             "new_status": pickup.status
         })
-    
+
+    def update_driver_location(address, city):
+        """
+        Update the driver's location to the provided address/city.
+        If no DriverLocation row exists yet, create one.
+        """
+        driver_loc = DriverLocation.query.first()
+        # If you have multiple drivers, you'd filter by user_id here (DriverLocation.query.filter_by(user_id=...).first())
+        if not driver_loc:
+            driver_loc = DriverLocation(address=address, city=city)
+            db.session.add(driver_loc)
+        else:
+            driver_loc.address = address
+            driver_loc.city = city
+
+        db.session.commit()
 
     def validate_contact(name, email, message):
         if not name or not email or not message:

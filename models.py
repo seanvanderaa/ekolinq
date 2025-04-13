@@ -2,6 +2,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 import random
+from datetime import datetime
+import json
 
 db = SQLAlchemy()
 
@@ -11,10 +13,14 @@ class PickupRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fname = db.Column(db.String(100), nullable=True)
     lname = db.Column(db.String(100), nullable=True)
+
     email = db.Column(db.String(120), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=True)
+
     address = db.Column(db.String(200), nullable=False)
     city = db.Column(db.String(200), nullable=False)
     zipcode = db.Column(db.String(10), nullable=False)
+
     notes = db.Column(db.String(400), nullable=True)
     status = db.Column(db.String(50), default='Pending')
     
@@ -31,7 +37,7 @@ class PickupRequest(db.Model):
     pickup_complete_info = db.Column(db.String(120), nullable=True)
 
     request_id = db.Column(db.String(6), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20), nullable=True)
+
 
 def generate_unique_request_id():
     # Generate a random 6-digit code as a string.
@@ -100,3 +106,36 @@ def add_request(**kwargs):
     db.session.add(new_pickup)
     db.session.commit()
     return new_pickup.id
+
+class RouteSolution(db.Model):
+    """
+    Table to cache/store the solved route for a given date (or driver, if multiple).
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(50), nullable=False)  
+    route_json = db.Column(db.Text, nullable=True)
+    total_time_str = db.Column(db.String(50), nullable=True)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "date": self.date,
+            "route": json.loads(self.route_json) if self.route_json else [],
+            "total_time_str": self.total_time_str,
+            "last_updated": self.last_updated.isoformat()
+        }
+
+
+class DriverLocation(db.Model):
+    """
+    Stores the driver's last known location, so the route can start from there.
+    This is useful once they've begun making pickups.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(255), nullable=True)
+    city = db.Column(db.String(255), nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def full_address(self):
+        return f"{self.address}, {self.city} CA" if (self.address and self.city) else None

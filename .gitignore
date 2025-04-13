@@ -5,3 +5,6 @@
 __pycache__/
 
 /helpers/__pycache__/
+
+website/credentials/*.json
+website/credentials/

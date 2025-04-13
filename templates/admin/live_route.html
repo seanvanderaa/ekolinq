@@ -51,11 +51,9 @@
     {% for pickup in pickups_requested %}
       <div class="pickup-stop" {% if loop.index == 1 %}style="margin-bottom: 64px;"{% endif %}>
         <div class="pickup-header {% if loop.index != 1 %}disabled{% endif %}">
-          <h4>Stop {{ loop.index }}</h4>
+          <h4>{{ pickup.address }} <span style="font-size: 16px; margin-left: 10px;">{{ pickup.city }}, CA</span></h4>
         </div>        
         <div class="pickup-content">
-          <p>{{ pickup.address }}</p>
-          <p>{{ pickup.city }}, CA</p>
           <div class="align-center button-wrapper">
             <button {% if loop.index != 1 %} disabled {% endif %} class="open-map button-wrapper-btn"
                     onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">
