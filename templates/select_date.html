@@ -82,32 +82,32 @@
       <div class="faq-container">
         <div class="faq-item align-center" id="faq-items">
           <h3 style="margin: 16px 0px;">What if I need to reschedule?</h3>
-          <img src="/static/images/calendar.png" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
+          <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
         </div>
         <div class="faq-item align-center" id="faq-result">
           <h3 style="margin: 16px 0px;">What time will you pick up my items?</h3>
-          <img src="/static/images/clock.png" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
+          <img src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
         </div>
         <div class="faq-item align-center" id="faq-better">
           <h3 style="margin: 16px 0px;">Why should I use EkoLinq?</h3>
-          <img src="/static/images/EkoLinq Logo Black.png" alt="" height="70" style="margin-top: 10px; opacity: .8;">
+          <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70" style="margin-top: 10px; opacity: .8;">
         </div>
       </div>
       <div class="overlay" id="overlay"></div>
       <div class="faq-popup" id="faq-items-popup" style="display: none;">
-        <img src="/static/images/calendar.png" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
+        <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
         <h3 style="margin: 16px 0px;">What if I need to reschedule?</h3>
         <p>After scheduling your pickup, you have the ability to edit the date via the "Edit a request" button in the top right corner of the page. In your confirmation email, you'll receive a unique number that you can then use to edit your request.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
       <div class="faq-popup" id="faq-result-popup" style="display: none;">
-        <img src="/static/images/clock.png" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
+        <img src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
         <h3 style="margin: 16px 0px;">What time will you pick up my items?</h3>
         <p>All pick ups occur between 8am-4pm on the day you request.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
       <div class="faq-popup" id="faq-better-popup" style="display: none;">
-        <img src="/static/images/EkoLinq Logo Black.png" alt="" height="70" style="margin-top: 10px; opacity: .8;">
+        <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70" style="margin-top: 10px; opacity: .8;">
         <h3 style="margin: 16px 0px;">Why should I use EkoLinq?</h3>
         <p>EkoLinq is heavily involved in our local ecosystem—whether through collaborations with other businesses, donating proceeds from our work to community members, or by providing a better outlet for textile waste, EkoLinq aims to have a positive impact in the Tri-Valley.</p>
         <button class="popup-close download-btn">Close</button>

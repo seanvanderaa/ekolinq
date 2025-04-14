@@ -66,19 +66,19 @@
           <div class="impact-square fade-up"></div>
           <div class="impact-square fade-up"></div>
           <div class="impact-square align-center highlight-square" data-reveal-target="pickup-reveal">
-            <img src="/static/images/ekolinq-icon-collect.svg" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="" height="80px;">
           </div>
           <div class="impact-square align-center " id="fundraiser-reveal">
             <p class="reveal-text">Fundraising collection events</p>
           </div>
           <div class="impact-square align-center highlight-square" data-reveal-target="collect-reveal">
-            <img src="/static/images/ekolinq-icon-bin.svg" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-bin.svg') }}" alt="" height="80px;">
           </div>
           <div class="impact-square align-center " id="pickup-reveal">
             <p class="reveal-text">Residential and business site pick-ups.</p>
           </div>
           <div class="impact-square align-center highlight-square" data-reveal-target="fundraiser-reveal">
-            <img src="/static/images/ekolinq-icon-fundraise.svg" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="" height="80px;">
           </div>
           <div class="impact-square align-center " id="collect-reveal">
             <p class="reveal-text">Collection bins and drop boxes</p>
@@ -150,7 +150,7 @@
   <div class="content-width">
     <div id="collection-event" class="align-center block-margin box-shadow">
       <div style="flex: 1;" class="align-center">
-        <img src="/static/images/Group 26.png" height="80" alt="">
+        <img src="{{ url_for('static', filename='images/Group 26.png') }}" height="80" alt="">
       </div>
       <div style="flex: 2; display: flex; flex-direction: column; justify-content: center; max-width: 300px;">
         <h2 style="color: var(--m-blue); flex: 1; margin: 0px;">Interested in hosting a collection event?</h2>
@@ -158,7 +158,7 @@
         <button id="get-in-touch" class="action-btn" style="margin-top: 36px;" onclick="openContactPopup()"><i style="font-weight: bold;" class="bi bi-arrow-up-right btn-icon align-center"></i>Get in Touch</button>
       </div>
       <div style="flex: 1;" class="align-center" id="mobile-image-removed">
-        <img src="/static/images/Group 30.png" height="60" alt="">
+        <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="">
       </div>
     </div>
     <div id="shared-vision" class="align-center block-margin" style="text-align: center">
@@ -167,15 +167,15 @@
       <p style="font-weight: 500; max-width: 400px; margin: 24px;">EkoLinq contributes at least 5% of profits to eco-friendly, carbon capture initiatives such as:</p>
       <div id="shared-vision-orgs" class="align-center" style="gap: 36px; margin-top: 24px;">
         <div class="initiatives" class="align-center">
-          <img src="/static/images/tradewater.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
           <p style="max-width: 280px;">Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
         </div>
         <div class="initiatives" class="align-center">
-          <img src="/static/images/onetree.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/onetree.png') }}" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
           <p style="max-width: 280px;">One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
         </div>
         <div class="initiatives" class="align-center">
-          <img src="/static/images/climeworks.png" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" alt="" class="box-shadow" style="border-radius: 20px;">
           <p style="max-width: 280px;">Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
         </div>
       </div>

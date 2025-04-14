@@ -9,7 +9,7 @@
 {% block content %}
 <main class="content-width">
   <h2 style="color: var(--m-green); font-family: var(--pub); margin: 0px;">
-    Live Pick Ups <span style="font-size: 14px; color: var(--subtle-text-wbg)"><i>Est. {{ total_time_str }}</i></span>
+    Live Pick Ups <span style="font-size: 14px; color: var(--subtle-text-wbg)"><i>Time Remaining {{ total_time_str }}</i></span>
   </h2>
   <p style="margin-top: 8px; color: var(--subtle-text-wbg)">{{ date }}</p>
 
@@ -54,6 +54,19 @@
           <h4>{{ pickup.address }} <span style="font-size: 16px; margin-left: 10px;">{{ pickup.city }}, CA</span></h4>
         </div>        
         <div class="pickup-content">
+          {% if loop.index == 1 %}
+            {% if pickup.qr_code %}
+            <div class="pickup-gate-info align-center">
+              <h4>Address QR Code: </h4>
+              <img src="{{ url_for('static', filename='images/qr_codes/' ~ pickup.qr_code) }}" alt="QR Code" width="100%"/>
+            </div>
+            {% endif %}
+            {% if pickup.gate_code %}
+            <div class="pickup-gate-info align-center">
+              <h3>Gate Code: {{ pickup.gate_code }}</h3>
+            </div>
+            {% endif %}
+          {% endif %}
           <div class="align-center button-wrapper">
             <button {% if loop.index != 1 %} disabled {% endif %} class="open-map button-wrapper-btn"
                     onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">

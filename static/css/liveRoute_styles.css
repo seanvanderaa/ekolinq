@@ -82,6 +82,10 @@ main {
     color: rgba(255, 255, 255, 0.8);
 }
 
+.pickup-gate-info {
+    flex-direction: column;
+}
+
 .pickup-content {
     padding: 12px 24px;
     border: 1px solid var(--border-grey);

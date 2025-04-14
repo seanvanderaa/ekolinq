@@ -21,17 +21,17 @@
     <p style="margin-top: 24px;">Below are three key challenges that illustrate the issue at a glance:</p>
     <div id="info-blocks" class="fade-in-section">
       <div class="info-block" class="align-center">
-        <img src="../static/images/landfill.png" height="60">
+        <img src="{{ url_for('static', filename='images/landfill.png') }}" height="60">
         <h3>Landfill Overload</h3>
         <p>Discarded textiles can take decades to decompose, releasing methane—a greenhouse gas that is up to 28 times more potent than carbon dioxide (EPA, 2021).</p>
       </div>
       <div class="info-block" class="align-center">
-        <img src="../static/images/fossil fuel.png" height="60">
+        <img src="{{ url_for('static', filename='images/fossil_fuel.png') }}" height="60">
         <h3>Resource Intensity</h3>
         <p>The production of new textiles requires vast amounts of water, energy, and raw materials. For example, a single cotton shirt may require approximately 700 gallons of water (World Wildlife Fund, 2019).</p>
       </div>
       <div class="info-block" class="align-center">
-        <img src="../static/images/chemicals.png" height="60">
+        <img src="{{ url_for('static', filename='images/chemicals.png') }}" height="60">
         <h3>Chemical Impact</h3>
         <p>Toxic dyes and chemicals used during manufacturing can leach into the soil and waterways when textiles are improperly disposed of, adversely affecting ecosystems and human health (Greenpeace, 2018).</p>
       </div>

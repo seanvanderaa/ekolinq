@@ -59,7 +59,12 @@ def solve_tsp(matrix):
     print("Solving distance matrix.")
     n = len(matrix)
     
-    manager = pywrapcp.RoutingIndexManager(n, 1, 0)
+    manager = pywrapcp.RoutingIndexManager(
+        n,
+        1,
+        [0],       # start nodes
+        [n - 1]    # end nodes
+    )
     
     routing = pywrapcp.RoutingModel(manager)
 
