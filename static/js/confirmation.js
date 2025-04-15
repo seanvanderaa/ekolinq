@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById('pickup-info').textContent = `${formattedDate} between 8am-4pm`;
   
   const updateAddressForm = document.getElementById('edit-address-form');
+  const loadingDiv = document.getElementById('loading-popup');
 
   updateAddressForm.addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -76,6 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (data.valid) {
         // If ZIP is valid, submit for real
+        overlay.style.display = "block";
+        loadingDiv.style.display = "block";
         updateAddressForm.submit(); 
       } else {
         alert(`${data.reason}`);

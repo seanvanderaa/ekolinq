@@ -1,87 +1,151 @@
-2025-04-13 17:02:44,043 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1273]
+2025-04-14 21:54:41,191 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-14 21:55:16,648 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:156]
+2025-04-14 21:55:16,685 INFO: New pickup request created. ID in DB: 2, request_id: 243426 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:208]
+2025-04-14 21:55:16,694 INFO: User is selecting a date/time for request_id=243426, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:55:23,990 INFO: User is selecting a date/time for request_id=243426, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:55:27,034 INFO: User is selecting a date/time for request_id=243426, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:55:27,940 INFO: User is selecting a date/time for request_id=243426, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:55:28,309 INFO: User is selecting a date/time for request_id=243426, offset=2. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:55:30,070 INFO: Pickup request 243426 updated with chosen_date=2025-05-03, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 21:55:30,083 INFO: Sending pickup request email for request_id=243426 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:283]
+2025-04-14 21:55:31,479 INFO: Rendering confirmation.html for request_id=243426 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:296]
+2025-04-14 21:56:41,177 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-14 21:56:46,384 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-14 21:57:00,899 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:156]
+2025-04-14 21:57:00,915 INFO: New pickup request created. ID in DB: 3, request_id: 784396 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:208]
+2025-04-14 21:57:00,923 INFO: User is selecting a date/time for request_id=784396, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
+2025-04-14 21:57:02,595 INFO: Pickup request 784396 updated with chosen_date=2025-04-18, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 21:57:02,605 INFO: Sending pickup request email for request_id=784396 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:283]
+2025-04-14 21:57:03,904 INFO: Rendering confirmation.html for request_id=784396 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:296]
+2025-04-14 21:57:42,797 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:707]
+2025-04-14 21:57:49,380 INFO: GET /callback - Callback endpoint hit for admin login. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:720]
+2025-04-14 21:57:49,808 INFO: Successfully logged in and obtained tokens for admin. Redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:764]
+2025-04-14 21:57:49,823 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:777]
+2025-04-14 21:57:56,748 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:954]
+2025-04-14 21:58:10,243 INFO: Sending pickup request email for request_id=757167 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:283]
+2025-04-14 21:58:11,557 INFO: Rendering confirmation.html for request_id=757167 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:296]
+2025-04-14 22:04:01,260 WARNING: Unauthorized access attempt with request_id=243426 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:283]
+2025-04-14 22:11:36,069 WARNING: Unauthorized access attempt with request_id=757167 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:283]
+2025-04-14 22:11:36,070 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1621]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1299, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 55, in top-level template code
-    {% include 'partials/_footer.html' %}
-    ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/partials/_footer.html", line 5, in template
-    <img id="footer-img-mobile" src="{{ url_for('static', filename='images/EKOLINQ-LOGO.png) }}" alt="" height="40">
-    ^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.TemplateSyntaxError: expected token ',', got 'static'
-2025-04-13 17:02:44,048 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1273]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1299, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 55, in top-level template code
-    {% include 'partials/_footer.html' %}
-    ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/partials/_footer.html", line 5, in template
-    <img id="footer-img-mobile" src="{{ url_for('static', filename='images/EKOLINQ-LOGO.png) }}" alt="" height="40">
-    ^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.TemplateSyntaxError: expected token ',', got 'static'
-2025-04-13 17:02:44,053 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1273]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1299, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 55, in top-level template code
-    {% include 'partials/_footer.html' %}
-    ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/partials/_footer.html", line 5, in template
-    <img id="footer-img-mobile" src="{{ url_for('static', filename='images/EKOLINQ-LOGO.png) }}" alt="" height="40">
-    ^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.TemplateSyntaxError: expected token ',', got 'static'
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 284, in confirmation
+    abort(404)
+    ~~~~~^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/helpers.py", line 284, in abort
+    current_app.aborter(code, *args, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/exceptions.py", line 876, in __call__
+    raise self.mapping[code](*args, **kwargs)
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-14 22:11:44,156 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-14 22:11:48,601 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:375]
+2025-04-14 22:11:53,861 INFO: Form validated successfully for request_id=023491 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:392]
+2025-04-14 22:11:53,880 WARNING: No PickupRequest found for request_id=023491. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
+2025-04-14 22:13:01,762 INFO: Form validated successfully for request_id=023492 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:392]
+2025-04-14 22:13:01,769 WARNING: No PickupRequest found for request_id=023492. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
+2025-04-14 22:13:25,563 INFO: Form validated successfully for request_id=023492 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:392]
+2025-04-14 22:13:25,569 WARNING: No PickupRequest found for request_id=023492. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
+2025-04-14 22:13:34,981 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:13:35,311 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:13:39,412 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:14:15,380 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:14:31,165 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:14:39,011 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:14:52,620 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:15:40,988 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:15:58,943 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:16:02,430 INFO: GET /logout - Logging out user and clearing session. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-04-14 22:16:02,456 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:715]
+2025-04-14 22:16:05,895 INFO: GET /callback - Callback endpoint hit for admin login. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:728]
+2025-04-14 22:16:06,425 INFO: Successfully logged in and obtained tokens for admin. Redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:772]
+2025-04-14 22:16:06,456 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:16:54,563 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:17:19,729 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:17:41,472 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:17:58,326 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:18:13,873 INFO: GET /route-overview - displaying route overview page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1121]
+2025-04-14 22:18:13,887 INFO: Rendering route_overview.html with next_pickup=2025-04-18, #upcoming=2, #past=0 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1215]
+2025-04-14 22:18:17,570 INFO: GET /view-route-info - user requested route info for date=2025-05-03 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1231]
+2025-04-14 22:18:17,879 INFO: view_route_info final route computed. Rendering view_route_info.html [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1287]
+2025-04-14 22:18:25,424 INFO: GET /route-overview - displaying route overview page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1121]
+2025-04-14 22:18:25,428 INFO: Rendering route_overview.html with next_pickup=2025-04-18, #upcoming=2, #past=0 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1215]
+2025-04-14 22:18:41,879 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:785]
+2025-04-14 22:18:43,450 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-14 22:18:46,036 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-14 22:18:53,070 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:156]
+2025-04-14 22:18:53,090 INFO: New pickup request created. ID in DB: 4, request_id: 452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:208]
+2025-04-14 22:18:53,098 INFO: User is selecting a date/time for request_id=452037, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:261]
+2025-04-14 22:18:56,949 INFO: Pickup request 452037 updated with chosen_date=2025-04-19, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 22:18:56,964 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:18:58,365 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:19:04,958 INFO: User is selecting a date/time for request_id=452037, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:261]
+2025-04-14 22:19:07,243 INFO: Pickup request 452037 updated with chosen_date=2025-04-18, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 22:19:07,264 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:19:08,598 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:19:18,349 INFO: Received valid POST to update address for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:320]
+2025-04-14 22:19:18,360 INFO: Successfully updated address for request_id=452037 to (5389 Mallard Dr., Pleasanton, 94566). [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:339]
+2025-04-14 22:19:18,367 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:19:19,648 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:22:47,927 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:22:49,274 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:23:51,470 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:23:52,856 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:24:05,137 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:24:06,427 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:24:52,791 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:24:54,125 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:25:17,191 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:25:18,478 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:25:22,953 INFO: Received valid POST to update address for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:320]
+2025-04-14 22:25:22,964 INFO: Successfully updated address for request_id=452037 to (5381 Mallard Dr., Pleasanton, 94566). [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:339]
+2025-04-14 22:25:22,971 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:25:24,287 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:25:33,875 INFO: Received valid POST to update address for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:320]
+2025-04-14 22:25:33,884 INFO: Successfully updated address for request_id=452037 to (5382 Mallard Dr., Pleasanton, 94566). [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:339]
+2025-04-14 22:25:33,907 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:25:35,218 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:26:07,404 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:26:08,707 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:26:31,289 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:26:32,673 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:26:37,024 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:26:38,376 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:26:53,934 INFO: User is selecting a date/time for request_id=452037, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:261]
+2025-04-14 22:26:57,728 INFO: User is selecting a date/time for request_id=452037, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:261]
+2025-04-14 22:26:58,843 INFO: Pickup request 452037 updated with chosen_date=2025-04-26, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 22:26:58,856 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:27:00,225 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:27:25,971 INFO: Sending pickup request email for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:27:27,243 INFO: Rendering confirmation.html for request_id=452037 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:304]
+2025-04-14 22:31:10,295 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-14 22:31:13,371 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-14 22:31:29,080 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:156]
+2025-04-14 22:31:29,102 INFO: New pickup request created. ID in DB: 5, request_id: 687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:208]
+2025-04-14 22:31:29,111 INFO: User is selecting a date/time for request_id=687940, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:261]
+2025-04-14 22:31:30,634 INFO: Pickup request 687940 updated with chosen_date=2025-04-19, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 22:31:30,646 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:31:30,647 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:294]
+2025-04-14 22:31:32,105 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:309]
+2025-04-14 22:31:39,442 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:31:39,442 INFO: Confirmation email already sent for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:299]
+2025-04-14 22:31:39,443 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:309]
+2025-04-14 22:31:51,512 INFO: Received valid POST to update address for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:325]
+2025-04-14 22:31:51,522 INFO: Successfully updated address for request_id=687940 to (5382 Mallard Dr., Pleasanton, 94566). [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:344]
+2025-04-14 22:31:52,903 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:291]
+2025-04-14 22:31:52,904 INFO: Confirmation email already sent for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:299]
+2025-04-14 22:31:52,904 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:309]
+2025-04-14 22:34:53,175 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:298]
+2025-04-14 22:34:53,176 INFO: Confirmation email already sent for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:306]
+2025-04-14 22:34:53,177 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:316]
+2025-04-14 22:35:00,707 INFO: User is selecting a date/time for request_id=687940, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-14 22:35:02,181 INFO: User is selecting a date/time for request_id=687940, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-14 22:35:04,027 INFO: Pickup request 687940 updated with chosen_date=2025-04-26, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-14 22:35:04,027 INFO: Sending edited pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:260]
+2025-04-14 22:35:05,319 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:298]
+2025-04-14 22:35:05,319 INFO: Confirmation email already sent for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:306]
+2025-04-14 22:35:05,319 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:316]

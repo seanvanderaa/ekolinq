@@ -129,13 +129,13 @@ footer {
         background-repeat: no-repeat;
         height: 100%;
         box-sizing: border-box;
-        padding-top: 20vh;
+        padding-top: 15vh;
         padding-bottom: 10vh;
     }
     
     #confirmation-wrapper {
         border-radius: 20px;
-        padding: 2em 1em;
+        padding: 2em;
     }
     
     .confirmation-info p {

@@ -5,16 +5,17 @@
         <img src="{{ url_for('static', filename='images/EkoLinqLogo_White.png') }}" alt="Company Logo" height="30">
       </a>
     </div>
-    <p style="margin: 0px; margin-left: 24px; color: white;padding-bottom: 2px; font-size: 14px;">ADMIN WORKSPACE</p>
-    <a id="home-button" href="/" style="padding: 8px 12px; background-color: rgba(255, 255, 255, 0.372); border-radius: 5px; font-family: var(--mont); color: white; margin-left: 24px;">Back To Main Site</a>
+    <p style="margin: 0px; margin-left: 24px; color: var(--yel);padding-bottom: 2px; font-size: 14px;">ADMIN WORKSPACE</p>
   </div>
     <button class="navbar__toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbar-menu">
       <i class="bi bi-list" style="color: white; font-size: 24px;"></i>
     </button>
     <ul class="navbar__menu" id="navbar-menu">
+      <li class="navbar__item"><a href="/" class="navbar__link">Back to Main Site</a></li>
       <li class="navbar__item"><a href="/admin-schedule" class="navbar__link">Schedule Set Up</a></li>
       <li class="navbar__item"><a href="/admin-pickups" class="navbar__link">All Pick Ups</a></li>
-      <li class="navbar__item"><a href="/route-overview" class="navbar__link" style="color: var(--yel)">Route Overview</a></li>
+      <li class="navbar__item"><a href="/route-overview" class="navbar__link">Route Overview</a></li>
+      <li class="navbar__item"><a href="/logout" class="navbar__link" style="color: var(--yel)">Logout</a></li>
     </ul>
 </nav>
   
