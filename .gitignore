@@ -4,7 +4,9 @@
 
 __pycache__/
 
-/helpers/__pycache__/
+helpers/__pycache__/
 
 credentials/*.json
 credentials/
+
+static/images/qr_codes/
