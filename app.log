@@ -149,3 +149,754 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 2025-04-14 22:35:05,319 INFO: Sending pickup request email for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:298]
 2025-04-14 22:35:05,319 INFO: Confirmation email already sent for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:306]
 2025-04-14 22:35:05,319 INFO: Rendering confirmation.html for request_id=687940 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:316]
+2025-04-15 21:33:40,551 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-15 23:16:29,609 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-15 23:19:14,412 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-15 23:19:41,220 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:156]
+2025-04-15 23:19:41,340 INFO: New pickup request created. ID in DB: 6, request_id: 239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:208]
+2025-04-15 23:19:41,373 INFO: User is selecting a date/time for request_id=239905, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-15 23:19:49,077 INFO: User is selecting a date/time for request_id=239905, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-15 23:19:49,753 INFO: User is selecting a date/time for request_id=239905, offset=2. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-15 23:19:50,579 INFO: User is selecting a date/time for request_id=239905, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-15 23:19:50,981 INFO: User is selecting a date/time for request_id=239905, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:268]
+2025-04-15 23:19:54,206 INFO: Pickup request 239905 updated with chosen_date=2025-04-19, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:252]
+2025-04-15 23:19:54,206 INFO: Sending edited pickup request email for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:260]
+2025-04-15 23:19:55,703 INFO: Sending pickup request email for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:298]
+2025-04-15 23:19:55,703 INFO: Confirmation email already sent for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:306]
+2025-04-15 23:19:55,704 INFO: Rendering confirmation.html for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:316]
+2025-04-15 23:20:16,031 INFO: Received valid POST to update address for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:332]
+2025-04-15 23:20:16,160 INFO: Successfully updated address for request_id=239905 to (5822 Mallard Dr., Pleasanton, 94566). [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:351]
+2025-04-15 23:20:17,542 INFO: Sending pickup request email for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:298]
+2025-04-15 23:20:17,542 INFO: Confirmation email already sent for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:306]
+2025-04-15 23:20:17,543 INFO: Rendering confirmation.html for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:316]
+2025-04-15 23:20:22,373 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:390]
+2025-04-15 23:20:23,538 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-15 23:20:26,093 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:390]
+2025-04-15 23:20:29,473 INFO: Form validated successfully for request_id=239905 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:407]
+2025-04-15 23:20:29,480 INFO: Request 239905 passed all checks and can be edited. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:500]
+2025-04-15 23:20:29,517 INFO: Rendering edit_request.html for request_id=239905 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:532]
+2025-04-15 23:20:39,357 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:725]
+2025-04-15 23:20:39,366 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:800]
+2025-04-15 23:21:10,124 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:800]
+2025-04-15 23:21:13,702 INFO: Accessing /admin-schedule. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:870]
+2025-04-15 23:21:24,565 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:977]
+2025-04-15 23:21:29,547 INFO: GET /route-overview - displaying route overview page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1136]
+2025-04-15 23:21:29,560 INFO: Rendering route_overview.html with next_pickup=2025-04-18, #upcoming=3, #past=0 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1230]
+2025-04-15 23:21:31,589 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:977]
+2025-04-15 23:24:08,918 INFO: GET /route-overview - displaying route overview page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1136]
+2025-04-15 23:24:08,932 INFO: Rendering route_overview.html with next_pickup=2025-04-18, #upcoming=3, #past=0 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1230]
+2025-04-15 23:24:19,011 INFO: GET /live-route - showing live route info. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1315]
+2025-04-15 23:24:19,369 INFO: Route cache updated for date=2025-04-18 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1416]
+2025-04-15 23:24:19,372 INFO: Rendering live_route.html for date=2025-04-18. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1440]
+2025-04-15 23:24:23,203 INFO: GET /live-route - showing live route info. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1315]
+2025-04-15 23:24:23,251 INFO: Rendering live_route.html for date=2025-04-18. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1440]
+2025-04-15 23:24:23,393 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1635]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-04-15 23:26:56,681 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:800]
+2025-04-15 23:26:57,834 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-15 23:28:54,963 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:33:10,318 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-20 10:33:14,879 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:34:31,721 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:35:11,378 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-20 10:35:14,068 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:35:32,409 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:35:32,410 INFO: Recaptcha site key = None, secret key = None [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:150]
+2025-04-20 10:38:38,395 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-20 10:38:44,671 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:38:44,673 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:150]
+2025-04-20 10:38:53,794 WARNING: POST /request_init - Form validation failed. Errors: {'recaptcha': ['The response parameter is missing.']} [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:219]
+2025-04-20 10:38:53,794 INFO: GET /request_init - Rendering request form. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:221]
+2025-04-20 10:40:51,478 WARNING: POST /request_init - Form validation failed. Errors: {'recaptcha': ['The response parameter is missing.']} [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:219]
+2025-04-20 10:40:51,479 INFO: GET /request_init - Rendering request form. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:221]
+2025-04-20 10:41:07,603 WARNING: POST /request_init - Form validation failed. Errors: {'recaptcha': ['The response parameter is missing.']} [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:219]
+2025-04-20 10:41:07,603 INFO: GET /request_init - Rendering request form. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:221]
+2025-04-20 10:46:14,711 WARNING: POST /request_init - Form validation failed. Errors: {'recaptcha': ['The response parameter is missing.']} [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:219]
+2025-04-20 10:46:14,713 INFO: GET /request_init - Rendering request form. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:221]
+2025-04-20 10:46:16,929 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:105]
+2025-04-20 10:46:19,369 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:131]
+2025-04-20 10:46:19,370 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:150]
+2025-04-20 10:46:33,545 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 10:46:33,603 INFO: New pickup request created. ID in DB: 7, request_id: 702193 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:215]
+2025-04-20 10:46:33,619 INFO: User is selecting a date/time for request_id=702193, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:275]
+2025-04-20 11:03:44,948 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:03:59,639 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:04:02,077 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:04:02,078 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:04:16,468 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:176]
+2025-04-20 11:04:16,483 INFO: New pickup request created. ID in DB: 8, request_id: 436428 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:228]
+2025-04-20 11:04:16,491 INFO: User is selecting a date/time for request_id=436428, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:288]
+2025-04-20 11:04:18,222 INFO: Pickup request 436428 updated with chosen_date=2025-04-26, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:272]
+2025-04-20 11:04:18,223 INFO: Confirmation email not yet sent for request_id=436428, sending to confirmation page [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:284]
+2025-04-20 11:04:18,245 INFO: Sending pickup request email for request_id=436428 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:318]
+2025-04-20 11:04:18,245 INFO: Sending pickup request email for request_id=436428 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:321]
+2025-04-20 11:04:19,581 INFO: Rendering confirmation.html for request_id=436428 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:336]
+2025-04-20 11:04:21,111 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:04:23,592 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:04:23,593 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:04:33,496 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1676]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask_limiter/extension.py", line 1310, in __inner
+    self.limiter._check_request_limit(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        in_middleware=False, callable_name=name
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask_limiter/extension.py", line 1172, in _check_request_limit
+    raise e
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask_limiter/extension.py", line 1169, in _check_request_limit
+    self.__evaluate_limits(endpoint, all_limits)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask_limiter/extension.py", line 1153, in __evaluate_limits
+    raise RateLimitExceeded(
+    ...<2 lines>...
+    )
+flask_limiter.errors.RateLimitExceeded: 429 Too Many Requests: 1 per 1 hour
+2025-04-20 11:07:42,879 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:07:53,630 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:07:53,637 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:07:57,452 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:176]
+2025-04-20 11:07:57,476 INFO: New pickup request created. ID in DB: 9, request_id: 714548 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:228]
+2025-04-20 11:07:57,484 INFO: User is selecting a date/time for request_id=714548, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:288]
+2025-04-20 11:08:02,496 INFO: Pickup request 714548 updated with chosen_date=2025-04-26, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:272]
+2025-04-20 11:08:02,496 INFO: Sending edited pickup request email for request_id=714548 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:280]
+2025-04-20 11:08:03,827 INFO: Sending pickup request email for request_id=714548 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:318]
+2025-04-20 11:08:03,827 INFO: Confirmation email already sent for request_id=714548 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:326]
+2025-04-20 11:08:03,828 INFO: Rendering confirmation.html for request_id=714548 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:336]
+2025-04-20 11:08:04,941 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:08:07,781 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:08:07,782 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:09:45,055 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:09:48,411 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:09:48,414 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:10:00,507 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:176]
+2025-04-20 11:10:00,542 INFO: New pickup request created. ID in DB: 10, request_id: 759503 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:228]
+2025-04-20 11:10:00,562 INFO: User is selecting a date/time for request_id=759503, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:288]
+2025-04-20 11:10:01,979 INFO: Pickup request 759503 updated with chosen_date=2025-04-26, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:272]
+2025-04-20 11:10:01,980 INFO: Sending edited pickup request email for request_id=759503 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:280]
+2025-04-20 11:10:03,284 INFO: Sending pickup request email for request_id=759503 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:318]
+2025-04-20 11:10:03,285 INFO: Confirmation email already sent for request_id=759503 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:326]
+2025-04-20 11:10:03,286 INFO: Rendering confirmation.html for request_id=759503 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:336]
+2025-04-20 11:10:04,441 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:10:07,208 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:144]
+2025-04-20 11:10:07,209 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:163]
+2025-04-20 11:12:07,654 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:18:28,701 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:118]
+2025-04-20 11:18:28,713 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 119, in home
+    return render_template('landing.html')
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,725 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,731 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,736 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,740 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,756 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,766 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,775 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,785 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,792 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,799 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1702]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1728, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:18:28,804 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1649]
+2025-04-20 11:23:30,701 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:28:41,288 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:28:41,304 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 124, in home
+    return render_template('landing.html')
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,318 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,330 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,337 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,346 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,354 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,361 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,366 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,372 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,378 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,383 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1707]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1733, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 34, in top-level template code
+    {{ form.hidden_tag() }}
+    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'form' is undefined
+2025-04-20 11:28:41,388 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:28:53,111 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:29:35,341 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:29:38,209 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:30:02,007 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:30:14,548 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:30:23,429 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:30:33,340 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:30:43,534 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:31:01,050 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:32:23,025 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:32:34,000 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:32:38,656 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:32:41,299 INFO: Rate limiter hit, redirecting user. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1654]
+2025-04-20 11:33:03,186 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:33:36,223 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:43:12,309 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:43:22,867 INFO: Contact form validated: name=Sean Vanderaa, email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1615]
+2025-04-20 11:43:24,160 INFO: Contact email sent successfully. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1621]
+2025-04-20 11:46:20,908 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:46:44,702 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
+2025-04-20 11:46:53,959 INFO: Contact form validated: name=Sean Vanderaa, email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1615]
+2025-04-20 11:46:55,242 INFO: Contact email sent successfully. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1621]
+2025-04-20 11:47:20,403 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]

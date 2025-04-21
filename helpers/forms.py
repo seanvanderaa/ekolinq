@@ -1,5 +1,5 @@
 # forms.py
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, BooleanField, SelectField, TextAreaField, FileField, HiddenField, FieldList, FormField, SubmitField
 from wtforms.fields import EmailField, DateField
 from wtforms.validators import DataRequired, Email, Optional, Length, Regexp
@@ -53,6 +53,8 @@ class RequestForm(FlaskForm):
     selectedGatedOption = HiddenField("Selected Gated Option", validators=[Optional()])
     finalGateCode = HiddenField("Final Gate Code", validators=[Optional()])
     finalNotice = HiddenField("Final Notice", validators=[Optional()])
+    recaptcha = RecaptchaField()
+
 
 class EditRequestTimeForm(FlaskForm):
     chosen_date = HiddenField('Chosen Date', validators=[DataRequired()])
@@ -134,3 +136,19 @@ class EditRequestInitForm(FlaskForm):
 class DeletePickupForm(FlaskForm):
     pickup_id = HiddenField(validators=[DataRequired()])
     submit = SubmitField('Delete')
+
+class ContactForm(FlaskForm):
+    name = StringField(
+        'Name',
+        validators=[DataRequired(), Length(max=128)]
+    )
+    email = StringField(
+        'Email',
+        validators=[DataRequired(), Email(), Length(max=256)]
+    )
+    message = TextAreaField(
+        'Message',
+        validators=[DataRequired(), Length(max=2000)]
+    )
+    # Override default message
+    recaptcha = RecaptchaField()

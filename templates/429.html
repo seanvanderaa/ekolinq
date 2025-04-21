@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Too Many Requests | EkoLinq{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main style="padding-top: 180px;" class="content-width align-center">
+  <div class="align-center" style="flex-direction: column; max-width: 520px;">
+    <h1 style="font-size: 48px; margin-bottom: 12px; color: var(--m-red)">
+      Whoa there! <i class="bi bi-exclamation-triangle"></i>
+    </h1>
+    <h3 style="text-align: center;">It seems you've made too many requests too quickly.</h3>
+    <p style="text-align: center;">
+      {% if retry_after %}
+        Please wait {{ retry_after }} before trying again.
+      {% else %}
+        Please slow down and try again in a few moments.
+      {% endif %}
+    </p>
+    <button onclick="window.location.href='/'" class="submit-btn" style="margin-top: 24px;">
+      Back to the Homepage
+    </button>
+  </div>
+</main>
+{% endblock %}

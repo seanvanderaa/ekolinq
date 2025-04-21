@@ -1,6 +1,8 @@
 # app.py
 from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash, abort
 from flask_wtf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import logging
 from logging.handlers import RotatingFileHandler
 from models import db, PickupRequest, ServiceSchedule, DriverLocation, RouteSolution, Config as DBConfig, add_request, get_service_schedule, get_address
@@ -16,7 +18,7 @@ from helpers.routing_old import get_optimized_route
 from helpers.scheduling import build_schedule
 from helpers.emailer import send_contact_email, send_request_email, send_error_report, send_editted_request_email
 from helpers.routing import fetch_distance_matrix, solve_tsp, seconds_to_hms
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm, ContactForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -32,6 +34,7 @@ csrf = CSRFProtect()
 
 import traceback
 
+limiter = Limiter(key_func=get_remote_address, default_limits=["100 per hour"])
 
 def create_app():
     # 1) Create a Flask app
@@ -42,6 +45,16 @@ def create_app():
 
     # 3) Load config from object
     app.config.from_object(Config)
+
+    # if you have a Redis instance:
+    # limiter = Limiter(
+    #     key_func=get_remote_address,
+    #     storage_uri="redis://localhost:6379"
+    # )
+
+    # for simple in‑memory (not recommended for prod):
+    limiter.init_app(app)
+
 
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     #app.config['SESSION_COOKIE_SECURE'] = True # Must be true for production
@@ -65,6 +78,11 @@ def create_app():
         #db.drop_all() #to reset the db
         db.create_all()
         seed_schedule_if_necessary()
+
+    @app.context_processor
+    def inject_contact_form():
+        # Every template now has `contact_form` in its context
+        return { 'contact_form': ContactForm() }
 
     def login_required(f):
         @wraps(f)
@@ -146,10 +164,17 @@ def create_app():
             city = None
             zipcode = None
             current_app.logger.warning("Invalid or missing zipcode provided: %s", zipcode)
+        
+        current_app.logger.info(
+            "Recaptcha site key = %r, secret key = %r",
+            current_app.config.get('RECAPTCHA_PUBLIC_KEY'),
+            current_app.config.get('RECAPTCHA_PRIVATE_KEY'),
+        )
         return render_template('request.html', zipcode = zipcode, city=city, form=form)
 
 
     @app.route('/request_init', methods=['GET', 'POST'])
+    @limiter.limit("5 per hour")
     def request_init():
         form = RequestForm()
         if form.validate_on_submit():
@@ -1578,34 +1603,34 @@ def create_app():
         db.session.commit()
         current_app.logger.info("Driver location updated successfully.")
 
-
-    def validate_contact(name, email, message):
-        if not name or not email or not message:
-            return False, "Name, email, and message are required."
-        return True, ""
-
-    @app.route('/contact-form-entry', methods=['GET'])
+    @app.route('/contact-form-entry', methods=['POST'])
+    @limiter.limit("5 per hour")   # max 5 submissions per IP per hour
     def contact_form_entry():
-        name = request.args.get('name')
-        email = request.args.get('email')
-        message = request.args.get('message')
-        current_app.logger.debug("Contact form entry received with name=%s, email=%s", name, email)
+        form = ContactForm()
+        if form.validate_on_submit():
+            name    = form.name.data
+            email   = form.email.data
+            message = form.message.data
 
-        valid, reason = validate_contact(name, email, message)
-        if valid:
-            current_app.logger.info("Contact form validated successfully. Attempting to send email.")
-            email_sent = send_contact_email(name, email, message)
-            if email_sent:
+            current_app.logger.info(
+                "Contact form validated: name=%s, email=%s", name, email
+            )
+
+            sent = send_contact_email(name, email, message)
+            if sent:
                 current_app.logger.info("Contact email sent successfully.")
+                return jsonify(valid=True,  reason=""), 200
             else:
-                current_app.logger.warning("Contact email sending failed.")
-            return jsonify({
-                "valid": email_sent,
-                "reason": "" if email_sent else "Email sending failed."
-            })
-        else:
-            current_app.logger.warning("Contact form validation failed: %s", reason)
-            return jsonify({"valid": False, "reason": reason})
+                current_app.logger.warning("Contact email failed to send.")
+                return jsonify(valid=False, reason="Email sending failed."), 500
+
+        # validation failed
+        current_app.logger.warning("Contact form invalid: %s", form.errors)
+        # flatten the first error from each field
+        messages = []
+        for field, errs in form.errors.items():
+            messages += errs
+        return jsonify(valid=False, reason=" ".join(messages)), 400
 
     
     @app.route('/logout')
@@ -1623,6 +1648,32 @@ def create_app():
     
     # --------------------------------------------------
 
+    @app.errorhandler(429)
+    def too_many_requests(e):
+        # First generate the default RateLimitExceeded response so we can read its headers'
+        current_app.logger.info("Rate limiter hit, redirecting user.")
+
+        default_resp = e.get_response()
+        retry_after = default_resp.headers.get("Retry-After", None)
+
+        # Default fallback text
+        pretty = "an hour"
+        if retry_after and retry_after.isdigit():
+            seconds = int(retry_after)
+            if seconds >= 3600 and seconds % 3600 == 0:
+                hours = seconds // 3600
+                pretty = f"{hours} hour" + ("s" if hours != 1 else "")
+            elif seconds >= 60 and seconds % 60 == 0:
+                minutes = seconds // 60
+                pretty = f"{minutes} minute" + ("s" if minutes != 1 else "")
+            else:
+                pretty = f"{seconds} second" + ("s" if seconds != 1 else "")
+        # Render our custom template, passing the human‑friendly string
+        return make_response(
+            render_template("429.html", retry_after=pretty),
+            429,
+            default_resp.headers  # preserves Retry‑After, RateLimit headers, etc.
+        )
 
 
 

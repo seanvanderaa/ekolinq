@@ -82,6 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Form submission handler
   initForm.addEventListener('submit', async function (event) {
     // Basic gating validation: if gated is checked, ensure we have what we need
+    if (grecaptcha.getResponse().length === 0) {
+      event.preventDefault();
+      alert('Please click the “I’m not a robot” box before continuing.');
+      return;
+    }
+    
     if (gatedCheckbox.checked) {
       // Must choose one option
       if (!gatedOptionsSelect.value) {

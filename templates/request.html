@@ -95,6 +95,16 @@
           {{ form.finalNotice() }}
         </div>
 
+        <div class="form-group">
+          {{ form.recaptcha }}
+          {% for error in form.recaptcha.errors %}
+          <div class="user-notice-warn" style="max-width: 460px;">
+            {{ error }}
+          </div>
+
+          {% endfor %}
+        </div>
+
         <button type="submit" style="margin-top: 36px;" id="init-submit-btn" class="submit-btn">
           <span>Next Step: <span style="font-weight: 400;">Select a Timeframe</span></span>
         </button>

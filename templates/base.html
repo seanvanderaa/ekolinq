@@ -22,35 +22,62 @@
   </div>
   <div class="overlay" id="overlay"></div>
   <div id="contactPopup">
-    <!-- Close button -->
-    <button class="close-btn" id="closePopupBtn" onclick="closeContactPopup()">&times;</button>
-    
-    <!-- Contact form area -->
+    <button class="close-btn" onclick="closeContactPopup()">&times;</button>
+  
     <div id="contact-form-wrapper">
       <h2>Contact Us</h2>
       <p>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</p>
-      <p>If you're contacting us about a specific request, please include your request confirmation number, found in your email, so we can better assist you.</p>
-      <form id="contactForm" action="/contact-form-entry" method="GET">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="message">Message:</label>
-        <textarea id="message" name="message" rows="4" required></textarea>
-
+  
+      <form id="contactForm"
+            action="{{ url_for('contact_form_entry') }}"
+            method="POST">
+        {{ contact_form.hidden_tag() }}
+  
+        <div class="contact-form-group">
+          {{ contact_form.name.label }}
+          {{ contact_form.name(id="name", placeholder="Your name") }}
+          {% if contact_form.name.errors %}
+            <div class="error">{{ contact_form.name.errors[0] }}</div>
+          {% endif %}
+        </div>
+  
+        <div class="contact-form-group">
+          {{ contact_form.email.label }}
+          {{ contact_form.email(id="email", placeholder="you@example.com") }}
+          {% if contact_form.email.errors %}
+            <div class="error">{{ contact_form.email.errors[0] }}</div>
+          {% endif %}
+        </div>
+  
+        <div class="contact-form-group">
+          {{ contact_form.message.label }}
+          {{ contact_form.message(id="message", rows="4", placeholder="Your message") }}
+          {% if contact_form.message.errors %}
+            <div class="error">{{ contact_form.message.errors[0] }}</div>
+          {% endif %}
+        </div>
+  
+        <div class="contact-form-group" style="margin-top: 24px;">
+          {{ contact_form.recaptcha }}
+          {% if contact_form.recaptcha.errors %}
+            <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
+          {% endif %}
+        </div>
+  
         <button type="submit" id="contactFormBtn">Submit</button>
       </form>
     </div>
-
-    <!-- Confirmation area -->
-    <div id="contact-form-confirmation" class="align-center" style="display: none; flex-direction: column;">
+  
+    <div id="contact-form-confirmation" style="display: none;">
       <h2>Thanks for getting in touch!</h2>
-      <p style="margin-top: 8px;">We'll follow up with you shortly.</p>
-      <button onclick="closeContactPopup()" id="close-confirmation-btn" style="margin-top: 16px">Close</button>
+      <p>We'll follow up with you shortly.</p>
+      <button onclick="closeContactPopup()" id="close-confirmation-btn">Close</button>
     </div>
   </div>
+  
+  <!-- reCAPTCHA script -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  
   <!-- Include a site-wide footer -->
   {% include 'partials/_footer.html' %}
 

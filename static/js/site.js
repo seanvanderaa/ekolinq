@@ -3,6 +3,8 @@ const popup = document.getElementById('contactPopup');
 const contactForm = document.getElementById('contactForm');
 const contactFormWrapper = document.getElementById('contact-form-wrapper');
 const contactFormConf = document.getElementById('contact-form-confirmation');
+const submitBtn           = document.getElementById('contactFormBtn');
+
 
 // Function to open the popup (accessible via onClick)
 function openContactPopup() {
@@ -24,29 +26,42 @@ function closeContactPopup() {
 
 // Close the popup if the overlay is clicked
 overlay.addEventListener('click', closeContactPopup);
-
-// Handle form submission
 document.getElementById('contactForm').addEventListener('submit', async function (event) {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault();
 
-  const submitBtn = document.getElementById('contactFormBtn');
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const message = document.getElementById('message').value;
+  // Disable the button & change text
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending…';
 
-  submitBtn.style.backgroundColor = "var(--m-blue)";
+  // Build a FormData object (includes CSRF & recaptcha response)
+  const formData = new FormData(contactForm);
 
-  // Construct the URL correctly using & to separate parameters
-  const url = `/contact-form-entry?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`;
+  try {
+    const response = await fetch(contactForm.action, {
+      method: 'POST',
+      credentials: 'same-origin',  // send cookies/CSRF
+      body: formData
+    });
 
-  const response = await fetch(url);
-  const data = await response.json();
+    // parse JSON
+    const data = await response.json();
 
-  if (data.valid) {
-    contactFormWrapper.style.display = 'none';
-    contactFormConf.style.display = 'flex';
-  } else {
-    alert(`${data.reason}`);
+    if (data.valid) {
+      // Hide form, show confirmation
+      contactFormWrapper.style.display = 'none';
+      contactFormConf.style.display    = 'flex';
+    } else {
+      // Show server‑side validation error
+      alert(data.reason);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert('An error occurred. Please try again.');
+  } finally {
+    // Re‑enable button and restore text
+    submitBtn.disabled    = false;
+    submitBtn.textContent = 'Submit';
   }
 });
 
