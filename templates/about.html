@@ -48,14 +48,118 @@
     </div>
     <img id="pleasanton" src="{{ url_for('static', filename='images/pleasanton.jpg') }}" alt="">
   </div>
-  <div class="content-width align-center" id="testimonial">
-    <h3 style="font-size: 30px; text-align: center; max-width: 740px; margin-top: 0px;">“Thank you for everything you all do—I’ve always hated throwing out my old clothes and now I know that they’re ending up in good hands.”</h3>
-    <h4 style="margin: 0px"><b>Pleasanton Community Member</b></h4>
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="content-width align-center">
+    <p><b>Testimonials</b></p>
+    <div class="testimonial-slider">
+      <div class="testimonial-slide active">
+        <h3>“Ekolinq is always responsive and reliable with scheduling, and pickups are consistently on time. We’re so grateful to have found such a dependable solution for responsibly recycling clothing, shoes, and accessories.”</h3>
+        <h4><b>Resident, Danville</b></h4>
+      </div>
+      <div class="testimonial-slide">
+        <h3>“I love what EkoLinq is doing for our environment and community. Knowing my donations are actually being reused or recycled locally makes a big difference to me. It’s a great way to give back and reduce waste.”</h3>
+        <h4><b>Michael R., San Ramon</b></h4>
+      </div>
+      <div class="testimonial-slide">
+        <h3>“Scheduling a pick-up was so easy, and it felt great knowing my old clothes wouldn’t end up in the trash. EkoLinq made it totally hassle-free—I just left the bag out and they handled the rest!”</h3>
+        <h4><b>Jenna L., Pleasanton</b></h4>
+      </div>
+    </div>
+
+    <!-- navigation controls -->
+    <div class="testimonial-nav">
+      <button class="chevron prev" aria-label="Previous testimonial"><i class="bi bi-chevron-left"></i></button>
+      <div class="dots"></div>
+      <button class="chevron next" aria-label="Next testimonial"><i class="bi bi-chevron-right"></i></button>
+    </div>
+  </section>
+  <div id="request-form" class="content-width">
+    <h2 style="margin: 0px; margin-bottom: 10px;">Can we help get rid of your textile waste?</h2>
+    <p>Enter your zipcode below to schedule a pickup.</p>
+    <form action="/find-time" method="GET" id="request-form-input">
+      <div style="position: relative; display: inline-block; margin: 0px; width: 100%;">
+        <input type="text" id="zipcode" style="font-weight: 500; box-sizing: border-box;" name="zipcode" placeholder="Enter ZIP Code"
+          class="align-center" required>
+        <span class="info-icon">i</span>
+        <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
+          only serves the Tri-Valley.</div>
+      </div>
+      <button class="main-btn" type="submit"><span>Find a Time</span></button>
+    </form>
   </div>
 </main>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-  <!-- Additional scripts can be added here if needed -->
+  <script>
+    // carousel.js
+    document.addEventListener("DOMContentLoaded", () => {
+      const slides = Array.from(document.querySelectorAll(".testimonial-slide"));
+      const prevBtn = document.querySelector(".testimonial-nav .prev");
+      const nextBtn = document.querySelector(".testimonial-nav .next");
+      const dotsContainer = document.querySelector(".testimonial-nav .dots");
+      let current = 0;
+      let interval;
+
+      // build dots
+      slides.forEach((_, i) => {
+        const dot = document.createElement("span");
+        dot.classList.add("dot");
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => goTo(i));
+        dotsContainer.appendChild(dot);
+      });
+      const dots = Array.from(dotsContainer.children);
+
+      function update() {
+        slides.forEach((s, i) => {
+          s.classList.toggle("active", i === current);
+          dots[i].classList.toggle("active", i === current);
+        });
+      }
+
+      function next() { current = (current + 1) % slides.length; update(); }
+      function prev() { current = (current - 1 + slides.length) % slides.length; update(); }
+      function goTo(idx) { current = idx; update(); resetInterval(); }
+
+      prevBtn.addEventListener("click", () => { prev(); resetInterval(); });
+      nextBtn.addEventListener("click", () => { next(); resetInterval(); });
+
+      function startInterval() {
+        interval = setInterval(next, 8000); // slide every 5s
+      }
+      function resetInterval() {
+        clearInterval(interval);
+        startInterval();
+      }
+
+      // pause on hover
+      document.querySelector(".testimonial-slider")
+        .addEventListener("mouseenter", () => clearInterval(interval));
+      document.querySelector(".testimonial-slider")
+        .addEventListener("mouseleave", startInterval);
+
+      // kick it off
+      startInterval();
+      
+      document.getElementById('request-form-input').addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent default form submission
+      
+          const zipcode = document.getElementById('zipcode').value;
+      
+          // Make an AJAX request to the Flask endpoint
+          const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
+          const data = await response.json();
+      
+          if (data.valid) {
+            // Redirect to /request_pickup if ZIP code is valid
+            window.location.href = `/request_pickup?zipcode=${zipcode}`;
+          } else {
+            // Display an alert with the invalid reason
+            alert(`${data.reason}`);
+          }
+        });
+    });
+  </script>
 {% endblock %}
