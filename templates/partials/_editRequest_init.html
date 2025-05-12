@@ -1,15 +1,17 @@
 <!-- edit_request.html -->
 <div id="request-id-modal" class="content-width align-center">
-  <h2>Edit a Request</h2>
-  <p style="max-width: 400px;">
-    Enter your six-digit request confirmation number and your email below to edit the details of your request. 
-    You can find this number in your confirmation email.
-    <br><br>
-    <span style="font-style: italic;">
-      Can't find your confirmation email?
-      <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
-    </span>
-  </p>
+  <div style="flex: 1;">
+    <h2>Edit a Request</h2>
+    <p style="max-width: 400px;">
+      Enter your six-digit request confirmation number and your email to edit the details of your request. 
+      You can find this number in your confirmation email.
+      <br><br>
+      <span style="font-style: italic;">
+        Can't find your confirmation email?
+        <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
+      </span>
+    </p>
+  </div>
   
   <form id="edit-request-form" action="{{ url_for('edit_request') }}" method="POST">
     {{ edit_request_form.hidden_tag() }}  {# This includes the CSRF token #}
@@ -25,49 +27,34 @@
     <button type="submit" class="action-btn align-center">Submit</button>
   </form>
 </div>
+<div class="flash-messages align-right">
+  {% with msgs = get_flashed_messages(with_categories=True) %}
+  {% if msgs %}
+    {% for category, message in msgs %}
+      <div class="alert alert-{{ category }} flash-message">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+</div>
+
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const editRequestForm = document.getElementById('edit-request-form');
-    editRequestForm.addEventListener('submit', async function(e) {
-      e.preventDefault(); // Prevent normal form submission
-  
-      const requestId = document.getElementById('{{ edit_request_form.request_id.id }}').value.trim();
-      const email = document.getElementById('{{ edit_request_form.requester_email.id }}').value.trim();
-      
-      // Basic front-end check for 6 digits
-      if (!/^\d{6}$/.test(requestId)) {
-        alert("Your code must be exactly 6 digits. Please check and try again.");
-        return;
-      }
-  
-      // Build form data
-      const formData = new FormData();
-      formData.append('request_id', requestId);
-      formData.append('requester_email', email);
-  
-      // Include CSRF token from the hidden field
-      const csrfTokenElem = document.querySelector('input[name="csrf_token"]');
-      if (csrfTokenElem) {
-        formData.append('csrf_token', csrfTokenElem.value);
-      }
-  
-      try {
-        const response = await fetch('{{ url_for("edit_request_check") }}', {
-          method: 'POST',
-          body: formData
-        });
-  
-        if (!response.ok) {
-          const data = await response.json();
-          alert(data.error || "An error occurred. Please try again.");
-        } else {
-          // If valid, redirect to /edit-request?request_id=XXXX
-          window.location.href = "{{ url_for('edit_request') }}" + "?request_id=" + encodeURIComponent(requestId);
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Something went wrong. Please try again.");
-      }
+  // Wait until the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Select all flash-message elements
+    const flashes = document.querySelectorAll('.flash-message');
+    
+    // For each one, attach a click handler that hides it
+    flashes.forEach(function(msg) {
+      msg.addEventListener('click', function() {
+        // Option 1: simply remove it from layout
+        msg.style.display = 'none';
+        
+        // Option 2: remove it from the DOM entirely
+        // msg.remove();
+      });
     });
   });
-  </script>
+</script>
+

@@ -521,6 +521,32 @@ li {
     margin-top: 48px;
 }
 
+.flash-messages {
+    position: fixed;
+    bottom: 48px;
+    right: 48px;
+    row-gap: 8px;
+}
+
+.flash-message {
+    max-width: 360px;
+    background-color: var(--yel);
+    border-radius: 5px;
+    padding: 16px 20px;
+    text-align: center;
+    box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    color: black;
+    font-weight: 500;
+    font-family: var(--mont);
+    border: none;
+    transition: transform .2s ease, border .2s ease;
+}
+
+.flash-message:hover {
+    cursor: pointer;
+    transform: scale(1.02)
+}
+
 .contact-form-group {
     display: flex;
     flex-direction: column;
@@ -564,25 +590,37 @@ li {
         z-index: 3;
         flex-direction: column;
         position: absolute;
-        top: 64px;
+        top: 66px;
         right: 0;
         background-color: var(--d-green);
         width: 100%;
         max-height: 0;
+        text-align: left;
         overflow: hidden;
         row-gap: 24px;
-
+        box-shadow: 0px 20px 20px 0px rgba(0, 0, 0, 0.3);
         transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+        padding-left: 24px;
+        box-sizing: border-box;
     }
     
     .navbar__item {
+        width: 100%;
+        box-sizing: border-box;
         margin: 1rem 0;
-        text-align: center;
+        padding-left: 8px;
+        text-align: left;
+        border-left: 2px solid var(--yel);
+    }
+
+    .navbar__item a {
+        font-size: 18px;
     }
     
     .navbar__menu.active {
-        max-height: 300px; /* Arbitrary max height for the dropdown */
         padding: 36px 0px;
+        padding-left: 24px;
+        max-height: 300px; /* Arbitrary max height for the dropdown */
     }
 
     .content-width {
@@ -676,5 +714,18 @@ li {
 
     #footer-socials i {
         font-size: 24px;
+    }
+
+    .flash-messages {
+        position: fixed;
+        left: 50%;
+        transform: translate(-50%);
+        row-gap: 8px;
+        bottom: 16px;
+        width: 100%;
+        padding: 0px 24px;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
     }
 }

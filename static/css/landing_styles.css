@@ -344,7 +344,7 @@
     flex: 1;
 }
 
-#image-belt {
+/* #image-belt {
     position: relative;
     width: 100vw;
     background-image: url('/static/images/pleasanton.jpg');
@@ -362,24 +362,29 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.2); /* Adjust the opacity (0.5) for desired darkness */
-    z-index: 1; /* Ensure it is layered below the content */
+    background-color: rgba(0, 0, 0, 0.2); /* Adjust the opacity (0.5) for desired darkness
+    z-index: 1; /* Ensure it is layered below the content
+} */
+
+#image-belt {
+    background-color: var(--d-green);
 }
+
 
 #items {
     position: relative;
     z-index: 2;
     max-width: 860px;
     border-radius: 50px;
-    background-color: #3131319c;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background-color: #142602;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 50px;
     color: white;
 }
 
 #items-header {
-    max-width: 50%;
+    max-width: 60%;
 }
 
 #items-info {
@@ -389,6 +394,16 @@
     justify-content: center;
     column-gap: 36px;
     margin-top: 24px;
+}
+
+#about-us-btn {
+    background-color: white;
+    color: var(--m-green);
+}
+
+#about-us-btn:hover {
+    background-color: var(--m-green);
+    color: white;
 }
 
 #collection-event {

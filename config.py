@@ -16,3 +16,8 @@ class Config:
     GOOGLE_SERVICE_ACCOUNT_JSON = os.path.join(BASEDIR, 'credentials', 'service_account.json')
     RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+    COGNITO_REGION        = os.getenv("COGNITO_REGION")
+    COGNITO_USER_POOL_ID  = os.getenv("COGNITO_USER_POOL_ID")
+    COGNITO_CLIENT_ID     = os.getenv("COGNITO_CLIENT_ID")
+    COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
+    LOGGER_LEVEL = 'DEBUG'

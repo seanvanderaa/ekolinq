@@ -117,33 +117,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelBtn = document.getElementById("cancel-edit-date");
     if (cancelBtn) {
       cancelBtn.addEventListener("click", function () {
-        // 1) Retrieve the POST target URL and the request_id
-        const targetUrl = cancelBtn.getAttribute("data-cancel-url"); 
-        const requestId = cancelBtn.getAttribute("data-request-id");
-    
-        // 2) Dynamically create a standalone form
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = targetUrl;
-    
-        // 3) Add hidden input for the request_id
-        const hiddenInput = document.createElement("input");
-        hiddenInput.type = "hidden";
-        hiddenInput.name = "request_id";
-        hiddenInput.value = requestId;
-        form.appendChild(hiddenInput);
-    
-        // 4) Append the CSRF token hidden input
-        const csrfToken = document.querySelector('[name="csrf_token"]').value;
-        const csrfInput = document.createElement("input");
-        csrfInput.type = "hidden";
-        csrfInput.name = "csrf_token";
-        csrfInput.value = csrfToken;
-        form.appendChild(csrfInput);
-    
-        // 5) Append the form to the document and submit it
-        document.body.appendChild(form);
-        form.submit();
+        const editTimeForm = document.getElementById('timeframe-form');
+        const showDiv = document.getElementById('pickup-date-time');
+        showDiv.style.display = "flex";
+        editTimeForm.style.display = "none";
       });
     }
 

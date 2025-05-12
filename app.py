@@ -10,6 +10,8 @@ from config import Config
 from extensions import mail
 import requests
 from flask_sqlalchemy import SQLAlchemy
+from authlib.integrations.flask_client import OAuth
+from authlib.jose import jwt, JsonWebKey 
 from dotenv import load_dotenv
 from helpers.address import verifyZip
 from helpers.contact import submitContact
@@ -29,6 +31,8 @@ import os
 import csv
 import io
 import json
+from urllib.parse import urlencode
+import uuid
 
 csrf = CSRFProtect()
 
@@ -36,15 +40,29 @@ import traceback
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100 per hour"])
 
+load_dotenv()
+
 def create_app():
-    # 1) Create a Flask app
     app = Flask(__name__)
-
-    # 2) Load .env (optional if you want environment-based overrides)
-    load_dotenv()
-
-    # 3) Load config from object
     app.config.from_object(Config)
+    oauth = OAuth(app)
+
+    COGNITO_DOMAIN        = os.environ["COGNITO_DOMAIN"]           # e.g.  demo-domain.auth.us-east-2.amazoncognito.com
+    COGNITO_CLIENT_ID     = os.environ["COGNITO_CLIENT_ID"]
+
+    issuer_base = (
+        f"https://cognito-idp.{app.config['COGNITO_REGION']}.amazonaws.com/"
+        f"{app.config['COGNITO_USER_POOL_ID']}"
+    )
+
+    oauth.register(
+        name="oidc",
+        client_id=app.config["COGNITO_CLIENT_ID"],
+        client_secret=app.config["COGNITO_CLIENT_SECRET"],
+        authority=issuer_base,
+        server_metadata_url=f"{issuer_base}/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid email phone"},
+    )
 
     # if you have a Redis instance:
     # limiter = Limiter(
@@ -65,6 +83,7 @@ def create_app():
 
     mail.init_app(app)
     csrf.init_app(app)
+
 
     # 4) Initialize your extensions
     db.init_app(app)
@@ -95,7 +114,7 @@ def create_app():
     if not app.debug and not app.testing:
         # Production: Use rotating file logs
         file_handler = RotatingFileHandler("app.log", maxBytes=102400, backupCount=5)
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(app.config['LOGGER_LEVEL'])
         formatter = logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
         )
@@ -103,11 +122,7 @@ def create_app():
         app.logger.addHandler(file_handler)
 
     # For local dev, or if you want DEBUG info:
-    if app.debug:
-        app.logger.setLevel(logging.DEBUG)
-    else:
-        app.logger.setLevel(logging.INFO)
-
+    app.logger.setLevel(app.config['LOGGER_LEVEL'])
 
 
     # --------------------------------------------------
@@ -194,10 +209,7 @@ def create_app():
             gate_code = form.finalGateCode.data or None
             notify_val = form.finalNotice.data
             notify = True if notify_val == 'true' else False
-            current_app.logger.debug(
-                "New request details: fname=%s, lname=%s, email=%s, phone=%s, address=%s, city=%s, zip=%s, notes=%s, gated=%s, gate_code=%s, notify=%s",
-                fname, lname, email, phone, address, city, zip_, notes, gated, gate_code, notify
-            )
+            current_app.logger.debug("New request created.")
 
             # Handle file upload
             qr_code_file = form.qrCodeInput.data
@@ -230,7 +242,7 @@ def create_app():
             )
             pickup = db.session.get(PickupRequest, new_id)
             pickup_code= pickup.request_id
-            current_app.logger.info("New pickup request created. ID in DB: %s, request_id: %s", new_id, pickup_code)
+            current_app.logger.info("New pickup request created.")
             return redirect(url_for('select_date', request_id=pickup_code))
         
         if request.method == 'POST':
@@ -374,8 +386,8 @@ def create_app():
             # Commit changes to the database
             db.session.commit()
             current_app.logger.info(
-                "Successfully updated address for request_id=%s to (%s, %s, %s).",
-                request_id, address, city, zip_code
+                "Successfully updated address for request_id=%s",
+                request_id
             )
 
             # Redirect based on the page value
@@ -421,171 +433,94 @@ def create_app():
         )
 
 
-    @app.route('/edit-request/check', methods=['POST'])
-    def edit_request_check():
-        current_app.logger.debug("POST /edit-request/check - Attempting to validate form for edit request check.")
+    def can_edit(request_id: str, email: str):
+        """
+        Central authority for all business rules that gate an edit.
+
+        Returns
+        -------
+        (True,  pickup)         – all checks passed
+        (False, error_message)  – failed, give the reason that should be shown
+        """
+        # 1) basic format
+        if not request_id.isdigit() or len(request_id) != 6:
+            return False, (
+                "Your code must be exactly 6 digits and contain only numbers. "
+                "Please check and try again."
+            )
+
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+        if not pickup:
+            return False, (
+                "Request not found. Please make sure the confirmation number "
+                "matches exactly what appears in your confirmation email."
+            )
+
+        # 2) email must match
+        if pickup.email != email:
+            return False, (
+                "The code and e-mail do not match. Please verify and try again."
+            )
+
+        # 3) date in the past?
+        if pickup.request_date:
+            try:
+                if datetime.strptime(pickup.request_date, '%Y-%m-%d').date() < datetime.now().date():
+                    return False, (
+                        "That request date has already passed and can’t be edited."
+                    )
+            except ValueError:
+                current_app.logger.error("Bad date on request %s", request_id)
+                return False, (
+                    "We couldn’t verify the request date. Please contact us."
+                )
+
+        # 4) status checks
+        if pickup.status in ("Cancelled", "Completed"):
+            return False, f"Your request has been {pickup.status.lower()} and cannot be edited."
+
+        return True, pickup
+    
+    @app.route('/edit-request', methods=['POST'])
+    def edit_request():
+        """Receives the code+email form, validates via can_edit(), and
+        either shows the edit screen or bounces back with a flash alert."""
+        current_app.logger.info("POST /edit-request - User accessing the edit request page.")
 
         form = EditRequestInitForm()
-        if form.validate_on_submit():
-            request_id = form.request_id.data
-            email = form.requester_email.data
-            current_app.logger.info("Form validated successfully for request_id=%s with email=%s", request_id, email)
 
-        else:
-            current_app.logger.warning("Form validation failed. Errors: %s", form.errors)
-            return jsonify({
-                'success': False,
-                'error': 'Invalid form submission.'
-            }), 400
+        if not form.validate_on_submit():
+            flash('Invalid form submission.', 'danger')
+            current_app.logger.warning("Invalid form submission at edit_request")
+            return redirect(url_for('edit_request_init'))
 
-        # Validate format: must be exactly 6 digits
-        if not request_id.isdigit() or len(request_id) != 6:
-            current_app.logger.warning("Request code invalid: %s (must be 6 digits).", request_id)
-            return jsonify({
-                'success': False,
-                'error': 'Your code must be exactly 6 digits and cannot contain any other characters. Please check and try again.'
-            }), 400
+        ok, result = can_edit(form.request_id.data, form.requester_email.data)
+        if not ok:
+            current_app.logger.warning("edit_request endpoint hit, email and request ID don't match. Request ID = %s", form.request_id.data)
+            flash(result, 'warning')
+            return redirect(url_for('edit_request_init'))
 
-        # Attempt to find matching row in DB
-        pickup_request = PickupRequest.query.filter_by(request_id=request_id).first()
-        if not pickup_request:
-            current_app.logger.warning("No PickupRequest found for request_id=%s.", request_id)
+        # ── All checks passed ────────────────────────────────────────────
+        current_app.logger.info("Request to edit valid, rendering page.")
 
-            return jsonify({
-                'success': False,
-                'error': (
-                    "Request not found. Please make sure the confirmation number matches exactly "
-                    "what appears in your confirmation email, and try again."
-                )
-            }), 404
-        
-        if pickup_request.email != email:
-            current_app.logger.warning(
-                "Email mismatch for request_id=%s. Provided email=%s does not match the pickup_request.email=%s",
-                request_id, email, pickup_request.email
-            )
-            return jsonify({
-                'success': False,
-                'error': (
-                    "The code and email do not match. Please verify the info you entered is correct and try again."
-                    " If you think this is a mistake, please contact us."
-                )
-            }), 400
+        pickup = result
 
-        if pickup_request.request_date:
-            try:
-                request_date_obj = datetime.strptime(pickup_request.request_date, '%Y-%m-%d').date()
-                if request_date_obj < datetime.today().date():
-                    current_app.logger.info(
-                        "Attempt to edit a past request for request_id=%s, request_date=%s",
-                        request_id, pickup_request.request_date
-                    )
-                    return jsonify({
-                        'success': False,
-                        'error': (
-                            "Your request date has already passed "
-                            "and can no longer be edited. "
-                            "If you think this is an error, please contact us."
-                        )
-                    }), 400
-            except ValueError:
-                current_app.logger.error(
-                    "ValueError when parsing request_date=%s for request_id=%s",
-                    pickup_request.request_date, request_id
-                )
-                return jsonify({
-                    'success': False,
-                    'error': (
-                        "We couldn't verify the request date. "
-                        "Please contact us for further assistance."
-                    )
-                }), 400
-            
-        if pickup_request.status == "Cancelled":
-            current_app.logger.info("Attempt to edit a cancelled request_id=%s", request_id)
-            return jsonify({
-                'success': False,
-                'error': (
-                    "Your request has previously been cancelled and can no longer be edited."
-                    " If you think this is a mistake, please contact us."
-                )
-            }), 400
-        
-        if pickup_request.status == "Completed":
-            current_app.logger.info("Attempt to edit a completed request_id=%s", request_id)
+        update_form = UpdateAddressForm(obj=pickup)
+        update_form.request_id.data = pickup.request_id
+        update_form.page.data = "edit_request"
 
-            return jsonify({
-                'success': False,
-                'error': (
-                    "Your request has been completed and can no longer be edited."
-                    " If you think this is a mistake, please contact us."
-                )
-            }), 400
-        
-        current_app.logger.info("Request %s passed all checks and can be edited.", request_id)
+        cancel_form = CancelRequestForm()
+        cancel_form.request_id.data = pickup.request_id
 
-        return jsonify({'success': True}), 200
-    
-    @app.route('/edit-request', methods=['GET', 'POST'])
-    @csrf.exempt
-    def edit_request():
-        if request.method == "GET":
-            request_id = request.args.get('request_id', '').strip()
-            current_app.logger.debug("GET /edit-request with request_id=%s", request_id)
-
-            print(request_id)
-            if not request_id:
-                current_app.logger.info("No request_id provided, redirecting to edit_request_init.")
-
-                return redirect(url_for('edit_request_init'))
-            
-            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
-            if not pickup:
-                current_app.logger.warning("No PickupRequest found for request_id=%s, redirecting to edit_request_init.", request_id)
-                return redirect(url_for('edit_request_init'))
-
-            update_address_form = UpdateAddressForm(obj=pickup)
-            update_address_form.request_id.data = pickup.request_id
-            update_address_form.address.data = pickup.address
-            update_address_form.city.data    = pickup.city
-            update_address_form.zipcode.data = pickup.zipcode
-            update_address_form.page.data    = "edit_request"
-
-            cancel_form = CancelRequestForm()
-            cancel_form.request_id.data = pickup.request_id
-
-            current_app.logger.info("Rendering edit_request.html for request_id=%s", request_id)
-
-            return render_template('edit_request.html',
-                                partial="/partials/_editRequest_info.html",
-                                pickup=pickup,
-                                max_offset=2,
-                                request_id=request_id,
-                                form=update_address_form,
-                                cancel_form=cancel_form)
-        else:
-            current_app.logger.debug("POST /edit-request - Handling cancellation form.")
-
-            # Use a separate form for cancellation
-            cancel_form = CancelEditForm()
-            if cancel_form.validate_on_submit():
-                request_id = cancel_form.request_id.data
-                current_app.logger.info("CancelEditForm validated for request_id=%s", request_id)
-
-                # Process cancellation (e.g., simply re-render the edit page)
-                pickup = PickupRequest.query.filter_by(request_id=request_id).first()
-                if pickup:
-                    current_app.logger.debug("Re-rendering edit request page for request_id=%s after cancellation action.", request_id)
-                else:
-                    current_app.logger.warning("Pickup not found for request_id=%s while handling cancel form submission.", request_id)
-                    return redirect(url_for('edit_request_init'))
-                # You might want to log a cancellation action, reset some state, etc.
-                return redirect(url_for('edit_request', request_id=request_id))
-            else:
-                current_app.logger.error(
-                    "CancelEditForm validation failed. Errors: %s", cancel_form.errors
-                )                
-                return "Validation failed: " + str(cancel_form.errors), 400
+        return render_template(
+            'edit_request.html',
+            partial="/partials/_editRequest_info.html",
+            pickup=pickup,
+            max_offset=2,
+            request_id=pickup.request_id,
+            form=update_form,
+            cancel_form=cancel_form,
+        )
         
     @app.route('/edit-request-time', methods=['GET'])
     def edit_request_time():
@@ -739,7 +674,7 @@ def create_app():
 
     # --------------------------------------------------
 
-    # ADMIN ENDPOINTS AND FUNCTIONS (still needs logging functionality)
+    # ADMIN ENDPOINTS AND FUNCTIONS
 
     # --------------------------------------------------
 
@@ -750,74 +685,52 @@ def create_app():
         current_app.logger.info("GET /admin - User accessed admin route; redirecting to admin_console.")
         return redirect(url_for('admin_console'))
     
-    @app.route('/admin/login')
+    @app.route("/admin/login")
     def admin_login():
-        current_app.logger.info("GET /admin/login - Admin logging in via Cognito.")
-        client_id = os.environ.get("COGNITO_CLIENT_ID")
-        domain = os.environ.get("COGNITO_DOMAIN")  # e.g., myflaskadmin.auth.us-east-1.amazoncognito.com
-        redirect_uri = "http://localhost:3000/callback"
-        cognito_auth_url = f"https://{domain}/login?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}"
-        current_app.logger.debug(
-            "Cognito login URL constructed: %s. client_id=%s, domain=%s, redirect_uri=%s",
-            cognito_auth_url, client_id, domain, redirect_uri
-        )
-        return redirect(cognito_auth_url)
+        """Kick off OIDC flow."""
+        redirect_uri = url_for("callback", _external=True)  # HTTPS in prod
+        #redirect_uri = url_for("callback", _external=True, _scheme="https")  # HTTPS in prod
+        current_app.logger.debug("Redirecting admin to Cognito login: %s", redirect_uri)
+        return oauth.oidc.authorize_redirect(redirect_uri)
     
-    @app.route('/callback')
+    @app.route("/callback")
     def callback():
-        current_app.logger.info("GET /callback - Callback endpoint hit for admin login.")
+        """Cognito redirects back here with ?code= ; exchange it for tokens."""
+        current_app.logger.info("GET /callback – exchanging code for tokens")
 
-        print("Callback endpoint hit for admin login.")
-        code = request.args.get('code')
-        client_id = os.environ.get("COGNITO_CLIENT_ID")
-        client_secret = os.environ.get("COGNITO_CLIENT_SECRET")
-        domain = os.environ.get("COGNITO_DOMAIN")
-        redirect_uri = "http://localhost:3000/callback"
+        token = oauth.oidc.authorize_access_token()  # state + PKCE automatically verified
+        current_app.logger.debug("Token payload (sans id_token): %s",
+                                {k: v for k, v in token.items() if k != "id_token"})
 
-        current_app.logger.debug(
-            "Callback with code=%s, domain=%s, client_id=%s, client_secret present? %s",
-            code, domain, client_id, bool(client_secret)
-        )
-        
-        token_url = f"https://{domain}/oauth2/token"
-        data = {
-            'grant_type': 'authorization_code',
-            'client_id': client_id,
-            'code': code,
-            'redirect_uri': redirect_uri
-        }
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-        
-        # Include Authorization header if a client secret is used
-        if client_secret:
-            import base64
-            auth_str = f"{client_id}:{client_secret}"
-            b64_auth_str = base64.b64encode(auth_str.encode()).decode()
-            headers['Authorization'] = f"Basic {b64_auth_str}"
-            current_app.logger.debug("Using Basic Auth with Cognito token endpoint.")
+        # --------------------------------------------------------------------------
+        # Extra defence: verify the ID-token signature & claims ourselves :contentReference[oaicite:1]{index=1}
+        # --------------------------------------------------------------------------
+        try:
+            jwks_uri = oauth.oidc.load_server_metadata()["jwks_uri"]
+            jwks     = JsonWebKey.import_key_set(requests.get(jwks_uri, timeout=5).json())
+            id_token = jwt.decode(token["id_token"], jwks)  # verifies signature
+            id_token.validate()                            # exp, iat, aud, iss…
+        except Exception as exc:
+            current_app.logger.exception("ID-token validation failed: %s", exc)
+            return "Invalid id_token", 400
 
-        
-        response = requests.post(token_url, data=data, headers=headers)
-        current_app.logger.debug("Token endpoint returned status_code=%d", response.status_code)
+        # Persist only what you really need
+        session.permanent = True
+        session["user"]   = {"sub": id_token["sub"], "email": id_token.get("email")}
+        session['logged_in'] = True
+        current_app.logger.info("Admin %s logged in", id_token.get("email"))
+
+        return redirect(url_for("admin_console"))
 
 
-        if response.status_code == 200:
-            tokens = response.json()
-            # Save tokens or user info in session as needed
-            session.permanent = True
-            session['logged_in'] = True
-            session['tokens'] = tokens
-            current_app.logger.info("Successfully logged in and obtained tokens for admin. Redirecting to admin_console.")
-
-            return redirect(url_for('admin_console'))
-        else:
-            current_app.logger.error(
-                "Error logging in at /callback. Status=%d, Response Body=%s",
-                response.status_code, response.text
-            )
-            return "Error logging in", 400
+    @app.route("/admin/logout")
+    def admin_logout():
+        """Clear local session *and* hit Cognito’s global-sign-out endpoint."""
+        session.clear()
+        logout_uri   = url_for("/", _external=True, _scheme="https")
+        cognito_url  = (f"https://{COGNITO_DOMAIN}/logout"
+                        f"?client_id={COGNITO_CLIENT_ID}&logout_uri={logout_uri}")
+        return redirect(cognito_url)
         
     @app.route('/admin-console', methods=['GET', 'POST'])
     @login_required

@@ -118,7 +118,8 @@
     <div id="items">
       <div id="items-header">
         <div>
-          <h2 style="color: var(--yel);">What does EkoLinq accept?</h2>
+          <p class="section-title" style="color: white;">ABOUT US</p>
+          <h2 style="color: var(--yel);">What kinds of items does EkoLinq accept?</h2>
           <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
             list below for any specific items you’re curious about.</p>
         </div>
@@ -145,6 +146,10 @@
           </ul>
         </div>
       </div>
+      <button id="about-us-btn" onclick="window.location.href='{{ url_for('about') }}'" 
+            class="action-btn" style="margin-top: 36px;">
+      <i class="bi bi-arrow-up-right btn-icon align-center" style="background-color: var(--m-green); color: white;"></i>Learn More About Us
+      </button>
     </div>
   </div>
   <div class="content-width">
