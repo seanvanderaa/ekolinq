@@ -10,3 +10,5 @@ credentials/*.json
 credentials/
 
 static/images/qr_codes/
+
+app.*
