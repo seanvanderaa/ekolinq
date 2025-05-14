@@ -25,9 +25,6 @@ class PickupRequest(db.Model):
     status = db.Column(db.String(50), default='Pending')
     
     gated = db.Column(db.Boolean, default=False)
-    qr_code = db.Column(db.String(255), nullable=True)
-    gate_code = db.Column(db.String(50), nullable=True)
-    notify = db.Column(db.Boolean, default=False)
     
     request_date = db.Column(db.String(120), nullable=True)
     request_time = db.Column(db.String(120), nullable=True)

@@ -3,6 +3,7 @@ from flask import Flask, request, render_template, redirect, url_for, jsonify, m
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_sitemap import Sitemap
 import logging
 from logging.handlers import RotatingFileHandler
 from models import db, PickupRequest, ServiceSchedule, DriverLocation, RouteSolution, Config as DBConfig, add_request, get_service_schedule, get_address
@@ -44,6 +45,7 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+    sitemap = Sitemap(app=app)
     app.config.from_object(Config)
     oauth = OAuth(app)
 
@@ -205,24 +207,7 @@ def create_app():
             notes   = form.notes.data
 
             gated = form.gated.data
-            selected_gated_option = form.selectedGatedOption.data  # or form.gatedOptions.data if that fits your logic
-            gate_code = form.finalGateCode.data or None
-            notify_val = form.finalNotice.data
-            notify = True if notify_val == 'true' else False
             current_app.logger.debug("New request created.")
-
-            # Handle file upload
-            qr_code_file = form.qrCodeInput.data
-            qr_code_filename = None
-            if qr_code_file:
-                folder_path = 'static/images/qr_codes'
-                os.makedirs(folder_path, exist_ok=True)
-                filename = secure_filename(qr_code_file.filename)
-                qr_code_file.save(os.path.join(folder_path, filename))
-                qr_code_filename = filename
-                current_app.logger.info("QR code file uploaded: %s", qr_code_filename)
-
-            print("New request created, unfinished.")
             
             # Insert into DB (assuming add_request is defined elsewhere)
             new_id = add_request(
@@ -235,9 +220,6 @@ def create_app():
                 zipcode=zip_,
                 notes=notes,
                 gated=gated,
-                qr_code=qr_code_filename,
-                gate_code=gate_code,
-                notify=notify,
                 status="Unfinished"
             )
             pickup = db.session.get(PickupRequest, new_id)
@@ -699,8 +681,6 @@ def create_app():
         current_app.logger.info("GET /callback – exchanging code for tokens")
 
         token = oauth.oidc.authorize_access_token()  # state + PKCE automatically verified
-        current_app.logger.debug("Token payload (sans id_token): %s",
-                                {k: v for k, v in token.items() if k != "id_token"})
 
         # --------------------------------------------------------------------------
         # Extra defence: verify the ID-token signature & claims ourselves :contentReference[oaicite:1]{index=1}
@@ -718,7 +698,7 @@ def create_app():
         session.permanent = True
         session["user"]   = {"sub": id_token["sub"], "email": id_token.get("email")}
         session['logged_in'] = True
-        current_app.logger.info("Admin %s logged in", id_token.get("email"))
+        current_app.logger.info("Admin logged in")
 
         return redirect(url_for("admin_console"))
 

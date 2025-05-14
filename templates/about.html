@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}About Us | EcoTextile Pickup{% endblock %}
+{% block title %}About Us | EkoLinq{% endblock %}
+{% block meta_description %}Meet the EkoLinq team: our mission to reduce textile waste and build a greener future together.{% endblock %}
+{% block og_image %}{{ url_for('static', filename='images/EkoLinq_Square_Logo_GBG.png') }}{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/about_styles.css') }}">

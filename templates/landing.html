@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}EkoLinq{% endblock %}
+{% block title %}Request a Pick Up | EkoLinq{% endblock %}
+{% block meta_description %}Schedule your free textile-waste pick up and join EkoLinq’s mission to keep textiles out of landfills!{% endblock %}
+{% block og_image %}{{ url_for('static', filename='images/EkoLinq_Square_Logo_GBG.png') }}{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">

@@ -1,4 +1,112 @@
-2025-05-13 19:56:26,230 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:55:59,213 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:55:59,220 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:55:59,226 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:55:59,231 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+Traceback (most recent call last):
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:56:24,824 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -25,7 +133,7 @@ Traceback (most recent call last):
     <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
     ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:56:26,245 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,839 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -52,7 +160,7 @@ Traceback (most recent call last):
     <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
     ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:56:26,250 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,847 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -79,7 +187,7 @@ Traceback (most recent call last):
     <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
     ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,666 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,854 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -100,13 +208,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,681 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,862 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -127,13 +235,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,690 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,870 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -154,13 +262,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,697 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,878 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -181,13 +289,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,703 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,885 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -208,13 +316,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,711 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,891 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -235,13 +343,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,718 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,897 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -262,13 +370,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,725 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,902 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -289,13 +397,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,733 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,908 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -316,13 +424,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,739 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,914 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -343,13 +451,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,744 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,920 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -370,13 +478,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,752 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,927 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -397,13 +505,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,760 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,933 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -424,13 +532,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,768 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,938 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -451,13 +559,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,773 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,944 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -478,13 +586,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,778 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,955 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -505,13 +613,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,785 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:24,961 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -532,13 +640,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,791 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:25,984 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -559,13 +667,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,796 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,004 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -586,13 +694,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:18,801 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,013 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -613,13 +721,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,829 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,084 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -640,13 +748,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,843 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,099 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -667,13 +775,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,851 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,114 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -694,13 +802,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,858 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,129 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -721,13 +829,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,865 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,139 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -748,13 +856,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,872 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,145 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -775,13 +883,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,878 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,175 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -802,13 +910,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,883 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,185 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -829,13 +937,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,888 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,192 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -856,13 +964,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,893 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,199 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -883,13 +991,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,898 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,206 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -910,13 +1018,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,903 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,211 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -937,13 +1045,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,909 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,218 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -964,13 +1072,13 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,914 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
+2025-05-13 19:56:26,223 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
@@ -991,144 +1099,9 @@ Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
     {% extends "base.html" %}
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,919 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,925 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,930 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,935 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
-2025-05-13 19:57:19,942 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
-    return render_template('error.html', error_message=error, traceback=traceback)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
-    {% extends "base.html" %}
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
-    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
-    ^^^^^^^^^^^^^^^^^
+    <!-- <meta property="og:image" content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}"> -->
+    ^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: Flask.url_for() takes 2 positional arguments but 3 were given

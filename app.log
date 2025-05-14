@@ -1,710 +1,115 @@
-2025-04-27 15:27:45,273 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:28:07,376 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:29:13,668 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:30:17,843 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:30:31,931 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:32:08,790 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:32:48,747 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:32:57,446 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:33:51,697 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:34:18,635 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:34:33,760 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:34:47,859 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:35:03,348 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:35:10,297 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1686]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-04-27 15:35:19,438 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-27 15:35:22,786 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-27 15:35:22,787 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-27 15:36:40,416 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-27 15:36:40,417 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-27 15:36:41,751 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-27 15:37:55,584 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-27 15:37:55,585 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-27 16:00:54,879 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:750]
-2025-04-27 16:00:54,893 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:755]
-2025-04-27 16:01:07,869 INFO: GET /callback - Callback endpoint hit for admin login. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:768]
-2025-04-27 16:01:08,329 INFO: Successfully logged in and obtained tokens for admin. Redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:812]
-2025-04-27 16:01:08,342 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:825]
-2025-04-27 16:01:14,973 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1002]
-2025-04-27 16:03:57,173 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1002]
-2025-04-27 16:04:26,293 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1002]
-2025-04-27 16:04:38,215 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1002]
-2025-04-27 16:05:00,745 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1002]
-2025-04-27 16:05:14,927 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:825]
-2025-04-27 16:05:18,375 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-27 16:05:19,430 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-27 16:05:21,898 INFO: Form validated successfully for request_id=867801 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:432]
-2025-04-27 16:05:21,902 INFO: Attempt to edit a past request for request_id=867801, request_date=2025-04-19 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:479]
-2025-04-27 16:05:25,292 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-27 16:05:28,752 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-27 16:05:28,756 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-27 16:05:39,281 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:181]
-2025-04-27 16:05:39,296 INFO: New pickup request created. ID in DB: 8, request_id: 346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:233]
-2025-04-27 16:05:39,303 INFO: User is selecting a date/time for request_id=346235, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:293]
-2025-04-27 16:05:45,345 INFO: Pickup request 346235 updated with chosen_date=2025-05-03, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:277]
-2025-04-27 16:05:45,346 INFO: Confirmation email not yet sent for request_id=346235, sending to confirmation page [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:289]
-2025-04-27 16:05:45,356 INFO: Sending pickup request email for request_id=346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:323]
-2025-04-27 16:05:45,356 INFO: Sending pickup request email for request_id=346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:326]
-2025-04-27 16:05:46,676 INFO: Rendering confirmation.html for request_id=346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:341]
-2025-04-27 16:06:14,573 WARNING: Unauthorized access attempt with request_id=346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:315]
-2025-04-27 16:06:14,573 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1686]
+2025-05-13 19:57:19,947 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 316, in confirmation
-    abort(404)
-    ~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/helpers.py", line 284, in abort
-    current_app.aborter(code, *args, **kwargs)
-    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/exceptions.py", line 876, in __call__
-    raise self.mapping[code](*args, **kwargs)
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-04-27 16:07:33,207 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-27 16:07:59,228 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-27 16:08:32,491 INFO: Form validated successfully for request_id=346235 with email=seanpvanderaa@gmail.com [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:432]
-2025-04-27 16:08:32,499 INFO: Request 346235 passed all checks and can be edited. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:525]
-2025-04-27 16:08:32,512 INFO: Rendering edit_request.html for request_id=346235 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:557]
-2025-04-28 18:31:44,794 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 18:31:48,321 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-28 18:46:17,164 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 18:46:23,202 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-28 18:46:23,204 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-28 18:46:30,909 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:181]
-2025-04-28 18:46:30,917 INFO: New pickup request created. ID in DB: 9, request_id: 534351 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:233]
-2025-04-28 18:46:30,925 INFO: User is selecting a date/time for request_id=534351, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:293]
-2025-04-28 18:46:35,529 INFO: User is selecting a date/time for request_id=534351, offset=1. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:293]
-2025-04-28 18:46:37,010 INFO: User is selecting a date/time for request_id=534351, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:293]
-2025-04-28 18:46:43,612 INFO: Pickup request 534351 updated with chosen_date=2025-05-03, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:277]
-2025-04-28 18:46:43,612 INFO: Confirmation email not yet sent for request_id=534351, sending to confirmation page [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:289]
-2025-04-28 18:46:43,623 INFO: Sending pickup request email for request_id=534351 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:323]
-2025-04-28 18:46:43,623 INFO: Sending pickup request email for request_id=534351 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:326]
-2025-04-28 18:46:44,970 INFO: Rendering confirmation.html for request_id=534351 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:341]
-2025-04-28 18:46:50,514 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:46:53,667 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1648]
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 1624, in error
+    return render_template('error.html', error_message=error, traceback=traceback)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/error.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in block 'og_image'
+    content="{% block og_image %}{{ url_for('static','images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:58:25,913 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+2025-05-13 19:58:25,928 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 482, in edit_request
-    ok, result = can_edit(form.request_id.data, form.requester_email.data)
-                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 456, in can_edit
-    if datetime.strptime(pickup.request_date, '%Y-%m-%d').date() < datetime.now():
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: '<' not supported between instances of 'datetime.date' and 'datetime.datetime'
-2025-04-28 18:48:07,777 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:48:11,946 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:49:42,127 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:49:44,776 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:52:10,726 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:52:14,569 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:52:51,594 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:52:54,393 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:53:14,090 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:53:16,418 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:53:44,517 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:53:47,324 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:54:12,188 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:54:15,200 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:54:54,261 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:54:56,556 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:55:20,836 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:55:23,052 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:55:56,535 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:55:58,803 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:56:08,303 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:56:10,577 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:56:24,536 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:56:27,041 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:57:15,133 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:57:17,596 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:58:02,206 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:58:04,308 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:58:09,339 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:58:44,219 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:58:47,542 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:04,409 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:07,315 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:21,687 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:23,939 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:31,005 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:33,921 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:38,939 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 18:59:44,688 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:00:05,973 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:00:08,852 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:00:50,984 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:567]
-2025-04-28 19:00:52,214 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:01:01,494 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:03:58,521 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:567]
-2025-04-28 19:04:24,699 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:567]
-2025-04-28 19:04:26,073 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1627]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-04-28 19:08:12,218 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:08:19,673 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:567]
-2025-04-28 19:08:26,215 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:567]
-2025-04-28 19:09:03,659 INFO: Rendering edit_request.html for request_id=534351 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:543]
-2025-04-28 19:09:15,364 INFO: CancelRequestForm validated. request_id=534351 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:619]
-2025-04-28 19:09:15,378 INFO: Request for request_id=534351 successfully changed to Cancelled. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:633]
-2025-04-28 19:09:17,291 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:09:19,207 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:09:22,133 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:10:06,604 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:10:44,834 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:10:51,766 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:11:09,775 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:11:55,451 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:11:58,736 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:12:23,290 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:12:34,939 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:12:52,185 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:12:55,248 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:15:14,121 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:15:23,374 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:16:02,935 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:16:12,772 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:18:18,429 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:18:50,093 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:415]
-2025-04-28 19:18:54,550 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:19:13,545 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:20:19,042 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:20:31,195 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:21:00,849 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:21:07,527 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:21:26,159 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:21:44,140 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:21:50,076 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:22:22,758 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:22:41,336 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:22:58,939 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:23:16,090 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:23:27,024 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:24:02,329 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:24:11,988 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:24:17,201 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:24:24,552 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:25:14,878 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:25:29,426 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:25:37,696 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:26:06,062 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:26:41,774 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:26:54,568 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:27:06,517 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:27:17,763 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:27:27,138 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:27:44,832 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:27:51,281 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:28:33,923 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:28:39,466 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:28:47,127 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:29:57,350 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:30:17,126 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:30:24,155 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:30:37,981 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:30:56,236 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:31:02,366 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:31:23,676 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:31:31,504 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:31:40,843 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:32:26,690 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:33:31,185 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:34:29,771 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:34:43,875 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:34:49,625 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:35:00,848 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:35:26,721 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:35:35,212 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:35:44,135 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:35:52,545 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:36:00,965 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:37:24,203 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:39:33,062 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:40:15,793 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:40:23,453 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:40:55,292 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:41:05,281 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:41:25,609 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:41:38,406 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:42:37,738 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:43:30,270 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:44:04,447 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:44:32,445 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:44:43,156 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:44:52,837 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:45:17,114 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:45:20,070 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-28 19:45:26,286 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-28 19:45:28,990 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-29 17:27:12,276 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-29 17:27:16,077 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-29 17:27:16,078 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-29 17:27:29,330 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:181]
-2025-04-29 17:27:29,347 INFO: New pickup request created. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:230]
-2025-04-29 17:27:29,356 INFO: User is selecting a date/time for request_id=957730, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:290]
-2025-04-29 17:27:30,995 INFO: Pickup request 957730 updated with chosen_date=2025-05-03, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:274]
-2025-04-29 17:27:30,995 INFO: Sending edited pickup request email for request_id=957730 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:282]
-2025-04-29 17:27:32,444 INFO: Sending pickup request email for request_id=957730 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:320]
-2025-04-29 17:27:32,444 INFO: Confirmation email already sent for request_id=957730 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:328]
-2025-04-29 17:27:32,448 INFO: Rendering confirmation.html for request_id=957730 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:338]
-2025-04-29 17:27:37,217 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
-2025-04-29 17:27:39,777 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:473]
-2025-04-29 17:27:39,782 INFO: Request to edit valid, rendering page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:489]
-2025-04-29 17:27:41,291 INFO: Rendering edit_request.html for request_id=957730 to edit time. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:546]
-2025-04-29 17:27:43,214 INFO: Pickup request 957730 time updated to (2025-05-04, 08:00-16:00). Sending edited request email. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:587]
-2025-04-29 17:27:44,570 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1627]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 624, in match
-    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
-werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
-2025-04-29 17:48:26,079 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:133]
-2025-04-29 17:49:31,708 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-29 17:50:06,110 INFO: GET /textile-waste - Rendering textile_waste page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:128]
-2025-04-29 17:50:07,235 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-29 17:50:21,782 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:149]
-2025-04-29 17:50:21,795 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-04-29 17:53:53,879 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:181]
-2025-04-29 17:53:53,905 INFO: New pickup request created. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:230]
-2025-04-29 17:53:53,917 INFO: User is selecting a date/time for request_id=838834, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:290]
-2025-04-29 17:53:56,054 INFO: Pickup request 838834 updated with chosen_date=2025-05-04, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:274]
-2025-04-29 17:53:56,055 INFO: Sending edited pickup request email for request_id=838834 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:282]
-2025-04-29 17:53:57,405 INFO: Sending pickup request email for request_id=838834 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:320]
-2025-04-29 17:53:57,406 INFO: Confirmation email already sent for request_id=838834 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:328]
-2025-04-29 17:53:57,406 INFO: Rendering confirmation.html for request_id=838834 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:338]
-2025-04-29 17:55:08,136 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
-2025-04-29 17:55:40,739 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:473]
-2025-04-29 17:55:40,741 WARNING: Invalid form submission at edit_request [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:479]
-2025-04-29 17:55:40,763 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:412]
-2025-04-29 17:55:47,087 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-29 20:12:43,451 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:184]
-2025-04-29 20:12:47,435 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:731]
-2025-04-29 20:41:31,424 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-29 20:41:34,750 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:670]
-2025-04-29 20:41:34,760 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:675]
-2025-04-29 20:42:01,793 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:670]
-2025-04-29 20:42:01,804 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:675]
-2025-04-29 20:42:40,294 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:123]
-2025-04-29 20:42:42,283 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:670]
-2025-04-29 20:42:42,291 INFO: GET /admin/login - Admin logging in via Cognito. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:675]
-2025-04-29 20:49:15,945 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:125]
-2025-04-29 20:49:19,016 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:672]
-2025-05-11 18:52:55,363 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:125]
-2025-05-11 18:52:59,878 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:672]
-2025-05-11 19:12:56,125 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:142]
-2025-05-11 19:13:00,473 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:689]
-2025-05-11 19:18:05,757 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:142]
-2025-05-11 19:18:10,007 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:142]
-2025-05-11 19:18:14,900 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:689]
-2025-05-11 19:18:28,017 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:29,046 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:29,251 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:29,960 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:30,377 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:31,082 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:31,313 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:32,050 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:32,243 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:32,925 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:34,391 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:35,076 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:35,447 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:36,127 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:18:36,307 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:18:36,975 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:724]
-2025-05-11 19:21:48,071 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:21:48,072 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1624]
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 139, in home
+    return render_template('landing.html')
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    content="{% block og_image %}{{ url_for('static', filename='images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 5, in block 'og_image'
+    {% block og_image %}{{ url_for('static','images/request-pickup-social.png') }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:58:29,651 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+2025-05-13 19:58:29,652 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 705, in callback
-    token = oauth.oidc.authorize_access_token()  # state + PKCE automatically verified
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/authlib/integrations/flask_client/apps.py", line 100, in authorize_access_token
-    params = self._format_state_params(state_data, params)
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/authlib/integrations/base_client/sync_app.py", line 234, in _format_state_params
-    raise MismatchingStateError()
-authlib.integrations.base_client.errors.MismatchingStateError: mismatching_state: CSRF Warning! State not equal in request and response.
-2025-05-11 19:21:54,546 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:689]
-2025-05-11 19:21:55,304 INFO: GET /callback – exchanging code for tokens [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:703]
-2025-05-11 19:21:56,302 INFO: Admin seanpvanderaa@gmail.com logged in [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:725]
-2025-05-11 19:21:56,314 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:742]
-2025-05-11 19:21:59,364 INFO: GET /route-overview - displaying route overview page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1078]
-2025-05-11 19:21:59,374 INFO: Rendering route_overview.html with next_pickup=None, #upcoming=0, #past=3 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1172]
-2025-05-11 19:22:00,327 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:919]
-2025-05-11 19:22:08,283 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:742]
-2025-05-11 19:22:32,606 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:142]
-2025-05-11 19:22:35,340 INFO: GET /request_pickup - User accessed request_pickup page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:168]
-2025-05-11 19:22:35,342 INFO: Recaptcha site key = '6Lc3zR4rAAAAAC-V5D1mEQtw-yLlzoh5sZjKn_9z', secret key = '6Lc3zR4rAAAAAAn4IiORSQTpjF2dYzMUvAtArGeE' [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:187]
-2025-05-11 19:33:04,090 DEBUG: GET /verify_zip - verifying user zip. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:619]
-2025-05-11 19:33:04,091 DEBUG: Zip code provided: 94566 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:622]
-2025-05-11 19:33:04,091 DEBUG: verifyZip result: {'valid': True, 'reason': ''} [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:626]
-2025-05-11 19:33:04,340 INFO: POST /request_init - Form validated successfully. Creating new request. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:196]
-2025-05-11 19:33:04,340 DEBUG: New request created. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:212]
-2025-05-11 19:33:04,378 INFO: New pickup request created. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:245]
-2025-05-11 19:33:04,389 DEBUG: select_date route accessed with request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
-2025-05-11 19:33:04,391 DEBUG: Built schedule for offset=0. base_date_str=May. 11, days_list=[{'date_obj': datetime.date(2025, 5, 16), 'date_str': 'May. 16', 'day_of_week': 'Friday', 'slots': [('08:00', '16:00')]}, {'date_obj': datetime.date(2025, 5, 17), 'date_str': 'May. 17', 'day_of_week': 'Saturday', 'slots': [('08:00', '16:00')]}] [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:276]
-2025-05-11 19:33:04,391 INFO: User is selecting a date/time for request_id=487276, offset=0. Rendering select_date.html. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:305]
-2025-05-11 19:33:06,293 DEBUG: select_date route accessed with request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:258]
-2025-05-11 19:33:06,296 DEBUG: Built schedule for offset=0. base_date_str=May. 11, days_list=[{'date_obj': datetime.date(2025, 5, 16), 'date_str': 'May. 16', 'day_of_week': 'Friday', 'slots': [('08:00', '16:00')]}, {'date_obj': datetime.date(2025, 5, 17), 'date_str': 'May. 17', 'day_of_week': 'Saturday', 'slots': [('08:00', '16:00')]}] [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:276]
-2025-05-11 19:33:06,300 INFO: Pickup request 487276 updated with chosen_date=2025-05-17, chosen_time=08:00-16:00. Redirecting to confirmation. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:289]
-2025-05-11 19:33:06,301 INFO: Confirmation email not yet sent for request_id=487276, sending to confirmation page [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:301]
-2025-05-11 19:33:06,309 DEBUG: confirmation route accessed with request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:323]
-2025-05-11 19:33:06,310 INFO: Sending pickup request email for request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:335]
-2025-05-11 19:33:06,310 INFO: Sending pickup request email for request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:338]
-2025-05-11 19:33:07,638 DEBUG: Pickup request email sent for request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:341]
-2025-05-11 19:33:07,640 INFO: Rendering confirmation.html for request_id=487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:353]
-2025-05-11 19:33:10,943 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:33:14,144 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:488]
-2025-05-11 19:33:14,147 INFO: Request to edit valid, rendering page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:504]
-2025-05-11 19:33:29,837 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:33:33,774 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:488]
-2025-05-11 19:33:33,778 WARNING: edit_request endpoint hit, email and request ID don't match. Request ID = 487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:499]
-2025-05-11 19:33:33,786 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:33:40,379 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:488]
-2025-05-11 19:33:40,381 WARNING: edit_request endpoint hit, email and request ID don't match. Request ID = 48727 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:499]
-2025-05-11 19:33:40,395 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:35:16,465 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:35:34,675 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:35:45,434 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:35:57,050 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:36:11,587 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:36:17,462 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:37:27,411 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 139, in home
+    return render_template('landing.html')
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    content="{% block og_image %}{{ url_for('static', filename='images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/landing.html", line 5, in block 'og_image'
+    {% block og_image %}{{ url_for('static','images/request-pickup-social.png') }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 19:59:02,257 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+2025-05-13 19:59:48,096 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+2025-05-13 20:01:19,714 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:148]
+2025-05-13 20:01:19,726 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1598]
 Traceback (most recent call last):
   File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
     rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:38:03,878 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:38:03,915 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:38:08,819 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:38:08,864 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:38:37,640 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:38:37,664 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:38:52,219 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:38:52,257 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:39:01,315 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:39:01,356 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:39:14,932 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:39:14,972 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:39:25,786 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:39:30,211 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:39:48,498 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:41:07,570 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:41:07,607 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:41:18,581 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:41:30,884 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:41:41,456 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:41:51,795 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:42:02,500 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:42:20,164 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:42:51,639 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:42:51,708 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:43:00,126 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:43:19,248 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:43:34,490 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
-2025-05-11 19:43:52,972 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:44:08,192 INFO: GET /admin - User accessed admin route; redirecting to admin_console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:685]
-2025-05-11 19:44:08,205 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:738]
-2025-05-11 19:44:08,207 DEBUG: Using default date range for admin_console: 2025-05-05 to 2025-05-11 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:761]
-2025-05-11 19:44:08,232 DEBUG: Computed daily_counts=[['2025-05-05', 0], ['2025-05-06', 0], ['2025-05-07', 0], ['2025-05-08', 0], ['2025-05-09', 0], ['2025-05-10', 0], ['2025-05-11', 1]], pickups_total=0 for date range 2025-05-05 - 2025-05-11 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:793]
-2025-05-11 19:44:11,287 INFO: Accessing /admin-pickups page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:915]
-2025-05-11 19:44:11,290 DEBUG: Using default sorting by ID desc. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:948]
-2025-05-11 19:44:11,292 DEBUG: Found 12 pickup requests after applying filters/sorts. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:952]
-2025-05-11 19:44:16,427 INFO: Accessing /admin-console. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:738]
-2025-05-11 19:44:16,428 DEBUG: Using default date range for admin_console: 2025-05-05 to 2025-05-11 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:761]
-2025-05-11 19:44:16,430 DEBUG: Computed daily_counts=[['2025-05-05', 0], ['2025-05-06', 0], ['2025-05-07', 0], ['2025-05-08', 0], ['2025-05-09', 0], ['2025-05-10', 0], ['2025-05-11', 1]], pickups_total=0 for date range 2025-05-05 - 2025-05-11 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:793]
-2025-05-11 19:44:19,213 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
-2025-05-11 19:44:20,547 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:44:24,377 INFO: POST /edit-request - User accessing the edit request page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:488]
-2025-05-11 19:44:24,383 WARNING: edit_request endpoint hit, email and request ID don't match. Request ID = 487276 [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:499]
-2025-05-11 19:44:24,393 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:44:44,982 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:45:14,470 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:45:14,510 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:45:28,161 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:45:28,218 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:45:33,236 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:45:33,276 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:45:38,915 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:45:38,982 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:45:43,768 INFO: GET /edit-request-init - User accessing the edit request initialization page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:427]
-2025-05-11 19:45:43,896 ERROR: Unhandled exception occurred: [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:1599]
-Traceback (most recent call last):
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 891, in dispatch_request
-    self.raise_routing_exception(req)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 500, in raise_routing_exception
-    raise request.routing_exception  # type: ignore[misc]
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/ctx.py", line 362, in match_request
-    result = self.url_adapter.match(return_rule=True)  # type: ignore
-  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/werkzeug/routing/map.py", line 629, in match
-    raise NotFound() from None
-werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
-2025-05-11 19:46:53,707 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py", line 149, in about
+    return render_template('about.html')
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/path/to/venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/about.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/base.html", line 24, in top-level template code
+    content="{% block og_image %}{{ url_for('static', filename='images/social-preview.png') }}{% endblock %}">
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/templates/about.html", line 5, in block 'og_image'
+    {% block og_image %}{{ url_for('static','images/about-us-social.png') }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Flask.url_for() takes 2 positional arguments but 3 were given
+2025-05-13 20:01:31,607 INFO: GET / - Rendering landing page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:138]
+2025-05-13 20:01:32,715 INFO: GET /about - Rendering about page. [in /Users/seanvanderaa/Desktop/Creativity/EkoLinq/Website/app.py:148]

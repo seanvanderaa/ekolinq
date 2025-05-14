@@ -66,33 +66,8 @@
           {{ form.gated() }}<label for="gated">Do we need a gate code or permission to access your address?</label>
           <span class="info-icon">i</span>
           <div class="info-text">
-            If checked, you'll be asked to provide us with a bit more information about gate access.
+            If checked, you'll be asked to send us the gate or QR code, or confirm that you've notified your gate attendant about the pending pick up.
           </div>
-        </div>
-        <br/>
-
-        <div id="gated-popup" style="display: none;">
-          <p>Please select how you’d like to provide access details:</p>
-          <div id="gatedOptions-wrapper" style="margin-bottom: 16px;">
-            {{ form.gatedOptions(id="gatedOptions") }}
-          </div>
-          <!-- Gate Code Section -->
-          <div id="gate-code-section" style="display: none; margin-bottom: 16px;">
-            <label for="gateCodeInput">Gate Code</label>
-            {{ form.gateCodeInput(id="gateCodeInput", placeholder="Enter gate code") }}
-          </div>
-          <!-- QR Code Section -->
-          <div id="qr-code-section" style="display: none; margin-bottom: 16px; flex-direction: column;">
-            <label for="qrCodeInput" style="margin-bottom: 16px; margin-top: 16px;">Upload QR Code</label>
-            {{ form.qrCodeInput(id="qrCodeInput", accept="image/*") }}
-          </div>
-          <div id="notice-section" style="display: none; margin-bottom: 16px;">
-            <p>I will notify our gate attendant and recognize that failure to do so may result in my items not being picked up.</p>
-          </div>
-          <!-- Hidden fields -->
-          {{ form.selectedGatedOption() }}
-          {{ form.finalGateCode() }}
-          {{ form.finalNotice() }}
         </div>
 
         <div class="form-group">

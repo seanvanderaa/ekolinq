@@ -1,6 +1,6 @@
-<nav class="navbar">
+<nav class="navbar" role="navigation">
     <div class="navbar__logo">
-      <a href="/">
+      <a href="/" role="home">
         <img src="{{ url_for('static', filename='images/EkoLinqLogo_White.png') }}" alt="Company Logo" height="30">
       </a>
     </div>
@@ -8,11 +8,11 @@
       <i class="bi bi-list" style="color: white; font-size: 24px;"></i>
     </button>
     
-    <ul class="navbar__menu" id="navbar-menu">
-      <li class="navbar__item"><a href="/textile-waste" class="navbar__link">What's textile waste?</a></li>
-      <li class="navbar__item"><a href="/about" class="navbar__link">About us</a></li>
-      <li class="navbar__item"><a onclick="openContactPopup()" id="navbar-contact-btn" class="navbar__link">Contact us</a></li>
-      <li class="navbar__item"><a href="/edit-request-init" class="navbar__link" style="color: var(--yel);">Edit request</a></li>
+    <ul class="navbar__menu" id="navbar-menu" aria-label="Navbar menu">
+      <li class="navbar__item"><a aria-label="What's textile waste?" href="/textile-waste" class="navbar__link">What's textile waste?</a></li>
+      <li class="navbar__item"><a aria-label="About us" href="/about" class="navbar__link">About us</a></li>
+      <li class="navbar__item"><a aria-label="Contact us" onclick="openContactPopup()" id="navbar-contact-btn" class="navbar__link">Contact us</a></li>
+      <li class="navbar__item"><a aria-label="Edit request" href="/edit-request-init" class="navbar__link" style="color: var(--yel);">Edit request</a></li>
     </ul>
 </nav>
   
