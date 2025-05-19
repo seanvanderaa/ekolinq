@@ -19,4 +19,20 @@ document.addEventListener("DOMContentLoaded", function() {
   filterForm.querySelectorAll('select, input').forEach(el => {
     el.addEventListener('change', updateTable);
   });
+    
+  const cleanForm = document.getElementById('cleanup_form');
+  const overlay   = document.getElementById('overlay');
+
+  if (cleanForm && overlay) {
+    cleanForm.addEventListener('submit', () => {
+      // disable the submit button to prevent double-clicks (optional)
+      cleanForm.querySelector('button, input[type="submit"]')?.setAttribute('disabled', 'disabled');
+
+      // reveal the overlay + spinner
+      overlay.classList.add('show');
+    });
+  }
+  else {
+    console.log("NOPE!");
+  }
 });

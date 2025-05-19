@@ -17,8 +17,13 @@
 
   <!-- Main content will be inserted here -->
   <div id="main-content" style="padding-bottom: 60px;">
+      <div id="overlay" aria-hidden="true">
+        <div class="spinner" role="status" aria-label="Loading…"></div>
+      </div>
       {% block content %}{% endblock %}
   </div>
+
+
 
   <!-- JS Scripts that are needed everywhere can go here -->
   {% block scripts %}

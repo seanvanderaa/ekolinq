@@ -14,9 +14,11 @@
   <!-- Show a table of all PickupRequests -->
   <div id="header">
     <h2 style="margin: 0px;">All Pickup Requests</h2>
-    <p style="margin: 0px;" class="download-btn">
-      <a href="{{ url_for('download_csv') }}" style="text-decoration: none; color: black;">Download All Pick Up Requests as CSV</a>
-    </p>
+    <form action="{{ url_for('clean_pickups') }}"
+        method="POST" id="cleanup_form">
+        {{ cleanup_form.csrf_token }}
+        {{ cleanup_form.submit(class="download-btn") }}
+    </form>
   </div>
   <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTERS</h4>
   <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}" style="margin-bottom: 24px;">

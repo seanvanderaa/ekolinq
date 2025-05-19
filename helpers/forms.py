@@ -152,3 +152,6 @@ class ContactForm(FlaskForm):
     )
     # Override default message
     recaptcha = RecaptchaField()
+
+class CleanPickupsForm(FlaskForm):
+    submit = SubmitField("Clean Up and Update Google Spreadsheet")

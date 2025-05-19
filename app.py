@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash, abort
+from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash, abort, g
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -7,7 +7,6 @@ from flask_sitemap import Sitemap
 import logging
 from logging.handlers import RotatingFileHandler
 from models import db, PickupRequest, ServiceSchedule, DriverLocation, RouteSolution, Config as DBConfig, add_request, get_service_schedule, get_address
-from config import Config
 from extensions import mail
 import requests
 from flask_sqlalchemy import SQLAlchemy
@@ -21,7 +20,9 @@ from helpers.routing_old import get_optimized_route
 from helpers.scheduling import build_schedule
 from helpers.emailer import send_contact_email, send_request_email, send_error_report, send_editted_request_email
 from helpers.routing import fetch_distance_matrix, solve_tsp, seconds_to_hms
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm, ContactForm
+from helpers.auth import verify_cognito_jwt, JoseError
+from helpers.export import weekly_export
+from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm, ContactForm, CleanPickupsForm
 from datetime import date, timedelta, datetime
 from sqlalchemy import func
 from sqlalchemy import or_
@@ -32,6 +33,7 @@ import os
 import csv
 import io
 import json
+import time
 from urllib.parse import urlencode
 import uuid
 
@@ -41,7 +43,10 @@ import traceback
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100 per hour"])
 
-load_dotenv()
+load_dotenv() 
+
+from config import Config
+
 
 def create_app():
     app = Flask(__name__)
@@ -100,18 +105,39 @@ def create_app():
         db.create_all()
         seed_schedule_if_necessary()
 
+    @app.before_request
+    def session_auto_timeout():
+        exp = session.get("expires_at")
+        if exp and exp < time.time():
+            session.clear()
+
+
     @app.context_processor
     def inject_contact_form():
         # Every template now has `contact_form` in its context
         return { 'contact_form': ContactForm() }
 
-    def login_required(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            if not session.get('logged_in'):
-                return redirect(url_for('admin_login'))
-            return f(*args, **kwargs)
-        return decorated_function
+    def login_required(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            id_token = session.get("id_token")
+            if not id_token:                         # not logged in
+                return redirect(url_for("admin_login", next=request.url))
+
+            try:
+                claims = verify_cognito_jwt(id_token)
+            except JoseError:                        # bad sig / expired / wrong aud...
+                session.clear()
+                return redirect(url_for("admin_login", next=request.url))
+
+            # (optional) expose user info downstream
+            g.current_user = {
+                "sub": claims["sub"],
+                "email": claims.get("email"),
+                "groups": claims.get("cognito:groups", []),
+            }
+            return fn(*args, **kwargs)
+        return wrapper
     
     if not app.debug and not app.testing:
         # Production: Use rotating file logs
@@ -181,12 +207,7 @@ def create_app():
             city = None
             zipcode = None
             current_app.logger.warning("Invalid or missing zipcode provided: %s", zipcode)
-        
-        current_app.logger.info(
-            "Recaptcha site key = %r, secret key = %r",
-            current_app.config.get('RECAPTCHA_PUBLIC_KEY'),
-            current_app.config.get('RECAPTCHA_PRIVATE_KEY'),
-        )
+
         return render_template('request.html', zipcode = zipcode, city=city, form=form)
 
 
@@ -302,7 +323,7 @@ def create_app():
     @app.route('/confirmation')
     def confirmation():    
         request_id = request.args.get('request_id')
-        current_app.logger.debug("confirmation route accessed with request_id=%s", request_id)
+        current_app.logger.debug("Confirmation route accessed with request_id=%s", request_id)
 
         # Verify the request ID exists in the session and matches
         if 'pickup_request_id' not in session or session['pickup_request_id'] != request_id:
@@ -672,7 +693,7 @@ def create_app():
         """Kick off OIDC flow."""
         redirect_uri = url_for("callback", _external=True)  # HTTPS in prod
         #redirect_uri = url_for("callback", _external=True, _scheme="https")  # HTTPS in prod
-        current_app.logger.debug("Redirecting admin to Cognito login: %s", redirect_uri)
+        current_app.logger.debug("Redirecting admin to Cognito login.")
         return oauth.oidc.authorize_redirect(redirect_uri)
     
     @app.route("/callback")
@@ -696,8 +717,9 @@ def create_app():
 
         # Persist only what you really need
         session.permanent = True
-        session["user"]   = {"sub": id_token["sub"], "email": id_token.get("email")}
-        session['logged_in'] = True
+        session["id_token"]  = token["id_token"]
+        session["expires_at"] = id_token["exp"]
+
         current_app.logger.info("Admin logged in")
 
         return redirect(url_for("admin_console"))
@@ -738,7 +760,7 @@ def create_app():
             # Pre-populate the form fields with default dates
             form.start_date.data = start_date
             form.end_date.data = end_date
-            current_app.logger.debug("Using default date range for admin_console: %s to %s", start_date, end_date)
+            current_app.logger.debug("Using default date range for admin_console.")
 
         # Build the complete date range for the period
         num_days = (end_date - start_date).days + 1
@@ -827,17 +849,17 @@ def create_app():
             elif admin_address_form.submit.data and admin_address_form.validate_on_submit():
                 # Process address update
                 new_address = admin_address_form.admin_address.data
-                current_app.logger.info("AdminAddressForm was submitted and validated. New address=%s", new_address)
+                current_app.logger.info("AdminAddressForm was submitted and validated.")
 
                 config = DBConfig.query.filter_by(key='admin_address').first()
                 if config:
                     old_address_val = config.value
                     config.value = new_address
-                    current_app.logger.debug("Updated admin_address from '%s' to '%s'.", old_address_val, new_address)
+                    current_app.logger.debug("Updated admin_address.")
                 else:
                     config = DBConfig(key='admin_address', value=new_address)
                     db.session.add(config)
-                    current_app.logger.debug("Created new admin_address config entry: '%s'.", new_address)
+                    current_app.logger.debug("Created new admin_address config entry.")
                 
                 db.session.commit()
                 current_app.logger.info("Address updated; redirecting to /admin-schedule.")
@@ -868,17 +890,17 @@ def create_app():
         form = AdminAddressForm()
         if form.validate_on_submit():
             new_address = form.admin_address.data
-            current_app.logger.debug("Form validated. New address value: %s", new_address)
+            current_app.logger.debug("Form validated. New address value.")
 
             config = DBConfig.query.filter_by(key='admin_address').first()
             if config:
                 old_address = config.value
                 config.value = new_address
-                current_app.logger.debug("Updated existing admin_address from '%s' to '%s'.", old_address, new_address)
+                current_app.logger.debug("Updated existing admin_address.")
             else:
                 config = DBConfig(key='admin_address', value=new_address)
                 db.session.add(config)
-                current_app.logger.debug("Created new DBConfig entry for admin_address: '%s'.", new_address)
+                current_app.logger.debug("Created new DBConfig entry for admin_address.")
             
             db.session.commit()
             current_app.logger.info("Admin address updated. Redirecting to admin_schedule.")
@@ -888,7 +910,7 @@ def create_app():
             return redirect(url_for('admin_schedule'))
 
 
-    
+    # NEED TO CREATE A CSRF FORM HERE
     @app.route('/admin-pickups', methods=['GET', 'POST'])
     @login_required
     def admin_pickups():
@@ -930,9 +952,9 @@ def create_app():
 
         requests = query.all()
         current_app.logger.debug("Found %d pickup requests after applying filters/sorts.", len(requests))
+        cleanup_form = CleanPickupsForm()
 
-
-        return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests, delete_form=delete_form)
+        return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests, delete_form=delete_form, cleanup_form=cleanup_form)
 
     @app.route('/admin/filtered_requests')
     @login_required
@@ -995,48 +1017,75 @@ def create_app():
             current_app.logger.warning("Invalid form submission when attempting to delete pickup. Errors: %s", form.errors)
         
         return redirect(url_for('admin_pickups'))
+    
+    @app.route('/admin/clean_pickups', methods=["POST"])
+    def clean_pickups():
+        form = CleanPickupsForm()
+
+        # Always validate *before* doing any work
+        if not form.validate_on_submit():
+            flash("Invalid form submission – please try again.", "error")
+            return redirect(url_for("admin_pickups"))
+
+        current_app.logger.info("ADMIN: triggered /clean_pickups")
+
+        try:
+            weekly_export()
+        except Exception as exc:
+            current_app.logger.exception("weekly_export() failed")
+            flash(f"Export failed: {exc}", "error")
+        else:
+            current_app.logger.info("weekly_export() completed")
+            flash("Pickup requests exported and scrubbed ✔️", "success")
+
+        return redirect(url_for("admin_pickups"))
 
 
-    @app.route('/admin/download_csv')
-    @login_required
-    def download_csv():
-        current_app.logger.info("GET /admin/download_csv - Admin downloading CSV of all pickup requests.")
+    # @app.route('/admin/download_csv')
+    # @login_required
+    # def download_csv():
+    #     current_app.logger.info("GET /admin/download_csv - Admin downloading CSV of all pickup requests.")
 
-        # Query all pickup requests
-        pickup_requests = PickupRequest.query.all()
-        current_app.logger.debug("Fetched %d pickup requests to include in CSV.", len(pickup_requests))
+    #     # Query all pickup requests
+    #     pickup_requests = PickupRequest.query.all()
+    #     current_app.logger.debug("Fetched %d pickup requests to include in CSV.", len(pickup_requests))
 
-        # Create an in-memory CSV
-        output = io.StringIO()
-        writer = csv.writer(output)
+    #     # Create an in-memory CSV
+    #     output = io.StringIO()
+    #     writer = csv.writer(output)
 
-        # Write header with all fields
-        writer.writerow([
-            "ID", "First Name", "Last Name", "Email", "Phone Number",
-            "Address", "City", "Zipcode", "Notes", "Status",
-            "Gated", "QR Code", "Gate Code", "Notify",
-            "Request Date", "Request Time", "Date Filed",
-            "Pickup Complete Info", "Request ID"
-        ])
+    #     # Write header with all fields
+    #     writer.writerow([
+    #         "ID", "First Name", "Last Name", "Email", "Phone Number",
+    #         "Address", "City", "Zipcode", "Notes", "Status",
+    #         "Gated",
+    #         "Request Date", "Request Time", "Date Filed",
+    #         "Pickup Complete Info", "Request ID"
+    #     ])
 
-        # Write rows for each pickup request
-        for req in pickup_requests:
-            writer.writerow([
-                req.id, req.fname, req.lname, req.email, req.phone_number,
-                req.address, req.city, req.zipcode, req.notes, req.status,
-                req.gated, req.qr_code, req.gate_code, req.notify,
-                req.request_date, req.request_time, req.date_filed,
-                req.pickup_complete_info, req.request_id
-            ])
+    #     # Write rows for each pickup request
+    #     for req in pickup_requests:
+    #         writer.writerow([
+    #             req.id, req.fname, req.lname, req.email, req.phone_number,
+    #             req.address, req.city, req.zipcode, req.notes, req.status,
+    #             req.gated,
+    #             req.request_date, req.request_time, req.date_filed,
+    #             req.pickup_complete_info, req.request_id
+    #         ])
 
-        # Make a Flask response with the CSV data
-        response = make_response(output.getvalue())
-        response.headers["Content-Disposition"] = "attachment; filename=pickup_requests.csv"
-        response.headers["Content-type"] = "text/csv"
+    #     # Make a Flask response with the CSV data
+    #     response = make_response(output.getvalue())
+    #     response.headers["Content-Disposition"] = "attachment; filename=pickup_requests.csv"
+    #     response.headers.update({
+    #         "Content-Disposition": "attachment; filename=pickup_requests.csv",
+    #         "Content-Type": "text/csv",
+    #         "Cache-Control": "private, no-store",
+    #         "X-Frame-Options": "DENY"
+    #     })
 
-        current_app.logger.info("CSV created and sent to client.")
+    #     current_app.logger.info("CSV created and sent to client.")
 
-        return response
+    #     return response
         
 
 
@@ -1181,7 +1230,7 @@ def create_app():
 
         # Now call our route-optimization function
         adminAddress = DBConfig.query.filter_by(key='admin_address').first()
-        current_app.logger.debug("Using start_location='%s' for get_optimized_route.", adminAddress)
+        current_app.logger.debug("Using adminAddress for get_optimized_route.")
 
         try:
             sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
@@ -1251,12 +1300,12 @@ def create_app():
         driver_loc = DriverLocation.query.first()
         if driver_loc and driver_loc.full_address():
             driver_current_location = driver_loc.full_address()
-            current_app.logger.debug("Using driver's current location: %s", driver_current_location)
+            current_app.logger.debug("Using driver's current location.")
 
         else:
             admin_config = DBConfig.query.filter_by(key='admin_address').first()
             driver_current_location = admin_config.value if admin_config else "5831 Mallard Dr., Pleasanton CA"
-            current_app.logger.debug("No valid driver location, falling back to admin address: %s", driver_current_location)
+            current_app.logger.debug("No valid driver location, falling back to admin address.")
 
 
         # 3) Always end at admin location
@@ -1506,7 +1555,7 @@ def create_app():
             message = form.message.data
 
             current_app.logger.info(
-                "Contact form validated: name=%s, email=%s", name, email
+                "Contact form validated."
             )
 
             sent = send_contact_email(name, email, message)
