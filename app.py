@@ -3,6 +3,7 @@ from flask import Flask, request, render_template, redirect, url_for, jsonify, m
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from helpers.cus_limiter import code_email_key
 from flask_sitemap import Sitemap
 import logging
 from logging.handlers import RotatingFileHandler
@@ -29,6 +30,7 @@ from sqlalchemy import or_
 from pycognito import Cognito
 from functools import wraps
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import csv
 import io
@@ -75,7 +77,32 @@ def create_app():
     # limiter = Limiter(
     #     key_func=get_remote_address,
     #     storage_uri="redis://localhost:6379"
+    #     default_limits=["100 per hour"],
     # )
+
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)   # before limiter.init_app(app)
+
+    def user_or_ip():
+        if g.get("current_user"):          # set in your login_required wrapper
+            return g.current_user["sub"]
+        return get_remote_address()
+
+    # ④  Stronger limits on sensitive flows
+    edit_scope = limiter.shared_limit(
+        "20 per hour;4 per minute", scope="edit-flow", key_func=user_or_ip
+    )
+    code_email_scope = limiter.shared_limit(
+        "20 per hour;4 per minute",
+        scope="edit-code-email",     # any constant string
+        key_func=code_email_key,
+    )
+
+    # group the two “per-IP” limits the same way
+    ip_scope = limiter.shared_limit(
+        "20 per hour;2 per minute",
+        scope="edit-IP",
+        key_func=get_remote_address,
+    )
 
     # for simple in‑memory (not recommended for prod):
     limiter.init_app(app)
@@ -188,6 +215,7 @@ def create_app():
 
 
     @app.route('/request_pickup')
+    @limiter.limit("20 per hour")
     def request_pickup():
         current_app.logger.info("GET /request_pickup - User accessed request_pickup page.")
         form = RequestForm()
@@ -426,6 +454,7 @@ def create_app():
 
 
     @app.route('/edit-request-init', methods=['GET'])
+    @limiter.limit("10 per hour")
     def edit_request_init():
         current_app.logger.info("GET /edit-request-init - User accessing the edit request initialization page.")
         edit_request_form = EditRequestInitForm()
@@ -449,7 +478,7 @@ def create_app():
         if not request_id.isdigit() or len(request_id) != 6:
             return False, (
                 "Your code must be exactly 6 digits and contain only numbers. "
-                "Please check and try again."
+                "Please double-check and try again."
             )
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
@@ -462,7 +491,8 @@ def create_app():
         # 2) email must match
         if pickup.email != email:
             return False, (
-                "The code and e-mail do not match. Please verify and try again."
+                "Request not found. Please make sure the confirmation number "
+                "matches exactly what appears in your confirmation email."
             )
 
         # 3) date in the past?
@@ -485,6 +515,8 @@ def create_app():
         return True, pickup
     
     @app.route('/edit-request', methods=['POST'])
+    @code_email_scope
+    @ip_scope
     def edit_request():
         """Receives the code+email form, validates via can_edit(), and
         either shows the edit screen or bounces back with a flash alert."""
@@ -526,6 +558,7 @@ def create_app():
         )
         
     @app.route('/edit-request-time', methods=['GET'])
+    @edit_scope
     def edit_request_time():
         current_app.logger.debug("GET /edit-request-time - user attempting to edit request time.")
 
@@ -577,6 +610,7 @@ def create_app():
                             cancel_form=cancel_form)
     
     @app.route('/edit-request-time-submit', methods=['POST'])
+    @edit_scope
     def edit_request_time_submit():
         current_app.logger.debug("POST /edit-request-time-submit - handling time edit form submission.")
 
@@ -618,6 +652,7 @@ def create_app():
 
     
     @app.route('/verify_zip', methods=['GET'])
+    @limiter.limit("60 per hour")
     def verify_zip():
         current_app.logger.debug("GET /verify_zip - verifying user zip.")
 
@@ -631,6 +666,7 @@ def create_app():
         return jsonify(result)
     
     @app.route('/cancel-request', methods=["POST"])
+    @edit_scope
     def cancel_request():
         current_app.logger.debug("POST /cancel-request - user attempting to cancel request.")
 
@@ -689,6 +725,7 @@ def create_app():
         return redirect(url_for('admin_console'))
     
     @app.route("/admin/login")
+    @limiter.limit("10 per hour")
     def admin_login():
         """Kick off OIDC flow."""
         redirect_uri = url_for("callback", _external=True)  # HTTPS in prod
@@ -697,6 +734,7 @@ def create_app():
         return oauth.oidc.authorize_redirect(redirect_uri)
     
     @app.route("/callback")
+    @limiter.limit("10 per hour")
     def callback():
         """Cognito redirects back here with ?code= ; exchange it for tokens."""
         current_app.logger.info("GET /callback – exchanging code for tokens")
@@ -1024,7 +1062,6 @@ def create_app():
 
         # Always validate *before* doing any work
         if not form.validate_on_submit():
-            flash("Invalid form submission – please try again.", "error")
             return redirect(url_for("admin_pickups"))
 
         current_app.logger.info("ADMIN: triggered /clean_pickups")
@@ -1033,10 +1070,8 @@ def create_app():
             weekly_export()
         except Exception as exc:
             current_app.logger.exception("weekly_export() failed")
-            flash(f"Export failed: {exc}", "error")
         else:
             current_app.logger.info("weekly_export() completed")
-            flash("Pickup requests exported and scrubbed ✔️", "success")
 
         return redirect(url_for("admin_pickups"))
 

@@ -530,15 +530,13 @@ li {
 
 .flash-message {
     max-width: 360px;
-    background-color: var(--yel);
-    border-radius: 5px;
+    background-color: #ffe8a4;
+    border-left: 5px solid var(--yel);
     padding: 16px 20px;
-    text-align: center;
-    box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    text-align: left;
     color: black;
     font-weight: 500;
     font-family: var(--mont);
-    border: none;
     transition: transform .2s ease, border .2s ease;
 }
 

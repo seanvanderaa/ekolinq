@@ -15,7 +15,19 @@
   
   <form id="edit-request-form" action="{{ url_for('edit_request') }}" method="POST">
     {{ edit_request_form.hidden_tag() }}  {# This includes the CSRF token #}
-    
+
+    {% with msgs = get_flashed_messages(with_categories=True) %}
+      {% if msgs %}
+      <div style="width: 100%; margin-bottom: 16px;">
+        {% for category, message in msgs %}
+          <div class="alert alert-{{ category }} flash-message">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
     <div class="form-group">
       <label class="edit-request-label" for="{{ edit_request_form.request_id.id }}">Request ID</label>
       {{ edit_request_form.request_id(id=edit_request_form.request_id.id, placeholder="000000") }}
@@ -26,17 +38,6 @@
     </div>
     <button type="submit" class="action-btn align-center">Submit</button>
   </form>
-</div>
-<div class="flash-messages align-right">
-  {% with msgs = get_flashed_messages(with_categories=True) %}
-  {% if msgs %}
-    {% for category, message in msgs %}
-      <div class="alert alert-{{ category }} flash-message">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-  {% endwith %}
 </div>
 
 <script>
