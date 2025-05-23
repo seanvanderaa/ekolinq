@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
+
+  const deleteButtons = document.querySelectorAll('.delete-request-btn');
+
+  deleteButtons.forEach(function (button) {
+      button.addEventListener('click', function (event) {
+          const confirmed = confirm('Are you sure you want to delete this item?');
+          if (!confirmed) {
+              event.preventDefault();
+          }
+      });
+  });
+
   const filterForm = document.getElementById('filter-form');
   const tableBody = document.querySelector('#requests-table tbody');
 

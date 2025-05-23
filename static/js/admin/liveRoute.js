@@ -87,4 +87,19 @@ document.addEventListener('DOMContentLoaded', () => {
             completedHeader.style.borderRadius = '10px';
         }
     });
+    
+    const mapButtons = document.querySelectorAll('.open-map');
+
+    mapButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            if (button.disabled) return;
+
+            const address = button.getAttribute('data-address');
+            const city = button.getAttribute('data-city');
+            const query = encodeURIComponent(`${address} ${city} CA`);
+            const url = `https://maps.google.com/?q=${query}`;
+
+            window.open(url, '_blank');
+        });
+    });
   });

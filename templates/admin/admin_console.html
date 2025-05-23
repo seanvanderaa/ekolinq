@@ -45,7 +45,7 @@
 
 {% block scripts %}
   {{ super() }}
-  <script>
+  <script nonce="{{ csp_nonce() }}">
     // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
     const dailyCounts = JSON.parse('{{ daily_counts|tojson }}');
     const labels = dailyCounts.map(item => item[0]);

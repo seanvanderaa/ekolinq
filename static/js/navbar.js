@@ -23,5 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.style.opacity = 1;
       }, 150); // Delay roughly half the duration of the transition
     });
+    const openContact = document.getElementById('navbar-contact-btn');
+    if (openContact) openContact.addEventListener('click', openContactPopup);
+
+    const openContactFooter1 = document.getElementById('footer-contact-btn');
+    if (openContactFooter1) openContactFooter1.addEventListener('click', openContactPopup);
+
+    const openContactFooter2 = document.getElementById('footer-open-contact-link');
+    if (openContactFooter2) openContactFooter2.addEventListener('click', openContactPopup);
   });
   

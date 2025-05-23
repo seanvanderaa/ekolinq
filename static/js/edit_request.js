@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadingDiv = document.getElementById('loading-popup');
     const overlay = document.getElementById('overlay');
 
-    editAddressPencil.addEventListener('click', displayForm);
-    closeUpdate.addEventListener('click', displayForm);
+    if(editAddressPencil) editAddressPencil.addEventListener('click', displayForm);
+    if(closeUpdate) closeUpdate.addEventListener('click', displayForm);
 
 
     function displayForm() {
@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelRequestWrapper = document.getElementById('cancel-confirm-wrapper');
     const cancelCancelRequest = document.getElementById('cancel-back-btn');
 
-    cancelRequestInit.addEventListener('click', cancelRequest);
-    cancelCancelRequest.addEventListener('click', cancelRequest);
+    if(cancelRequestInit) cancelRequestInit.addEventListener('click', cancelRequest);
+    if(cancelCancelRequest) cancelCancelRequest.addEventListener('click', cancelRequest);
 
     function cancelRequest() {
       if (cancelRequestWrapper.style.display === "flex") {
@@ -124,32 +124,33 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-document.getElementById('cancel-request-form').addEventListener('submit', async function (event) {
-  event.preventDefault(); // Prevent default form submission
+    const cancelRequestForm = document.getElementById('cancel-request-form');
+    if(cancelRequestForm) cancelRequestForm.addEventListener('submit', async function (event) {
+      event.preventDefault(); // Prevent default form submission
 
-  const request_id = document.getElementById('form-request-id').value;
+      const request_id = document.getElementById('form-request-id').value;
 
-  const form = event.target;
-  const formData = new FormData(form);
-  const response = await fetch(form.action, {
-    method: "POST",
-    body: formData
-  });
-  const data = await response.json();
+      const form = event.target;
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
 
-  if (data.valid) {
-    alert(`${data.reason}`);
-    window.location.href = '/'; 
-  } else {
-    alert(`${data.reason}`);
-  }
-});
+      if (data.valid) {
+        alert(`${data.reason}`);
+        window.location.href = '/'; 
+      } else {
+        alert(`${data.reason}`);
+      }
+    });
 
   // Retrieve the raw data directly from the DOM
-  const requestDateEl = document.getElementById('request-date');
-  const requestTimeEl = document.getElementById('request-time');
-  const request_date = requestDateEl.getAttribute('data-date'); // e.g., "2025-01-12"
-  const request_time = requestTimeEl.getAttribute('data-time'); // e.g., "08:00-12:00"
+  const request_date = document.getElementById('request-date')?.getAttribute('data-date');
+  const request_time = document.getElementById('request-time')?.getAttribute('data-time');
+
+
 
   // Format the date
   const formatDate = (dateStr) => {

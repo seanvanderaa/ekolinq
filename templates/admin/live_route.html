@@ -68,9 +68,13 @@
             {% endif %}
           {% endif %}
           <div class="align-center button-wrapper">
-            <button {% if loop.index != 1 %} disabled {% endif %} class="open-map button-wrapper-btn"
-                    onclick="window.open('https://maps.google.com/?q={{ pickup.address|urlencode }}+{{ pickup.city|urlencode }}+CA', '_blank')">
-              <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
+            <button 
+                {% if loop.index != 1 %} disabled {% endif %}
+                class="open-map button-wrapper-btn"
+                data-address="{{ pickup.address | urlencode }}"
+                data-city="{{ pickup.city | urlencode }}"
+            >
+                <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
             </button>
             <!-- If it’s not the first in the list, disable the "Mark Complete" button -->
             <button class="mark-complete button-wrapper-btn"

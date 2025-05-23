@@ -16,10 +16,10 @@
       {% if retry_after %}
         Please wait {{ retry_after }} before trying again.
       {% else %}
-        Please slow down and try again in a few moments.
+        Please slow down and try again after a while.
       {% endif %}
     </p>
-    <button onclick="window.location.href='/'" class="submit-btn" style="margin-top: 24px;">
+    <button id="error-back-to-home" class="submit-btn" style="margin-top: 24px;">
       Back to the Homepage
     </button>
   </div>

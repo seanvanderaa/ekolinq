@@ -1,69 +1,101 @@
 # app.py
-from flask import Flask, request, render_template, redirect, url_for, jsonify, make_response, session, current_app, flash, abort, g
+import os
+import csv
+import io
+import json
+import uuid
+import time
+import logging
+from datetime import date, datetime, timedelta
+from functools import wraps
+from urllib.parse import urlencode
+
+from flask import (Flask, request, render_template, redirect, url_for, jsonify,
+                   make_response, session, current_app, flash, abort, g)
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from helpers.cus_limiter import code_email_key
+from flask_talisman import Talisman
 from flask_sitemap import Sitemap
-import logging
 from logging.handlers import RotatingFileHandler
-from models import db, PickupRequest, ServiceSchedule, DriverLocation, RouteSolution, Config as DBConfig, add_request, get_service_schedule, get_address
-from extensions import mail
-import requests
-from flask_sqlalchemy import SQLAlchemy
-from authlib.integrations.flask_client import OAuth
-from authlib.jose import jwt, JsonWebKey 
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.utils import secure_filename
+
+import traceback
+
 from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
+from authlib.jose import jwt, JsonWebKey
+import requests
+from sqlalchemy import func, or_
+from pycognito import Cognito
+
+from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
 from helpers.routing_old import get_optimized_route
 from helpers.scheduling import build_schedule
-from helpers.emailer import send_contact_email, send_request_email, send_error_report, send_editted_request_email
+from helpers.emailer import (send_contact_email, send_request_email,
+                             send_error_report, send_editted_request_email)
 from helpers.routing import fetch_distance_matrix, solve_tsp, seconds_to_hms
 from helpers.auth import verify_cognito_jwt, JoseError
 from helpers.export import weekly_export
-from helpers.forms import RequestForm, DateSelectionForm, UpdateAddressForm, PickupStatusForm, AdminScheduleForm, AdminAddressForm, ScheduleDayForm, DateRangeForm, EditRequestTimeForm, CancelEditForm, CancelRequestForm, EditRequestInitForm, DeletePickupForm, ContactForm, CleanPickupsForm
-from datetime import date, timedelta, datetime
-from sqlalchemy import func
-from sqlalchemy import or_
-from pycognito import Cognito
-from functools import wraps
-from werkzeug.utils import secure_filename
-from werkzeug.middleware.proxy_fix import ProxyFix
-import os
-import csv
-import io
-import json
-import time
-from urllib.parse import urlencode
-import uuid
+from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
+                           PickupStatusForm, AdminScheduleForm, AdminAddressForm,
+                           ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
+                           CancelEditForm, CancelRequestForm, EditRequestInitForm,
+                           DeletePickupForm, ContactForm, CleanPickupsForm)
 
-csrf = CSRFProtect()
+from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
+                    RouteSolution, Config as DBConfig, add_request,
+                    get_service_schedule, get_address)
+from extensions import mail
 
-import traceback
+# ──────────────────────────────────────────────────────────────────────────
+# Environment & configuration
+# ──────────────────────────────────────────────────────────────────────────
+load_dotenv()  # read .env before we pull settings
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["100 per hour"])
+from config import DevelopmentConfig, ProductionConfig
 
-load_dotenv() 
+CONFIG_NAME  = os.getenv("FLASK_CONFIG", "DevelopmentConfig")
+CONFIG_MAP   = {
+    "DevelopmentConfig": DevelopmentConfig,
+    "ProductionConfig":  ProductionConfig,
+}
+ConfigClass  = CONFIG_MAP.get(CONFIG_NAME, DevelopmentConfig)
 
-from config import Config
+# ──────────────────────────────────────────────────────────────────────────
+# Extension singletons
+# ──────────────────────────────────────────────────────────────────────────
+csrf    = CSRFProtect()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=ConfigClass.DEFAULT_RATE_LIMITS
+)
 
-
+# ──────────────────────────────────────────────────────────────────────────
+# Factory
+# ──────────────────────────────────────────────────────────────────────────
 def create_app():
+
+    # --------------------------------------------------
+    # APP INITIALIZATION
+    # --------------------------------------------------
     app = Flask(__name__)
     sitemap = Sitemap(app=app)
-    app.config.from_object(Config)
-    oauth = OAuth(app)
+    app.config.from_object(ConfigClass)
 
-    COGNITO_DOMAIN        = os.environ["COGNITO_DOMAIN"]           # e.g.  demo-domain.auth.us-east-2.amazoncognito.com
-    COGNITO_CLIENT_ID     = os.environ["COGNITO_CLIENT_ID"]
+    # OAuth (Amazon Cognito)
+    oauth = OAuth(app)
+    COGNITO_DOMAIN    = os.environ["COGNITO_DOMAIN"]      # demo-domain.auth.us-east-2.amazoncognito.com
+    COGNITO_CLIENT_ID = os.environ["COGNITO_CLIENT_ID"]
 
     issuer_base = (
         f"https://cognito-idp.{app.config['COGNITO_REGION']}.amazonaws.com/"
         f"{app.config['COGNITO_USER_POOL_ID']}"
     )
-
     oauth.register(
         name="oidc",
         client_id=app.config["COGNITO_CLIENT_ID"],
@@ -73,91 +105,125 @@ def create_app():
         client_kwargs={"scope": "openid email phone"},
     )
 
-    # if you have a Redis instance:
-    # limiter = Limiter(
-    #     key_func=get_remote_address,
-    #     storage_uri="redis://localhost:6379"
-    #     default_limits=["100 per hour"],
-    # )
-
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)   # before limiter.init_app(app)
-
-    def user_or_ip():
-        if g.get("current_user"):          # set in your login_required wrapper
-            return g.current_user["sub"]
-        return get_remote_address()
-
-    # ④  Stronger limits on sensitive flows
-    edit_scope = limiter.shared_limit(
-        "20 per hour;4 per minute", scope="edit-flow", key_func=user_or_ip
-    )
-    code_email_scope = limiter.shared_limit(
-        "20 per hour;4 per minute",
-        scope="edit-code-email",     # any constant string
-        key_func=code_email_key,
-    )
-
-    # group the two “per-IP” limits the same way
-    ip_scope = limiter.shared_limit(
-        "20 per hour;2 per minute",
-        scope="edit-IP",
-        key_func=get_remote_address,
-    )
-
-    # for simple in‑memory (not recommended for prod):
+    # --------------------------------------------------
+    # LIMITER FUNCTIONALITY
+    # --------------------------------------------------
+    if app.config["RATE_LIMIT_STORAGE_URL"]:
+        limiter.storage_uri = app.config["RATE_LIMIT_STORAGE_URL"]  # e.g. Redis in prod
     limiter.init_app(app)
 
+    # Put ProxyFix before the limiter so it sees the real client IP
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    #app.config['SESSION_COOKIE_SECURE'] = True # Must be true for production
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax' 
-    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 5 MB
+    # --------------------------------------------------
+    # FLASK TALISMAN & SECURE HEADERS
+    # --------------------------------------------------
+    SELF = "'self'"
 
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+    csp = {
+        # ───── fetch directives ────────────────────────────────────────────
+        "default-src":   [SELF],
+        "script-src":    [
+            SELF,
+            "https://ajax.googleapis.com",
+            "https://cdnjs.cloudflare.com",
+            "https://cdn.jsdelivr.net",        # your JS bundles
+            "https://www.google.com",          # reCAPTCHA loader
+            "https://www.gstatic.com",         # reCAPTCHA iframe
+            "'unsafe-inline'",                 # remove once every inline <script> has a nonce=* or moves out
+        ],
+        "style-src":     [
+            SELF,
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net",        # bootstrap-icons.css
+            "'unsafe-inline'",                 # required by Bootstrap until you purge inline <style>
+        ],
+        "img-src":       [SELF, "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
+        "font-src":      ["https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
+        "connect-src":   [SELF, "https://maps.googleapis.com"],
+        "frame-src":     [
+            "https://maps.googleapis.com",
+            "https://www.google.com",          # reCAPTCHA iframe
+            "https://www.gstatic.com",
+        ],
+    }
 
+    talisman = Talisman(
+        app,
+        content_security_policy=csp,
+        content_security_policy_nonce_in=["script-src"],
+        frame_options="DENY",
+        referrer_policy="no-referrer",
+        permissions_policy={"geolocation": "()", "microphone": "()"},
+        force_https=app.config["FORCE_HTTPS"],
+        strict_transport_security=app.config["STRICT_TRANSPORT_SECURITY"],
+    )
+
+    # --------------------------------------------------
+    # COOKIE / SESSION FLAGS
+    # --------------------------------------------------
+    # HTTP-only and SameSite already set in BaseConfig
+    # Secure flag toggles automatically via ConfigClass
+    app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB upload limit
+
+    # --------------------------------------------------
+    # EXTENSIONS
+    # --------------------------------------------------
     mail.init_app(app)
     csrf.init_app(app)
-
-
-    # 4) Initialize your extensions
     db.init_app(app)
-    print("App initialized.")
 
     from flask_migrate import Migrate
     migrate = Migrate(app, db)
 
-    # 5) Create tables once if needed
+    # Create tables once if needed
     with app.app_context():
-        #db.drop_all() #to reset the db
         db.create_all()
         seed_schedule_if_necessary()
 
+    # --------------------------------------------------
+    # RATE-LIMIT SCOPES (shared limits)
+    # --------------------------------------------------
+    def user_or_ip():
+        if g.get("current_user"):                 # set in the login_required wrapper
+            return g.current_user["sub"]
+        return get_remote_address()
+
+    edit_scope = limiter.shared_limit("20 per hour;4 per minute",
+                                      scope="edit-flow", key_func=user_or_ip)
+    code_email_scope = limiter.shared_limit("20 per hour;4 per minute",
+                                            scope="edit-code-email",
+                                            key_func=code_email_key)
+    ip_scope = limiter.shared_limit("20 per hour;2 per minute",
+                                    scope="edit-IP", key_func=get_remote_address)
+
+    # --------------------------------------------------
+    # SESSION-HELPER HOOKS
+    # --------------------------------------------------
     @app.before_request
     def session_auto_timeout():
         exp = session.get("expires_at")
         if exp and exp < time.time():
             session.clear()
 
-
     @app.context_processor
     def inject_contact_form():
-        # Every template now has `contact_form` in its context
-        return { 'contact_form': ContactForm() }
+        return {"contact_form": ContactForm()}
 
+    # --------------------------------------------------
+    # LOGIN SECURITY (verify Cognito JWT)
+    # --------------------------------------------------
     def login_required(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             id_token = session.get("id_token")
-            if not id_token:                         # not logged in
+            if not id_token:
                 return redirect(url_for("admin_login", next=request.url))
-
             try:
                 claims = verify_cognito_jwt(id_token)
-            except JoseError:                        # bad sig / expired / wrong aud...
+            except JoseError:
                 session.clear()
                 return redirect(url_for("admin_login", next=request.url))
-
-            # (optional) expose user info downstream
             g.current_user = {
                 "sub": claims["sub"],
                 "email": claims.get("email"),
@@ -165,27 +231,24 @@ def create_app():
             }
             return fn(*args, **kwargs)
         return wrapper
-    
+
+    # --------------------------------------------------
+    # LOGGING
+    # --------------------------------------------------
     if not app.debug and not app.testing:
-        # Production: Use rotating file logs
-        file_handler = RotatingFileHandler("app.log", maxBytes=102400, backupCount=5)
-        file_handler.setLevel(app.config['LOGGER_LEVEL'])
+        file_handler = RotatingFileHandler("app.log", maxBytes=102_400, backupCount=5)
+        file_handler.setLevel(app.config["LOGGER_LEVEL"])
         formatter = logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
         )
         file_handler.setFormatter(formatter)
         app.logger.addHandler(file_handler)
 
-    # For local dev, or if you want DEBUG info:
-    app.logger.setLevel(app.config['LOGGER_LEVEL'])
-
+    app.logger.setLevel(app.config["LOGGER_LEVEL"])
 
     # --------------------------------------------------
-
     # START APPLICATION ENDPOINTS
-    
     # --------------------------------------------------
-
 
 
     @app.route('/', methods=['GET'])

@@ -86,7 +86,7 @@
             <form action="{{ url_for('delete_pickup') }}" method="POST" style="display:inline;">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
-              <button type="submit" class="download-btn" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+              <button type="submit" id="delete-request" class="download-btn delete-request-btn">Delete</button>
             </form>
           </td>
           <td style="min-width: 120px;

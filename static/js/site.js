@@ -65,3 +65,30 @@ document.getElementById('contactForm').addEventListener('submit', async function
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('close-contact-btn');
+  if (btn) btn.addEventListener('click', closeContactPopup);
+  const btn2 = document.getElementById('close-contact-btn2');
+  if (btn2) btn2.addEventListener('click', closeContactPopup);
+
+  const btn3 = document.getElementById('error-open-contact');
+  if (btn3) btn3.addEventListener('click', openContactPopup);
+
+  const btn4 = document.getElementById('edit-request-info-open-contact');
+  if (btn4) btn4.addEventListener('click', openContactPopup);
+
+  const btn5 = document.getElementById('edit-request-init-open-contact');
+  if (btn5) btn5.addEventListener('click', openContactPopup);
+
+  const errorButton = document.getElementById('error-back-to-home');
+  if (errorButton) {
+    errorButton.addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  }
+});
+
+
+
+
+

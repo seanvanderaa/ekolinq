@@ -8,7 +8,7 @@
       <br><br>
       <span style="font-style: italic;">
         Can't find your confirmation email?
-        <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
+        <a id="edit-request-init-open-contact" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
       </span>
     </p>
   </div>
@@ -40,7 +40,7 @@
   </form>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
   // Wait until the DOM is fully loaded
   document.addEventListener('DOMContentLoaded', function() {
     // Select all flash-message elements

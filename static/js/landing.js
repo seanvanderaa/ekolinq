@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+    const navTextileWaste = document.getElementById('nav-textile-waste');
+    if (navTextileWaste) {
+      navTextileWaste.addEventListener('click', () => {
+        window.location.href = '/textile-waste';
+      });
+    }
+
+    const aboutUs = document.getElementById('about-us-btn');
+    if (aboutUs) {
+      aboutUs.addEventListener('click', () => {
+        window.location.href = '/about';
+      });
+    }
+
+    const getInTouch = document.getElementById('get-in-touch');
+    if (getInTouch) getInTouch.addEventListener('click', openContactPopup);
     // Find all highlight squares
     
     const highlightSquares = document.querySelectorAll('.highlight-square');

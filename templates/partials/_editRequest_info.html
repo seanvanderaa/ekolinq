@@ -1,6 +1,6 @@
 <div class="content-width" id="edit-info-wrapper">
     <h1>Edit Your Request</h1>
-    <p style="max-width: 520px; margin-top: 0px; margin-bottom: 48px;">Edit the address or select a new time for your pickup. If you have any questions about making changes to your request, please don't hesitate to <a onclick="openContactPopup()" style="color: var(--m-green); text-decoration: underline;">contact us.</a></p>
+    <p style="max-width: 520px; margin-top: 0px; margin-bottom: 48px;">Edit the address or select a new time for your pickup. If you have any questions about making changes to your request, please don't hesitate to <a id="edit-request-info-open-contact" style="color: var(--m-green); text-decoration: underline;">contact us.</a></p>
     <div class="confirmation-info">
         <p>Pick Up Date and Time</p>
         <div id="pickup-date-time" style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
@@ -17,7 +17,7 @@
     </div>
     {% if edit_request %}
       {% include edit_request %}
-      <script>
+      <script nonce="{{ csp_nonce() }}">
         const hideDiv = document.getElementById('pickup-date-time');
         hideDiv.style.display = "none";
       </script>
