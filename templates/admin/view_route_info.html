@@ -25,6 +25,9 @@
         {% if pickup.email %}
         <p style="margin: 0px;">{{ pickup.email }}, CA</p>
         {% endif %}
+        {% if pickup.gated %}
+        <p style="margin: 0px; color: var(--m-blue); font-weight: 600; margin-top: 8px;">Address is gated. Check email for QR or gate code.</p>
+        {% endif %}
       </div>
     {% endfor %}
   {% else %}

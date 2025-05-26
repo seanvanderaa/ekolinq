@@ -1207,7 +1207,7 @@ def create_app():
         current_app.logger.info("GET /route-overview - displaying route overview page.")
 
         today = date.today().strftime("%Y-%m-%d")
-        
+
         # --- Upcoming Pickups ---
         current_app.logger.debug("Querying upcoming pickups on or after %s.", today)
 
@@ -1222,48 +1222,61 @@ def create_app():
             .order_by(PickupRequest.request_date.asc())
             .all()
         )
-        
+
         # Group the upcoming results by date.
         upcoming_grouped = {}
         for row in upcoming_rows:
             date_str = row.request_date
-            if date_str not in upcoming_grouped:
-                upcoming_grouped[date_str] = []
-            upcoming_grouped[date_str].append({
+            upcoming_grouped.setdefault(date_str, []).append({
                 'timeframe': row.request_time,
                 'count': row.pickup_count
             })
-
         current_app.logger.debug("Upcoming grouped pickups: %s", upcoming_grouped)
-            
+
         # Sort upcoming dates ascending.
         upcoming_dates_sorted = sorted(upcoming_grouped.items(), key=lambda x: x[0])
-        
-        # Separate out the earliest upcoming date as "next_pickup".
-        if upcoming_dates_sorted:
-            next_date, next_timeframes = upcoming_dates_sorted[0]
-            next_pickup = {
-                'date': next_date,
-                'formatted_date': format_date(next_date),
-                'timeframes': next_timeframes
-            }
-            remaining_upcoming = []
-            for date_str, timeframes in upcoming_dates_sorted[1:]:
-                remaining_upcoming.append({
-                    'date': date_str,
-                    'formatted_date': format_date(date_str),
-                    'timeframes': timeframes
-                })
-            current_app.logger.debug("Next pickup date=%s, remaining upcoming count=%d", next_date, len(remaining_upcoming))
 
+        # Decide what goes in next_pickup vs. upcoming_dates
+        next_pickup = None
+        remaining_upcoming = []
+
+        if upcoming_dates_sorted:
+            first_date, first_timeframes = upcoming_dates_sorted[0]
+
+            # ➜ Only promote to next_pickup if it's **today**
+            if first_date == today:
+                next_pickup = {
+                    'date': first_date,
+                    'formatted_date': format_date(first_date),
+                    'timeframes': first_timeframes
+                }
+                # all other upcoming dates
+                for date_str, timeframes in upcoming_dates_sorted[1:]:
+                    remaining_upcoming.append({
+                        'date': date_str,
+                        'formatted_date': format_date(date_str),
+                        'timeframes': timeframes
+                    })
+                current_app.logger.debug(
+                    "Next pickup is today (%s); remaining upcoming count=%d",
+                    first_date, len(remaining_upcoming)
+                )
+            else:
+                # nothing today, so *everything* is just upcoming
+                for date_str, timeframes in upcoming_dates_sorted:
+                    remaining_upcoming.append({
+                        'date': date_str,
+                        'formatted_date': format_date(date_str),
+                        'timeframes': timeframes
+                    })
+                current_app.logger.debug(
+                    "No pickups today; upcoming count=%d",
+                    len(remaining_upcoming)
+                )
         else:
-            next_pickup = None
-            remaining_upcoming = []
             current_app.logger.debug("No upcoming dates found.")
 
-        
         # --- Past Pickups ---
-        # Query past pickups grouped by date and timeframe.
         current_app.logger.debug("Querying past pickups before %s.", today)
 
         past_rows = (
@@ -1277,37 +1290,40 @@ def create_app():
             .order_by(PickupRequest.request_date.desc())
             .all()
         )
-        
+
         past_grouped = {}
         for row in past_rows:
             date_str = row.request_date
-            if date_str not in past_grouped:
-                past_grouped[date_str] = []
-            past_grouped[date_str].append({
+            past_grouped.setdefault(date_str, []).append({
                 'timeframe': row.request_time,
                 'count': row.pickup_count
             })
         current_app.logger.debug("Past grouped pickups: %s", past_grouped)
-        
+
         # Sort past dates descending.
-        past_dates_sorted = sorted(past_grouped.items(), key=lambda x: x[0], reverse=True)
-        past_dates_final = []
-        for date_str, timeframes in past_dates_sorted:
-            past_dates_final.append({
-                'date': date_str,
-                'formatted_date': format_date(date_str),
-                'timeframes': timeframes
-            })
-        current_app.logger.info("Rendering route_overview.html with next_pickup=%s, #upcoming=%d, #past=%d",
-                            next_pickup['date'] if next_pickup else None,
-                            len(remaining_upcoming), len(past_dates_final))
-        
+        past_dates_final = [
+            {
+                'date': d,
+                'formatted_date': format_date(d),
+                'timeframes': tfs
+            }
+            for d, tfs in sorted(past_grouped.items(), key=lambda x: x[0], reverse=True)
+        ]
+
+        current_app.logger.info(
+            "Rendering route_overview.html with next_pickup=%s, #upcoming=%d, #past=%d",
+            next_pickup['date'] if next_pickup else None,
+            len(remaining_upcoming),
+            len(past_dates_final)
+        )
+
         return render_template(
             "admin/route_overview.html",
             next_pickup=next_pickup,
             upcoming_dates=remaining_upcoming,
             past_dates=past_dates_final
         )
+
     
 
     @app.route('/view-route-info')
