@@ -266,6 +266,11 @@ def create_app():
         current_app.logger.info("GET /about - Rendering about page.")
         return render_template('about.html')
     
+    @app.route('/drop-boxes', methods=['GET'])
+    def dropBoxes():
+        current_app.logger.info("GET /drop-boxes - Rendering drop boxes page.")
+        return render_template('drop_boxes.html')
+    
 
 
     # --------------------------------------------------

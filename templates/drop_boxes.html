@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Our Drop Boxes | EkoLinq{% endblock %}
+{% block meta_description %}Find our dropboxes in Pleasanton, CA, and drop off our textiles on your own.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{{ url_for('static', filename='images/EkoLinq_Square_Logo_GBG.png') }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/boxes_styles.css') }}">
+{% endblock %}
+{% block content %}
+<main>
+    <div class="content-width align-center" id="map-info">
+        <div id="info-header">
+            <h2>Convenient Textile Drop-Off Now Available!</h2>
+            <p>We’re excited to offer a new way to recycle your unwanted clothing and household textiles with EkoLinq. In addition to our regular door-side pickup service, we now have drop boxes available in Pleasanton—making it even easier to keep textiles out of landfills. Whether you choose drop-off or pickup, you’re helping make a difference in local sustainability.</p>
+            <p><strong>Do you remember what items we accept?</strong> <br><span id="acceptable-items">See the full list here.</span></p>
+        </div>
+        <div id="info-map" class="map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3158.3761223423908!2d-121.87099621324464!3d37.663868967997615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fe9a514905ebf%3A0xc6dd94e7ef9bfa21!2sRock%20Bible%20Church!5e0!3m2!1sen!2sus!4v1748220367065!5m2!1sen!2sus" width="100%" style="border:0;" allowfullscreen="" loading="lazy" id="google-map" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+  <div class="content content-width">
+    <h2>Located in the Rock Bible Church parking lot.</h2>
+
+    <div class="images">
+      <img src="{{ url_for('static', filename='images/Boxes1.jpg') }}" alt="Dropbox in parking lot 1" />
+      <img src="{{ url_for('static', filename='images/Boxes2.jpg') }}" alt="Dropbox in parking lot 2" />
+    </div>
+  </div>
+</main>
+<div id="items-info" style="display: none;">
+  <div style="flex: 1;">
+    <h3 style="font-family: var(--crim); color: var(--m-green)">Accepted Items</h3>
+    <ul>
+      <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+      <li>Coats, jackets, gloves, hats, scarves</li>
+      <li>Shoes, boots, heels, sneakers, sandals, socks</li>
+      <li>Bras, underwear, slips, camisoles, tights</li>
+      <li>Handbags, belts, ties, headbands</li>
+      <li>Towels, sheets, comforters, blankets, tablecloths</li>
+      <li>Wallets, totes, backpacks, stuffed animals</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3 style="font-family: var(--crim); color: red;">Unaccepted Items</h3>
+    <ul>
+      <li>Textiles that are wet, moldy, or contaminated with chemicals</li>
+      <li>Bio-hazardous waste</li>
+      <li>Mattresses, furniture, or other similar oversized items</li>
+    </ul>
+  </div>
+  <div class="align-center" style="width: 100%; margin-top: 48px;">
+    <button class="download-btn" style="width: 200px; padding: 16px;">Close</button>
+  </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/boxes.js') }}"></script>
+{% endblock %}
