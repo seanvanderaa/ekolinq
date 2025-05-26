@@ -34,11 +34,10 @@ from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
-from helpers.routing_old import get_optimized_route
+from helpers.routing import compute_optimized_route, seconds_to_hms
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
                              send_error_report, send_editted_request_email)
-from helpers.routing import fetch_distance_matrix, solve_tsp, seconds_to_hms
 from helpers.auth import verify_cognito_jwt, JoseError
 from helpers.export import weekly_export
 from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
@@ -1349,45 +1348,21 @@ def create_app():
         requested_addresses = [p.address + ", " + p.city + " CA" for p in all_pickups]
 
         # Now call our route-optimization function
-        adminAddress = DBConfig.query.filter_by(key='admin_address').first()
-        current_app.logger.debug("Using adminAddress for get_optimized_route.")
+        admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
+        depot     = admin_cfg.value
 
         try:
-            sorted_addresses, total_time_seconds, leg_times = get_optimized_route(
-                addresses=requested_addresses,
-                # Optional: provide start_location if you have a depot location
-                start_location=adminAddress.value,
+            sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
+                requested_addresses,
+                start_location=depot,           # identical start/end rules as live view
+                end_location=depot,
                 api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
             )
-            current_app.logger.debug("Route optimization success. Total time (sec)=%d", total_time_seconds)
-
-        except Exception as e:
-            current_app.logger.exception("Distance matrix error during view_route_info for date=%s:", selected_date)
-
-            sorted_addresses = requested_addresses
-            total_time_seconds = 0
-            leg_times = []
-
-        def sort_key(pr):
-            full_addr = pr.address + ", " + pr.city + " CA"
-            try:
-                return sorted_addresses.index(full_addr)
-            except ValueError:
-                return 999999
-
-        all_pickups.sort(key=sort_key)
-
-        def seconds_to_hms(sec):
-            hours = sec // 3600
-            mins = (sec % 3600) // 60
-            if hours > 0:
-                return f"{hours} hr {mins} min"
-            else:
-                return f"{mins} min"
+        except Exception:
+            current_app.logger.exception("Distance-matrix/TSP error")
+            sorted_addresses, total_time_seconds, leg_times = requested_addresses, 0, []
 
         total_time_str = seconds_to_hms(total_time_seconds)
-        current_app.logger.info("view_route_info final route computed. Rendering view_route_info.html")
-
 
         return render_template(
             'admin/view_route_info.html',
@@ -1462,45 +1437,16 @@ def create_app():
 
         # 6) Either use the cached route or recalc
         if should_refresh:
-            current_app.logger.debug("Recomputing route for date=%s, addresses=%s", selected_date, addresses)
-
-            print("Recomputing route for", addresses)
             try:
-                matrix = fetch_distance_matrix(addresses)
-            except Exception as e:
-                current_app.logger.exception("Distance matrix error in /live-route:")
-                final_route = addresses
-                total_time_str = "N/A"
-            else:
-                route_indices = solve_tsp(matrix)  # uses the updated solve_tsp with start=0, end=n-1
-                if route_indices is None:
-                    current_app.logger.warning("solve_tsp returned None, using addresses as-is.")
-
-                    final_route = addresses
-                    total_time_str = "N/A"
-                else:
-                    final_route = [addresses[i] for i in route_indices]
-                    total_sec = 0
-                    for i in range(len(route_indices)-1):
-                        total_sec += matrix[route_indices[i]][route_indices[i+1]]
-                    total_time_str = seconds_to_hms(total_sec)
-                    current_app.logger.debug("Final route computed=%s, total_time_str=%s", final_route, total_time_str)
-            
-            # Update cache
-            if not cached_solution:
-                cached_solution = RouteSolution(
-                    date=selected_date,
-                    route_json=json.dumps(final_route),
-                    total_time_str=total_time_str,
-                    last_updated=datetime.now()
+                final_route, total_seconds, _ = compute_optimized_route(
+                    waypoints=addresses[1:-1],     # just the pickups
+                    start_location=addresses[0],
+                    end_location=addresses[-1],
                 )
-                db.session.add(cached_solution)
-            else:
-                cached_solution.route_json = json.dumps(final_route)
-                cached_solution.total_time_str = total_time_str
-                cached_solution.last_updated = datetime.now()
-            db.session.commit()
-            current_app.logger.info("Route cache updated for date=%s", selected_date)
+                total_time_str = seconds_to_hms(total_seconds)
+            except Exception:
+                current_app.logger.exception("Routing failure – falling back to straight list")
+                final_route, total_time_str = addresses, "N/A"
 
         else:
             print("Using cached route.")
