@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
         popups.forEach(p => p.style.display = 'none');  // Hide all popups
       });
     });
+    const checkbox = document.getElementById('gated');
+    const selectedGate = document.getElementById('selected-gate');
+
+    // toggle visibility on change
+    checkbox.addEventListener('change', function() {
+      selectedGate.style.display = this.checked ? 'block' : 'none';
+    });
   });
 
   const initForm = document.getElementById('init-form-info');

@@ -10,23 +10,21 @@
 {% endblock %}
 {% block content %}
 <main>
+  <div id="map-info-wrapper">
     <div class="content-width align-center" id="map-info">
-        <div id="info-header">
-            <h2>Convenient Textile Drop-Off Now Available!</h2>
-            <p>We’re excited to offer a new way to recycle your unwanted clothing and household textiles with EkoLinq. In addition to our regular door-side pickup service, we now have drop boxes available in Pleasanton—making it even easier to keep textiles out of landfills. Whether you choose drop-off or pickup, you’re helping make a difference in local sustainability.</p>
-            <p><strong>Do you remember what items we accept?</strong> <br><span id="acceptable-items">See the full list here.</span></p>
-        </div>
-        <div id="info-map" class="map">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3158.3761223423908!2d-121.87099621324464!3d37.663868967997615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fe9a514905ebf%3A0xc6dd94e7ef9bfa21!2sRock%20Bible%20Church!5e0!3m2!1sen!2sus!4v1748220367065!5m2!1sen!2sus" width="100%" style="border:0;" allowfullscreen="" loading="lazy" id="google-map" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+      <div id="info-header">
+        <h2 style="margin-top: 0px; margin-bottom: 8px;">Convenient Drop Boxes Now Available!</h2>
+        <p>We’re excited to offer a new way to recycle your unwanted clothing and household textiles with EkoLinq. In addition to our regular door-side pickup service, we now have drop boxes available in Pleasanton—making it even easier to keep textiles out of landfills. Whether you choose drop-off or pickup, you’re helping make a difference in local sustainability.</p>
+        <button class="download-btn" id="acceptable-items">See the list of items we accept.</button>
+      </div>
+      <img src="{{ url_for('static', filename='images/Boxes1.jpg') }}" alt="Dropbox in parking lot 2" id="dropbox-image"/>
     </div>
-  <div class="content content-width">
-    <h2>Located in the Rock Bible Church parking lot.</h2>
+  </div>
 
-    <div class="images">
-      <img src="{{ url_for('static', filename='images/Boxes1.jpg') }}" alt="Dropbox in parking lot 1" />
-      <img src="{{ url_for('static', filename='images/Boxes2.jpg') }}" alt="Dropbox in parking lot 2" />
-    </div>
+  <div id="info-map" class="map content-width">
+    <h2 style="margin-bottom: 8px;">Find Our Drop Boxes.</h2>
+    <p style="max-width: 550px;">Located in the Rock Bible Church parking lot in Pleasanton, you'll see them on your left as soon as you enter the lot.</p>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3158.3761223423908!2d-121.87099621324464!3d37.663868967997615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fe9a514905ebf%3A0xc6dd94e7ef9bfa21!2sRock%20Bible%20Church!5e0!3m2!1sen!2sus!4v1748220367065!5m2!1sen!2sus" width="100%" allowfullscreen="" loading="lazy" id="google-map" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 </main>
 <div id="items-info" style="display: none;">

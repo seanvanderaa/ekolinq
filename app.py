@@ -130,6 +130,7 @@ def create_app():
             "https://cdn.jsdelivr.net",        # your JS bundles
             "https://www.google.com",          # reCAPTCHA loader
             "https://www.gstatic.com",         # reCAPTCHA iframe
+            "https://maps.googleapis.com",
             "'unsafe-inline'",                 # remove once every inline <script> has a nonce=* or moves out
         ],
         "style-src":     [

@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   modal.style.display = 'none';
   modal.innerHTML = `
     <div class="popup-content">
-      <button class="popup-close" aria-label="Close">&times;</button>
       ${itemsInfo.innerHTML}
     </div>
   `;
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to open popup
   function openPopup() {
     overlay.style.display = 'block';
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
   }
 
   // Function to close popup
@@ -43,6 +42,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // Wire up events
   trigger.addEventListener('click', openPopup);
   overlay.addEventListener('click', closePopup);
-  modal.querySelector('.popup-close').addEventListener('click', closePopup);
   modal.querySelector('.download-btn').addEventListener('click', closePopup);
 });

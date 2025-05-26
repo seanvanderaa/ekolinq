@@ -62,6 +62,7 @@ h4{
 p {
     font-size: var(--p);
     font-family: 'Montserrat', sans-serif;
+    line-height: 1.4em;
 }
 
 ul, li {
@@ -479,6 +480,17 @@ li {
     margin-top: 12px;
 }
 
+.user-notice {
+    max-width: 500px;
+    background-color: #ffe8a4;
+    border-left: 5px solid var(--yel);
+    padding: 16px 20px;
+    text-align: left;
+    color: black;
+    font-weight: 500;
+    font-family: var(--mont);
+}
+
 .download-btn {
     text-decoration: none;
     padding: 8px 12px;
@@ -575,7 +587,7 @@ li {
     }
 }
 
-@media only screen and (max-width: 768px) {
+@media (max-width: 860px) {
     .navbar {
         padding: 24px;
     }
@@ -620,7 +632,9 @@ li {
         padding-left: 24px;
         max-height: 300px; /* Arbitrary max height for the dropdown */
     }
+}
 
+@media only screen and (max-width: 768px) {
     .content-width {
         width: calc(95% - 2em);
     }
