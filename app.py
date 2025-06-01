@@ -130,7 +130,6 @@ def create_app():
             "https://www.google.com",          # reCAPTCHA loader
             "https://www.gstatic.com",         # reCAPTCHA iframe
             "https://maps.googleapis.com",
-            "'unsafe-inline'",                 # remove once every inline <script> has a nonce=* or moves out
         ],
         "style-src":     [
             SELF,
@@ -164,7 +163,6 @@ def create_app():
     # --------------------------------------------------
     # HTTP-only and SameSite already set in BaseConfig
     # Secure flag toggles automatically via ConfigClass
-    app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB upload limit
 
     # --------------------------------------------------
     # EXTENSIONS
@@ -191,7 +189,7 @@ def create_app():
 
     edit_scope = limiter.shared_limit("20 per hour;4 per minute",
                                       scope="edit-flow", key_func=user_or_ip)
-    code_email_scope = limiter.shared_limit("20 per hour;4 per minute",
+    code_email_scope = limiter.shared_limit("30 per hour;10 per minute",
                                             scope="edit-code-email",
                                             key_func=code_email_key)
     ip_scope = limiter.shared_limit("20 per hour;2 per minute",

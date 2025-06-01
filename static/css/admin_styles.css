@@ -99,6 +99,51 @@ th {
     row-gap: 16px;
 }
 
+
+.a-green {
+  text-decoration: underline; color: var(--m-green);
+}
+
+.col-white {
+    color: white !important;
+}
+
+.col-yel {
+    color: var(--yel) !important;
+}
+
+.col-blue {
+    color: var(--m-blue) !important;
+}
+
+.col-green {
+    color: var(--m-green) !important;
+}
+
+.col-subtle {
+    color: var(--subtle-text);
+}
+
+.crim {
+    font-family: var(--crim);
+}
+
+.fs-24 {
+    font-size: 24px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.mt0 {
+    margin: 0;
+}
+
 @media only screen and (max-width: 768px) {
     body {
         background-color: var(--off-white);

@@ -530,3 +530,304 @@ main {
     }
 
 }
+
+/*─────────────────────────────────────────────────────────────────────────
+  1) “Request a Pickup” header and intro text
+─────────────────────────────────────────────────────────────────────────*/
+
+/* H1 at the top of #init-form: eliminate default margin */
+#init-form > h1 {
+  margin: 0;
+}
+
+/* The paragraph immediately under that H1: max-width and subtle color */
+#init-form > p {
+  max-width: 450px;
+  color: var(--subtle-text-wbg);
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  2) HR separators inside the form
+─────────────────────────────────────────────────────────────────────────*/
+
+/* First <hr> inside form#init-form-info: 24px top margin */
+#init-form-info hr:first-of-type {
+  margin-top: 24px;
+}
+
+/* Second <hr> inside form#init-form-info: 48px top margin */
+#init-form-info hr:nth-of-type(2) {
+  margin-top: 48px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  3) Section titles within the form
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Contact Info” H3 (first H3 in form#init-form-info) */
+#init-form-info > h3:first-of-type {
+  margin-bottom: 0;
+}
+
+/* “Address” H3 (second H3 in form#init-form-info) */
+#init-form-info > h3:nth-of-type(2) {
+  margin-bottom: 0;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  4) Form-group width helpers
+   (requires adding .half-width, .full-width, .notes-width to your HTML)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All .form-group elements that need 50% width */
+.form-group.half-width {
+  max-width: 50%;
+}
+
+/* The one .form-group that needs 100% width */
+.form-group.full-width {
+  max-width: 100%;
+}
+
+/* The .form-group that needs 550px maximum width (notes textarea) */
+.form-group.notes-width {
+  max-width: 550px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  5) Gated-access section wrapper
+   (requires adding .gated-wrapper to that <div>)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Do we need a gate code…” wrapper */
+.gated-wrapper {
+  margin-top: 32px;
+  position: relative;
+  display: inline-block;
+}
+
+
+/* Show/hide the “selected-gate” div */
+#selected-gate {
+  display: none;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  6) Recaptcha error container
+─────────────────────────────────────────────────────────────────────────*/
+
+.user-notice-warn {
+  max-width: 460px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) “Next Step” submit button
+─────────────────────────────────────────────────────────────────────────*/
+
+#init-submit-btn {
+  margin-top: 36px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  8) Frequently Asked Questions (FAQ) section
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Each FAQ item’s heading margin */
+.faq-container .faq-item h3 {
+  margin: 16px 0;
+}
+
+/* The first two FAQ images (opacity only) */
+#faq-items img,
+#faq-result img {
+  opacity: 0.8;
+}
+
+/* The third FAQ image has both margin-top and opacity */
+#faq-better img {
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  9) FAQ pop-up windows
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All pop-up boxes start hidden */
+.faq-popup {
+  display: none;
+}
+
+/* Headings inside any .faq-popup: same margin as above FAQs */
+.faq-popup h3 {
+  margin: 16px 0;
+}
+
+/*─────────────────────────────────────────────────────────────────────────
+  Helper resets
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Zero out margin */
+
+/* 24px top margin, zero bottom margin */
+.mt6-zero-mb {
+  margin: 0;
+  margin-top: 6px;
+}
+
+/* 36px top margin */
+.mt36 {
+  margin-top: 36px;
+}
+
+/* 56px top margin, 32px bottom margin */
+.mt56-mb32 {
+  margin-top: 56px;
+  margin-bottom: 32px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  1) “Select a Timeframe” header & intro text
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The <p> under the H1: max-width 450px, subtle-text color */
+.intro-text {
+  max-width: 450px;
+  color: var(--subtle-text-wbg);
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  2) Sub‐headings inside the form (all identical)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Any <h4> with class .subheading-h4: font-weight 500, size 20px, 12px bottom margin */
+.subheading-h4 {
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.subheading-h4-mt0 {
+  font-weight: 500;
+  font-size: 20px;
+  margin: 0px;
+}
+/* If you needed a zero‐margin override for those <h4>s, you can chain .mt0, but in our case
+   none of the <h4> elements other than the days themselves need “margin: 0” on top. */
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  3) “Prev/Next Week” button row
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Wraps the two week navigation links as a flex container */
+.week-nav {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 16px 0;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  4) Submit button inner text & hidden info
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Make “Schedule Pick-Up” bold (font-weight: 500) */
+.fw500 {
+  font-weight: 500;
+}
+
+/* The hidden info span under the button: display none, small font, lighter weight, 6px top margin */
+#submit-btn-info {
+  display: none;
+  font-size: 12px;
+  font-weight: 300;
+  margin-top: 6px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  5) FAQ heading
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Frequently Asked Questions” <h2> margins */
+.mt56-mb32 {
+  margin-top: 56px;
+  margin-bottom: 32px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  6) FAQ items (all three .faq-item children)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Each FAQ <h3>: 16px top/bottom margin */
+.faq-h3 {
+  margin: 16px 0;
+}
+
+/* First two FAQ images: 15px top, 15px bottom, 0.8 opacity */
+.faq-img {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+/* Third FAQ image: 10px top, 0.8 opacity, no bottom margin necessary */
+.faq-img-small {
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) FAQ pop-ups
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All .faq-popup start hidden */
+.faq-popup {
+  display: none;
+}
+
+/* Any <img> inside a .faq-popup: 0.8 opacity */
+.faq-popup img {
+  opacity: 0.8;
+}
+
+/* Default <h3> style inside any .faq-popup: 16px top/bottom margin */
+.faq-popup h3 {
+  margin: 16px 0;
+}
+
+/* For #faq-items-popup & #faq-result-popup images: give 16px bottom margin */
+#faq-items-popup img,
+#faq-result-popup img {
+  margin-bottom: 16px;
+}
+
+/* For #faq-better-popup image: 10px top margin */
+#faq-better-popup img {
+  margin-top: 10px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  8) “Submitting Your Request” loading pop-up
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The <h3> in #loading-popup: zero top, 8px bottom */
+#loading-popup h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}

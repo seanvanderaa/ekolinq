@@ -1,3 +1,7 @@
+strong {
+    font-weight: 600;
+}
+
 #header-content {
     display: flex;
     flex-direction: row;
@@ -70,6 +74,24 @@
     padding: 20px;
 }
 
+#header-right h2 {
+    color: white;
+    font-weight: 200;
+    margin: 0px;
+}
+
+#header-right p {
+    color: var(--subtle-text);
+    font-family: var(--crim);
+    font-size: 20px;
+    font-weight: 300;
+    margin-bottom: 0px;
+}
+
+#header-right a {
+    text-decoration: underline; text-decoration-style: dotted; color: var(--subtle-text);
+}
+
 #request-form {
     bottom: -280px;
     z-index: 100;
@@ -104,6 +126,18 @@
     font-size: 16px;
     margin-bottom: 36px;
     margin-top: 16px;
+}
+
+#request-form h1 {
+    margin: 0px; margin-bottom: 20px; color: var(--d-green); font-weight: 600;
+}
+
+#req-form-top-p {
+    margin: 0px; margin-bottom: 6px; color: var(--d-green); font-weight: 500;
+}
+
+#req-form-mid-p {
+    max-width: 420px;margin: 0px; margin-bottom: 16px;
 }
 
 .info-text {
@@ -260,6 +294,7 @@
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0);
     transition: background-color 0.2s ease;
+
   }
   
   .highlight-square::before {
@@ -431,10 +466,38 @@
     width: 100%;
 }
 
+#main-429 {
+    padding-top: 180px;
+}
+
+#div-wrapper-429 {
+    flex-direction: column; 
+    max-width: 520px;
+}
+
+#div-wrapper-429 h1 {
+    font-size: 48px; 
+    margin-bottom: 12px; 
+    color: var(--m-red);
+}
+
+#div-wrapper-429 h3, #div-wrapper-429 p {
+    text-align: center;
+}
+
+#error-back-to-home {
+    margin-top: 24px;
+}
+
 
 @media (max-width: 980px) {
     body {
         overflow-x: hidden;
+    }
+
+    .navbar__menu {
+        backdrop-filter: blur(5px);         /* applies the blur */
+        -webkit-backdrop-filter: blur(5px);
     }
 
     #header {
@@ -724,4 +787,146 @@
         color: var(--m-green);
         font-weight: 600;
     }
+}
+
+/* Request form input wrapper */
+#request-form-input > div {
+  position: relative;
+  display: inline-block;
+  margin: 0px;
+  width: 100%;
+}
+
+/* Zip Code input */
+#zipcode {
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+/* Impact section headings */
+#impact-left h2 {
+  margin: 0px;
+}
+#impact-left h2:first-of-type {
+  margin-top: 24px;
+}
+
+/* Impact numbers */
+#impact-left h1 {
+  font-size: 64px;
+  font-family: var(--mont);
+  font-weight: 600;
+  margin: 12px 0px;
+}
+#impact-left h1:first-of-type {
+  color: var(--m-blue);
+}
+#impact-left h1:nth-of-type(2) {
+  color: var(--m-green);
+}
+
+/* Impact paragraphs */
+#impact-left p {
+  margin-top: 24px;
+}
+
+/* Problem section heading */
+#problem-right h2 {
+  margin: 0px;
+  margin-top: 24px;
+}
+
+/* Problem section paragraph */
+#problem-right-text {
+  margin-top: 24px;
+}
+
+/* Problem section button */
+#nav-textile-waste {
+  margin-top: 36px;
+}
+
+/* Items header section */
+#items-header .section-title {
+  color: white;
+}
+#items-header h2 {
+  color: var(--yel);
+}
+
+/* Items info columns */
+#items-info > div {
+  flex: 1;
+}
+#items-info h3 {
+  font-family: var(--crim);
+}
+
+/* About Us button */
+#about-us-btn {
+  margin-top: 36px;
+}
+#about-us-btn .btn-icon {
+  background-color: var(--m-green);
+  color: white;
+}
+
+/* Collection Event layout */
+#collection-event > div:first-child {
+  flex: 1;
+}
+#collection-event > div:nth-child(2) {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 300px;
+}
+#collection-event > div:nth-child(2) h2 {
+  color: var(--m-blue);
+  flex: 1;
+  margin: 0px;
+}
+#collection-event > div:nth-child(2) p {
+  margin: 0px;
+  margin-top: 16px;
+}
+#get-in-touch {
+  margin-top: 36px;
+}
+#get-in-touch .btn-icon {
+  font-weight: bold;
+}
+#mobile-image-removed {
+  flex: 1;
+}
+
+/* Shared Vision section */
+#shared-vision {
+  text-align: center;
+}
+#shared-vision hr {
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+  width: 60px;
+  margin-bottom: 36px;
+}
+#shared-vision h2 {
+  margin: 0px;
+}
+#shared-vision > p {
+  font-weight: 500;
+  max-width: 400px;
+  margin: 24px;
+}
+
+/* Shared Vision organizations */
+#shared-vision-orgs {
+  gap: 36px;
+  margin-top: 24px;
+}
+.initiatives img {
+  border-radius: 20px;
+}
+.initiatives p {
+  max-width: 280px;
 }

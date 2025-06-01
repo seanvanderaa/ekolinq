@@ -9,66 +9,66 @@
 {% block content %}
   <main>
     <section id="init-form" class="content-width  request-form">
-      <h1 style="margin: 0px;">Request a Pickup</h1>
-      <p style="max-width: 450px; color: var(--subtle-text-wbg);">
+      <h1>Request a Pickup</h1>
+      <p>
         After filling in the below information, you’ll be able to select 
         a timeframe for us to pick up your textiles.
       </p>
       <form action="{{ url_for('request_init') }}" method="POST" id="init-form-info" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <hr style="margin-top: 24px;">
-        <h3 style="margin-bottom: 0px;">Contact Info</h3>
+        <hr>
+        <h3>Contact Info</h3>
         <div id="form-group-1" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group half-width">
             <label for="firstName">First Name</label>
             {{ form.firstName(id="firstName", placeholder="Jane") }}
           </div>
-          <div class="form-group" style="max-width: 50%;">
+          <div class="form-group half-width">
             <label for="lastName">Last Name</label>
             {{ form.lastName(id="lastName", placeholder="Doe") }}
           </div>
         </div>
         <div id="form-group-1" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
-            <label for="email">Email<span style="color: red;">*</span></label>
+          <div class="form-group half-width">
+            <label for="email">Email<span>*</span></label>
             {{ form.email(id="email", placeholder="jdoe@gmail.com", required=True) }}
           </div>
-          <div class="form-group" style="max-width: 50%;">
-            <label for="phone">Phone Number<span style="color: red;">*</span></label>
+          <div class="form-group half-width">
+            <label for="phone">Phone Number<span>*</span></label>
             {{ form.phone(id="phone", placeholder="(408) 888-8888") }}
           </div>
         </div>
-        <hr style="margin-top: 48px;">
-        <h3 style="margin-bottom: 0px;">Address</h3>
+        <hr>
+        <h3>Address</h3>
         <div id="form-group-2" class="form-group-div">
-          <div class="form-group" style="max-width: 100%;">
-            <label for="address">Address<span style="color: red;">*</span></label>
+          <div class="form-group full-width">
+            <label for="address">Address<span>*</span></label>
             {{ form.address(id="address", placeholder="100 Pleasanton Ave.", required=True) }}
           </div>
         </div>
         <div id="form-group-2" class="form-group-div">
-          <div class="form-group" style="max-width: 50%;">
-            <label for="city">City<span style="color: red;">*</span></label>
+          <div class="form-group half-width">
+            <label for="city">City<span>*</span></label>
             {{ form.city(id="city", placeholder="City", required=True, value=city) }}
           </div>
-          <div class="form-group" style="max-width: 50%;">
-            <label for="zip">Zip Code<span style="color: red;">*</span></label>
+          <div class="form-group half-width">
+            <label for="zip">Zip Code<span>*</span></label>
             {{ form.zip(id="zip", placeholder="Zip Code", required=True, value=zipcode) }}
           </div>
         </div>
-        <div class="form-group" style="max-width: 550px;">
+        <div class="form-group notes-width">
           <label for="notes">Any additional notes about where you’ll leave your items?</label>
           {{ form.notes(id="notes", placeholder="They'll be in front of the garage.", rows="3") }}
         </div>
 
         <!-- Gated Section -->
-        <div style="margin-top: 32px; position: relative; display: inline-block">
+        <div class="gated-wrapper">
           {{ form.gated() }}<label for="gated">Do we need a gate code or permission to access your address?</label>
           <span class="info-icon">i</span>
           <div class="info-text">
             If checked, you'll be asked to send us the gate or QR code, or confirm that you've notified your gate attendant about the pending pick up.
           </div>
-          <div style="display: none;" id="selected-gate">
+          <div id="selected-gate">
             <p class="user-notice"><strong>Note: </strong>You will need to respond to your confirmation email with the gate code or QR code to ensure your items are picked up.</p>
           </div>
         </div>
@@ -76,46 +76,46 @@
         <div class="form-group">
           {{ form.recaptcha }}
           {% for error in form.recaptcha.errors %}
-          <div class="user-notice-warn" style="max-width: 460px;">
+          <div class="user-notice-warn">
             {{ error }}
           </div>
 
           {% endfor %}
         </div>
 
-        <button type="submit" style="margin-top: 36px;" id="init-submit-btn" class="submit-btn">
-          <span>Next Step: <span style="font-weight: 400;">Select a Timeframe</span></span>
+        <button type="submit" id="init-submit-btn" class="submit-btn">
+          <span>Next Step: <span>Select a Timeframe</span></span>
         </button>
       </form>
 
-      <h2 style="margin-top: 56px; margin-bottom: 32px;">Frequently Asked Questions</h2>
+      <h2>Frequently Asked Questions</h2>
       <div class="faq-container">
         <div class="faq-item align-center" id="faq-items">
-          <h3 style="margin: 16px 0px;">What kinds of items do you accept?</h3>
-          <img src="{{ url_for('static', filename='images/Cloth Items.png') }}" alt="" height="80" style="opacity: .8;">
+          <h3>What kinds of items do you accept?</h3>
+          <img src="{{ url_for('static', filename='images/Cloth Items.png') }}" alt="" height="80">
         </div>
         <div class="faq-item align-center" id="faq-result">
-          <h3 style="margin: 16px 0px;">What do you do with my textile waste?</h3>
-          <img src="{{ url_for('static', filename='images/van black.png') }}" alt="" height="80" style="opacity: .8;">
+          <h3>What do you do with my textile waste?</h3>
+          <img src="{{ url_for('static', filename='images/van black.png') }}" alt="" height="80">
         </div>
         <div class="faq-item align-center" id="faq-better">
-          <h3 style="margin: 16px 0px;">Why is it better to use EkoLinq?</h3>
-          <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70" style="margin-top: 10px; opacity: .8;">
+          <h3>Why is it better to use EkoLinq?</h3>
+          <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70">
         </div>
       </div>
       <div class="overlay" id="overlay"></div>
-      <div class="faq-popup" id="faq-items-popup" style="display: none;">
-        <h3 style="margin: 16px 0px;">What kinds of items do you accept?</h3>
+      <div class="faq-popup" id="faq-items-popup">
+        <h3>What kinds of items do you accept?</h3>
         <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. But, we do not take textiles that are wet, moldy, contaminated with chemicals, or may be bio-hazardous waste. Additionally, we do not accept mattresses, furniture, or other similar oversized items.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
-      <div class="faq-popup" id="faq-result-popup" style="display: none;">
-        <h3 style="margin: 16px 0px;">What do you do with my textile waste?</h3>
+      <div class="faq-popup" id="faq-result-popup">
+        <h3>What do you do with my textile waste?</h3>
         <p>Whenever possible, we try to recycle all textile waste donated to us. If this isn't possible, or if the clothes are better off being recycled, they are turned into shoddy—fibers used for fillings or in lower-grade textile products. Regardless, 100% of the textiles we collect are diverted from landfill.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
-      <div class="faq-popup" id="faq-better-popup" style="display: none;">
-        <h3 style="margin: 16px 0px;">Why is it better to use EkoLinq?</h3>
+      <div class="faq-popup" id="faq-better-popup">
+        <h3>Why is it better to use EkoLinq?</h3>
         <p>EkoLinq is heavily involved in our local ecosystem—whether through collaborations with other businesses, donating proceeds from our work to community members, or by providing a better outlet for textile waste, EkoLinq aims to have a positive impact in the Tri-Valley.</p>
         <button class="popup-close download-btn">Close</button>
       </div>

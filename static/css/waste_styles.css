@@ -37,7 +37,7 @@ main {
 
 #header-content {
     position: relative; /* To ensure content appears above the overlay */
-    z-index: 2;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -310,7 +310,6 @@ main {
 
 @media (max-width: 980px) {
     .navbar__menu {
-        background-color: rgba(0, 0, 0, .7);
         backdrop-filter: blur(10px);         /* applies the blur */
         -webkit-backdrop-filter: blur(10px);
     }
@@ -397,4 +396,186 @@ main {
     #request-form-input {
         width: 80%;
     }
+
+    .info-text {
+        right: -60px;
+    }
 }
+
+/*─────────────────────────────────────────────────────────────────────────
+  1) Header area (inside #header)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* #header-content was inline-white text */
+#header-content {
+  color: white;
+}
+
+/* “What is Textile Waste?” H1 */
+.header-h1 {
+  font-size: 64px;
+  text-align: center;
+  margin: 0;
+  z-index: 1;
+}
+
+/* Subtitle H3 under the H1 */
+.header-h3 {
+  color: var(--yel);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Copyright line at bottom-right of #header */
+.header-copy {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 12px;
+  color: white;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  2) “OVERVIEW” section in #waste-main-content
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The first H2 (“Untangling Textile Waste…”) */
+.mt24-zero-marb {
+  margin: 0;
+  margin-top: 24px;
+}
+
+/* Paragraph immediately after it */
+.mt24-mb0 {
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+/* “Below are three key challenges…” */
+.mt24 {
+  margin-top: 24px;
+}
+
+/*─────────────────────────────────────────────────────────────────────────
+  3) The three .info-blocks (no inline styles to extract here)
+─────────────────────────────────────────────────────────────────────────*/
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  4) “ENVIRONMENTAL IMPACT” block
+─────────────────────────────────────────────────────────────────────────*/
+
+/* H2 under “ENVIRONMENTAL IMPACT” */
+#section-two h2 {
+  margin: 0;
+  margin-top: 24px;
+}
+
+/* The two paragraphs under that H2 */
+#section-two p {
+  margin-top: 24px;
+}
+
+/* Left flex-child (was inline “flex: 2”) */
+.flex-2 {
+  flex: 2;
+}
+
+/* Right flex-child (#sect-two-img) */
+#sect-two-img {
+  flex: 1.5;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  5) “ECONOMIC & CIRCULAR ECONOMY IMPACT” block
+─────────────────────────────────────────────────────────────────────────*/
+
+/* H2 under “ECONOMIC & CIRCULAR ECONOMY IMPACT” */
+#section-three + .fade-in-section h2 {
+  /* In this markup, the next fade-in-section after #section-two is the economic block */
+  margin: 0;
+  margin-top: 24px;
+}
+
+/* That block’s paragraphs */
+#section-three + .fade-in-section p {
+  margin-top: 24px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  6) “Did you know?” row (inside #section-three)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Container should behave like flex-row */
+.icon-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Icon styling */
+.icon-large {
+  font-size: 32px;
+  margin-right: 12px;
+  padding-top: 4px;
+}
+
+/* The “Did you know?” H2 (just zero out margins) */
+.mt0 {
+  margin: 0;
+}
+
+/* The paragraph under “Did you know?” uses the same .mt24 as above */
+
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) “OTHER RESOURCES” block
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Intro paragraph at top of “OTHER RESOURCES” */
+.resources-intro {
+  margin-bottom: 56px;
+  max-width: 660px;
+}
+
+/* “Resource” / “Brief Description” header flex cells */
+#resource-file-header .flex-2 {
+  flex: 2;
+}
+
+/* Each resource row: the H3 and P use .flex-2 */
+.resource-file .flex-2 {
+  flex: 2;
+}
+
+/* The small italic text inside each H3 */
+.i-small {
+  font-size: 14px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  8) “Can we help pick up your textile waste?” form at the bottom
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The ZIP-code input wrapper (was inline: position, display, margin, width) */
+.zipcode-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+}
+
+/* The ZIP-code <input> itself */
+.zipcode-input {
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  9) (No other inline styles left)
+─────────────────────────────────────────────────────────────────────────*/

@@ -465,3 +465,72 @@ main {
         margin-top: 16px;
     }
 }
+
+/* ----------------------------------------- */
+/* Layout & spacing utilities               */
+/* ----------------------------------------- */
+.full-width       { width: 100%; }
+.hidden           { display: none; }
+.flex-row-center  {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.align-right      { text-align: right; }
+
+/* Margin-top 64px */
+.mt-64            { margin-top: 64px; }
+
+/* Margin-right 8px */
+.mr-8             { margin-right: 8px; }
+
+/* No margin (for resetting <h4>) */
+.no-margin        { margin: 0 !important; }
+
+/* ----------------------------------------- */
+/* Width-limiting utilities                 */
+/* ----------------------------------------- */
+.max-w-520        { max-width: 520px; }
+.max-w-300        { max-width: 300px; }
+.max-w-220        { max-width: 220px; }
+.max-w-120        { max-width: 120px; }
+
+/* ----------------------------------------- */
+/* Button padding helper                    */
+/* ----------------------------------------- */
+.btn-padding      { padding: 14px 16px; }
+
+/* ----------------------------------------- */
+/* Text utilities                           */
+/* ----------------------------------------- */
+.text-right       { text-align: right; }
+
+/* ----------------------------------------- */
+/* Special “intro” paragraph styling         */
+/* ----------------------------------------- */
+.intro-text {
+  max-width: 520px;
+  margin-top: 0;
+  margin-bottom: 48px;
+}
+
+/* “Contact us” link style inside the intro */
+.contact-link {
+  color: var(--m-green);
+  text-decoration: underline;
+}
+
+/* ----------------------------------------- */
+/* Icon color reset                         */
+/* ----------------------------------------- */
+.icon-gray {
+  color: rgb(91, 91, 91);
+}
+
+/* ----------------------------------------- */
+/* If you have other .download-btn or        */
+/* .warning-btn definitions elsewhere, keep  */
+/* them in your base CSS. Only padding is    */
+/* extracted here.                           */
+/* ----------------------------------------- */

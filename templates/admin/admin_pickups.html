@@ -13,7 +13,7 @@
   <h1 style="margin: 0px; margin-bottom: 24px;">Pick Ups Overview</h1>
   <!-- Show a table of all PickupRequests -->
   <div id="header">
-    <h2 style="margin: 0px;">All Pickup Requests</h2>
+    <h2 class="mt0">All Pickup Requests</h2>
     <form action="{{ url_for('clean_pickups') }}"
         method="POST" id="cleanup_form">
         {{ cleanup_form.csrf_token }}
@@ -54,7 +54,7 @@
       </div>
     </div>
   </form>
-  <div id="table-wrapper" style="overflow-x: scroll; padding-bottom: 50px;">
+  <div id="table-wrapper">
     <table id="requests-table" border="1" cellpadding="5" cellspacing="0" >
       <thead>
         <tr>
@@ -70,9 +70,6 @@
           <th>Zip</th>
           <th>Notes</th>
           <th>Gated</th>
-          <th>QR Code</th>
-          <th>Gate Code</th>
-          <th>Will Notify</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>ID</th>
@@ -82,57 +79,40 @@
       <tbody>
         {% for req in requests %}
         <tr>
-          <td style="min-width: 80px;" class="align-center">
-            <form action="{{ url_for('delete_pickup') }}" method="POST" style="display:inline;">
+          <td class="min-w-80 align-center">
+            <form action="{{ url_for('delete_pickup') }}" method="POST">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
-              <button type="submit" id="delete-request" class="download-btn delete-request-btn">Delete</button>
+              <button
+                type="submit"
+                id="delete-request"
+                class="download-btn delete-request-btn">
+                Delete
+              </button>
             </form>
           </td>
-          <td style="min-width: 120px;
-                    color: {% if req.status == 'Complete' %}
-                              var(--m-green)
-                            {% elif req.status == 'Requested' %}
-                            rgb(184, 148, 16);
-                            {% endif %};">
-              {{ req.status }}
+          <td class="min-w-120
+                {% if req.status == 'Complete' %}
+                  status-complete
+                {% elif req.status == 'Requested' %}
+                  status-requested
+                {% endif %}">
+            {{ req.status }}
           </td>
-
-          <td style="min-width: 150px;">{{ req.date_filed }}</td>
-          <td style="min-width: 150px;">{{ req.request_date }}</td>
-          <td style="min-width: 150px;">{{ req.request_time }}</td>
-          <td style="min-width: 300px;">{{ req.email }}</td>
-          <td style="min-width: 200px;">{{ req.phone_number }}</td>
-          <td style="min-width: 250px;">{{ req.address }}</td>
-          <td style="min-width: 150px;">{{ req.city }}</td>
-          <td style="min-width: 75px;">{{ req.zipcode }}</td>
-          <td style="min-width: 300px; word-break: break-word;">{{ req.notes }}</td>
-          <td style="min-width: 100px;">{{ req.gated }}</td>
-          <td style="min-width: 100px;">
-            {% if req.qr_code %}
-              <b>Yes, <a href="{{ url_for('static', filename='images/qr_codes/' ~ req.qr_code) }}" target="_blank" style="text-decoration: underline;">view</a></b>
-            {% else %}
-              False
-            {% endif %}
-          </td>          
-          <td style="min-width: 100px;">
-            {% if req.gate_code %}
-              <b>{{ req.gate_code }}</b>
-            {% else %}
-              False
-            {% endif %}
-          </td>
-          <td style="min-width: 100px;">
-            {% if req.notify %}
-              <b>True</b>
-            {% else %}
-              False
-            {% endif %}
-          </td>
-          <td style="min-width: 150px;">{{ req.fname }}</td>
-          <td style="min-width: 200px;">{{ req.lname }}</td>
-          <td style="min-width: 50px;">{{ req.request_id }}</td>
-          <td style="min-width: 250px;">{{ req.pickup_complete_info }}</td>
+          <td class="min-w-150">{{ req.date_filed }}</td>
+          <td class="min-w-150">{{ req.request_date }}</td>
+          <td class="min-w-150">{{ req.request_time }}</td>
+          <td class="min-w-300">{{ req.email }}</td>
+          <td class="min-w-200">{{ req.phone_number }}</td>
+          <td class="min-w-250">{{ req.address }}</td>
+          <td class="min-w-150">{{ req.city }}</td>
+          <td class="min-w-75">{{ req.zipcode }}</td>
+          <td class="min-w-300 word-break">{{ req.notes }}</td>
+          <td class="min-w-100">{{ req.gated }}</td>
+          <td class="min-w-150">{{ req.fname }}</td>
+          <td class="min-w-200">{{ req.lname }}</td>
+          <td class="min-w-50">{{ req.request_id }}</td>
+          <td class="min-w-250">{{ req.pickup_complete_info }}</td>
         </tr>
         {% endfor %}          
       </tbody>

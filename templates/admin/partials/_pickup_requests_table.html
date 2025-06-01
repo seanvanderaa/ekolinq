@@ -18,27 +18,6 @@
   <td style="min-width: 75px;">{{ req.zipcode }}</td>
   <td style="min-width: 300px; word-break: break-word;">{{ req.notes }}</td>
   <td style="min-width: 100px;">{{ req.gated }}</td>
-  <td style="min-width: 100px;">
-    {% if req.qr_code %}
-      <b>Yes, <a href="{{ url_for('static', filename='images/qr_codes/' ~ req.qr_code) }}" target="_blank" style="text-decoration: underline;">view</a></b>
-    {% else %}
-      False
-    {% endif %}
-  </td>          
-  <td style="min-width: 100px;">
-    {% if req.gate_code %}
-      <b>{{ req.gate_code }}</b>
-    {% else %}
-      False
-    {% endif %}
-  </td>
-  <td style="min-width: 100px;">
-    {% if req.notify %}
-      <b>True</b>
-    {% else %}
-      False
-    {% endif %}
-  </td>
   <td style="min-width: 150px;">{{ req.fname }}</td>
   <td style="min-width: 200px;">{{ req.lname }}</td>
   <td style="min-width: 50px;">{{ req.request_id }}</td>

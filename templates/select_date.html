@@ -9,14 +9,14 @@
 {% block content %}
   <main>
     <section id="date-form" class="content-width request-form">
-      <h1 style="margin: 0px;">Select a Timeframe</h1>
-      <p style="max-width: 450px; color: var(--subtle-text-wbg);">
+      <h1 class="mt0">Select a Timeframe</h1>
+      <p class="intro-text">
         Via our contactless pickups, you don’t need to be home during this timeframe as long as your items are accessible.
       </p>
-      <h4 style="font-weight: 500; font-size: 20px; margin-bottom: 12px;">
+      <h4 class="subheading-h4">
         Available Day(s) for the Week of <span id="week-specification" data-base-date="{{ base_date_str }}">Jan. 26</span>
       </h4>      <!-- We wrap everything in a form so we can POST chosen_date/time -->
-      <p style="margin: 0px;"><i>All pick ups happen between 8am-4pm.</i></p>
+      <p class="mt0"><i>All pick ups happen between 8am-4pm.</i></p>
       <form action="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset) }}" method="POST" id="timeframe-form" class="align-center">
         {{ form.hidden_tag() }}
         <!-- Render hidden fields from the FlaskForm -->
@@ -27,14 +27,9 @@
 
             {% if days_list %}
               {% for d in days_list %}
-              <div class="day-wrapper align-center" data-date="{{ d.date_obj.isoformat() }}" 
-              data-time="08:00-16:00">
-                <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
-                  {{ d.day_of_week|upper }}
-                </h4>
-                <p style="margin: 0px; margin-top: 6px;">
-                  {{ d.date_str }}
-                </p>
+              <div class="day-wrapper align-center" data-date="{{ d.date_obj.isoformat() }}" data-time="08:00-16:00">
+                <h4 class="subheading-h4-mt0">{{ d.day_of_week|upper }}</h4>
+                <p class="mt6-zero-mb">{{ d.date_str }}</p>
               </div>
               {% endfor %}
             {% else %}
@@ -45,7 +40,7 @@
 
 
         <!-- Prev/Next Week buttons -->
-        <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
+        <div class="align-center week-nav">
           {% if offset > 0 %}
             <a id="prev-week" class="week-btn" 
                href="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset-1) }}">
@@ -53,7 +48,7 @@
             </a>
           {% else %}
             <!-- If offset = 0, we can hide or disable the previous button -->
-            <span style="visibility: hidden;">Previous Week</span>
+            <span>Previous Week</span>
           {% endif %}
 
           {% if offset < max_offset %}
@@ -63,58 +58,57 @@
             </a>
           {% else %}
             <!-- If offset >= max_offset, hide or disable the next button -->
-            <span style="visibility: hidden;">Next Week</span>
+            <span>Next Week</span>
           {% endif %}
         </div>
 
-        <button type="submit" style="margin-top: 36px;" id="timeframe-submit-btn" class="submit-btn" disabled>
+        <button type="submit" id="timeframe-submit-btn" class="submit-btn mt36" disabled>
           <div class="button-content">
             <span>
-              <span style="font-weight: 500;">Schedule Pick-Up</span>
+              <span class="fw500">Schedule Pick-Up</span>
             </span>
-            <span id="submit-btn-info" style="display: none; font-size: 12px; font-weight: 300; margin-top: 6px;">
-            </span>
+            <span id="submit-btn-info"></span>
           </div>
         </button>
       </form>
 
-      <h2 style="margin-top: 56px; margin-bottom: 32px;">Frequently Asked Questions</h2>
+      <h2 class="mt56-mb32">Frequently Asked Questions</h2>
       <div class="faq-container">
         <div class="faq-item align-center" id="faq-items">
-          <h3 style="margin: 16px 0px;">What if I need to reschedule?</h3>
-          <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
+          <h3 class="faq-h3">What if I need to reschedule?</h3>
+          <img class="faq-img" src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50">
         </div>
         <div class="faq-item align-center" id="faq-result">
-          <h3 style="margin: 16px 0px;">What time will you pick up my items?</h3>
-          <img src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50" style="margin-top: 15px; opacity: .8; margin-bottom: 15px;">
+          <h3 class="faq-h3">What time will you pick up my items?</h3>
+          <img class="faq-img" src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50">
         </div>
         <div class="faq-item align-center" id="faq-better">
-          <h3 style="margin: 16px 0px;">Why should I use EkoLinq?</h3>
-          <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70" style="margin-top: 10px; opacity: .8;">
+          <h3 class="faq-h3">Why should I use EkoLinq?</h3>
+          <img class="faq-img-small" src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70">
         </div>
       </div>
       <div class="overlay" id="overlay"></div>
-      <div class="faq-popup" id="faq-items-popup" style="display: none;">
-        <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
-        <h3 style="margin: 16px 0px;">What if I need to reschedule?</h3>
+      <div class="faq-popup" id="faq-items-popup">
+        <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50">
+        <h3>What if I need to reschedule?</h3>
         <p>After scheduling your pickup, you have the ability to edit the date via the "Edit a request" button in the top right corner of the page. In your confirmation email, you'll receive a unique number that you can then use to edit your request.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
-      <div class="faq-popup" id="faq-result-popup" style="display: none;">
-        <img src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50" style="opacity: .8; margin-bottom: 16px;">
-        <h3 style="margin: 16px 0px;">What time will you pick up my items?</h3>
+      <div class="faq-popup" id="faq-result-popup">
+        <img src="{{ url_for('static', filename='images/clock.png') }}" alt="" height="50">
+        <h3>What time will you pick up my items?</h3>
         <p>All pick ups occur between 8am-4pm on the day you request.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
-      <div class="faq-popup" id="faq-better-popup" style="display: none;">
-        <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70" style="margin-top: 10px; opacity: .8;">
-        <h3 style="margin: 16px 0px;">Why should I use EkoLinq?</h3>
+      <div class="faq-popup" id="faq-better-popup">
+        <img src="{{ url_for('static', filename='images/EkoLinq Logo Black.png') }}" alt="" height="70">
+        <h3>Why should I use EkoLinq?</h3>
         <p>EkoLinq is heavily involved in our local ecosystem—whether through collaborations with other businesses, donating proceeds from our work to community members, or by providing a better outlet for textile waste, EkoLinq aims to have a positive impact in the Tri-Valley.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
     </section>
     <div id="loading-popup">
-      <h3 style="margin-top: 0px; margin-bottom: 8px;">Submitting Your Request</h3>
+      <h3>Submitting Your Request</h3>
       <p>You will be redirected shortly.</p>
       <div class="loader">
       </div>

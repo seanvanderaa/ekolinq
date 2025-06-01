@@ -73,6 +73,50 @@ li {
     margin-top: 12px;
 }
 
+.a-green {
+  text-decoration: underline; color: var(--m-green);
+}
+
+.col-white {
+    color: white !important;
+}
+
+.col-yel {
+    color: var(--yel) !important;
+}
+
+.col-blue {
+    color: var(--m-blue) !important;
+}
+
+.col-green {
+    color: var(--m-green) !important;
+}
+
+.col-subtle {
+    color: var(--subtle-text);
+}
+
+.crim {
+    font-family: var(--crim);
+}
+
+.fs-24 {
+    font-size: 24px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.mt0 {
+    margin: 0;
+}
+
 .navbar {
     top: 0px;
     left: 0px;
@@ -240,6 +284,7 @@ li {
 
 #contact-form-confirmation {
     flex-direction: column;
+    display: none;
 }
 
 #footer {
@@ -572,6 +617,10 @@ li {
     padding: 12px 16px;
 }
 
+#recaptcha-form {
+    margin-top: 24px;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -602,7 +651,7 @@ li {
         position: absolute;
         top: 66px;
         right: 0;
-        background-color: var(--d-green);
+        background-color: rgba(0, 0, 0, 0.8);
         width: 100%;
         max-height: 0;
         text-align: left;

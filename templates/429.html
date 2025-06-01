@@ -6,20 +6,20 @@
 {% endblock %}
 
 {% block content %}
-<main style="padding-top: 180px;" class="content-width align-center">
-  <div class="align-center" style="flex-direction: column; max-width: 520px;">
-    <h1 style="font-size: 48px; margin-bottom: 12px; color: var(--m-red)">
+<main id="main-429" class="content-width align-center">
+  <div id="div-wrapper-429" class="align-center">
+    <h1>
       Whoa there! <i class="bi bi-exclamation-triangle"></i>
     </h1>
-    <h3 style="text-align: center;">It seems you've made too many requests too quickly.</h3>
-    <p style="text-align: center;">
+    <h3>It seems you've made too many requests too quickly.</h3>
+    <p>
       {% if retry_after %}
         Please wait {{ retry_after }} before trying again.
       {% else %}
         Please slow down and try again after a while.
       {% endif %}
     </p>
-    <button id="error-back-to-home" class="submit-btn" style="margin-top: 24px;">
+    <button id="error-back-to-home" class="submit-btn">
       Back to the Homepage
     </button>
   </div>

@@ -69,6 +69,14 @@ th {
     text-align: left;
 }
 
+#table-wrapper {
+    overflow-x: scroll; padding-bottom: 50px;
+}
+
+#table-wrapper form {
+    display: inline;
+}
+
 #table-wrapper tr {
     max-height: 20px;
     overflow-y: scroll;
@@ -96,3 +104,22 @@ th {
         row-gap: 12px;
     }
 }
+
+.min-w-80   { min-width: 80px; }
+.min-w-120  { min-width: 120px; }
+.min-w-150  { min-width: 150px; }
+.min-w-200  { min-width: 200px; }
+.min-w-250  { min-width: 250px; }
+.min-w-300  { min-width: 300px; }
+.min-w-75   { min-width: 75px; }
+.min-w-50   { min-width: 50px; }
+
+/* Utility class for word-breaking long text */
+.word-break { word-break: break-word; }
+
+/* Alignment helper */
+.align-center { text-align: center; }
+
+/* Status color classes */
+.status-complete  { color: var(--m-green); }
+.status-requested { color: rgb(184, 148, 16); }

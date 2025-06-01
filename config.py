@@ -6,7 +6,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 class BaseConfig:
     """Settings that never change between environments."""
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY   = os.getenv("SECRET_KEY", "dev-only-fallback")      # override in env
+    SECRET_KEY   = os.getenv("SECRET_KEY")      # override in env
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     PERMANENT_SESSION_LIFETIME = timedelta(days=1)
@@ -36,12 +36,14 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
+    MAIL_DEBUG = False 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///ekolinq.db")
     SESSION_COOKIE_SECURE = False            # allow http://localhost
     LOGGER_LEVEL = "DEBUG"                   # noisy logs locally
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+    MAIL_DEBUG = False 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")              # e.g. Postgres on Render
     SESSION_COOKIE_SECURE = True
     FORCE_HTTPS = True                           # redirect to HTTPS

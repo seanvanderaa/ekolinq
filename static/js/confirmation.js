@@ -8,16 +8,21 @@ document.addEventListener("DOMContentLoaded", function () {
     editAddressPencil.addEventListener('click', displayForm);
     closeUpdate.addEventListener('click', displayForm)
 
-
     function displayForm() {
-      if (editAddressText.style.display === "flex") {
+      // Use getComputedStyle to see if the text-div is currently shown or hidden
+      const textIsVisible = window
+        .getComputedStyle(editAddressText)
+        .display !== "none";
+
+      if (textIsVisible) {
+        // If the text is visible, hide it and show the form
         editAddressText.style.display = "none";
-        addressHeader.textContent = `Edit Address`;
+        addressHeader.textContent = "Edit Address";
         editAddressForm.style.display = "flex";
-      }
-      else {
+      } else {
+        // Otherwise, show the text and hide the form
         editAddressText.style.display = "flex";
-        addressHeader.textContent = `Address`;
+        addressHeader.textContent = "Address";
         editAddressForm.style.display = "none";
       }
     }
