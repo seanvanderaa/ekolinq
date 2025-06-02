@@ -97,6 +97,10 @@ li {
     color: var(--subtle-text);
 }
 
+.col-red {
+    color: red;
+}
+
 .crim {
     font-family: var(--crim);
 }

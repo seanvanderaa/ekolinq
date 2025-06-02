@@ -13,19 +13,19 @@
 <main class="content-width">
     <div>
         <div id="header" class="align-left">
-            <h1 style="margin: 0px;">Admin Console</h1>
+            <h1 class="mt0">Admin Console</h1>
             <!-- Static Pickup Count for This Week -->
-            <div style="margin-bottom: 16px;" id="total-pickups">
-                <p style="font-size: 12px;"><i>Total pickups requested this timeframe</i></p>
-                <p style="margin: 0px; padding: 12px 24px; background-color: var(--m-green); color: white; box-sizing: content-box; text-align: center; border-radius: 5px; font-size: 24px; font-weight: 600">{{ pickups_this_week }}</p>
+            <div id="total-pickups">
+                <p><i>Total pickups requested this timeframe</i></p>
+                <p id="total-pickups-num">{{ pickups_this_week }}</p>
             </div>
         </div>
       <!-- Graph Canvas -->
       <div>
          <canvas id="pickupChart"></canvas>
       </div>
-      <div style="margin-top: 24px;">
-        <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTER CHART</h4>
+      <div id="filter-wrapper">
+        <h4 class="filter-h4">FILTER CHART</h4>
         <form method="POST" class="align-left" id="date-form">
           {{ form.hidden_tag() }}
           <div class="form-group">
@@ -36,7 +36,7 @@
               {{ form.end_date.label }} 
               {{ form.end_date(id="end_date") }}
           </div>
-          {{ form.submit(class="download-btn", style="height: 100%; padding: 10px 24px;") }}
+          {{ form.submit(class="download-btn") }}
         </form>
       </div>
     </div>

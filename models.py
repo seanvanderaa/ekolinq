@@ -33,16 +33,25 @@ class PickupRequest(db.Model):
 
     pickup_complete_info = db.Column(db.String(120), nullable=True)
 
-    request_id = db.Column(db.String(6), unique=True, nullable=False)
+    request_id = db.Column(db.String(8), unique=True, nullable=False)
 
 
-def generate_unique_request_id():
-    # Generate a random 6-digit code as a string.
-    code = str(random.randint(100000, 999999))
-    # Keep generating until the code is unique.
-    while PickupRequest.query.filter_by(request_id=code).first() is not None:
-        code = str(random.randint(100000, 999999))
-    return code
+import string
+import secrets
+_BASE62 = string.ascii_letters + string.digits      # 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+def generate_unique_request_id(length: int = 8, max_attempts: int = 20) -> str:
+    """
+    Return an 8-character, URL-safe ID that is (a) unpredictable and
+    (b) unique in the PickupRequest table.
+    """
+    for _ in range(max_attempts):
+        code = ''.join(secrets.choice(_BASE62) for _ in range(length))
+        if not PickupRequest.query.filter_by(request_id=code).first():
+            return code
+
+    raise RuntimeError("Could not generate a unique request_id; "
+                       "increase length or investigate DB state.")
 
 @event.listens_for(PickupRequest, 'before_insert')
 def assign_request_id(mapper, connection, target):

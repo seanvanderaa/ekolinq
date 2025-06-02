@@ -541,9 +541,9 @@ def create_app():
         (False, error_message)  – failed, give the reason that should be shown
         """
         # 1) basic format
-        if not request_id.isdigit() or len(request_id) != 6:
+        if len(request_id) != 8:
             return False, (
-                "Your code must be exactly 6 digits and contain only numbers. "
+                "Your code must be exactly 6 digits. "
                 "Please double-check and try again."
             )
 
@@ -591,7 +591,7 @@ def create_app():
         form = EditRequestInitForm()
 
         if not form.validate_on_submit():
-            flash('Invalid form submission.', 'danger')
+            flash("Invalid form submission. Verify that you clicked the 'I'm not a robot' box.", 'danger')
             current_app.logger.warning("Invalid form submission at edit_request")
             return redirect(url_for('edit_request_init'))
 
@@ -709,7 +709,7 @@ def create_app():
 
             send_editted_request_email(pickup)
 
-            return redirect(url_for('edit_request', request_id=request_id))
+            return
         else:
             current_app.logger.warning("Form validation failed for edit-request-time-submit. Errors: %s", form.errors)
             # Optionally log or flash the errors from form.errors here for debugging
@@ -1732,24 +1732,13 @@ def create_app():
     def error():
         error=request.args.get('error_message')
         traceback=request.args.get('traceback')
-
-        """
-        A simple endpoint that displays an error page whenever something goes wrong.
-        """
-        return render_template('error.html', error_message=error, traceback=traceback)
-
-
-
+        return render_template('error.html')
 
     # --------------------------------------------------
 
     # DB FUNCTIONS
     
     # --------------------------------------------------
-
-
-
-
 
     @app.cli.command('reset-db')
     def reset_db():

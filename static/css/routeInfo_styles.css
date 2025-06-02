@@ -54,3 +54,16 @@ main {
         margin-top: 80px;
     }
 }
+
+.m08 {
+    margin: 0px;
+    margin-bottom: 8px;
+}
+
+.highlighted-text {
+    margin: 0px; color: var(--m-blue); font-weight: 600; margin-top: 8px;
+}
+
+#date-text {
+    margin-top: 8px; color: var(--subtle-text-wbg)
+}

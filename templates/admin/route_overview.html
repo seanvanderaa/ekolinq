@@ -8,22 +8,22 @@
 
 {% block content %}
 <main class="content-width">
-  <h1 style="margin-top: 0px;">Pick Ups Overview</h1>
+  <h1>Pick Ups Overview</h1>
   <div id="next-pickup">
     <div class="align-center pickup-header">
-        <h4 style="margin: 0px;">Next Pick Up</h4>
-        {% if next_pickup %} <p style="margin: 0px; margin-left: 24px;">{{ next_pickup.formatted_date }}</p>{% endif %}
+        <h4 class="mt0">Next Pick Up</h4>
+        {% if next_pickup %} <p id="ml-24 mt0">{{ next_pickup.formatted_date }}</p>{% endif %}
     </div>
-    <div class="pickup-content" style="border: none;">
+    <div class="pickup-content no-border">
         {% if next_pickup %}
-        <div style="padding-bottom: 8px">
+        <div id="pb-8">
             {% for timeframe in next_pickup.timeframes %}
             <div>
-              <p>{{ timeframe.count }} pickup{% if timeframe.count > 1 %}s{% endif %} <span class="subtle-date" style="margin-left: 12px;">{{ timeframe.timeframe }}</span> </p>
+              <p>{{ timeframe.count }} pickup{% if timeframe.count > 1 %}s{% endif %} <span class="subtle-date ml-12">{{ timeframe.timeframe }}</span> </p>
             </div>
           {% endfor %}
         </div>
-        <a href="{{ url_for('live_route') }}?date={{ next_pickup.date }}" ><div class="pickup-date-btn"><p style="margin: 0px;">Start Pick Ups</p></div></a>
+        <a href="{{ url_for('live_route') }}?date={{ next_pickup.date }}" ><div class="pickup-date-btn"><p class="mt0">Start Pick Ups</p></div></a>
       {% else %}
         <p>No upcoming pickups available.</p>
       {% endif %}
@@ -31,15 +31,15 @@
   </div>
   <div id="upcoming-pickups">
     <div id="upcoming-dates-header" class="align-left dropdown-header">
-        <h4 style="margin: 0px;">Upcoming Pickups</h4>
+        <h4 class="mt0">Upcoming Pickups</h4>
         <i class="bi bi-chevron-down" id="upcoming-pickups-icon"></i>
     </div>
 
     {% if upcoming_dates %}
-    <div id="upcoming-dates" style="display: none" class="pickups-listing">
+    <div id="upcoming-dates" class="pickups-listing">
         {% for pickup in upcoming_dates %}
-        <div style="margin-bottom: 24px;">
-            <div class="pickup-header" style="background-color: var(--l-blue); color: black;">
+        <div>
+            <div class="pickup-header" id="upcoming-header">
                 <h4>{{ pickup.formatted_date }}</h4>
             </div>
             <div class="pickup-content">
@@ -48,7 +48,7 @@
                     <p>{{ timeframe.count }} pickups ({{ timeframe.timeframe }})</p>
                 </div>
                 {% endfor %}
-              <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
+              <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p class="mt0">View Info</p></div></a>
             </div>
         </div>
       {% endfor %}
@@ -60,14 +60,14 @@
   </div>
   <div id="past-pickups">
     <div id="past-pickups-header" class="align-left dropdown-header">
-        <h4 style="margin: 0px;">Past Pickups</h4>
+        <h4 class="mt0">Past Pickups</h4>
         <i class="bi bi-chevron-down" id="past-pickups-icon"></i>
     </div>
     {% if past_dates %}
-    <div id="past-dates" style="display: none;" class="pickups-listing">
+    <div id="past-dates" class="pickups-listing">
         {% for pickup in past_dates %}
-        <div style="margin-bottom: 24px;">
-          <div class="pickup-header" style="background-color: var(--subtle-text); color: black;">
+        <div class="mb-24">
+          <div class="pickup-header">
             <h4>{{ pickup.formatted_date }}</h4>
           </div>
           <div class="pickup-content">
@@ -78,7 +78,7 @@
                 </li>
               {% endfor %}
             </ul>
-            <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p style="margin: 0px;">View Info</p></div></a>
+            <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p class="mt0">View Info</p></div></a>
           </div>
         </div>
       {% endfor %}

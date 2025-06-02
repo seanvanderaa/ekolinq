@@ -1,14 +1,14 @@
 <!-- edit_request.html -->
 <div id="request-id-modal" class="content-width align-center">
-  <div style="flex: 1;">
+  <div class="flex-1">
     <h2>Edit a Request</h2>
-    <p style="max-width: 400px;">
+    <p class="mw-400">
       Enter your six-digit request confirmation number and your email to edit the details of your request. 
       You can find this number in your confirmation email.
       <br><br>
-      <span style="font-style: italic;">
-        Can't find your confirmation email?
-        <a id="edit-request-init-open-contact" style="color: var(--m-green); text-decoration: underline;">Contact us.</a>
+      <span>
+        <i>Can't find your confirmation email?</i>
+        <a id="edit-request-init-open-contact" class="a-green">Contact us.</a>
       </span>
     </p>
   </div>
@@ -18,7 +18,7 @@
 
     {% with msgs = get_flashed_messages(with_categories=True) %}
       {% if msgs %}
-      <div style="width: 100%; margin-bottom: 16px;">
+      <div id="msgs">
         {% for category, message in msgs %}
           <div class="alert alert-{{ category }} flash-message">
             {{ message }}
@@ -35,6 +35,12 @@
     <div class="form-group">
       <label class="edit-request-label" for="{{ edit_request_form.requester_email.id }}">Email</label>
       {{ edit_request_form.requester_email(id=edit_request_form.requester_email.id, placeholder="janedoe@gmail.com") }}
+    </div>
+    <div class="form-group">
+      {{ contact_form.recaptcha }}
+        {% if contact_form.recaptcha.errors %}
+          <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
+        {% endif %}
     </div>
     <button type="submit" class="action-btn align-center">Submit</button>
   </form>

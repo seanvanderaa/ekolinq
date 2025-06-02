@@ -36,6 +36,10 @@ body {
     padding: 0px;
 }
 
+main {
+    padding-bottom: 60px;
+}
+
 h1 {
     font-size: var(--h1);
     font-family: 'Crimson Pro', serif;

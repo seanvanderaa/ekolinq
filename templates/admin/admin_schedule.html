@@ -10,9 +10,9 @@
 
 {% block content %}
 <main class="content-width">
-    <h1 style="margin: 0px; margin-bottom: 24px;">Scheduling Overview</h1>
-    <h2 style="margin: 0px; margin-bottom: 0px;">Timeframe Configuration</h2>
-    <p style="max-width: 550px; word-break: break-word;">If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
+    <h1>Scheduling Overview</h1>
+    <h2>Timeframe Configuration</h2>
+    <p>If no timeslots are filled for a selected day, that day will remain unavailable for users to select. Only one timeslot needs to be filled for a day to be available.</p>
   <form id="date-timeframe-form" method="POST" action="{{ url_for('admin_schedule') }}">
     {{ admin_schedule_form.hidden_tag() }}
     <table cellpadding="5" cellspacing="0">
@@ -43,9 +43,9 @@
   <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
     {{ admin_address_form.hidden_tag() }}
     <label for="admin-address">Set the Start and End Address for the Routing System</label>
-    <p style="margin: 0px;"><i>Must be in full address format (address, city, state, zip)</i></p>
-    {{ admin_address_form.admin_address(class="form-control", id="admin-address", style="width:100%; box-sizing: border-box;") }}
-    {{ admin_address_form.submit(class="download-btn", id="update-admin-address", style="margin-top:16px;") }}
+    <p class="mt0"><i>Must be in full address format (address, city, state, zip)</i></p>
+    {{ admin_address_form.admin_address(class="form-control", id="admin-address") }}
+    {{ admin_address_form.submit(class="download-btn", id="update-admin-address") }}
   </form>
 </main>
 {% endblock %}

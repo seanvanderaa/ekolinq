@@ -1,22 +1,28 @@
-<form action="{{ url_for('edit_request_time_submit', request_id=pickup.request_id) }}" method="POST" id="timeframe-form" class="align-center">
+<link rel="stylesheet" href="timeframe.css" />
+
+<form
+  action="{{ url_for('edit_request_time_submit', request_id=pickup.request_id) }}"
+  method="POST"
+  id="timeframe-form"
+  class="align-center"
+>
   {{ time_form.hidden_tag() }}
   {{ time_form.chosen_date(id="chosen_date") }}
   {{ time_form.chosen_time(id="chosen_time") }}
   {{ time_form.request_id(id="request_id", value=pickup.request_id) }}
-  <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}">
-  
+  <input type="hidden" id="cancel-request-id" value="{{ pickup.id }}" />
+
   <div id="date-selection-scroll" data-base-date="{{ base_date_str }}">
     <div id="date-selection-wrapper" class="align-center">
       {% if days_list %}
         {% for d in days_list %}
-          <div class="day-wrapper align-center" {% if loop.first %}style="margin-left: 1px;"{% endif %}
-               data-date="{{ d.date_obj.isoformat() }}" data-time="08:00-16:00">
-            <h4 style="margin: 0px; font-weight: 500; font-size: 20px;">
-              {{ d.day_of_week|upper }}
-            </h4>
-            <p style="margin: 0px; margin-top: 6px;">
-              {{ d.date_str }}
-            </p>
+          <div
+            class="day-wrapper align-center"
+            data-date="{{ d.date_obj.isoformat() }}"
+            data-time="08:00-16:00"
+          >
+            <h4>{{ d.day_of_week|upper }}</h4>
+            <p>{{ d.date_str }}</p>
           </div>
         {% endfor %}
       {% else %}
@@ -26,33 +32,47 @@
   </div>
 
   <!-- Prev/Next Week buttons -->
-  <div class="align-center" style="margin: 16px 0; justify-content: space-between; width: 100%;">
+  <div class="align-center week-nav">
     {% if offset > 0 %}
-      <a id="prev-week" class="week-btn" 
-         href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset-1) }}">
-         < Previous Week
+      <a
+        id="prev-week"
+        class="week-btn"
+        href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset-1) }}"
+      >
+        ‹ Previous Week
       </a>
     {% else %}
-      <span style="visibility: hidden;">Previous Week</span>
+      <span class="hidden-text">Previous Week</span>
     {% endif %}
 
     {% if offset < max_offset %}
-      <a id="next-week" class="week-btn" 
-         href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset+1) }}">
-         Next Week >
+      <a
+        id="next-week"
+        class="week-btn"
+        href="{{ url_for('edit_request_time', request_id=pickup.request_id, week_offset=offset+1) }}"
+      >
+        Next Week ›
       </a>
     {% else %}
-      <span style="visibility: hidden;">Next Week</span>
+      <span class="hidden-text">Next Week</span>
     {% endif %}
   </div>
 
-  <button type="submit" style="margin-top: 36px;" id="timeframe-submit-btn" class="submit-btn" disabled>
+  <button
+    type="submit"
+    id="timeframe-submit-btn"
+    class="submit-btn"
+    disabled
+  >
     <div class="button-content">
       <span>
-        <span style="font-weight: 500;">Change Pick Up Date</span>
+        <span class="button-text-strong">Change Pick Up Date</span>
       </span>
-      <span id="submit-btn-info" style="display: none; font-size: 12px; font-weight: 300; margin-top: 6px;"></span>
+      <span id="submit-btn-info"></span>
     </div>
   </button>
-  <button id="cancel-edit-date" type="button" class="download-btn">Cancel</button>
+
+  <button id="cancel-edit-date" type="button" class="download-btn">
+    Cancel
+  </button>
 </form>

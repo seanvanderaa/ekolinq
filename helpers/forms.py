@@ -132,6 +132,7 @@ class EditRequestInitForm(FlaskForm):
     requester_email = EmailField("Email", validators=[
         DataRequired(), Email(), Length(max=120)
     ])
+    recaptcha = RecaptchaField()
 
 class DeletePickupForm(FlaskForm):
     pickup_id = HiddenField(validators=[DataRequired()])

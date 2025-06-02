@@ -10,7 +10,7 @@
 
 {% block content %}
 <main  class="content-width">
-  <h1 style="margin: 0px; margin-bottom: 24px;">Pick Ups Overview</h1>
+  <h1>Pick Ups Overview</h1>
   <!-- Show a table of all PickupRequests -->
   <div id="header">
     <h2 class="mt0">All Pickup Requests</h2>
@@ -20,8 +20,8 @@
         {{ cleanup_form.submit(class="download-btn") }}
     </form>
   </div>
-  <h4 id="filter-h4" style="margin: 0px; font-size: 12px; margin-bottom: 8px">FILTERS</h4>
-  <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}" style="margin-bottom: 24px;">
+  <h4 class="filter-h4">FILTERS</h4>
+  <form id="filter-form" class="align-left" method="GET" action="{{ url_for('filtered_requests') }}">
     <div class="filter-form-group-wrapper">
       <div class="filter-form-group">
         <label for="sort-by">Sort By:</label>

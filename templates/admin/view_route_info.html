@@ -8,25 +8,23 @@
 
 {% block content %}
 <main class="content-width">
-  <h2 style="color: var(--m-green); font-family: var(--pub); margin: 0px;">
-    Route Overview <span style="font-size: 14px; color: var(--subtle-text-wbg)"><i>Est. {{ total_time_str }}</i></span>
+  <h2 class="col-green mt0">
+    Route Overview <span class="fs-14 col-subtle-wbg"><i>Est. {{ total_time_str }}</i></span>
   </h2>
-  <p style="margin-top: 8px; color: var(--subtle-text-wbg)">{{ date }}</p>
+  <p id="date-text">{{ date }}</p>
 
   <!-- Requested section -->
-  <div>
-    <h3>Stops</h3>
-  </div>
+  <h3>Stops</h3>
   {% if all_pickups %}
     {% for pickup in all_pickups %}
       <div class="pickup-stop">      
-        <p style="margin: 0px; margin-bottom: 8px;">{{ pickup.address }}</p>
-        <p style="margin: 0px; margin-bottom: 8px;">{{ pickup.city }}, CA</p>
+        <p class="m08">{{ pickup.address }}</p>
+        <p class="m08">{{ pickup.city }}, CA</p>
         {% if pickup.email %}
-        <p style="margin: 0px;">{{ pickup.email }}, CA</p>
+        <p class="mt0">{{ pickup.email }}, CA</p>
         {% endif %}
         {% if pickup.gated %}
-        <p style="margin: 0px; color: var(--m-blue); font-weight: 600; margin-top: 8px;">Address is gated. Check email for QR or gate code.</p>
+        <p class="highlighted-text">Address is gated. Check email for QR or gate code.</p>
         {% endif %}
       </div>
     {% endfor %}

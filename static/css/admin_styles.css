@@ -124,12 +124,24 @@ th {
     color: var(--subtle-text);
 }
 
+.col-subtle-wbg {
+    color: var(--subtle-text-wbg);
+}
+
 .crim {
     font-family: var(--crim);
 }
 
+.pub {
+    font-family: var(--p);
+}
+
 .fs-24 {
     font-size: 24px;
+}
+
+.fs-14 {
+    font-size: 14px;
 }
 
 .flex-1 {
@@ -140,8 +152,29 @@ th {
     width: 100%;
 }
 
+.ml-24 {
+    margin-left: 24px;
+}
+
+.no-border {
+    border: none;
+}
+
 .mt0 {
     margin: 0;
+}
+
+.filter-h4 {
+    margin: 0px; font-size: 12px; margin-bottom: 8px
+}
+
+.admin-workspace {
+    margin: 0px; margin-left: 24px; color: var(--yel);padding-bottom: 2px; font-size: 14px;
+}
+
+.bi-list {
+    color: white;
+    font-size: 24px;
 }
 
 @media only screen and (max-width: 768px) {
