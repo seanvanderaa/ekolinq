@@ -44,7 +44,7 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            PickupStatusForm, AdminScheduleForm, AdminAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
-                           DeletePickupForm, ContactForm, CleanPickupsForm)
+                           DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
@@ -135,7 +135,6 @@ def create_app():
             SELF,
             "https://fonts.googleapis.com",
             "https://cdn.jsdelivr.net",        # bootstrap-icons.css
-            "'unsafe-inline'",                 # required by Bootstrap until you purge inline <style>
         ],
         "img-src":       [SELF, "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
         "font-src":      ["https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
@@ -176,6 +175,7 @@ def create_app():
 
     # Create tables once if needed
     with app.app_context():
+        #db.drop_all()
         db.create_all()
         seed_schedule_if_necessary()
 
@@ -1059,6 +1059,66 @@ def create_app():
         cleanup_form = CleanPickupsForm()
 
         return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests, delete_form=delete_form, cleanup_form=cleanup_form)
+    
+    @app.route("/individual-pickup/<string:pickup_id>", methods=["GET"])
+    @login_required
+    def individual_pickup(pickup_id: str):
+        """
+        Render the individual-pickup view.
+        """
+        current_app.logger.info("GET /admin/individual_pickup - Admin viewing a pickup.")
+
+        # ── Fetch the pickup safely ──────────────────────────────────────────────
+        try:
+            pickup = PickupRequest.query.filter_by(request_id=pickup_id).first()
+        except Exception as exc:
+            current_app.logger.exception("Failed to fetch pickup.")
+            return redirect(url_for('admin_pickups'))
+
+
+        if pickup is None:
+            current_app.logger.warning("Pickup %s not found.", pickup_id)
+
+        # ── Instantiate the form (empty on GET) ──────────────────────────────────
+        form = AddPickupNotes(obj=pickup)  # pre-fill if you store notes on model
+
+        return render_template(
+            "admin/admin_ind_pickup.html",
+            pickup=pickup,
+            admin_notes_form=form,
+        )
+
+    @app.route("/individual-pickup/<string:pickup_id>/notes", methods=["POST"])
+    @login_required
+    def save_admin_notes(pickup_id: str):
+        """
+        Persist the admin note for a single pickup, then redirect back.
+        """
+        form = AddPickupNotes()
+        if not form.validate_on_submit():
+            flash("Invalid form data; please correct and try again.", "error")
+            return redirect(url_for("individual_pickup", pickup_id=pickup_id))
+
+        try:
+            pickup: PickupRequest | None = db.session.get(PickupRequest, pickup_id)
+            if pickup is None:
+                current_app.logger.warning("Attempted to save notes for non-existent pickup %s.", pickup_id)
+                abort(404, description="Pickup not found.")
+
+            pickup.admin_notes = form.admin_notes.data
+            db.session.commit()
+
+            # current_app.logger.info(
+            #     "Admin %s updated notes for pickup %s.", current_user.id, pickup_id
+            # )
+            # flash("Notes saved successfully.", "success")
+
+        except Exception as exc:
+            db.session.rollback()
+            current_app.logger.exception("Failed to update notes for pickup %s.", pickup_id)
+            flash("Database error—could not save notes.", "error")
+
+        return redirect(url_for("individual_pickup", pickup_id=pickup_id))
 
     @app.route('/admin/filtered_requests')
     @login_required

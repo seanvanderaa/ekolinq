@@ -47,4 +47,20 @@ document.addEventListener("DOMContentLoaded", function() {
   else {
     console.log("NOPE!");
   }
+  
+  const viewButtons = document.querySelectorAll('#view-request');
+
+  viewButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Read the pickup ID from data-attribute
+      const pickupId = this.getAttribute('data-attribute');
+
+      // Redirect to /admin/pickups/<id>
+      if (pickupId) {
+        window.location.href = `/individual-pickup/${pickupId}`;
+      } else {
+        console.error("No pickup ID found on button.");
+      }
+    });
+  });
 });

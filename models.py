@@ -35,6 +35,8 @@ class PickupRequest(db.Model):
 
     request_id = db.Column(db.String(8), unique=True, nullable=False)
 
+    admin_notes = db.Column(db.String(2000), nullable=True)
+
 
 import string
 import secrets

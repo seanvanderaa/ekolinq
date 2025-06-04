@@ -156,3 +156,11 @@ class ContactForm(FlaskForm):
 
 class CleanPickupsForm(FlaskForm):
     submit = SubmitField("Clean Up and Update Google Spreadsheet")
+
+class AddPickupNotes(FlaskForm):
+    pickup_id = HiddenField(validators=[DataRequired()])
+    admin_notes = StringField(
+        'Notes',
+        validators=[DataRequired(), Length(max=2000)]
+    )
+    submit = SubmitField("Update Notes")
