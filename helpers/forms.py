@@ -159,7 +159,7 @@ class CleanPickupsForm(FlaskForm):
 
 class AddPickupNotes(FlaskForm):
     pickup_id = HiddenField(validators=[DataRequired()])
-    admin_notes = StringField(
+    admin_notes = TextAreaField(
         'Notes',
         validators=[DataRequired(), Length(max=2000)]
     )

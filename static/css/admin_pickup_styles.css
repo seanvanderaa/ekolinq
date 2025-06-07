@@ -1,0 +1,103 @@
+p {
+    margin: 0;
+}
+
+.card {
+    margin-bottom: 36px;
+}
+
+hr {
+    opacity: .4;
+}
+
+.subtle {
+    color: var(--subtle-text-wbg);
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 220px;
+    margin-top: 16px;
+}
+
+.card-info-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 36px;
+    row-gap: 24px;
+}
+
+.info-row {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    max-width: 25%;
+}
+
+.info-row .label {
+    font-size: 14px;
+    color: var(--subtle-text-wbg);
+    margin-bottom: 4px;
+}
+
+.value a {
+    text-decoration: underline;
+    color: var(--m-blue);
+}
+
+.bi {
+    margin-right: 8px;
+}
+
+.back-link {
+    color: black;
+}
+
+.break-all {
+  white-space: nowrap;       /* Prevent line breaks */
+  overflow: hidden;          /* Hide overflow content */
+  text-overflow: ellipsis;   /* Show ellipsis (...) */
+  word-break: break-all;     /* Optional: break long words if necessary */
+}
+
+
+.notes {
+    display: flex; 
+    flex-direction: row;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.notes-textarea {
+    width: 100%;
+    font-family: var(--mont);
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.map-section {
+    margin-top: 24px;
+}
+
+.map {
+    border: 1px solid var(--subtle-text);
+    border-radius: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+    .info-row {
+        min-width: 40%;
+    }
+    .notes {
+        flex-direction: column;
+        row-gap: 24px;
+    }
+}

@@ -10,7 +10,7 @@
 
 {% block content %}
 <main  class="content-width">
-  <h1>Pick Ups Overview</h1>
+  <h1>Pickups Overview</h1>
   <!-- Show a table of all PickupRequests -->
   <div id="header">
     <h2 class="mt0">All Pickup Requests</h2>
@@ -58,7 +58,7 @@
     <table id="requests-table" border="1" cellpadding="5" cellspacing="0" >
       <thead>
         <tr>
-          <th>Delete</th>
+          <th>Actions</th>
           <th>Status</th>
           <th>Date Filed</th>
           <th>Request Date</th>
@@ -79,7 +79,8 @@
       <tbody>
         {% for req in requests %}
         <tr>
-          <td class="min-w-80 align-center">
+          <td class="min-w-80 align-center action-container">
+            <button class="download-btn" id="view-request" data-attribute="{{ req.request_id }}"><i class="bi bi-arrow-up-right-square"></i>View</button>
             <form action="{{ url_for('delete_pickup') }}" method="POST">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
@@ -87,10 +88,9 @@
                 type="submit"
                 id="delete-request"
                 class="download-btn delete-request-btn">
-                Delete
+                <i class="bi bi-trash"></i>Delete
               </button>
             </form>
-            <button class="download-btn" id="view-request" data-attribute="{{ req.request_id }}">View</button>
           </td>
           <td class="min-w-120
                 {% if req.status == 'Complete' %}

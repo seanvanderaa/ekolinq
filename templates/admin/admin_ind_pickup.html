@@ -10,67 +10,80 @@
 
 {% block content %}
 <main class="content-width">
-  <a href="{{ url_for('admin') }}" class="back-link">&larr; Back to Pickups Overview</a>
-  <h1>Pickup #{{ pickup.request_id }}</h1>
+  <a href="{{ url_for('admin_pickups') }}" class="back-link download-btn"><i class="bi bi-arrow-left"></i>Back to Pickups Overview</a>
+  <h1><span class="subtle">Pickup</span> {{ pickup.request_id }}</h1>
 
   {# ---------------- Pickup Info ---------------- #}
   <section class="pickup-details grid gap-6 md:grid-cols-2">
     {# — Overview — #}
     <div class="card">
-      <h2 class="card-title">Overview</h2>
-      <div class="info-row">
-        <span class="label">Status</span>
-        <span class="value status-{{ pickup.status|lower }}">{{ pickup.status }}</span>
+      <h2 class="card-title">Request Details</h2>
+      <div class="card-info-wrapper">
+        <div class="info-row"><p class="label">Date Filed</p><p class="value">{{ pickup.date_filed_pretty }}</p></div>
+        <div class="info-row"><p class="label">Request Date</p><p class="value">{{ pickup.request_date_pretty }}</p></div>
+        <div class="info-row">
+          <p class="label">Status</p>
+          <p class="value status-{{ pickup.status|lower }}">{{ pickup.status }}</p>
+        </div>
+        <div class="info-row"><p class="label">Gated?</p><p class="value">{{ pickup.gated }}</p></div>
       </div>
-      <div class="info-row"><span class="label">Date Filed</span><span class="value">{{ pickup.date_filed }}</span></div>
-      <div class="info-row"><span class="label">Requested</span><span class="value">{{ pickup.request_date }} &bull; {{ pickup.request_time }}</span></div>
-      <div class="info-row"><span class="label">Gated?</span><span class="value">{{ pickup.gated }}</span></div>
     </div>
+    <hr>
 
     {# — Customer — #}
     <div class="card">
-      <h2 class="card-title">Customer</h2>
-      <div class="info-row"><span class="label">First Name</span><span class="value">{{ pickup.fname }}</span></div>
-      <div class="info-row"><span class="label">Last Name</span><span class="value">{{ pickup.lname }}</span></div>
-      <div class="info-row"><span class="label">Email</span><span class="value break-all">{{ pickup.email }}</span></div>
-      <div class="info-row"><span class="label">Phone</span><span class="value">{{ pickup.phone_number }}</span></div>
+      <h2 class="card-title">Customer Info</h2>
+      <div class="card-info-wrapper">
+        <div class="info-row"><p class="label">First Name</p><p class="value">{{ pickup.fname }}</p></div>
+        <div class="info-row"><p class="label">Last Name</p><p class="value">{{ pickup.lname }}</p></div>
+        <div class="info-row"><p class="label">Email</p><p class="value break-all"><a href="mailto:{{ pickup.email }}"><i class="bi bi-envelope"></i>{{ pickup.email }}</a></p></div>
+        <div class="info-row"><p class="label">Phone</p><p class="value"><a href="tel:{{ pickup.phone_number }}"><i class="bi bi-telephone"></i>{{ pickup.phone_number }}</a></p></div>
+      </div>
     </div>
+    <hr>
 
     {# — Address (full-width) — #}
-    <div class="card md:col-span-2">
+    <div class="card md:col-p-2">
       <h2 class="card-title">Address</h2>
-      <div class="info-row"><span class="label">Street</span><span class="value">{{ pickup.address }}</span></div>
-      <div class="info-row"><span class="label">City</span><span class="value">{{ pickup.city }}</span></div>
-      <div class="info-row"><span class="label">Zip</span><span class="value">{{ pickup.zipcode }}</span></div>
+      <div class="card-info-wrapper">
+        <div class="info-row"><p class="label">Street</p><p class="value">{{ pickup.address }}</p></div>
+        <div class="info-row"><p class="label">City</p><p class="value">{{ pickup.city }}</p></div>
+        <div class="info-row"><p class="label">Zip</p><p class="value">{{ pickup.zipcode }}</p></div>
+      </div>
     </div>
+    <hr>
 
     {# — Customer notes — #}
-    <div class="card md:col-span-2">
-      <h2 class="card-title">Customer Notes</h2>
-      <p class="value word-break">{{ pickup.notes or '—' }}</p>
-    </div>
+
 
     {# — Completion info (optional) — #}
     {% if pickup.pickup_complete_info %}
-    <div class="card md:col-span-2">
+    <div class="card md:col-p-2">
       <h2 class="card-title">Completion</h2>
       <p class="value">{{ pickup.pickup_complete_info }}</p>
     </div>
     {% endif %}
   </section>
-
   {# ---------------- Admin Notes ---------------- #}
-  <section class="admin-notes">
-    <h2>Admin Notes</h2>
-    <form action="{{ url_for('save_admin_notes', pickup_id=pickup.id) }}"
-        method="POST"
-        class="notes-form">
 
-      {{ admin_notes_form.csrf_token }}
-      <input type="hidden" name="pickup_id" value="{{ pickup.request_id }}">
-      {{ admin_notes_form.admin_notes(class="notes-textarea", rows="5", placeholder="Add internal notes for this pickup...") }}
-      {{ admin_notes_form.submit(class="download-btn") }}
-    </form>
+  <section class="notes">
+    {% if pickup.notes != ''%}
+    <div class="flex-1">
+      <h2 class="card-title">Customer Notes</h2>
+      <p class="value word-break">{{ pickup.notes or 'None.' }}</p>
+    </div>
+    {% endif %}
+    <div class="flex-1">
+      <h2>Admin Notes</h2>
+      <form action="{{ url_for('save_admin_notes', pickup_id=pickup.request_id) }}"
+          method="POST"
+          class="notes-form">
+        {{ admin_notes_form.csrf_token }}
+        <input type="hidden" name="pickup_id" value="{{ pickup.request_id }}">
+        {{ admin_notes_form.admin_notes(class="notes-textarea", rows="7", placeholder="Add internal notes for this pickup...") }}
+        {{ admin_notes_form.submit(class="download-btn") }}
+      </form>
+    </div>
   </section>
 
   {# ---------------- Google Map ---------------- #}
@@ -78,9 +91,9 @@
     <h2>Pickup Location</h2>
     <div class="map-embed-wrapper">
       <iframe
+        class="map"
         width="100%"
-        height="350"
-        style="border:0;"
+        height="450"
         loading="lazy"
         allowfullscreen
         referrerpolicy="no-referrer-when-downgrade"

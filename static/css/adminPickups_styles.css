@@ -69,6 +69,10 @@ table {
     border: 1px solid grey;
 }
 
+.action-container {
+    column-gap: 16px;
+}
+
 th {
     border-bottom: 1px solid grey;
     text-align: left;
@@ -85,6 +89,23 @@ th {
 #table-wrapper tr {
     max-height: 20px;
     overflow-y: scroll;
+}
+
+.delete-request-btn {
+    background-color: rgb(255, 200, 200);
+    width: 100px;
+}
+
+.delete-request-btn:hover {
+    background-color: rgb(255, 106, 106);
+}
+
+#view-request {
+    width: 90px;
+}
+
+.bi {
+    margin-right: 8px;
 }
 
 @media only screen and (max-width: 768px) {

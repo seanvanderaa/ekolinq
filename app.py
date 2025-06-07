@@ -1060,6 +1060,14 @@ def create_app():
 
         return render_template('admin/admin_pickups.html', schedule_data=schedule_data, requests=requests, delete_form=delete_form, cleanup_form=cleanup_form)
     
+    def format_iso_to_pretty(date_str: str) -> str:
+        try:
+            dt = datetime.strptime(date_str, "%Y-%m-%d")
+            return dt.strftime("%B %-d, %Y")      # on Linux/Mac the “-” drops leading zeros
+            # on Windows you may need "%B %#d, %Y"
+        except (ValueError, TypeError):
+            return date_str  # fallback if it’s not in the right form
+
     @app.route("/individual-pickup/<string:pickup_id>", methods=["GET"])
     @login_required
     def individual_pickup(pickup_id: str):
@@ -1075,12 +1083,15 @@ def create_app():
             current_app.logger.exception("Failed to fetch pickup.")
             return redirect(url_for('admin_pickups'))
 
-
         if pickup is None:
             current_app.logger.warning("Pickup %s not found.", pickup_id)
+            return redirect(url_for('admin_pickups'))
 
         # ── Instantiate the form (empty on GET) ──────────────────────────────────
         form = AddPickupNotes(obj=pickup)  # pre-fill if you store notes on model
+        # in your view/controller
+        pickup.date_filed_pretty   = format_iso_to_pretty(pickup.date_filed)
+        pickup.request_date_pretty = format_iso_to_pretty(pickup.request_date)
 
         return render_template(
             "admin/admin_ind_pickup.html",
@@ -1094,13 +1105,14 @@ def create_app():
         """
         Persist the admin note for a single pickup, then redirect back.
         """
+        print(pickup_id)
         form = AddPickupNotes()
         if not form.validate_on_submit():
             flash("Invalid form data; please correct and try again.", "error")
             return redirect(url_for("individual_pickup", pickup_id=pickup_id))
 
         try:
-            pickup: PickupRequest | None = db.session.get(PickupRequest, pickup_id)
+            pickup = PickupRequest.query.filter_by(request_id=pickup_id).first()
             if pickup is None:
                 current_app.logger.warning("Attempted to save notes for non-existent pickup %s.", pickup_id)
                 abort(404, description="Pickup not found.")
