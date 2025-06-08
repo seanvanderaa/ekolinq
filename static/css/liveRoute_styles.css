@@ -3,6 +3,10 @@ body {
     padding-top: 120px;
 }
 
+.col-subtle {
+    color: var(--subtle-text-wbg);
+}
+
 main {
     border-radius: 20px;
     max-width: 660px !important;
@@ -10,6 +14,25 @@ main {
     padding: 40px;
     background-color: var(--off-white);
 }
+
+.header {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.time-remaining {
+    margin-bottom: 36px;
+    font-weight: 600;
+    margin-top: 24px;
+}
+
+.time {
+    background-color: var(--m-blue);
+    padding: 8px 16px;
+    border-radius: 3px;
+    color: white;
+}
+
 
 #completed-pickups {
     margin-bottom: 36px;
@@ -21,8 +44,11 @@ main {
     padding-top: 24px;
     box-sizing: border-box;
     border-radius: 0px 0px 10px 10px;
-    background-color: rgb(140, 140, 140);
+    background-color: transparent;
+    border: 1px solid var(--subtle-text-wbg);
+    border-top: none;
     flex-direction: column;
+    display: none;
 }
 
 .completed-stop {
@@ -87,7 +113,7 @@ main {
 }
 
 .pickup-content {
-    padding: 12px 24px;
+    padding: 24px 24px;
     border: 1px solid var(--border-grey);
     border-top: none;
     border-radius: 0px 0px 10px 10px;
@@ -128,6 +154,7 @@ main {
     text-decoration: underline;
     color: var(--m-blue);
     border: none;
+    text-decoration: underline; color: var(--m-blue); font-size: 12px; margin: 0px; margin-bottom: 12px; font-family: var(--mont)
 }
 
 .mark-pickup-not-possible:hover {
@@ -165,6 +192,28 @@ main {
 .mark-incomplete:hover {
     background-color: var(--yel) !important;
     color: black !important;
+}
+
+.mt0 {
+    margin: 0px;
+}
+
+.mb4 {
+    margin-bottom: 4px;
+}
+
+.mb64 {
+    margin-bottom: 64px;
+}
+
+.bi {
+    margin-right: 6px;
+}
+
+.span-text {
+    margin-left: 8px;
+    font-size: 14px;
+    font-family: var(--mont);
 }
 
 @media only screen and (max-width: 768px) {

@@ -40,6 +40,7 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///ekolinq.db")
     SESSION_COOKIE_SECURE = False            # allow http://localhost
     LOGGER_LEVEL = "DEBUG"                   # noisy logs locally
+    RATELIMIT_ENABLED = False
 
 class ProductionConfig(BaseConfig):
     DEBUG = False

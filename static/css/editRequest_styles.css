@@ -74,6 +74,10 @@ main {
     margin-top: 4px;
 }
 
+.confirmation-info {
+    margin-bottom: 8px; 
+}
+
 .confirmation-info p {
     font-size: 14px;
     color: var(--subtle-text-wbg);
@@ -201,6 +205,9 @@ main {
     width: 100%;
     margin-bottom: 48px;
     padding-bottom: 48px;
+    border-bottom: 1px solid lightgrey;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 
 #date-selection-scroll {
@@ -214,7 +221,7 @@ main {
     align-items: flex-start;
     justify-content: center;
     column-gap: 36px;
-    margin-top: 36px;
+    margin-top: 8px;
     width: 100%;
     padding-bottom: 12px;
 }
@@ -299,6 +306,17 @@ main {
     cursor: not-allowed;
 }
 
+.notes-textarea {
+    width: 100%;
+    font-family: var(--mont);
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    margin-top: 8px;
+}
+
 #cancel-edit-date {
     margin-top: 16px;
     padding: 8px 24px;
@@ -339,6 +357,10 @@ main {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.flash-container {
+    margin-top: 12px;
 }
 
 @media only screen and (max-width: 768px) {

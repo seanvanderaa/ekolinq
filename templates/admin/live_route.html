@@ -8,19 +8,18 @@
 
 {% block content %}
 <main class="content-width">
-  <h2 class="col-green mt0">
-    Live Pick Ups <span class="col-subtle fs-14"><i>Time Remaining {{ total_time_str }}</i></span>
+  <h2 class="col-green header">
+    Live Pick Ups  |  {{ date }}
   </h2>
-  <p class="col-subtle-wbg" style="margin-top: 8px; color: var(--subtle-text-wbg)">{{ date }}</p>
-
+  <p class="col-subtle fs-14 time-remaining"><i><span class="time">{{ total_time_str }} remaining</span></i></p>
   <!-- Completed section -->
   <div id="completed-pickups">
     <div id="completed-header" class="dropdown-header align-left">
-      <h4 style="margin: 0px; font-weight: 500">Completed</h4>
+      <h4 class="mt0">Completed</h4>
       <i class="bi bi-chevron-down" id="completed-pickups-icon"></i>
     </div>
     <!-- Show/hide this as needed -->
-    <div id="listed-completed-pickups" class="align-center" style="display: none;" >
+    <div id="listed-completed-pickups" class="align-center">
       {% if pickups_completed %}
         {% for pickup in pickups_completed %}
           <div class="pickup-stop completed-stop">
@@ -34,14 +33,14 @@
                 <button class="mark-complete mark-incomplete button-wrapper-btn"
                         data-pickup-id="{{ pickup.id }}"
                         data-current-status="Complete">
-                  <i class="bi bi-x-octagon" style="margin-right: 6px"></i> Mark as Incomplete
+                  <i class="bi bi-x-octagon"></i> Mark as Incomplete
                 </button>
               </div>
             </div>
           </div>
         {% endfor %}
       {% else %}
-        <p style="color: white;">No completed pickups yet. Aftering marking your first pick up as complete, those will appear here.</p>
+        <p>No completed pickups yet. Aftering marking your first pick up as complete, they will appear here.</p>
       {% endif %}
     </div>
   </div>
@@ -49,22 +48,31 @@
   <!-- Requested section -->
   {% if pickups_requested %}
     {% for pickup in pickups_requested %}
-      <div class="pickup-stop" {% if loop.index == 1 %}style="margin-bottom: 64px;"{% endif %}>
+      <div class="pickup-stop" {% if loop.index == 1 %}class="mb64"{% endif %}>
         <div class="pickup-header {% if loop.index != 1 %}disabled{% endif %}">
-          <h4>{{ pickup.address }} <span style="font-size: 16px; margin-left: 10px;">{{ pickup.city }}, CA</span></h4>
+          <h4>{{ pickup.address }} <span class="span-text">{{ pickup.city }}, CA</span></h4>
         </div>        
         <div class="pickup-content">
           {% if loop.index == 1 %}
-            {% if pickup.qr_code %}
+            <div class="customer-info">
+              <div class="info-block">
+                <p><strong>Name: </strong>{{ pickup.fname }} {{ pickup.lname }}</p>
+                <p><strong>Phone Number: </strong><a href="tel:{{ pickup.phone_number }}">{{ pickup.phone_number }}</a></p>
+                <p><strong>Email: </strong><a href="mailto:{{ pickup.email }}">{{ pickup.email }}</a></p>
+              </div>
+            </div>
+            {% if pickup.gated %}
             <div class="pickup-gate-info align-center">
-              <h4>Address QR Code: </h4>
-              <img src="{{ url_for('static', filename='images/qr_codes/' ~ pickup.qr_code) }}" alt="QR Code" width="100%"/>
+              <h3>User Marked Address as Gated!</h3>
             </div>
             {% endif %}
-            {% if pickup.gate_code %}
-            <div class="pickup-gate-info align-center">
-              <h3>Gate Code: {{ pickup.gate_code }}</h3>
-            </div>
+            {% if pickup.notes %}
+              <p class="mt0 mb4"><strong>Customer Notes</strong></p>
+              <p class="mt0">{{ pickup.notes}}</p>
+            {% endif %}
+            {% if pickup.admin_notes %}
+              <p class="mt0 mb4"><strong>Admin Notes</strong></p>
+              <p class="mt0">{{ pickup.admin_notes}}</p>
             {% endif %}
           {% endif %}
           <div class="align-center button-wrapper">
@@ -74,20 +82,20 @@
                 data-address="{{ pickup.address | urlencode }}"
                 data-city="{{ pickup.city | urlencode }}"
             >
-                <i class="bi bi-geo-alt" style="margin-right: 6px;"></i>Open Maps
+                <i class="bi bi-geo-alt"></i>Open Maps
             </button>
             <!-- If it’s not the first in the list, disable the "Mark Complete" button -->
             <button class="mark-complete button-wrapper-btn"
                     data-pickup-id="{{ pickup.id }}"
                     data-current-status="Requested"
                     {% if loop.index != 1 %} disabled {% endif %}>
-              <i class="bi bi-check-circle" style="margin-right: 6px;"></i> Mark Complete
+              <i class="bi bi-check-circle"></i> Mark Complete
             </button>
             <button class="mark-pickup-not-possible"
                     data-pickup-id="{{ pickup.id }}"
                     data-current-status="Requested"
-                    {% if loop.index != 1 %} disabled {% endif %}
-                    style="text-decoration: underline; color: var(--m-blue); font-size: 12px; margin: 0px; margin-bottom: 12px; font-family: var(--mont)">Can't complete pickup
+                    {% if loop.index != 1 %} disabled {% endif %}>
+                    Can't complete pickup
             </button>
           </div>
         </div>

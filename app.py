@@ -29,6 +29,7 @@ from authlib.jose import jwt, JsonWebKey
 import requests
 from sqlalchemy import func, or_
 from pycognito import Cognito
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
@@ -44,7 +45,8 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            PickupStatusForm, AdminScheduleForm, AdminAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
-                           DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes)
+                           DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
+                           updateCustomerNotes)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
@@ -90,6 +92,8 @@ def create_app():
     oauth = OAuth(app)
     COGNITO_DOMAIN    = os.environ["COGNITO_DOMAIN"]      # demo-domain.auth.us-east-2.amazoncognito.com
     COGNITO_CLIENT_ID = os.environ["COGNITO_CLIENT_ID"]
+
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'], salt="pickup-confirm")
 
     issuer_base = (
         f"https://cognito-idp.{app.config['COGNITO_REGION']}.amazonaws.com/"
@@ -189,11 +193,18 @@ def create_app():
 
     edit_scope = limiter.shared_limit("20 per hour;4 per minute",
                                       scope="edit-flow", key_func=user_or_ip)
+    
+    approval_scope = limiter.shared_limit("10 per hour;4 per minute",
+                                        scope="edit-approval",
+                                        key_func=get_remote_address)
+
+    in_window_scope = limiter.shared_limit("300 per hour;30 per minute",
+                                        scope="edit-inwindow",
+                                        key_func=user_or_ip)
+
     code_email_scope = limiter.shared_limit("30 per hour;10 per minute",
                                             scope="edit-code-email",
                                             key_func=code_email_key)
-    ip_scope = limiter.shared_limit("20 per hour;2 per minute",
-                                    scope="edit-IP", key_func=get_remote_address)
 
     # --------------------------------------------------
     # SESSION-HELPER HOOKS
@@ -229,6 +240,34 @@ def create_app():
             }
             return fn(*args, **kwargs)
         return wrapper
+    
+    # --------------------------------------------------
+    # EDIT REQUEST SECURITY
+    # --------------------------------------------------
+    
+    def edit_window_required(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            # Where is the id coming from?
+            rid = (
+                kwargs.get("request_id") or            # URL kwarg <string:request_id>
+                request.args.get("request_id") or
+                request.form.get("request_id")
+            )
+
+            token  = session.get("edit_token")
+            exp    = session.get("edit_expires", 0)
+
+            if not (token and rid and time.time() < exp and verify_edit_token(token, rid)):
+                flash("Your edit session has expired – please start again.", "warning")
+                session.pop("edit_token",    None)
+                session.pop("edit_expires",  None)
+                return redirect(url_for("edit_request_init"))
+
+            # (optional) sliding window – uncomment next line if you want it
+            # session["edit_expires"] = time.time() + EDIT_WINDOW_SECS
+            return fn(*args, **kwargs)
+        return wrapper
 
     # --------------------------------------------------
     # LOGGING
@@ -244,6 +283,48 @@ def create_app():
 
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
 
+
+    # --------------------------------------------------
+    # REQUEST SESSION HANDLING FOR NEW REQUESTS & CONFIRMATION
+    # --------------------------------------------------
+
+    def new_confirm_token(request_id: str) -> str:
+        """
+        Returns a signed, timestamped token bound to this request id
+        *and* the caller’s IP address (binds the session to one IP).
+        """
+        payload = {"rid": request_id, "ip": get_remote_address()}
+        return serializer.dumps(payload)          # timestamp is implicit
+
+    def verify_confirm_token(token: str, max_age: int = 300) -> dict:
+        """
+        Reverse of new_confirm_token().  Raises SignatureExpired or BadSignature
+        if the token is tampered with or older than *max_age* seconds.
+        """
+        data = serializer.loads(token, max_age=max_age)
+        # extra defence: the token is only valid from the same IP
+        if data["ip"] != get_remote_address():
+            raise BadSignature("IP mismatch")
+        return data
+    
+    # --------------------------------------------------
+    # EDIT REQUEST SESSION HANDLING
+    # --------------------------------------------------
+
+    EDIT_WINDOW_SECS = 20 * 60          # 20 minutes
+
+    def new_edit_token(request_id: str) -> str:
+        """Signed 20-min token, bound to caller’s IP *and* request_id."""
+        payload = {"rid": request_id, "ip": get_remote_address()}
+        return serializer.dumps(payload)          # timestamp is implicit
+
+    def verify_edit_token(token: str, request_id: str) -> bool:
+        """True ⇢ token is intact, <20 min old, from same IP & matches id."""
+        try:
+            data = serializer.loads(token, max_age=EDIT_WINDOW_SECS)
+            return data["ip"] == get_remote_address() and data["rid"] == request_id
+        except (BadSignature, SignatureExpired):
+            return False
     # --------------------------------------------------
     # START APPLICATION ENDPOINTS
     # --------------------------------------------------
@@ -277,7 +358,19 @@ def create_app():
 
     # --------------------------------------------------
 
+    @app.route('/verify_zip', methods=['GET'])
+    @limiter.limit("60 per hour")
+    def verify_zip():
+        current_app.logger.debug("GET /verify_zip - verifying user zip.")
 
+        zip_code = request.args.get('zipcode')
+        current_app.logger.debug("Zip code provided: %s", zip_code)
+
+        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"] 
+        result = verifyZip(approved_zips, zip_code)
+        current_app.logger.debug("verifyZip result: %s", result)
+
+        return jsonify(result)
 
 
     @app.route('/request_pickup')
@@ -394,17 +487,33 @@ def create_app():
                 current_app.logger.info("Sending edited pickup request email for request_id=%s", request_id)
                 send_editted_request_email(pickup)
                 current_app.logger.debug("Edited pickup request email sent for request_id=%s", request_id)
+                token = new_confirm_token(request_id)
+                session.update({
+                    "pickup_request_id": request_id,
+                    "confirm_token":    token,
+                    "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+                })
+                return redirect(url_for('confirmation',
+                                    request_id=request_id,
+                                    t=token))  
             else:
                 current_app.logger.info("Confirmation email not yet sent for request_id=%s, sending to confirmation page", request_id)
-
-            return redirect(url_for('confirmation', request_id=request_id))
+                session.clear()                               # blow away any old pickup flow
+                token = new_confirm_token(request_id)
+                session.update({
+                    "pickup_request_id": request_id,
+                    "confirm_token":    token,
+                    "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+                })
+                return redirect(url_for('confirmation',
+                                    request_id=request_id,
+                                    t=token))  
         
         current_app.logger.info(
             "User is selecting a date/time for request_id=%s, offset=%d. Rendering select_date.html.",
             request_id, offset
         )
 
-        print("User selecting a date.")
         return render_template('select_date.html',
                             form=form,
                             pickup=pickup,
@@ -415,13 +524,28 @@ def create_app():
                             base_date_str=base_date_str)
     
     @app.route('/confirmation')
-    def confirmation():    
+    def confirmation():
         request_id = request.args.get('request_id')
+        token      = request.args.get('t')
+
         current_app.logger.debug("Confirmation route accessed with request_id=%s", request_id)
 
-        # Verify the request ID exists in the session and matches
-        if 'pickup_request_id' not in session or session['pickup_request_id'] != request_id:
-            current_app.logger.warning("Unauthorized access attempt with request_id=%s", request_id)
+        # ── 1) Session must still be alive and point at the same request  ──
+        if session.get("pickup_request_id") != request_id:
+            current_app.logger.warning("Session mismatch for /confirmation")
+            abort(404)
+
+        # ── 2) Token must verify, be <5 min old, and come from same IP ──
+        try:
+            verify_confirm_token(token)
+        except (SignatureExpired, BadSignature):
+            current_app.logger.warning("Stale or invalid confirm token")
+            abort(404)
+
+        # ── 3) Extra clock-based guard (belt-and-braces) ──
+        if time.time() > session.get("confirm_expires", 0):
+            current_app.logger.info("Confirm window elapsed – clearing session")
+            session.clear()
             abort(404)
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
@@ -580,13 +704,13 @@ def create_app():
 
         return True, pickup
     
-    @app.route('/edit-request', methods=['POST'])
-    @code_email_scope
-    @ip_scope
-    def edit_request():
+    @app.route('/edit-request-approval', methods=['POST'])
+    @approval_scope
+    @in_window_scope
+    def edit_request_approval():
         """Receives the code+email form, validates via can_edit(), and
         either shows the edit screen or bounces back with a flash alert."""
-        current_app.logger.info("POST /edit-request - User accessing the edit request page.")
+        current_app.logger.info("POST /edit-request-approval - User accessing the edit request page.")
 
         form = EditRequestInitForm()
 
@@ -602,9 +726,29 @@ def create_app():
             return redirect(url_for('edit_request_init'))
 
         # ── All checks passed ────────────────────────────────────────────
-        current_app.logger.info("Request to edit valid, rendering page.")
+        current_app.logger.info("Request to edit valid, rendering edit request page.")
 
         pickup = result
+
+        token = new_edit_token(pickup.request_id)
+        session.update({
+            "edit_token":   token,
+            "edit_expires": time.time() + EDIT_WINDOW_SECS,
+        })
+
+        return redirect(url_for('edit_request', request_id = pickup.request_id))
+    
+    @app.route('/edit-request', methods=['GET'])
+    @in_window_scope
+    @edit_window_required
+    def edit_request():
+        """Receives the code+email form, validates via can_edit(), and
+        either shows the edit screen or bounces back with a flash alert."""
+        current_app.logger.info("POST /edit-request - User accessing the edit request page.")
+
+        request_id = request.args.get('request_id')
+
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
 
         update_form = UpdateAddressForm(obj=pickup)
         update_form.request_id.data = pickup.request_id
@@ -612,6 +756,10 @@ def create_app():
 
         cancel_form = CancelRequestForm()
         cancel_form.request_id.data = pickup.request_id
+
+        notes_form = updateCustomerNotes()
+        notes_form.request_id.data = pickup.request_id
+        notes_form.notes.data = pickup.notes
 
         return render_template(
             'edit_request.html',
@@ -621,10 +769,12 @@ def create_app():
             request_id=pickup.request_id,
             form=update_form,
             cancel_form=cancel_form,
+            notes_form=notes_form
         )
         
     @app.route('/edit-request-time', methods=['GET'])
-    @edit_scope
+    @in_window_scope
+    @edit_window_required
     def edit_request_time():
         current_app.logger.debug("GET /edit-request-time - user attempting to edit request time.")
 
@@ -660,6 +810,10 @@ def create_app():
         cancel_form = CancelRequestForm()
         cancel_form.request_id.data = pickup.request_id
 
+        notes_form = updateCustomerNotes()
+        notes_form.request_id.data = pickup.request_id
+        notes_form.notes.data = pickup.notes
+
         current_app.logger.info("Rendering edit_request.html for request_id=%s to edit time.", request_id)
 
         return render_template('edit_request.html', 
@@ -673,10 +827,12 @@ def create_app():
                             base_date_str = base_date_str,
                             form = update_address_form,
                             time_form=time_form,
+                            notes_form=notes_form,
                             cancel_form=cancel_form)
     
     @app.route('/edit-request-time-submit', methods=['POST'])
-    @edit_scope
+    @in_window_scope
+    @edit_window_required
     def edit_request_time_submit():
         current_app.logger.debug("POST /edit-request-time-submit - handling time edit form submission.")
 
@@ -709,30 +865,51 @@ def create_app():
 
             send_editted_request_email(pickup)
 
-            return
+            return redirect(url_for('edit_request', request_id = pickup.request_id))
         else:
             current_app.logger.warning("Form validation failed for edit-request-time-submit. Errors: %s", form.errors)
             # Optionally log or flash the errors from form.errors here for debugging
-            return redirect(url_for('edit_request'))
-
-
+            return redirect(url_for('edit_request_init'))
     
-    @app.route('/verify_zip', methods=['GET'])
-    @limiter.limit("60 per hour")
-    def verify_zip():
-        current_app.logger.debug("GET /verify_zip - verifying user zip.")
+    @app.route("/edit-request/<string:pickup_id>/notes", methods=["POST"])
+    @in_window_scope
+    @edit_window_required
+    def edit_request_notes(pickup_id: str):
+        """
+        Persist the admin note for a single pickup, then redirect back.
+        """
+        current_app.logger.debug("Request id %s attempting to edit notes.", pickup_id)
 
-        zip_code = request.args.get('zipcode')
-        current_app.logger.debug("Zip code provided: %s", zip_code)
+        form = updateCustomerNotes()
+        if not form.validate_on_submit():
+            current_app.logger.warning("Updating notes failed, form invalid.")
+            flash("Your notes are too long—please restrict to 400 characters or less.", "warning")
+            return redirect(url_for("edit_request", request_id=pickup_id))
 
-        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551"] 
-        result = verifyZip(approved_zips, zip_code)
-        current_app.logger.debug("verifyZip result: %s", result)
+        try:
+            current_app.logger.debug("Note update form validated, attempting to add to the DB.")
+            pickup = PickupRequest.query.filter_by(request_id=pickup_id).first()
+            if pickup is None:
+                current_app.logger.warning("Attempted to save notes for non-existent pickup %s.", pickup_id)
+                abort(404, description="Pickup not found.")
 
-        return jsonify(result)
+            pickup.notes = form.notes.data
+            db.session.commit()
+            current_app.logger.debug("Successfully added notes to DB.")
+
+
+        except Exception as exc:
+            db.session.rollback()
+            current_app.logger.exception("Failed to update notes for pickup %s.", pickup_id)
+            flash("Database error—could not save notes.", "error")
+            return "Error updating notes.", 404
+        flash("Notes updated successfully.", "success")
+        return redirect(url_for("edit_request", request_id=pickup_id))
+
     
     @app.route('/cancel-request', methods=["POST"])
-    @edit_scope
+    @in_window_scope
+    @edit_window_required
     def cancel_request():
         current_app.logger.debug("POST /cancel-request - user attempting to cancel request.")
 
@@ -892,8 +1069,8 @@ def create_app():
 
         # Calculate total pickups for the same date range.
         pickups_total = PickupRequest.query.filter(
-            PickupRequest.request_date >= start_date.strftime("%Y-%m-%d"),
-            PickupRequest.request_date <= end_date.strftime("%Y-%m-%d")
+            PickupRequest.date_filed >= start_date.strftime("%Y-%m-%d"),
+            PickupRequest.date_filed <= end_date.strftime("%Y-%m-%d")
         ).count()
 
         current_app.logger.debug(
@@ -904,7 +1081,7 @@ def create_app():
         return render_template(
             'admin/admin_console.html',
             daily_counts=daily_counts,
-            pickups_this_week=pickups_total,
+            pickups_total=pickups_total,
             form=form  # Pass the form to your template
         )
 
@@ -1482,7 +1659,7 @@ def create_app():
             addresses.append(f"{p.address}, {p.city} CA")
         addresses.append(final_admin_address)  # this is n-1
 
-        current_app.logger.debug("Compiled addresses for route: %s", addresses)
+        current_app.logger.debug("Successfully compiled addresses for route.")
 
         
         # 5) Check cache for 'selected_date'
@@ -1542,9 +1719,11 @@ def create_app():
         
         current_app.logger.info("Rendering live_route.html for date=%s.", selected_date)
 
+        pretty_date = format_iso_to_pretty(selected_date)
+
         return render_template(
             'admin/live_route.html',
-            date=selected_date,
+            date=pretty_date,
             pickups_requested=pickups_requested,
             pickups_completed=pickups_completed,
             route=final_route,
@@ -1663,7 +1842,7 @@ def create_app():
         Update the driver's location to the provided address/city.
         If no DriverLocation row exists yet, create one.
         """
-        current_app.logger.info("Updating driver location to address='%s', city='%s'.", address, city)
+        current_app.logger.info("Pickup complete, updating driver location.")
 
         driver_loc = DriverLocation.query.first()
         # If you have multiple drivers, you'd filter by user_id here (DriverLocation.query.filter_by(user_id=...).first())

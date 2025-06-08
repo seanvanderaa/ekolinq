@@ -1,6 +1,7 @@
 {% for req in requests %}
         <tr>
-          <td class="min-w-80 align-center">
+          <td class="min-w-80 align-center action-container">
+            <button class="download-btn" id="view-request" data-attribute="{{ req.request_id }}"><i class="bi bi-arrow-up-right-square"></i>View</button>
             <form action="{{ url_for('delete_pickup') }}" method="POST">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
@@ -8,7 +9,7 @@
                 type="submit"
                 id="delete-request"
                 class="download-btn delete-request-btn">
-                Delete
+                <i class="bi bi-trash"></i>Delete
               </button>
             </form>
           </td>
@@ -22,13 +23,13 @@
           </td>
           <td class="min-w-150">{{ req.date_filed }}</td>
           <td class="min-w-150">{{ req.request_date }}</td>
-          <td class="min-w-150">{{ req.request_time }}</td>
-          <td class="min-w-300">{{ req.email }}</td>
-          <td class="min-w-200">{{ req.phone_number }}</td>
+          <td class="min-w-300"><a class="action-a" href="mailto:{{ req.email }}">{{ req.email }}</a></td>
+          <td class="min-w-200"><a class="action-a" href="tel:{{ req.phone_number }}">{{ req.phone_number }}</a></td>
           <td class="min-w-250">{{ req.address }}</td>
           <td class="min-w-150">{{ req.city }}</td>
           <td class="min-w-75">{{ req.zipcode }}</td>
           <td class="min-w-300 word-break">{{ req.notes }}</td>
+          <td class="min-w-300 word-break">{{ req.admin_notes }}</td>
           <td class="min-w-100">{{ req.gated }}</td>
           <td class="min-w-150">{{ req.fname }}</td>
           <td class="min-w-200">{{ req.lname }}</td>

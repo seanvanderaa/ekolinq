@@ -62,13 +62,13 @@
           <th>Status</th>
           <th>Date Filed</th>
           <th>Request Date</th>
-          <th>Request Time</th>
           <th>Email</th>
           <th>Phone Number</th>
           <th>Address</th>
           <th>City</th>
           <th>Zip</th>
-          <th>Notes</th>
+          <th>Cus. Notes</th>
+          <th>Admin Notes</th>
           <th>Gated</th>
           <th>First Name</th>
           <th>Last Name</th>
@@ -102,13 +102,13 @@
           </td>
           <td class="min-w-150">{{ req.date_filed }}</td>
           <td class="min-w-150">{{ req.request_date }}</td>
-          <td class="min-w-150">{{ req.request_time }}</td>
-          <td class="min-w-300">{{ req.email }}</td>
-          <td class="min-w-200">{{ req.phone_number }}</td>
+          <td class="min-w-300"><a class="action-a" href="mailto:{{ req.email }}">{{ req.email }}</a></td>
+          <td class="min-w-200"><a class="action-a" href="tel:{{ req.phone_number }}">{{ req.phone_number }}</a></td>
           <td class="min-w-250">{{ req.address }}</td>
           <td class="min-w-150">{{ req.city }}</td>
           <td class="min-w-75">{{ req.zipcode }}</td>
           <td class="min-w-300 word-break">{{ req.notes }}</td>
+          <td class="min-w-300 word-break">{{ req.admin_notes }}</td>
           <td class="min-w-100">{{ req.gated }}</td>
           <td class="min-w-150">{{ req.fname }}</td>
           <td class="min-w-200">{{ req.lname }}</td>

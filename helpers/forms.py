@@ -134,6 +134,14 @@ class EditRequestInitForm(FlaskForm):
     ])
     recaptcha = RecaptchaField()
 
+class updateCustomerNotes(FlaskForm):
+    request_id = HiddenField(validators=[DataRequired()])
+    notes = TextAreaField(
+        'Notes',
+        validators=[Length(max=400)]
+    )
+    submit = SubmitField("Save Notes")
+
 class DeletePickupForm(FlaskForm):
     pickup_id = HiddenField(validators=[DataRequired()])
     submit = SubmitField('Delete')

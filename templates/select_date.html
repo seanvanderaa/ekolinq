@@ -48,7 +48,7 @@
             </a>
           {% else %}
             <!-- If offset = 0, we can hide or disable the previous button -->
-            <span>Previous Week</span>
+            <span class="week-btn disabled">< Previous Week</span>
           {% endif %}
 
           {% if offset < max_offset %}
@@ -58,14 +58,14 @@
             </a>
           {% else %}
             <!-- If offset >= max_offset, hide or disable the next button -->
-            <span>Next Week</span>
+            <span class="week-btn disabled">Next Week ></span>
           {% endif %}
         </div>
 
         <button type="submit" id="timeframe-submit-btn" class="submit-btn mt36" disabled>
           <div class="button-content">
             <span>
-              <span class="fw500">Schedule Pick-Up</span>
+              <span class="fw500">Schedule Pickup</span>
             </span>
             <span id="submit-btn-info"></span>
           </div>
@@ -91,7 +91,7 @@
       <div class="faq-popup" id="faq-items-popup">
         <img src="{{ url_for('static', filename='images/calendar.png') }}" alt="" height="50">
         <h3>What if I need to reschedule?</h3>
-        <p>After scheduling your pickup, you have the ability to edit the date via the "Edit a request" button in the top right corner of the page. In your confirmation email, you'll receive a unique number that you can then use to edit your request.</p>
+        <p>After scheduling your pickup, you have the ability to edit the date via the "Edit a request" button in the top right corner of the page. In your confirmation email, you'll receive a unique confirmation code that you can then use to edit your request.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
       <div class="faq-popup" id="faq-result-popup">

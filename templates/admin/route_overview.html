@@ -8,18 +8,18 @@
 
 {% block content %}
 <main class="content-width">
-  <h1>Pick Ups Overview</h1>
+  <h1>Route Overview</h1>
+  {% if next_pickup %} 
   <div id="next-pickup">
     <div class="align-center pickup-header">
-        <h4 class="mt0">Next Pick Up</h4>
-        {% if next_pickup %} <p id="ml-24 mt0">{{ next_pickup.formatted_date }}</p>{% endif %}
+        <h4 class="mt0">Today's Pickup Route  <span class="small-header">{{ next_pickup.formatted_date }}</span></h4>
     </div>
     <div class="pickup-content no-border">
         {% if next_pickup %}
         <div id="pb-8">
             {% for timeframe in next_pickup.timeframes %}
             <div>
-              <p>{{ timeframe.count }} pickup{% if timeframe.count > 1 %}s{% endif %} <span class="subtle-date ml-12">{{ timeframe.timeframe }}</span> </p>
+              <p>{{ timeframe.count }} pickup{% if timeframe.count > 1 %}s{% endif %}</p>
             </div>
           {% endfor %}
         </div>
@@ -29,6 +29,7 @@
       {% endif %}
     </div>
   </div>
+  {% endif %}
   <div id="upcoming-pickups">
     <div id="upcoming-dates-header" class="align-left dropdown-header">
         <h4 class="mt0">Upcoming Pickups</h4>
@@ -45,7 +46,7 @@
             <div class="pickup-content">
                 {% for timeframe in pickup.timeframes %}
                 <div>
-                    <p>{{ timeframe.count }} pickups ({{ timeframe.timeframe }})</p>
+                    <p>{{ timeframe.count }} pickups</p>
                 </div>
                 {% endfor %}
               <a href="{{ url_for('view_route_info') }}?date={{ pickup.date }}" ><div class="pickup-date-btn view-date-btn"><p class="mt0">View Info</p></div></a>
@@ -74,7 +75,7 @@
             <ul>
               {% for timeframe in pickup.timeframes %}
                 <li>
-                  {{ timeframe.count }} pickups ({{ timeframe.timeframe }})
+                  {{ timeframe.count }} pickups
                 </li>
               {% endfor %}
             </ul>

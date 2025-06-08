@@ -71,6 +71,7 @@ table {
 
 .action-container {
     column-gap: 16px;
+    height: 100%;
 }
 
 th {
@@ -149,3 +150,8 @@ th {
 /* Status color classes */
 .status-complete  { color: var(--m-green); }
 .status-requested { color: rgb(184, 148, 16); }
+
+.action-a {
+    text-decoration: underline;
+    color: var(--m-green);
+}

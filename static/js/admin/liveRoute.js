@@ -77,7 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
         completedHeader = document.getElementById('completed-header'); 
         completedIcon = document.getElementById('completed-pickups-icon');
         const completedList = document.getElementById('listed-completed-pickups');
-        if (completedList.style.display === 'none') {
+        const currentDisplay = window.getComputedStyle(completedList).display;
+        if (currentDisplay === 'none') {
             completedList.style.display = 'flex';
             completedIcon.style.transform = 'rotate(180deg)';
             completedHeader.style.borderRadius = '10px 10px 0px 0px';

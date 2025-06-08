@@ -123,10 +123,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelBtn = document.getElementById("cancel-edit-date");
     if (cancelBtn) {
       cancelBtn.addEventListener("click", function () {
-        const editTimeForm = document.getElementById('timeframe-form');
-        const showDiv = document.getElementById('pickup-date-time');
-        showDiv.style.display = "flex";
-        editTimeForm.style.display = "none";
+        const request_id = document.getElementById('request_id').value;
+        window.location.href = `/edit-request?request_id=${encodeURIComponent(request_id)}`;
       });
     }
 

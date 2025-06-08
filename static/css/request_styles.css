@@ -211,6 +211,15 @@ main {
     background-color: #c8c8c8;
 }
 
+.week-btn.disabled {
+  opacity: .4;
+}
+
+.week-btn.disabled:hover {
+  background-color: #E7E7E7;
+  cursor: not-allowed;
+}
+
 #timeframe-submit-btn {
     height: auto;
     padding: 12px 48px;
@@ -632,6 +641,7 @@ main {
 
 #init-submit-btn {
   margin-top: 36px;
+  margin-bottom: 48px;
 }
 
 
