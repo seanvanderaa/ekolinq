@@ -40,7 +40,7 @@
           </div>
         {% endfor %}
       {% else %}
-        <p>No completed pickups yet. Aftering marking your first pick up as complete, they will appear here.</p>
+        <p>No completed pickups yet.</p>
       {% endif %}
     </div>
   </div>
@@ -54,6 +54,11 @@
         </div>        
         <div class="pickup-content">
           {% if loop.index == 1 %}
+            {% if pickup.gated %}
+            <div class="pickup-gate-info">
+              <p class="text-flag">User Marked Address as Gated!</p>
+            </div>
+            {% endif %}
             <div class="customer-info">
               <div class="info-block">
                 <p><strong>Name: </strong>{{ pickup.fname }} {{ pickup.lname }}</p>
@@ -61,26 +66,22 @@
                 <p><strong>Email: </strong><a href="mailto:{{ pickup.email }}">{{ pickup.email }}</a></p>
               </div>
             </div>
-            {% if pickup.gated %}
-            <div class="pickup-gate-info align-center">
-              <h3>User Marked Address as Gated!</h3>
-            </div>
-            {% endif %}
+
             {% if pickup.notes %}
-              <p class="mt0 mb4"><strong>Customer Notes</strong></p>
-              <p class="mt0">{{ pickup.notes}}</p>
+              <p class="mt0"><strong>Customer Notes:</strong></p>
+              <p>{{ pickup.notes}}</p>
             {% endif %}
             {% if pickup.admin_notes %}
-              <p class="mt0 mb4"><strong>Admin Notes</strong></p>
-              <p class="mt0">{{ pickup.admin_notes}}</p>
+              <p class="mt0"><strong>Admin Notes:</strong></p>
+              <p>{{ pickup.admin_notes}}</p>
             {% endif %}
           {% endif %}
           <div class="align-center button-wrapper">
             <button 
                 {% if loop.index != 1 %} disabled {% endif %}
                 class="open-map button-wrapper-btn"
-                data-address="{{ pickup.address | urlencode }}"
-                data-city="{{ pickup.city | urlencode }}"
+                data-address="{{ pickup.address }}"
+                data-city="{{ pickup.city }}"
             >
                 <i class="bi bi-geo-alt"></i>Open Maps
             </button>

@@ -93,12 +93,12 @@ th {
 }
 
 .delete-request-btn {
-    background-color: rgb(255, 200, 200);
+    background-color: rgb(255, 226, 226);
     width: 100px;
 }
 
 .delete-request-btn:hover {
-    background-color: rgb(255, 106, 106);
+    background-color: rgb(255, 170, 170);
 }
 
 #view-request {

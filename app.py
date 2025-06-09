@@ -19,7 +19,6 @@ from flask_talisman import Talisman
 from flask_sitemap import Sitemap
 from logging.handlers import RotatingFileHandler
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.utils import secure_filename
 
 import traceback
 
@@ -31,6 +30,7 @@ from sqlalchemy import func, or_
 from pycognito import Cognito
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
+from helpers.analytics import get_admin_metrics
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
@@ -56,7 +56,8 @@ from extensions import mail
 # ──────────────────────────────────────────────────────────────────────────
 # Environment & configuration
 # ──────────────────────────────────────────────────────────────────────────
-load_dotenv()  # read .env before we pull settings
+if os.getenv("FLASK_ENV") != "production":
+    load_dotenv()    
 
 from config import DevelopmentConfig, ProductionConfig
 
@@ -90,8 +91,9 @@ def create_app():
 
     # OAuth (Amazon Cognito)
     oauth = OAuth(app)
-    COGNITO_DOMAIN    = os.environ["COGNITO_DOMAIN"]      # demo-domain.auth.us-east-2.amazoncognito.com
-    COGNITO_CLIENT_ID = os.environ["COGNITO_CLIENT_ID"]
+    COGNITO_DOMAIN    = app.config["COGNITO_DOMAIN"]      # demo-domain.auth.us-east-2.amazoncognito.com
+    COGNITO_CLIENT_ID = app.config["COGNITO_CLIENT_ID"]
+    COGNITO_REGION = app.config["COGNITO_REGION"]
 
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'], salt="pickup-confirm")
 
@@ -194,7 +196,7 @@ def create_app():
     edit_scope = limiter.shared_limit("20 per hour;4 per minute",
                                       scope="edit-flow", key_func=user_or_ip)
     
-    approval_scope = limiter.shared_limit("10 per hour;4 per minute",
+    approval_scope = limiter.shared_limit("15 per hour;5 per minute",
                                         scope="edit-approval",
                                         key_func=get_remote_address)
 
@@ -706,7 +708,7 @@ def create_app():
     
     @app.route('/edit-request-approval', methods=['POST'])
     @approval_scope
-    @in_window_scope
+    @code_email_scope
     def edit_request_approval():
         """Receives the code+email form, validates via can_edit(), and
         either shows the edit screen or bounces back with a flash alert."""
@@ -1073,15 +1075,21 @@ def create_app():
             PickupRequest.date_filed <= end_date.strftime("%Y-%m-%d")
         ).count()
 
+        pickups_total_all = db.session.query(db.func.count(PickupRequest.id)).scalar()
+
+
         current_app.logger.debug(
-            "Computed daily_counts=%s, pickups_total=%d for date range %s - %s",
-            daily_counts, pickups_total, start_date, end_date
+            "Window total=%d, All-time total=%d, date range %s – %s",
+            pickups_total, pickups_total_all, start_date, end_date
         )
+        metrics = get_admin_metrics(start_date, end_date)
 
         return render_template(
             'admin/admin_console.html',
             daily_counts=daily_counts,
-            pickups_total=pickups_total,
+            pickups_total_window=pickups_total,
+            pickups_total_all=pickups_total_all,
+            metrics=metrics,
             form=form  # Pass the form to your template
         )
 
@@ -1372,6 +1380,7 @@ def create_app():
         return redirect(url_for('admin_pickups'))
     
     @app.route('/admin/clean_pickups', methods=["POST"])
+    @login_required
     def clean_pickups():
         form = CleanPickupsForm()
 
@@ -1681,19 +1690,41 @@ def create_app():
                 if same_size and same_start and same_end:
                     current_app.logger.debug("Cache is still valid (size/start/end match). Using cached route.")
                     should_refresh = False
-
+        
+        current_app.logger.debug("Calling optimizer with:")
+        current_app.logger.debug("Start: %s", addresses[0])
+        current_app.logger.debug("Waypoints: %s", addresses[1:-1])
+        current_app.logger.debug("End: %s", addresses[-1])
         # 6) Either use the cached route or recalc
         if should_refresh:
             try:
+
                 final_route, total_seconds, _ = compute_optimized_route(
-                    waypoints=addresses[1:-1],     # just the pickups
+                    waypoints=addresses[1:-1],
                     start_location=addresses[0],
                     end_location=addresses[-1],
                 )
                 total_time_str = seconds_to_hms(total_seconds)
+                current_app.logger.debug("Total Time: %s", total_time_str)
+                if cached_solution:
+                    cached_solution.route_json     = json.dumps(final_route)
+                    cached_solution.total_time_str = total_time_str
+                    cached_solution.last_updated   = datetime.utcnow()
+                else:
+                    cached_solution = RouteSolution(
+                        date            = selected_date,
+                        route_json      = json.dumps(final_route),
+                        total_time_str  = total_time_str,
+                        last_updated    = datetime.utcnow()
+                    )
+                    db.session.add(cached_solution)
+                db.session.commit()
             except Exception:
                 current_app.logger.exception("Routing failure – falling back to straight list")
                 final_route, total_time_str = addresses, "N/A"
+            # --------------------------------------------------
+            # NEW: save (or update) the freshly-computed route
+            # --------------------------------------------------
 
         else:
             print("Using cached route.")
@@ -1766,25 +1797,19 @@ def create_app():
         current_app.logger.info("Current pickup status for pickup_id %s is '%s'", pickup_id, pickup.status)
 
         if pickup.status in ["Complete", "Incomplete"]:
-            current_app.logger.info("Toggling status from '%s' to 'Requested' for pickup_id: %s", pickup.status, pickup_id)
-
-            # If current status is Complete or Incomplete -> set back to Requested
             pickup.status = "Requested"
             pickup.pickup_complete_info = None
-            cached_solution = RouteSolution.query.filter_by(date=pickup.request_date).first()
-            if cached_solution:
-                current_app.logger.debug("Deleting cached route solution for date %s.", pickup.request_date)
-
-                db.session.delete(cached_solution)
-                db.session.commit()
-        else:
-            current_app.logger.info("Toggling status from 'Requested' to 'Complete' for pickup_id: %s", pickup_id)
-
-            # Otherwise, set to Complete and record the completion time
+        else:                                   # now == 'Requested'
             pickup.status = "Complete"
             pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
-            # Because the pickup was just completed, update the driver's location
-            update_driver_location(pickup.address, pickup.city)
+            update_driver_location(pickup.address, pickup.city)   # <- only here
+
+        # -------------------------------------------
+        # 2.  ALWAYS nuke the cached route for the day
+        # -------------------------------------------
+        cached_solution = RouteSolution.query.filter_by(date=pickup.request_date).first()
+        if cached_solution:
+            db.session.delete(cached_solution)
 
         db.session.commit()
 
@@ -1825,9 +1850,11 @@ def create_app():
 
         pickup.status = "Incomplete"
         pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
-        update_driver_location(pickup.address, pickup.city)
 
-        # Notice: do not update driver location here since it's incomplete.
+        cached_solution = RouteSolution.query.filter_by(date=pickup.request_date).first()
+        if cached_solution:
+            db.session.delete(cached_solution)
+
         db.session.commit()
         
         current_app.logger.info("Pickup marked as 'Incomplete' for pickup_id: %s", pickup_id)
@@ -1845,7 +1872,6 @@ def create_app():
         current_app.logger.info("Pickup complete, updating driver location.")
 
         driver_loc = DriverLocation.query.first()
-        # If you have multiple drivers, you'd filter by user_id here (DriverLocation.query.filter_by(user_id=...).first())
         if not driver_loc:
             current_app.logger.debug("No existing DriverLocation found. Creating a new record.")
 
@@ -2016,7 +2042,6 @@ def seed_schedule_if_necessary():
                                      slot2_start=None, slot2_end=None)
             db.session.add(record)
         db.session.commit()
-
 
 if __name__ == '__main__':
     app = create_app()

@@ -11,80 +11,92 @@
 
 {% block content %}
 <main class="content-width">
-    <div>
-        <div id="header" class="align-left">
-            <h1 class="mt0">Admin Console</h1>
-            <!-- Static Pickup Count for This Week -->
-            <div id="total-pickups">
-                <p><i>Total pickups requested this timeframe</i></p>
-                <p id="total-pickups-num">{{ pickups_total }}</p>
-            </div>
-        </div>
-      <!-- Graph Canvas -->
-      <div>
-         <canvas id="pickupChart"></canvas>
-      </div>
+  <div>
+    <div id="header" class="align-left">
+      <h1 class="mt0">Admin Dashboard</h1>
       <div id="filter-wrapper">
-        <h4 class="filter-h4">FILTER CHART</h4>
         <form method="POST" class="align-left" id="date-form">
           {{ form.hidden_tag() }}
-          <div class="form-group">
-              {{ form.start_date.label }} 
+          <div class="form-group-wrapper">
+            <div class="form-group">
+              {{ form.start_date.label }}
               {{ form.start_date(id="start_date") }}
-          </div>
-          <div class="form-group">
-              {{ form.end_date.label }} 
+            </div>
+            <div class="form-group">
+              {{ form.end_date.label }}
               {{ form.end_date(id="end_date") }}
+            </div>
           </div>
           {{ form.submit(class="download-btn") }}
         </form>
       </div>
     </div>
+
+    <div id="pickups-data-wrapper">
+      <div id="total-pickups" class="pickup-data">
+        <p class="num-title"><i>Total pickups (all/timeframe)</i></p>
+        <p id="total-pickups-num" class="num-display">{{ pickups_total_window }} | {{ pickups_total_all }}</p>
+      </div>
+      <div id="returning-cus-info" class="pickup-data">
+        <p class="num-title"><i>New customers (all/timeframe)</i></p>
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.percent_all }}% | {{ metrics.percent_window }}%</p>
+      </div>
+      <div id="return-freq-info" class="pickup-data">
+        <p class="num-title"><i>Return frequency (all/timeframe)</i></p>
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_all_days }} days | {{ metrics.avg_window_days }} days</p>
+      </div>
+    </div>
+    <!-- Graph Canvas -->
+    <div id="chart-wrapper">
+      <h3>Pickup Chart</h3>
+      <canvas id="pickupChart"></canvas>
+    </div>
+  </div>
 </main>
 {% endblock %}
 
 {% block scripts %}
-  {{ super() }}
-  <script nonce="{{ csp_nonce() }}">
-    // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
-    const dailyCounts = JSON.parse('{{ daily_counts|tojson }}');
-    const labels = dailyCounts.map(item => item[0]);
-    const data = dailyCounts.map(item => item[1]);
+{{ super() }}
+<script nonce="{{ csp_nonce() }}">
+  // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
+  const dailyCounts = JSON.parse('{{ daily_counts|tojson }}');
+  const labels = dailyCounts.map(item => item[0]);
+  const data = dailyCounts.map(item => item[1]);
 
-    const ctx = document.getElementById('pickupChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Pickups per Day',
-          data: data,
-          borderColor: '#098223',
-          backgroundColor: '#BBCEA8',
-          fill: true,
-          tension: 0.1
-        }]
-      },
-      options: {
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Date'
-            }
+  const ctx = document.getElementById('pickupChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Pickups per Day',
+        data: data,
+        borderColor: '#098223',
+        backgroundColor: '#BBCEA8',
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of Pickups'
           },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Number of Pickups'
-            },
-            ticks: {
-              precision: 0
-            }
+          ticks: {
+            precision: 0
           }
         }
       }
-    });
-  </script>
+    }
+  });
+</script>
 {% endblock %}

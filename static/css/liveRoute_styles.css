@@ -216,6 +216,15 @@ main {
     font-family: var(--mont);
 }
 
+.text-flag {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-left: 3px solid orange;
+    background-color: rgba(255, 166, 0, 0.223);
+    color: black;
+}
+
 @media only screen and (max-width: 768px) {
     body {
         background-color: var(--off-white);

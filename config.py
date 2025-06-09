@@ -1,51 +1,78 @@
 # config.py
+from __future__ import annotations
+
 import os
+from pathlib import Path
 from datetime import timedelta
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
+from typing import Type
+
+BASE_DIR = Path(__file__).parent
+
+
+def require(name: str, default: str | None = None) -> str:
+    """Return an env var or raise in prod; use a default only in dev."""
+    val = os.getenv(name, default)
+    if val is None:
+        raise RuntimeError(f"Missing required env var {name!r}")
+    return val
+
 
 class BaseConfig:
-    """Settings that never change between environments."""
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY   = os.getenv("SECRET_KEY")      # override in env
+    """Values common to every environment."""
+    # ───── Flask ────────────────────────────────────────────────────────
+    SECRET_KEY = require("SECRET_KEY")
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     PERMANENT_SESSION_LIFETIME = timedelta(days=1)
-    MAIL_SERVER   = os.getenv("MAIL_SERVER", "smtp.ionos.com")
-    MAIL_PORT     = int(os.getenv("MAIL_PORT", 587))
-    MAIL_USE_TLS  = os.getenv("MAIL_USE_TLS", "True").lower() in ("true", "1")
-    MAIL_USE_SSL  = False
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-    GOOGLE_SERVICE_ACCOUNT_JSON = os.path.join(BASEDIR, "credentials", "service_account.json")
-    RECAPTCHA_PUBLIC_KEY  = os.getenv("RECAPTCHA_PUBLIC_KEY")
-    RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
-    COGNITO_REGION        = os.getenv("COGNITO_REGION")
-    COGNITO_USER_POOL_ID  = os.getenv("COGNITO_USER_POOL_ID")
-    COGNITO_CLIENT_ID     = os.getenv("COGNITO_CLIENT_ID")
-    COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
-    LOGGER_LEVEL  = os.getenv("LOGGER_LEVEL", "INFO")
-    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Flask-Limiter – leave empty to fall back to in-memory
-    RATE_LIMIT_STORAGE_URL = os.getenv("RATE_LIMIT_STORAGE_URL", "")
+    # ───── Mail ────────────────────────────────────────────────────────
+    MAIL_SERVER   = require("MAIL_SERVER", "smtp.ionos.com")
+    MAIL_PORT     = int(require("MAIL_PORT", 587))
+    MAIL_USE_TLS  = require("MAIL_USE_TLS", "True").lower() in ("true", "1")
+    MAIL_USERNAME = require("MAIL_USERNAME")
+    MAIL_PASSWORD = require("MAIL_PASSWORD")
+    MAIL_DEBUG = False 
+
+    # ───── Rate limiting / Redis ────────────────────────────────────────
+    RATE_LIMIT_STORAGE_URL = require("RATE_LIMIT_STORAGE_URL", "")
     DEFAULT_RATE_LIMITS    = ["100 per hour"]
 
-    # Security headers / Talisman
+    # ───── Security headers (Flask-Talisman) ───────────────────────────
     FORCE_HTTPS = False
     STRICT_TRANSPORT_SECURITY = False
 
+    COGNITO_USER_POOL_ID=require("COGNITO_USER_POOL_ID")
+    COGNITO_CLIENT_ID=require("COGNITO_CLIENT_ID")
+    COGNITO_CLIENT_SECRET=require("COGNITO_CLIENT_SECRET")
+    COGNITO_REGION=require("COGNITO_REGION")
+    COGNITO_DOMAIN=require("COGNITO_DOMAIN")
+
+    # ───── RECAPTCHA ───────────────────────────
+    RECAPTCHA_PUBLIC_KEY=require("RECAPTCHA_PUBLIC_KEY")
+    RECAPTCHA_PRIVATE_KEY=require("RECAPTCHA_PRIVATE_KEY")
+
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    MAIL_DEBUG = False 
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///ekolinq.db")
-    SESSION_COOKIE_SECURE = False            # allow http://localhost
-    LOGGER_LEVEL = "DEBUG"                   # noisy logs locally
+    LOGGER_LEVEL = "DEBUG"
+    SQLALCHEMY_DATABASE_URI = require("DATABASE_URI", "sqlite:///dev.db")
+    SESSION_COOKIE_SECURE = False
     RATELIMIT_ENABLED = False
 
+
+# config.py – only the prod class changes
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    MAIL_DEBUG = False 
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")              # e.g. Postgres on Render
+    LOGGER_LEVEL = "INFO"
     SESSION_COOKIE_SECURE = True
-    FORCE_HTTPS = True                           # redirect to HTTPS
-    STRICT_TRANSPORT_SECURITY = True             # sets HSTS
+    FORCE_HTTPS = True
+    STRICT_TRANSPORT_SECURITY = True
+    RATELIMIT_ENABLED = True
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        uri = os.getenv("DATABASE_URL")
+        if not uri:
+            raise RuntimeError("DATABASE_URL must be set when FLASK_CONFIG=production")
+        return uri
+

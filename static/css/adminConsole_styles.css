@@ -31,17 +31,38 @@ input:placeholder-shown {
     column-gap: 24px;
 }
 
+#pickups-data-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    column-gap: 24px;
+    margin-bottom: 36px;
+}
+
+.pickup-data {
+    flex: 1;
+}
+
 #total-pickups {
     display: flex;
     flex-direction: column;
 }
 
-#total-pickups p {
+#num-title {
     font-size: 12px;
 }
 
-#total-pickups-num {
+.num-display {
     margin: 0px; padding: 12px 24px; background-color: var(--m-green); color: white; box-sizing: content-box; text-align: center; border-radius: 5px; font-size: 24px !important; font-weight: 600
+}
+
+#returning-cus-info .num-display {
+    background-color: var(--m-blue);
+}
+
+#return-freq-info .num-display {
+    background-color: var(--yel);
+    color: black;
 }
 
 #header {
@@ -51,6 +72,12 @@ input:placeholder-shown {
 
 #date-form {
     align-items: flex-end;
+}
+
+.form-group-wrapper {
+    display: flex;
+    flex-direction: row;
+    column-gap: 12px;
 }
 
 .form-group {
@@ -63,9 +90,17 @@ input:placeholder-shown {
     font-family: var(--mont);
 }
 
+#chart-wrapper h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
 #pickupChart {
     width: 100%;
     height: 40vh;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 20px;
 }
 
 .download-btn {
@@ -90,18 +125,36 @@ input:placeholder-shown {
 
     #header {
         flex-direction: column;
-        row-gap: 24px;
-    }
-
-    #pickupChart {
         width: 100%;
     }
 
+    #header h1 {
+        width: 100%;
+    }
+
+    #pickups-data-wrapper {
+        overflow: scroll;
+        max-width: 100vw;
+    }
+
+    .pickup-data {
+        min-width: 290px;
+    }
+
     #date-form {
-        margin-top: 36px;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         row-gap: 24px;
+    }
+
+    .form-group-wrapper {
+        display: flex;
+        flex-direction: row;
+        column-gap: 12px;
+    }
+
+    #filter-wrapper {
+        width: 100%;
     }
 
     #filter-h4 {
