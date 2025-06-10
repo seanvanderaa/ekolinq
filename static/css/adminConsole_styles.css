@@ -3,12 +3,17 @@ body {
     padding-top: 120px;
 }
 
+h2 {
+    font-weight: 500;
+}
+
 main {  
     border-radius: 50px;
     box-sizing: border-box;
     padding: 40px;
     padding-top: 20px;
     background-color: var(--off-white);
+    padding-bottom: 60px;
 }
 
 #date-timeframe-form {
@@ -19,7 +24,7 @@ main {
 input, select {
     font-family: var(--mont);
     padding: 8px 8px;
-    border: 2px solid var(--m-green);
+    border: 2px solid var(--subtle-text);
     border-radius: 5px;
 }
 
@@ -31,7 +36,7 @@ input:placeholder-shown {
     column-gap: 24px;
 }
 
-#pickups-data-wrapper {
+.pickups-data-wrapper {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -41,6 +46,14 @@ input:placeholder-shown {
 
 .pickup-data {
     flex: 1;
+    margin: 0px; padding: 12px 24px; 
+    background-color: var(--m-green); 
+    color: white; 
+    box-sizing: content-box; 
+    text-align: left; 
+    border-radius: 5px; 
+    padding: 16px 24px;
+    box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.2);
 }
 
 #total-pickups {
@@ -48,26 +61,37 @@ input:placeholder-shown {
     flex-direction: column;
 }
 
-#num-title {
-    font-size: 12px;
+.num-title {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0px;
+    margin-top: 4px;
 }
 
 .num-display {
-    margin: 0px; padding: 12px 24px; background-color: var(--m-green); color: white; box-sizing: content-box; text-align: center; border-radius: 5px; font-size: 24px !important; font-weight: 600
+    font-size: 24px;
+    margin: 0px;
 }
 
-#returning-cus-info .num-display {
-    background-color: var(--m-blue);
+.dataset-hr {
+    margin: 48px 0px;
 }
 
-#return-freq-info .num-display {
-    background-color: var(--yel);
-    color: black;
+.pickups-graph-wrapper {
+    margin-bottom: 24px;
+}
+
+.bar-graph {
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 16px;
+    max-height: 40vh;
 }
 
 #header {
     justify-content: space-between;
     margin-bottom: 36px;
+    margin-top: 16px;
 }
 
 #date-form {
@@ -90,6 +114,14 @@ input:placeholder-shown {
     font-family: var(--mont);
 }
 
+#timeframe-window-wrapper .pickup-data {
+    background-color: var(--m-blue);
+}
+
+#chart-wrapper {
+    margin-top: 24px;
+}
+
 #chart-wrapper h3 {
     font-size: 20px;
     font-weight: 600;
@@ -109,6 +141,7 @@ input:placeholder-shown {
 
 #filter-wrapper {
     margin-top: 24px;
+    margin-bottom: 24px;
 }
 
 
@@ -123,6 +156,11 @@ input:placeholder-shown {
         margin-top: 80px;
     }
 
+
+    .pickups-graph-wrapper {
+        overflow:scroll;
+    }
+
     #header {
         flex-direction: column;
         width: 100%;
@@ -132,13 +170,14 @@ input:placeholder-shown {
         width: 100%;
     }
 
-    #pickups-data-wrapper {
-        overflow: scroll;
-        max-width: 100vw;
+    .pickups-data-wrapper {
+        flex-direction: column;
+        row-gap: 16px;
     }
 
     .pickup-data {
-        min-width: 290px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     #date-form {

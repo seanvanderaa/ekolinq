@@ -43,7 +43,7 @@
   <form id="address-form" class="align-left" method="POST" action="{{ url_for('admin_set_address') }}">
     {{ admin_address_form.hidden_tag() }}
     <label for="admin-address">Set the Start and End Address for the Routing System</label>
-    <p class="mt0"><i>Must be in full address format (address, city, state, zip)</i></p>
+    <p class="mt0 small-text"><i>Must be in full address format (address, city, state, zip)</i></p>
     {{ admin_address_form.admin_address(class="form-control", id="admin-address") }}
     {{ admin_address_form.submit(class="download-btn", id="update-admin-address") }}
   </form>

@@ -14,41 +14,73 @@
   <div>
     <div id="header" class="align-left">
       <h1 class="mt0">Admin Dashboard</h1>
-      <div id="filter-wrapper">
-        <form method="POST" class="align-left" id="date-form">
-          {{ form.hidden_tag() }}
-          <div class="form-group-wrapper">
-            <div class="form-group">
-              {{ form.start_date.label }}
-              {{ form.start_date(id="start_date") }}
-            </div>
-            <div class="form-group">
-              {{ form.end_date.label }}
-              {{ form.end_date(id="end_date") }}
-            </div>
-          </div>
-          {{ form.submit(class="download-btn") }}
-        </form>
-      </div>
     </div>
-
-    <div id="pickups-data-wrapper">
+    <h2>All-Time Data</h2>
+    <div class="pickups-data-wrapper" id="timeframe-all-wrapper">
       <div id="total-pickups" class="pickup-data">
-        <p class="num-title"><i>Total pickups (all/timeframe)</i></p>
-        <p id="total-pickups-num" class="num-display">{{ pickups_total_window }} | {{ pickups_total_all }}</p>
+        <p id="total-pickups-num" class="num-display">{{ pickups_total_all }}</p>
+        <p class="num-title"><i>All pickups</i></p>
       </div>
       <div id="returning-cus-info" class="pickup-data">
-        <p class="num-title"><i>New customers (all/timeframe)</i></p>
-        <p id="percent-new-cus-all" class="num-display">{{ metrics.percent_all }}% | {{ metrics.percent_window }}%</p>
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.percent_all }}%</p>
+        <p class="num-title"><i>New customers</i></p>
       </div>
       <div id="return-freq-info" class="pickup-data">
-        <p class="num-title"><i>Return frequency (all/timeframe)</i></p>
-        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_all_days }} days | {{ metrics.avg_window_days }} days</p>
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_all_days }} days</p>
+        <p class="num-title"><i>Return frequency</i></p>
       </div>
     </div>
+    <div class="pickups-graph-wrapper">
+      <div class="flex-1" id="awareness-metric-all">
+      </div>
+      <div class="flex-1" id="city-dist-all">
+        <canvas class="bar-graph" id="cityDistAllChart"></canvas>
+      </div>
+    </div>
+    <hr class="dataset-hr">
+    <h2>Filtered Data</h2>
+    <div id="filter-wrapper">
+      <form method="POST" class="align-left" id="date-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group-wrapper">
+          <div class="form-group">
+            {{ form.start_date.label }}
+            {{ form.start_date(id="start_date") }}
+          </div>
+          <div class="form-group">
+            {{ form.end_date.label }}
+            {{ form.end_date(id="end_date") }}
+          </div>
+        </div>
+        {{ form.submit(class="download-btn") }}
+      </form>
+    </div>
+    <div class="pickups-data-wrapper" id="timeframe-window-wrapper">
+      <div id="total-pickups" class="pickup-data">
+        <p id="total-pickups-num" class="num-display">{{ pickups_total_window }}</p>
+        <p class="num-title"><i>Total pickups</i></p>
+      </div>
+      <div id="returning-cus-info" class="pickup-data">
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.percent_window }}%</p>
+        <p class="num-title"><i>New customers</i></p>
+      </div>
+      <div id="return-freq-info" class="pickup-data">
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_window_days or "--" }} {% if metrics.avg_window_days %} days {% endif %}</p>
+        <p class="num-title"><i>Return frequency</i></p>
+      </div>
+    </div>
+    <div class="pickups-graph-wrapper">
+      <div class="flex-1" id="awareness-metric-window">
+      </div>
+      <div class="flex-1" id="city-dist-window">
+        <canvas class="bar-graph" id="cityDistWindowChart"></canvas>
+      </div>
+    </div>
+    <hr class="dataset-hr">
+
     <!-- Graph Canvas -->
     <div id="chart-wrapper">
-      <h3>Pickup Chart</h3>
+      <h2>Pickup Chart</h2>
       <canvas id="pickupChart"></canvas>
     </div>
   </div>
@@ -58,6 +90,11 @@
 {% block scripts %}
 {{ super() }}
 <script nonce="{{ csp_nonce() }}">
+  // before you create any charts:
+  Chart.defaults.font.family = "'Montserrat', sans-serif";
+  Chart.defaults.font.size   = 16;
+  Chart.defaults.color       = "#000000";       // default text color
+
   // Convert the daily_counts (a list of [date, count] tuples) to arrays for Chart.js.
   const dailyCounts = JSON.parse('{{ daily_counts|tojson }}');
   const labels = dailyCounts.map(item => item[0]);
@@ -98,5 +135,103 @@
       }
     }
   });
+  /* ---------------- Users-by-City bar charts ---------------- */
+  const cityStats = JSON.parse('{{ city_stats|tojson }}');
+
+  const greenPalette = [
+    '#09822356',
+    '#09822391',
+    '#098223c9',
+    '#098223',
+    '#055d18',
+  ];
+
+  const bluePalette = [
+    '#9dcafb',
+    '#6eaef3',
+    '#448edc',
+    '#3077c3',
+    '#1d5a9c',
+    '#104378',
+    '#0a2d53',
+  ];
+
+  function pickColors(palette, count) {
+    return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
+  }
+
+  function makeCityChart(canvasId, counts, percents, title, palette) {
+    const labels = cityStats.cities;
+    const backgroundColors = pickColors(palette, labels.length);
+
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '% of requests',
+          data: percents,
+          backgroundColor: backgroundColors,
+          borderColor: backgroundColors.map(c => Chart.helpers.color(c).darken(0.2).rgbString()),
+          borderWidth: 1
+        }],
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Users by City',
+            align: 'start',            // left-align
+            font: {
+              family: 'Montserrat, san-serif',
+              size: 18,
+              weight: 'bold'
+            },
+            padding: { top: 16, bottom: 24 },
+            color: '#000000'
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const idx = ctx.dataIndex;
+                return `${percents[idx]}%  (${counts[idx]} pickups)`;
+              }
+            }
+          },
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: v => v + '%' },
+            title: { display: true, text: '% of total' }
+          },
+          x: {
+            title: { display: true, text: 'City' },
+            ticks: { maxRotation: 45 }
+          }
+        }
+      }
+    });
+  }
+
+  // 4. Call twice with different palettes:
+  makeCityChart(
+    'cityDistAllChart',
+    cityStats.counts_all,
+    cityStats.percents_all,
+    'Users by City',
+    greenPalette
+  );
+
+  makeCityChart(
+    'cityDistWindowChart',
+    cityStats.counts_window,
+    cityStats.percents_window,
+    'Users by City',
+    bluePalette
+  );
+
 </script>
 {% endblock %}

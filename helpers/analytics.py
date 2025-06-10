@@ -31,6 +31,8 @@ from datetime import date
 from typing import Dict, List, Optional
 
 from models import db, PickupRequest
+from collections import Counter
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers
@@ -148,3 +150,56 @@ def get_admin_metrics(start_date: date, end_date: date) -> Dict[str, float | Non
     metrics.update(new_customer_percentages(start_date, end_date))
     metrics.update(returning_customer_average_days(start_date, end_date))
     return metrics
+
+def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
+    """
+    Return counts *and* percentages of requests per city for
+    both the selected window and the whole table.
+
+    The dict is shaped for Chart.js already.
+    """
+    sess = db.session
+    rows: list[tuple[str, str]] = (
+        sess.query(PickupRequest.city, PickupRequest.date_filed)
+        .filter(PickupRequest.date_filed.isnot(None))
+        .all()
+    )
+
+    if not rows:
+        return {
+            "cities": [],
+            "counts_all": [],
+            "percents_all": [],
+            "counts_window": [],
+            "percents_window": [],
+        }
+
+    counter_all: Counter[str] = Counter()
+    counter_window: Counter[str] = Counter()
+
+    for city, datestr in rows:
+        if city is None:
+            continue
+        counter_all[city] += 1
+        d = _parse_iso(datestr)
+        if d and start_date <= d <= end_date:
+            counter_window[city] += 1
+
+    # sort cities by all-time volume, high → low
+    cities = [c for c, _ in counter_all.most_common()]
+
+    total_all = sum(counter_all.values())
+    total_window = sum(counter_window.values()) or 1  # avoid /0
+
+    counts_all = [counter_all[c] for c in cities]
+    percents_all = [_pct(counter_all[c], total_all) for c in cities]
+    counts_window = [counter_window.get(c, 0) for c in cities]
+    percents_window = [_pct(counter_window.get(c, 0), total_window) for c in cities]
+
+    return {
+        "cities": cities,
+        "counts_all": counts_all,
+        "percents_all": percents_all,
+        "counts_window": counts_window,
+        "percents_window": percents_window,
+    }

@@ -30,7 +30,7 @@ from sqlalchemy import func, or_
 from pycognito import Cognito
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
-from helpers.analytics import get_admin_metrics
+from helpers.analytics import get_admin_metrics, city_distribution
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
@@ -1024,9 +1024,9 @@ def create_app():
 
         today = datetime.today().date()
         # Default to the current week: from Monday to today.
-        start_of_week = today - timedelta(days=today.weekday())
-        default_start_date = start_of_week
-        default_end_date = today
+        today = date.today()
+        default_start_date = today - timedelta(days=7)
+        default_end_date   = today
 
         form = DateRangeForm()
 
@@ -1083,6 +1083,7 @@ def create_app():
             pickups_total, pickups_total_all, start_date, end_date
         )
         metrics = get_admin_metrics(start_date, end_date)
+        city_stats = city_distribution(start_date, end_date)
 
         return render_template(
             'admin/admin_console.html',
@@ -1090,6 +1091,7 @@ def create_app():
             pickups_total_window=pickups_total,
             pickups_total_all=pickups_total_all,
             metrics=metrics,
+            city_stats=city_stats, 
             form=form  # Pass the form to your template
         )
 
