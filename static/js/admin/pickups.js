@@ -1,18 +1,26 @@
 document.addEventListener("DOMContentLoaded", function() {
+  const tableBody  = document.querySelector('#requests-table tbody');
 
-  const deleteButtons = document.querySelectorAll('.delete-request-btn');
+  /* ------------------  delete & view buttons  ------------------ */
+  tableBody.addEventListener('click', e => {
+    /* ----- view ----- */
+    const viewBtn = e.target.closest('.view-request-btn');
+    if (viewBtn) {
+      window.location.href = `/individual-pickup/${viewBtn.dataset.id}`;
+      return;        // don’t fall through
+    }
+  });
 
-  deleteButtons.forEach(function (button) {
-      button.addEventListener('click', function (event) {
-          const confirmed = confirm('Are you sure you want to delete this item?');
-          if (!confirmed) {
-              event.preventDefault();
-          }
-      });
+  /* catch the FORM submit, not the button click */
+  tableBody.addEventListener('submit', e => {
+    if (!e.target.matches('.delete-form')) return;   // some other form
+
+    if (!confirm('Are you sure you want to delete this pickup?')) {
+      e.preventDefault();                            // keep the row
+    }
   });
 
   const filterForm = document.getElementById('filter-form');
-  const tableBody = document.querySelector('#requests-table tbody');
 
   // Function to fetch filtered requests and update the table
   function updateTable() {
@@ -48,19 +56,4 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("NOPE!");
   }
   
-  const viewButtons = document.querySelectorAll('#view-request');
-
-  viewButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // Read the pickup ID from data-attribute
-      const pickupId = this.getAttribute('data-attribute');
-
-      // Redirect to /admin/pickups/<id>
-      if (pickupId) {
-        window.location.href = `/individual-pickup/${pickupId}`;
-      } else {
-        console.error("No pickup ID found on button.");
-      }
-    });
-  });
 });

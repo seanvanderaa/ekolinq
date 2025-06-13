@@ -194,7 +194,7 @@ def send_request_email(pickup):
 
 
 
-def send_editted_request_email(pickup):
+def send_edited_request_email(pickup):
     """
     Sends an email using your IONOS configuration (Flask-Mail).
     Returns True if successful, False if an error occurred.

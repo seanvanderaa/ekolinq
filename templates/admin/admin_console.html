@@ -26,12 +26,13 @@
         <p class="num-title"><i>New customers</i></p>
       </div>
       <div id="return-freq-info" class="pickup-data">
-        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_all_days }} days</p>
+        <p id="percent-new-cus-all" class="num-display">{{ metrics.avg_all_days  or "--" }} days</p>
         <p class="num-title"><i>Return frequency</i></p>
       </div>
     </div>
     <div class="pickups-graph-wrapper">
       <div class="flex-1" id="awareness-metric-all">
+        <canvas class="bar-graph" id="awareAllChart"></canvas>
       </div>
       <div class="flex-1" id="city-dist-all">
         <canvas class="bar-graph" id="cityDistAllChart"></canvas>
@@ -71,6 +72,7 @@
     </div>
     <div class="pickups-graph-wrapper">
       <div class="flex-1" id="awareness-metric-window">
+        <canvas class="bar-graph" id="awareWindowChart"></canvas>
       </div>
       <div class="flex-1" id="city-dist-window">
         <canvas class="bar-graph" id="cityDistWindowChart"></canvas>
@@ -161,7 +163,7 @@
   }
 
   function makeCityChart(canvasId, counts, percents, title, palette) {
-    const labels = cityStats.cities;
+    const labels = cityStats.categories;
     const backgroundColors = pickColors(palette, labels.length);
 
     const ctx = document.getElementById(canvasId).getContext('2d');
@@ -178,6 +180,8 @@
         }],
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
@@ -188,7 +192,7 @@
               size: 18,
               weight: 'bold'
             },
-            padding: { top: 16, bottom: 24 },
+            padding: { top: 16, bottom: 36 },
             color: '#000000'
           },
           tooltip: {
@@ -232,6 +236,88 @@
     'Users by City',
     bluePalette
   );
+
+  /* ---------- Awareness bar charts ---------- */
+const awareStats = JSON.parse('{{ awareness_stats|tojson }}');
+
+const orangePalette = [
+  '#ffe3cf', '#ffbe94', '#ffa366',
+  '#ff8533', '#e46e12', '#b55507'
+];
+const purplePalette = [
+  '#e5d4ff', '#c4a3ff', '#a276ff',
+  '#875cff', '#693bff', '#512cc1'
+];
+
+function makeAwareChart(canvasId, counts, percents, title, palette) {
+  const colors = pickColors(palette, awareStats.categories.length);
+  return new Chart(
+    document.getElementById(canvasId).getContext('2d'),
+    {
+      type: 'bar',
+      data: {
+        labels: awareStats.categories,
+        datasets: [{
+          data: percents,
+          backgroundColor: colors,
+          borderColor: colors.map(c => Chart.helpers.color(c).darken(0.25).rgbString()),
+          borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: title,
+            align: 'start',            // left-align
+            font: {
+              family: 'Montserrat, san-serif',
+              size: 18,
+              weight: 'bold'
+            },
+            padding: { top: 16, bottom: 36 },
+            color: '#000000'
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const i = ctx.dataIndex;
+                return `${percents[i]}%  (${counts[i]} pickups)`;
+              }
+            }
+          },
+          legend: { display: false },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: v => v + '%' },
+            title: { display: true, text: '% of total' },
+          },
+          x: { ticks: { maxRotation: 45 } },
+        },
+      },
+    }
+  );
+}
+
+makeAwareChart(
+  'awareAllChart',
+  awareStats.counts_all,
+  awareStats.percents_all,
+  'Awareness',
+  orangePalette
+);
+
+makeAwareChart(
+  'awareWindowChart',
+  awareStats.counts_window,
+  awareStats.percents_window,
+  'Awareness',
+  purplePalette
+);
 
 </script>
 {% endblock %}

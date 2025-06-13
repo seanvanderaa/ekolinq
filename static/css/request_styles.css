@@ -68,7 +68,7 @@ main {
 }
 
 .info-text {
-    top: -90px;
+    top: -120px !important;
 }
 
 #gateCodeInput {
@@ -313,6 +313,7 @@ main {
 @media only screen and (max-width: 768px) {
     body {
         padding-top: 120px;
+        background-color: var(--off-white);
     }
 
     .form-group-div {
@@ -416,7 +417,7 @@ main {
 
     .request-form {
         border-radius: 20px;
-        padding: 2em 1em; 
+        padding: 2em 0em; 
     }
     
     #timeframe-form {
@@ -538,6 +539,10 @@ main {
         font-size: 16px;
     }
 
+    .gated-wrapper {
+      padding-right: 24px;
+    }
+
 }
 
 /*─────────────────────────────────────────────────────────────────────────
@@ -614,15 +619,28 @@ main {
 
 /* “Do we need a gate code…” wrapper */
 .gated-wrapper {
-  margin-top: 32px;
+  margin-top: 48px;
   position: relative;
   display: inline-block;
 }
 
+.gated-wrapper label {
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+#recaptcha-form {
+  margin-top: 48px;
+}
 
 /* Show/hide the “selected-gate” div */
 #selected-gate {
   display: none;
+}
+
+#awarenessOptions {
+  padding: 12px;
+  font-family: var(--mont);
 }
 
 

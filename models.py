@@ -25,6 +25,8 @@ class PickupRequest(db.Model):
     status = db.Column(db.String(50), default='Pending')
     
     gated = db.Column(db.Boolean, default=False)
+
+    awareness = db.Column(db.String(120), nullable=False)
     
     request_date = db.Column(db.String(120), nullable=True)
     request_time = db.Column(db.String(120), nullable=True)

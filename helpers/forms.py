@@ -39,20 +39,24 @@ class RequestForm(FlaskForm):
     
     # Gated Info
     gated = BooleanField("Gated")
-    gatedOptions = SelectField("Gated Options", choices=[
-        ("", "-- Select Option --"),
-        ("code", "Provide a gate code"),
-        ("qr", "Upload a QR code"),
-        ("notice", "I will notify our community access attendant")
-    ], validators=[Optional()])
-    gateCodeInput = StringField("Gate Code", validators=[
-        Optional(), Length(max=20)
-    ])
-    qrCodeInput = FileField("QR Code", validators=[Optional()])
-    # Hidden fields for final gating data (if needed)
-    selectedGatedOption = HiddenField("Selected Gated Option", validators=[Optional()])
-    finalGateCode = HiddenField("Final Gate Code", validators=[Optional()])
-    finalNotice = HiddenField("Final Notice", validators=[Optional()])
+
+    awarenessOptions = SelectField(
+        "How did you hear about us?",
+        choices=[
+            ("", "-- Select Option --"),
+            ("Word of mouth", "Word of mouth"),
+            ("Facebook", "Facebook"),
+            ("Nextdoor", "Nextdoor"),
+            ("Other social media", "Other social media"),
+            ("Online website", "An online website (Zero Waste, Stopwaste.org, etc.)"),
+            ("Referral", "Referral"),
+            ("Garbage Service", "Pleasanton Garbage Service"),
+            ("Seen", "Saw EkoLinq around town"),
+            ("Other", "Other"),
+        ],
+        validators=[DataRequired()]
+    )
+
     recaptcha = RecaptchaField()
 
 

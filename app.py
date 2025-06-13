@@ -30,7 +30,7 @@ from sqlalchemy import func, or_
 from pycognito import Cognito
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
-from helpers.analytics import get_admin_metrics, city_distribution
+from helpers.analytics import get_admin_metrics, city_distribution, awareness_distribution
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
@@ -38,7 +38,7 @@ from helpers.helpers import format_date
 from helpers.routing import compute_optimized_route, seconds_to_hms
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
-                             send_error_report, send_editted_request_email)
+                             send_error_report, send_edited_request_email)
 from helpers.auth import verify_cognito_jwt, JoseError
 from helpers.export import weekly_export
 from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
@@ -415,6 +415,7 @@ def create_app():
             city    = form.city.data
             zip_    = form.zip.data
             notes   = form.notes.data
+            awareness = form.awarenessOptions.data
 
             gated = form.gated.data
             current_app.logger.debug("New request created.")
@@ -430,6 +431,7 @@ def create_app():
                 zipcode=zip_,
                 notes=notes,
                 gated=gated,
+                awareness=awareness,
                 status="Unfinished"
             )
             pickup = db.session.get(PickupRequest, new_id)
@@ -485,9 +487,9 @@ def create_app():
 
             session['pickup_request_id'] = request_id
 
-            if session.get('confirmation_email_sent'):
+            if session.get('confirmation_email_sent') and session["pickup_request_id"] != pickup.request_id:
                 current_app.logger.info("Sending edited pickup request email for request_id=%s", request_id)
-                send_editted_request_email(pickup)
+                send_edited_request_email(pickup)
                 current_app.logger.debug("Edited pickup request email sent for request_id=%s", request_id)
                 token = new_confirm_token(request_id)
                 session.update({
@@ -616,13 +618,13 @@ def create_app():
             # Redirect based on the page value
             if page == "edit_request":
                 current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
-                send_editted_request_email(pickup)
+                send_edited_request_email(pickup)
                 current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
 
                 return redirect(url_for('edit_request', request_id=request_id))
             else:
                 current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
-                send_editted_request_email(pickup)
+                send_edited_request_email(pickup)
                 current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
                 session['pickup_request_id'] = request_id
                 return redirect(url_for('confirmation', request_id=request_id))
@@ -865,7 +867,7 @@ def create_app():
                 request_id, chosen_date, chosen_time
             )
 
-            send_editted_request_email(pickup)
+            send_edited_request_email(pickup)
 
             return redirect(url_for('edit_request', request_id = pickup.request_id))
         else:
@@ -1082,8 +1084,9 @@ def create_app():
             "Window total=%d, All-time total=%d, date range %s – %s",
             pickups_total, pickups_total_all, start_date, end_date
         )
-        metrics = get_admin_metrics(start_date, end_date)
-        city_stats = city_distribution(start_date, end_date)
+        metrics          = get_admin_metrics(start_date, end_date)
+        city_stats       = city_distribution(start_date, end_date)
+        awareness_stats  = awareness_distribution(start_date, end_date)
 
         return render_template(
             'admin/admin_console.html',
@@ -1092,6 +1095,7 @@ def create_app():
             pickups_total_all=pickups_total_all,
             metrics=metrics,
             city_stats=city_stats, 
+            awareness_stats = awareness_stats,
             form=form  # Pass the form to your template
         )
 

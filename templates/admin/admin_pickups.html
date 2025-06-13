@@ -58,30 +58,31 @@
     <table id="requests-table" border="1" cellpadding="5" cellspacing="0" >
       <thead>
         <tr>
-          <th>Actions</th>
-          <th>Status</th>
-          <th>Date Filed</th>
-          <th>Request Date</th>
-          <th>Email</th>
-          <th>Phone Number</th>
-          <th>Address</th>
-          <th>City</th>
-          <th>Zip</th>
-          <th>Cus. Notes</th>
-          <th>Admin Notes</th>
-          <th>Gated</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>ID</th>
-          <th>Completion Date/Time</th>
+          <th class="min-w-200">Actions</th>
+          <th class="min-w-120">Status</th>
+          <th class="min-w-150">Date Filed</th>
+          <th class="min-w-150">Request Date</th>
+          <th class="min-w-300">Email</th>
+          <th class="min-w-200">Phone Number</th>
+          <th class="min-w-250">Address</th>
+          <th class="min-w-150">City</th>
+          <th class="min-w-75">Zip</th>
+          <th class="min-w-300 word-break">Cus. Notes</th>
+          <th class="min-w-300 word-break">Admin Notes</th>
+          <th class="min-w-100">Gated</th>
+          <th class="min-w-200">Awareness</th>
+          <th class="min-w-150">First Name</th>
+          <th class="min-w-200">Last Name</th>
+          <th class="min-w-50">ID</th>
+          <th class="min-w-250">Completion Date/Time</th>
         </tr>
       </thead>
       <tbody>
         {% for req in requests %}
         <tr>
-          <td class="min-w-80 align-center action-container">
+          <td class="align-center action-container">
             <button class="download-btn" id="view-request" data-attribute="{{ req.request_id }}"><i class="bi bi-arrow-up-right-square"></i>View</button>
-            <form action="{{ url_for('delete_pickup') }}" method="POST">
+            <form action="{{ url_for('delete_pickup') }}" method="POST" class="delete-form">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
               <button
@@ -110,6 +111,7 @@
           <td class="min-w-300 word-break">{{ req.notes }}</td>
           <td class="min-w-300 word-break">{{ req.admin_notes }}</td>
           <td class="min-w-100">{{ req.gated }}</td>
+          <td class="min-w-200">{{ req.awareness }}</td>
           <td class="min-w-150">{{ req.fname }}</td>
           <td class="min-w-200">{{ req.lname }}</td>
           <td class="min-w-50">{{ req.request_id }}</td>

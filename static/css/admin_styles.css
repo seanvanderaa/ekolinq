@@ -1,6 +1,7 @@
 body {
     background-color: var(--d-green);
     padding-top: 120px;
+    padding-bottom: 60px;
 }
 
 main {  

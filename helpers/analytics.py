@@ -28,10 +28,10 @@ larger consider:
 from __future__ import annotations
 
 from datetime import date
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
+from collections import Counter
 
 from models import db, PickupRequest
-from collections import Counter
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -151,55 +151,70 @@ def get_admin_metrics(start_date: date, end_date: date) -> Dict[str, float | Non
     metrics.update(returning_customer_average_days(start_date, end_date))
     return metrics
 
-def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
-    """
-    Return counts *and* percentages of requests per city for
-    both the selected window and the whole table.
-
-    The dict is shaped for Chart.js already.
-    """
+def _categorical_distribution(
+    *,
+    column,                        # SQLAlchemy column obj (PickupRequest.city …)
+    start_date: date,
+    end_date: date,
+) -> Dict[str, list]:
+    """Return dict ⇒ {categories, counts_all, percents_all, counts_window, …}."""
     sess = db.session
-    rows: list[tuple[str, str]] = (
-        sess.query(PickupRequest.city, PickupRequest.date_filed)
+    rows: List[Tuple[str, str]] = (
+        sess.query(column, PickupRequest.date_filed)
         .filter(PickupRequest.date_filed.isnot(None))
         .all()
     )
 
     if not rows:
-        return {
-            "cities": [],
-            "counts_all": [],
-            "percents_all": [],
-            "counts_window": [],
-            "percents_window": [],
-        }
+        empty = {k: [] for k in (
+            "categories",
+            "counts_all",
+            "percents_all",
+            "counts_window",
+            "percents_window",
+        )}
+        return empty
 
     counter_all: Counter[str] = Counter()
     counter_window: Counter[str] = Counter()
 
-    for city, datestr in rows:
-        if city is None:
+    for cat, datestr in rows:
+        if cat is None:
             continue
-        counter_all[city] += 1
+        counter_all[cat] += 1
         d = _parse_iso(datestr)
         if d and start_date <= d <= end_date:
-            counter_window[city] += 1
+            counter_window[cat] += 1
 
-    # sort cities by all-time volume, high → low
-    cities = [c for c, _ in counter_all.most_common()]
+    categories = [c for c, _ in counter_all.most_common()]
 
-    total_all = sum(counter_all.values())
-    total_window = sum(counter_window.values()) or 1  # avoid /0
-
-    counts_all = [counter_all[c] for c in cities]
-    percents_all = [_pct(counter_all[c], total_all) for c in cities]
-    counts_window = [counter_window.get(c, 0) for c in cities]
-    percents_window = [_pct(counter_window.get(c, 0), total_window) for c in cities]
+    total_all = sum(counter_all.values()) or 1
+    total_window = sum(counter_window.values()) or 1
 
     return {
-        "cities": cities,
-        "counts_all": counts_all,
-        "percents_all": percents_all,
-        "counts_window": counts_window,
-        "percents_window": percents_window,
+        "categories": categories,
+        "counts_all": [counter_all[c] for c in categories],
+        "percents_all": [_pct(counter_all[c], total_all) for c in categories],
+        "counts_window": [counter_window.get(c, 0) for c in categories],
+        "percents_window": [_pct(counter_window.get(c, 0), total_window) for c in categories],
     }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  Public wrappers for specific columns
+# ──────────────────────────────────────────────────────────────────────────────
+
+def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
+    return _categorical_distribution(
+        column=PickupRequest.city,
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
+    return _categorical_distribution(
+        column=PickupRequest.awareness,
+        start_date=start_date,
+        end_date=end_date,
+    )
