@@ -71,9 +71,6 @@ class RequestForm(FlaskForm):
         # 1) Compose the full address
         full_addr = f"{self.address.data}, {self.city.data} {self.zip.data}"
 
-        # 2) Choose provider
-        provider = current_app.config.get("GOOGLE_API_KEY")
-
         try:
             _verify(full_addr, self.place_id.data)
         except ValidationError as ve:

@@ -1,11 +1,10 @@
-/* request.js */
 window.initAutocomplete = function () {
   const input = document.getElementById('address');
 
   const ac = new google.maps.places.Autocomplete(input, {
     types: ['address'],
     componentRestrictions: { country: 'us' },
-    fields: ['address_components', 'formatted_address']
+    fields: ['address_components', 'formatted_address', 'place_id']
   });
 
   ac.addListener('place_changed', () => {
@@ -13,20 +12,38 @@ window.initAutocomplete = function () {
     if (!place.address_components) return;
 
     // clear previous values
-    document.getElementById('city').value = '';
-    document.getElementById('zip').value  = '';
+    document.getElementById('city').value     = '';
+    document.getElementById('zip').value      = '';
     document.getElementById('place_id').value = place.place_id || '';
 
+    // ---- OPTION A: use address_components ----
+    let streetNumber = '';
+    let route        = '';
     place.address_components.forEach(c => {
+      if (c.types.includes('street_number')) {
+        streetNumber = c.long_name;
+      }
+      if (c.types.includes('route')) {
+        route = c.long_name;
+      }
       switch (c.types[0]) {
-        case 'locality':        // city
+        case 'locality':    // city
           document.getElementById('city').value = c.long_name;
           break;
-        case 'postal_code':     // 5-digit ZIP only
-          document.getElementById('zip').value = c.long_name;
+        case 'postal_code': // zip
+          document.getElementById('zip').value  = c.long_name;
           break;
       }
     });
+    // join number + street name
+    const streetOnly = [streetNumber, route].filter(Boolean).join(' ');
+    document.getElementById('address').value = streetOnly;
+
+
+    // ---- OPTION B: use formatted_address.split(',') ----
+    // this will grab everything before the first comma
+    // const streetOnly = place.formatted_address.split(',')[0];
+    // document.getElementById('address').value = streetOnly;
   });
 };
 
@@ -64,31 +81,88 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  const initForm = document.getElementById('init-form-info');
+  const initForm   = document.getElementById('init-form-info');
+  const csrfToken  = document.querySelector('input[name="csrf_token"]').value;
+  let alreadyPosted = false;                      // prevents an endless loop
 
-  // Form submission handler
-  initForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    // Basic gating validation: if gated is checked, ensure we have what we need
+  ['address', 'city', 'zip'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      document.getElementById('place_id').value = '';
+    });
+  });
+
+  initForm.addEventListener('submit', async function handleSubmit (evt) {
+    if (alreadyPosted) return;                    // second call = real submit
+
+    evt.preventDefault();
+
+    // 0️⃣ reCAPTCHA client-side guard
     if (grecaptcha.getResponse().length === 0) {
-
-      alert('Please click the “I’m not a robot” box before continuing.');
+      showFormError('recaptcha', 'Please click the “I’m not a robot” box.');
       return;
     }
 
-    const zipcode = document.getElementById('zip').value;
+    // 1️⃣ ZIP code range check (existing endpoint is fine)
+    const zip = document.getElementById('zip').value.trim();
     try {
-      const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-      const data = await response.json();
-
-      if (data.valid) {
-        // If ZIP is valid, submit for real
-        initForm.submit(); 
-      } else {
-        alert(`${data.reason}`);
+      const zipRes = await fetch(`/verify_zip?zipcode=${encodeURIComponent(zip)}`);
+      const zipData = await zipRes.json();
+      if (!zipData.valid) {
+        showFormError('zip', zipData.reason);
+        return;
       }
     } catch (err) {
       console.error(err);
-      alert('Error verifying ZIP code. Please try again.');
+      showFormError('zip', 'ZIP-code validation failed. Please retry.');
+      return;
     }
+
+    // 2️⃣ Address existence check (new POST endpoint)
+    const addr   = document.getElementById('address').value.trim();
+    const city   = document.getElementById('city').value.trim();
+    const placeId = document.getElementById('place_id').value || null;
+
+    const body = JSON.stringify({
+      full_addr: `${addr}, ${city}, CA ${zip}`,
+      place_id : placeId,
+    });
+
+    try {
+      const aRes = await fetch('/api/validate_address', {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken' : csrfToken,
+        },
+        body,
+      });
+      const aData = await aRes.json();
+      if (!aData.valid) {
+        showFormError('address', aData.message);
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+      showFormError('address',
+        'Address validation service unavailable. Please try again.');
+      return;
+    }
+
+    // 3️⃣ All good → let the *real* POST go through
+    alreadyPosted = true;                         // flip the guard
+    initForm.submit();                            // triggers server-side checks
   });
+
+  /* ───────────────────────────────────────────── */
+  /* Tiny util to display inline messages          */
+  function showFormError(fieldName, msg) {
+    // remove any earlier message
+    document.querySelectorAll(`.err-${fieldName}`).forEach(el => el.remove());
+
+    const field = document.getElementById(fieldName);
+    const div   = document.createElement('div');
+    div.textContent = msg;
+    div.className   = `user-notice-warn err-${fieldName}`;
+    field.insertAdjacentElement('afterend', div);
+  }

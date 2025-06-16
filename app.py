@@ -13,6 +13,8 @@ from urllib.parse import urlencode
 from flask import (Flask, request, render_template, redirect, url_for, jsonify,
                    make_response, session, current_app, flash, abort, g)
 from flask_wtf import CSRFProtect
+from wtforms import ValidationError
+from flask_wtf.csrf import validate_csrf
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
@@ -32,7 +34,7 @@ from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from helpers.analytics import get_admin_metrics, city_distribution, awareness_distribution
 from helpers.cus_limiter import code_email_key
-from helpers.address import verifyZip
+from helpers.address import verifyZip, verifyAddress
 from helpers.contact import submitContact
 from helpers.helpers import format_date
 import helpers.import_backfill as backfill_mod
@@ -388,6 +390,28 @@ def create_app():
         current_app.logger.debug("verifyZip result: %s", result)
 
         return jsonify(result)
+    
+    @app.post("/api/validate_address")
+    @limiter.limit("20 per hour")
+    def validate_address():
+        current_app.logger.debug("POST /verify_address - verifying user address.")
+        validate_csrf(request.headers.get("X-CSRFToken", ""))
+
+        payload   = request.get_json(force=True)
+        full_addr = payload.get("full_addr")
+        place_id  = payload.get("place_id")
+
+        try:
+            full_addr = f"{self.address.data}, {self.city.data} {self.zip.data}"
+            verifyAddress(full_addr, self.place_id.data,
+                        self.city.data, self.zip.data)
+            verifyAddress(full_addr, place_id)
+        except ValidationError as ve:
+            return jsonify(valid=False, message=str(ve)), 200
+        except Exception:
+            return jsonify(valid=False,
+                        message="Address validation service unavailable."), 503
+        return jsonify(valid=True), 200
 
 
     @app.route('/request_pickup')
