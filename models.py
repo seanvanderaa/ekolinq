@@ -14,7 +14,7 @@ class PickupRequest(db.Model):
     fname = db.Column(db.String(100), nullable=True)
     lname = db.Column(db.String(100), nullable=True)
 
-    email = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=True)
     phone_number = db.Column(db.String(20), nullable=True)
 
     address = db.Column(db.String(200), nullable=False)
@@ -24,7 +24,7 @@ class PickupRequest(db.Model):
     notes = db.Column(db.String(400), nullable=True)
     status = db.Column(db.String(50), default='Pending')
     
-    gated = db.Column(db.Boolean, default=False)
+    gated = db.Column(db.Boolean, default=False, nullable=True)
 
     awareness = db.Column(db.String(120), nullable=False)
     
@@ -42,7 +42,7 @@ class PickupRequest(db.Model):
 
 import string
 import secrets
-_BASE62 = string.ascii_letters + string.digits      # 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+_BASE62 = string.ascii_letters + string.digits
 
 def generate_unique_request_id(length: int = 8, max_attempts: int = 20) -> str:
     """

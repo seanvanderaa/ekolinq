@@ -5,6 +5,7 @@
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/request_styles.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+
 {% endblock %}
 {% block content %}
   <main>
@@ -16,6 +17,7 @@
       </p>
       <form action="{{ url_for('request_init') }}" method="POST" id="init-form-info" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
+        <input type="hidden" id="place_id" name="place_id">
         <hr>
         <h3>Contact Info</h3>
         <div id="form-group-1" class="form-group-div">
@@ -43,17 +45,17 @@
         <div id="form-group-2" class="form-group-div">
           <div class="form-group full-width">
             <label for="address">Address<span class="col-red">*</span></label>
-            {{ form.address(id="address", placeholder="100 Pleasanton Ave.", required=True) }}
+            {{ form.address(id="address", placeholder="100 Pleasanton Ave.", required=True, autocomplete="off") }}
           </div>
         </div>
         <div id="form-group-2" class="form-group-div">
           <div class="form-group half-width">
             <label for="city">City<span class="col-red">*</span></label>
-            {{ form.city(id="city", placeholder="City", required=True, value=city) }}
+            {{ form.city(id="city", placeholder="City", required=True, autocomplete="off") }}
           </div>
           <div class="form-group half-width">
             <label for="zip">Zip Code<span class="col-red">*</span></label>
-            {{ form.zip(id="zip", placeholder="Zip Code", required=True, value=zipcode) }}
+            {{ form.zip(id="zip", placeholder="Zip Code", required=True, autocomplete="off") }}
           </div>
         </div>
         <div class="form-group notes-width">
@@ -135,7 +137,30 @@
   </main>
   {% endblock %}
 
-  {% block scripts %}
-    {{ super() }}
-    <script src="{{ url_for('static', filename='js/request.js') }}"></script>
-  {% endblock %}
+{% block scripts %}
+  {{ super() }}
+
+  <meta name="csp-nonce" content="{{ csp_nonce() }}">
+  <!-- 1) Patch createElement so every future <style> gets the nonce -->
+  <script nonce="{{ csp_nonce() }}">
+    (() => {
+      const NONCE = document.querySelector('meta[name="csp-nonce"]').content;
+      const orig  = document.createElement;
+      document.createElement = function (tag, opts) {
+        const el = orig.call(this, tag, opts);
+        if (tag && tag.toLowerCase() === 'style') {
+          el.setAttribute('nonce', NONCE);
+        }
+        return el;
+      };
+    })();
+  </script>
+
+  <script src="{{ url_for('static', filename='js/request.js') }}"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY | urlencode }}&libraries=places&callback=initAutocomplete&loading=async"
+    nonce="{{ csp_nonce() }}"
+    async></script>
+
+{% endblock %}
+

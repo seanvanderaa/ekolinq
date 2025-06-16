@@ -52,6 +52,10 @@ class BaseConfig:
     RECAPTCHA_PUBLIC_KEY=require("RECAPTCHA_PUBLIC_KEY")
     RECAPTCHA_PRIVATE_KEY=require("RECAPTCHA_PRIVATE_KEY")
 
+    # ───── GOOGLE ───────────────────────────
+    GOOGLE_API_KEY=require("GOOGLE_API_KEY")
+
+
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     LOGGER_LEVEL = "DEBUG"

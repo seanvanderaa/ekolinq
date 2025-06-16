@@ -1,3 +1,35 @@
+/* request.js */
+window.initAutocomplete = function () {
+  const input = document.getElementById('address');
+
+  const ac = new google.maps.places.Autocomplete(input, {
+    types: ['address'],
+    componentRestrictions: { country: 'us' },
+    fields: ['address_components', 'formatted_address']
+  });
+
+  ac.addListener('place_changed', () => {
+    const place = ac.getPlace();
+    if (!place.address_components) return;
+
+    // clear previous values
+    document.getElementById('city').value = '';
+    document.getElementById('zip').value  = '';
+    document.getElementById('place_id').value = place.place_id || '';
+
+    place.address_components.forEach(c => {
+      switch (c.types[0]) {
+        case 'locality':        // city
+          document.getElementById('city').value = c.long_name;
+          break;
+        case 'postal_code':     // 5-digit ZIP only
+          document.getElementById('zip').value = c.long_name;
+          break;
+      }
+    });
+  });
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const overlay = document.getElementById('overlay');
     

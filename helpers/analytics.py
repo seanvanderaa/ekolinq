@@ -57,15 +57,26 @@ def _parse_iso(date_str: str | None) -> date | None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def new_customer_percentages(start_date: date, end_date: date) -> Dict[str, float]:
-    """Return ``{"percent_window": x, "percent_all": y}``.
+    """
+    Return {"percent_window": x, "percent_all": y}.
 
-    The numerator counts **first-ever** requests for each unique address.
-    The denominator is the number of requests (not addresses) in scope.
+    *Only* “real” requests (rows whose `admin_notes` do **not** equal
+    "Imported via import-backfill CLI") count toward the denominators.
+    Imported rows are used **only** to establish whether an address was
+    already a customer before the window.
+
+    Numerator = first-ever request(s) for each unique address **that has at
+    least one real request**.
+    Denominator = total number of real requests in scope.
     """
     sess = db.session
 
-    rows: List[tuple[str, str]] = (
-        sess.query(PickupRequest.address, PickupRequest.date_filed)
+    rows: list[tuple[str, str, str | None]] = (
+        sess.query(
+            PickupRequest.address,
+            PickupRequest.date_filed,
+            PickupRequest.admin_notes,
+        )
         .filter(PickupRequest.date_filed.isnot(None))
         .all()
     )
@@ -73,74 +84,119 @@ def new_customer_percentages(start_date: date, end_date: date) -> Dict[str, floa
     if not rows:
         return {"percent_window": 0.0, "percent_all": 0.0}
 
-    earliest: Dict[str, date] = {}
+    earliest: dict[str, date] = {}
+    has_real: set[str] = set()
     total_requests_window = 0
+    total_requests_all = 0
 
-    for addr, datestr in rows:
+    for addr, datestr, notes in rows:
         d = _parse_iso(datestr)
         if addr is None or d is None:
             continue
 
-        if start_date <= d <= end_date:
-            total_requests_window += 1
-
+        # track the earliest request (imported *or* real) for each address
         if addr not in earliest or d < earliest[addr]:
             earliest[addr] = d
 
-    firsts_in_window = sum(
-        1 for first_seen in earliest.values() if start_date <= first_seen <= end_date
-    )
+        is_imported = notes == "Imported via import-backfill CLI"
 
-    firsts_all_time = len(earliest)
-    total_all = sum(1 for _, datestr in rows if _parse_iso(datestr) is not None)
+        if not is_imported:            # only “real” rows count as requests
+            total_requests_all += 1
+            if start_date <= d <= end_date:
+                total_requests_window += 1
+            has_real.add(addr)
+
+    # --- numerators --------------------------------------------------------
+    firsts_in_window = sum(
+        1
+        for addr, first_seen in earliest.items()
+        if addr in has_real and start_date <= first_seen <= end_date
+    )
+    firsts_all_time = len(has_real)    # every address with ≥1 real request
 
     return {
         "percent_window": _pct(firsts_in_window, total_requests_window),
-        "percent_all": _pct(firsts_all_time, total_all),
+        "percent_all":    _pct(firsts_all_time,  total_requests_all),
     }
 
 
 def returning_customer_average_days(
     start_date: date, end_date: date
 ) -> Dict[str, Optional[float]]:
-    """Average gap between first and second request **per returning address**.
+    """
+    Average gap (in days) between a location’s first and second request.
 
-    Addresses with only one request are ignored.
+    Rules
+    -----
+    • Requests whose `admin_notes` contain *exactly*
+      'Imported via import-backfill CLI' are ignored **unless** the same
+      address also has at least one non-import request.
+    • If both imported **and** real requests exist, we calculate the gap
+      between the imported request that is closest (<=) to the first real
+      request and that first real request.
+    • If no imported requests exist, we calculate the gap between the first
+      and second real requests, as before.
+    • Addresses with fewer than two qualifying requests are skipped.
     """
     sess = db.session
 
-    rows: List[tuple[str, str]] = (
-        sess.query(PickupRequest.address, PickupRequest.date_filed)
+    # Pull address, date, and admin_notes in one query, ordered for easier grouping
+    rows: list[tuple[str, str, str | None]] = (
+        sess.query(
+            PickupRequest.address,
+            PickupRequest.date_filed,
+            PickupRequest.admin_notes,
+        )
         .filter(PickupRequest.date_filed.isnot(None))
         .order_by(PickupRequest.address, PickupRequest.date_filed)
         .all()
     )
 
-    dates_by_addr: Dict[str, List[date]] = {}
-    for addr, datestr in rows:
+    # Group by address: list of (date, is_imported) tuples
+    recs_by_addr: dict[str, list[tuple[date, bool]]] = {}
+    for addr, datestr, notes in rows:
         d = _parse_iso(datestr)
         if addr is None or d is None:
             continue
-        dates_by_addr.setdefault(addr, []).append(d)
+        is_import = notes == "Imported via import-backfill CLI"
+        recs_by_addr.setdefault(addr, []).append((d, is_import))
 
-    gaps_all: List[int] = []
-    gaps_window: List[int] = []
+    gaps_all: list[int] = []
+    gaps_window: list[int] = []
 
-    for dlist in dates_by_addr.values():
-        if len(dlist) < 2:
-            continue
-        dlist.sort()
-        gap_first = (dlist[1] - dlist[0]).days
-        gaps_all.append(gap_first)
-        if start_date <= dlist[1] <= end_date:
-            gaps_window.append(gap_first)
+    for recs in recs_by_addr.values():
+        # split into imported / real lists, each already in chronological order
+        imported = [d for d, imp in recs if imp]
+        real     = [d for d, imp in recs if not imp]
 
-    def _avg(lst: List[int]) -> Optional[float]:
+        # ---- choose the two dates that define the gap ----
+        first, second = None, None
+
+        if real:
+            if imported:
+                # use the imported date closest *before* the first real date
+                first_real = real[0]
+                first_import = max(
+                    (d for d in imported if d <= first_real),
+                    default=imported[0],           # none precede → earliest import
+                )
+                first, second = first_import, first_real
+            elif len(real) >= 2:
+                first, second = real[0], real[1]
+        # else: only imported requests → ignore
+
+        if first and second:
+            gap_days = (second - first).days
+            gaps_all.append(gap_days)
+            if start_date <= second <= end_date:
+                gaps_window.append(gap_days)
+
+    def _avg(lst: list[int]) -> Optional[float]:
         return round(sum(lst) / len(lst), 1) if lst else None
 
     return {
         "avg_window_days": _avg(gaps_window),
-        "avg_all_days": _avg(gaps_all),
+        "avg_all_days":    _avg(gaps_all),
     }
 
 
@@ -161,7 +217,7 @@ def _categorical_distribution(
     sess = db.session
     rows: List[Tuple[str, str]] = (
         sess.query(column, PickupRequest.date_filed)
-        .filter(PickupRequest.date_filed.isnot(None))
+        .filter(column.isnot(None), column != "", column != "Unknown")
         .all()
     )
 
@@ -179,7 +235,7 @@ def _categorical_distribution(
     counter_window: Counter[str] = Counter()
 
     for cat, datestr in rows:
-        if cat is None:
+        if not cat or not cat.strip():
             continue
         counter_all[cat] += 1
         d = _parse_iso(datestr)

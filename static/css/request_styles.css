@@ -859,3 +859,41 @@ main {
   margin-top: 0;
   margin-bottom: 8px;
 }
+
+.pac-container {
+  font-family: var(--mont);
+  padding: 4px 16px;
+  color: black;
+  font-size: 16px;
+  background-color: white;
+  box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.pac-item {
+  margin: 0px !important;
+  padding: 12px 4px;
+  color: rgba(0, 0, 0, 0.779);
+  border-bottom: 1px solid lightgrey;
+  transition: background-color .2s ease, color .2s ease;
+  border-radius: 0px;
+}
+
+.pac-item-query {
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.pac-item:hover {
+  background-color: lightgrey;
+  color: black;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pac-item:last-child {
+  border: none;
+}
+
+.d-none { display:none !important; }

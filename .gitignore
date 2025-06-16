@@ -12,3 +12,6 @@ credentials/
 static/images/qr_codes/
 
 app.*
+
+import/
+backfill.csv

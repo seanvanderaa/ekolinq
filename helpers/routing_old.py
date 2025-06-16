@@ -9,7 +9,7 @@ def get_optimized_route(addresses, start_location, api_key=None):
     from urllib.parse import urlencode
 
     if not api_key:
-        api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError("Google Maps API key is required")
 

@@ -35,6 +35,7 @@ from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip
 from helpers.contact import submitContact
 from helpers.helpers import format_date
+import helpers.import_backfill as backfill_mod
 from helpers.routing import compute_optimized_route, seconds_to_hms
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
@@ -94,6 +95,7 @@ def create_app():
     COGNITO_DOMAIN    = app.config["COGNITO_DOMAIN"]      # demo-domain.auth.us-east-2.amazoncognito.com
     COGNITO_CLIENT_ID = app.config["COGNITO_CLIENT_ID"]
     COGNITO_REGION = app.config["COGNITO_REGION"]
+    GOOGLE_API_KEY = app.config["GOOGLE_API_KEY"]
 
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'], salt="pickup-confirm")
 
@@ -136,15 +138,28 @@ def create_app():
             "https://www.google.com",          # reCAPTCHA loader
             "https://www.gstatic.com",         # reCAPTCHA iframe
             "https://maps.googleapis.com",
+            'https://maps.gstatic.com',
         ],
         "style-src":     [
             SELF,
             "https://fonts.googleapis.com",
-            "https://cdn.jsdelivr.net",        # bootstrap-icons.css
+            "'nonce-{{nonce}}'", 
+            "https://cdn.jsdelivr.net",       
         ],
         "img-src":       [SELF, "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
         "font-src":      ["https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
         "connect-src":   [SELF, "https://maps.googleapis.com"],
+        "worker-src": [
+            "blob:"                       # required for Web Workers in Search JS
+        ],
+        "child-src": [
+            "blob:"                       # likewise
+        ],
+        "font-src": [
+            "https://fonts.gstatic.com",
+            "https://cdn.jsdelivr.net",
+            "data:"
+        ],
         "frame-src":     [
             "https://maps.googleapis.com",
             "https://www.google.com",          # reCAPTCHA iframe
@@ -397,7 +412,7 @@ def create_app():
             zipcode = None
             current_app.logger.warning("Invalid or missing zipcode provided: %s", zipcode)
 
-        return render_template('request.html', zipcode = zipcode, city=city, form=form)
+        return render_template('request.html', zipcode = zipcode, city=city, form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
 
 
     @app.route('/request_init', methods=['GET', 'POST'])
@@ -487,7 +502,7 @@ def create_app():
 
             session['pickup_request_id'] = request_id
 
-            if session.get('confirmation_email_sent') and session["pickup_request_id"] != pickup.request_id:
+            if session.get('confirmation_email_sent') and session["pickup_request_id"] == pickup.request_id:
                 current_app.logger.info("Sending edited pickup request email for request_id=%s", request_id)
                 send_edited_request_email(pickup)
                 current_app.logger.debug("Edited pickup request email sent for request_id=%s", request_id)
@@ -1618,7 +1633,7 @@ def create_app():
                 requested_addresses,
                 start_location=depot,           # identical start/end rules as live view
                 end_location=depot,
-                api_key=os.environ.get("GOOGLE_MAPS_API_KEY")
+                api_key=os.environ.get("GOOGLE_API_KEY")
             )
         except Exception:
             current_app.logger.exception("Distance-matrix/TSP error")
@@ -2032,6 +2047,8 @@ def create_app():
             print("Creating all tables...")
             db.create_all()
             print("Database reset complete.")
+
+    backfill_mod.register(app)
 
     return app
 
