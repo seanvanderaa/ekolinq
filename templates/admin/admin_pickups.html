@@ -81,7 +81,7 @@
         {% for req in requests %}
         <tr>
           <td class="align-center action-container">
-            <button class="download-btn" id="view-request" data-attribute="{{ req.request_id }}"><i class="bi bi-arrow-up-right-square"></i>View</button>
+            <button class="download-btn view-request-btn" id="view-request" data-id="{{ req.request_id }}"><i class="bi bi-arrow-up-right-square"></i>View</button>
             <form action="{{ url_for('delete_pickup') }}" method="POST" class="delete-form">
               {{ delete_form.csrf_token }}  <!-- CSRF protection -->
               <input type="hidden" name="pickup_id" value="{{ req.id }}">
