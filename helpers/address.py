@@ -21,19 +21,59 @@ def verifyZip(zip_list, zip_code):
         "reason": ""
     }
 
-def verifyInfo(fname, lname, email, address, city, zip, gated):
-    print (fname, lname, email, address, city, zip, gated)
-
-# app/services/address_validation.py
+import hashlib
+import json
+import logging
 import requests
 from flask import current_app
-from wtforms import ValidationError
 
-def verifyAddress(full_addr, place_id, user_city, user_zip):
+class AddressError(Exception):   # keeps your ValidationError semantics
+    pass
+
+def verifyAddress(full_addr: str,
+                   place_id: str | None,
+                   user_city: str,
+                   user_zip: str) -> tuple[bool, str]:
+    """
+    Returns (is_valid, message).
+    • Never logs PII (full address, city, ZIP).
+    • Surfaces a clear message when the Address Validation API is unavailable.
+    """
+    log = current_app.logger
     key = current_app.config["GOOGLE_API_KEY"]
 
+    def _anonymise(text: str) -> str:
+        """8-char stable hash for traceability without leaking PII."""
+        return hashlib.sha256(text.encode()).hexdigest()[:8]
+
+    req_id = _anonymise(full_addr)
+    log.info("verify_address[%s]: place=%s", req_id, bool(place_id))
+
+    # ------------- helper for component comparison -------------------
+    def _extract(comp, kind):
+        if kind in comp.get("types", []):
+            return comp.get("long_name", "").lower()
+        if comp.get("componentType") == kind:
+            return comp.get("componentName", {}).get("text", "").lower()
+        return None
+
+    def _match(comps):
+        city_ok = any(_extract(c, "locality")     == user_city.lower()
+                      for c in comps)
+        zip_ok  = any(_extract(c, "postal_code")  == user_zip
+                      for c in comps)
+        if city_ok and zip_ok:
+            return True, ""
+        msg = []
+        if not city_ok:
+            msg.append("city")
+        if not zip_ok:
+            msg.append("ZIP")
+        return False, f"The {', '.join(msg)} doesn’t match Google’s data."
+
+    # ───────── 1) Place Details — only if a place_id was provided ─────
     if place_id:
-        r = requests.get(
+        resp = requests.get(
             "https://maps.googleapis.com/maps/api/place/details/json",
             params={
                 "place_id": place_id,
@@ -42,28 +82,48 @@ def verifyAddress(full_addr, place_id, user_city, user_zip):
             },
             timeout=3,
         )
-        data = r.json()
-        if data.get("status") == "OK":
-            comps = data["result"]["address_components"]
-            def has(t, val):
-                return any(t in c["types"] and c["long_name"].lower() == val.lower()
-                           for c in comps)
-            if has("locality", user_city) and has("postal_code", user_zip):
-                return        # ✅ city & ZIP match this Place ID
-            # else fall through and geocode the text for a second opinion
+        if resp.ok and resp.json().get("status") == "OK":
+            ok, msg = _match(resp.json()["result"]["address_components"])
+            log.info("place_vrdct[%s]: %s", req_id, ok)
+            return ok, msg
+        # otherwise fall through
 
-    # Fallback: geocode the raw text
-    r = requests.get(
-        "https://maps.googleapis.com/maps/api/geocode/json",
-        params={
-            "address":    full_addr,
-            "components": "country:US",
-            "key":        key,
-        },
+    # ───────── 2) Address Validation fallback ─────────────────────────
+    payload = {
+        "address":         {"regionCode": "US", "addressLines": [full_addr]},
+        "enableUspsCass":  True,
+    }
+    resp = requests.post(
+        "https://addressvalidation.googleapis.com/v1:validateAddress",
+        params={"key": key},
+        json=payload,
         timeout=3,
     )
-    data = r.json()
-    if data.get("status") != "OK" or not data["results"]:
-        raise ValidationError("Address not found—please check the spelling and ensure all of the details—address, city, ZIP—are correct.")
 
-    
+    if not resp.ok:
+        # API unavailable: do NOT attempt to judge the address
+        log.warning("addr_api_fail[%s]: HTTP %s", req_id, resp.status_code)
+        raise AddressError(
+            "Our address verification service is temporarily unavailable "
+            "— please contact us."
+        )
+
+    rj       = resp.json()
+    result   = rj.get("result", {})
+    verdict  = result.get("verdict", {})
+
+    # Required high-confidence flags
+    if not verdict.get("addressComplete"):
+        log.info("addr_incomplete[%s]", req_id)
+        return False, "Google could not find a complete match for that address."
+
+    if any(verdict.get(f) for f in (
+            "hasInferredComponents",
+            "hasReplacedComponents",
+            "hasUnconfirmedComponents")):
+        log.info("addr_fixed[%s]", req_id)
+        return False, ("Some part of the address is incorrect—we could not find the address you've listed. Please double-check and try again. If the error persists, please contact us.")
+
+    ok, msg = _match(result.get("address", {}).get("addressComponents", []))
+    log.info("addr_vrdct[%s]: %s", req_id, ok)
+    return ok, msg

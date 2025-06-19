@@ -1,8 +1,8 @@
 # forms.py
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, BooleanField, SelectField, TextAreaField, FileField, HiddenField, FieldList, FormField, SubmitField, ValidationError
-from wtforms.fields import EmailField, DateField
-from wtforms.validators import DataRequired, Email, Optional, Length, Regexp
+from wtforms.fields import EmailField, DateField, RadioField
+from wtforms.validators import DataRequired, Email, Optional, Length, Regexp, InputRequired
 import requests, urllib.parse
 from flask import current_app
 
@@ -40,7 +40,12 @@ class RequestForm(FlaskForm):
     ])
     
     # Gated Info
-    gated = BooleanField("Gated")
+    gated = RadioField(
+        "Do we need a gate code or permission to access your address?",
+        choices=[("yes", "Yes"), ("no", "No")],
+        coerce=lambda v: v == "yes", 
+        validators=[InputRequired(message="Please choose either 'Yes' or 'No'")]
+    )
     place_id = StringField()        
 
     awarenessOptions = SelectField(

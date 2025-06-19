@@ -72,13 +72,19 @@ document.addEventListener('DOMContentLoaded', function() {
         popups.forEach(p => p.style.display = 'none');  // Hide all popups
       });
     });
-    const checkbox = document.getElementById('gated');
-    const selectedGate = document.getElementById('selected-gate');
 
-    // toggle visibility on change
-    checkbox.addEventListener('change', function() {
-      selectedGate.style.display = this.checked ? 'block' : 'none';
-    });
+    const selectedGate = document.getElementById('selected-gate');
+    const radios       = document.querySelectorAll('input[name="gated"]');
+
+    function toggleGateInfo() {
+      const yesChosen = document.querySelector('input[name="gated"][value="yes"]').checked;
+      selectedGate.style.display = yesChosen ? 'block' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', toggleGateInfo));
+
+    // Set the correct state on first load (useful on validation errors)
+    toggleGateInfo();
   });
 
   const initForm   = document.getElementById('init-form-info');
@@ -126,6 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const body = JSON.stringify({
       full_addr: `${addr}, ${city}, CA ${zip}`,
       place_id : placeId,
+      city     : city,   // ← add both
+      zip      : zip
     });
 
     try {
@@ -166,3 +174,5 @@ document.addEventListener('DOMContentLoaded', function() {
     div.className   = `user-notice-warn err-${fieldName}`;
     field.insertAdjacentElement('afterend', div);
   }
+
+

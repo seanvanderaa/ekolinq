@@ -68,7 +68,7 @@ main {
 }
 
 .info-text {
-    top: -120px !important;
+    top: -96px !important;
 }
 
 #gateCodeInput {
@@ -625,7 +625,6 @@ main {
 }
 
 .gated-wrapper label {
-  margin-left: 8px;
   font-weight: 600;
 }
 
@@ -897,3 +896,15 @@ main {
 }
 
 .d-none { display:none !important; }
+
+.explanatory-label {
+  font-size: 14px;
+  color: var(--subtle-text-wbg);
+}
+
+.btn-group        { display: flex; gap: .5rem; margin-top: 12px;}
+.btn-check        { display: none; }
+.btn              { padding: .5rem 1rem; background-color: var(--subtle-text);
+                    border-radius: .25rem; cursor: pointer; user-select: none; transition: border .2s ease, background-color .2s ease, color .2s ease;}
+.btn-check:checked + .btn,
+.btn:hover        { background: var(--m-green); color: #fff;}

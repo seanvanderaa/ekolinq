@@ -80,6 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn5 = document.getElementById('edit-request-init-open-contact');
   if (btn5) btn5.addEventListener('click', openContactPopup);
 
+  const footerLink = document.getElementById('footer-contact-link');
+  if (footerLink) footerLink.addEventListener('click', openContactPopup);
+
   const errorButton = document.getElementById('error-back-to-home');
   if (errorButton) {
     errorButton.addEventListener('click', () => {

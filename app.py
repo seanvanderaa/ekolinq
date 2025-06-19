@@ -34,7 +34,7 @@ from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from helpers.analytics import get_admin_metrics, city_distribution, awareness_distribution
 from helpers.cus_limiter import code_email_key
-from helpers.address import verifyZip, verifyAddress
+from helpers.address import verifyZip, verifyAddress, AddressError
 from helpers.contact import submitContact
 from helpers.helpers import format_date
 import helpers.import_backfill as backfill_mod
@@ -394,24 +394,40 @@ def create_app():
     @app.post("/api/validate_address")
     @limiter.limit("20 per hour")
     def validate_address():
-        current_app.logger.debug("POST /verify_address - verifying user address.")
+        log = current_app.logger
+        log.debug("POST /api/validate_address – verifying user address.")
+
+        # 0️⃣ CSRF guard ----------------------------------------------------
         validate_csrf(request.headers.get("X-CSRFToken", ""))
 
-        payload   = request.get_json(force=True)
-        full_addr = payload.get("full_addr")
-        place_id  = payload.get("place_id")
+        # 1️⃣ Extract body --------------------------------------------------
+        data = request.get_json(force=True) or {}
+        full_addr = data.get("full_addr")
+        place_id  = data.get("place_id")
+        city      = data.get("city")
+        zip_code  = data.get("zip")
 
-        try:
-            full_addr = f"{self.address.data}, {self.city.data} {self.zip.data}"
-            verifyAddress(full_addr, self.place_id.data,
-                        self.city.data, self.zip.data)
-            verifyAddress(full_addr, place_id)
-        except ValidationError as ve:
-            return jsonify(valid=False, message=str(ve)), 200
-        except Exception:
+        # 2️⃣ Sanity-check payload (short-circuit before hitting Google) ----
+        if not all((full_addr, city, zip_code)):
+            # Still HTTP-200 so the JS can show the message in-line
             return jsonify(valid=False,
-                        message="Address validation service unavailable."), 503
-        return jsonify(valid=True), 200
+                        message="Address, city and ZIP are required."), 200
+
+        # 3️⃣ Call the validator -------------------------------------------
+        try:
+            ok, msg = verifyAddress(full_addr, place_id, city, zip_code)
+        except AddressError as ae:
+            # Google service down / quota exhausted, etc.
+            # Preserve front-end expectations: valid:false, HTTP-200
+            return jsonify(valid=False, message=str(ae)), 200
+        except Exception:                           # truly unexpected
+            log.exception("Unexpected error in validate_address")
+            return jsonify(valid=False,
+                        message="Internal server error"), 500
+
+        # 4️⃣ Bubble result back unchanged ---------------------------------
+        return jsonify(valid=ok, message=msg), 200
+
 
 
     @app.route('/request_pickup')
@@ -457,6 +473,7 @@ def create_app():
             awareness = form.awarenessOptions.data
 
             gated = form.gated.data
+            
             current_app.logger.debug("New request created.")
             
             # Insert into DB (assuming add_request is defined elsewhere)
@@ -482,7 +499,7 @@ def create_app():
             current_app.logger.warning("POST /request_init - Form validation failed. Errors: %s", form.errors)
 
         current_app.logger.info("GET /request_init - Rendering request form.")
-        return render_template('request.html', form=form)
+        return render_template('request.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
 
 
     @app.route('/date', methods=['GET', 'POST'])

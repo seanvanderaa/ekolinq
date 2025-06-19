@@ -10,12 +10,15 @@
 {% block content %}
 <div id="header">
   <div class="website-notice content-width">
-    <p><strong>Notice: </strong>We just updated our website! You can now get started with a pick up by entering your zip code below.</span></p>
+    <p><strong>Notice: </strong>We just updated our website! Click "Request a pickup" below to get started.</span></p>
   </div>
   <div id="header-content">
     <div id="header-left">
       <h1 class="col-white">Everyone can play a role in reducing waste.</h1>
       <h1 class="col-yel">We're here to make it easy.</h1>
+      <div id="central-cta">
+        <button class="main-btn main-btn2" id="request-a-pickup"><span>Request a pickup.</span></button>
+      </div>
     </div>
     <div id="header-right">
       <h2>EkoLinq provides <strong>free,
@@ -67,7 +70,7 @@
             <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="" height="80px;">
           </div>
           <div class="impact-square align-center " id="fundraiser-reveal">
-            <p class="reveal-text">Fundraising collection events</p>
+            <p class="reveal-text">Fundraising collection events.</p>
           </div>
           <div class="impact-square align-center highlight-square" data-reveal-target="collect-reveal">
             <img src="{{ url_for('static', filename='images/ekolinq-icon-bin.svg') }}" alt="" height="80px;">
@@ -79,7 +82,7 @@
             <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="" height="80px;">
           </div>
           <div class="impact-square align-center " id="collect-reveal">
-            <p class="reveal-text">Collection bins and drop boxes</p>
+            <p class="reveal-text">Collection bins and drop boxes.</p>
           </div>
           <div class="impact-square fade-down"></div>
           <div class="impact-square fade-down"></div>
