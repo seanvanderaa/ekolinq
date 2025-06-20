@@ -93,6 +93,7 @@ def verifyAddress(full_addr: str,
         "address":         {"regionCode": "US", "addressLines": [full_addr]},
         "enableUspsCass":  True,
     }
+    print(full_addr)
     resp = requests.post(
         "https://addressvalidation.googleapis.com/v1:validateAddress",
         params={"key": key},
@@ -114,11 +115,10 @@ def verifyAddress(full_addr: str,
 
     # Required high-confidence flags
     if not verdict.get("addressComplete"):
-        log.info("addr_incomplete[%s]", req_id)
+        log.info("Address had to be fixed [%s]", req_id)
         return False, "Google could not find a complete match for that address."
 
     if any(verdict.get(f) for f in (
-            "hasInferredComponents",
             "hasReplacedComponents",
             "hasUnconfirmedComponents")):
         log.info("addr_fixed[%s]", req_id)

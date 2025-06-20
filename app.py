@@ -597,16 +597,20 @@ def create_app():
 
         # ── 2) Token must verify, be <5 min old, and come from same IP ──
         try:
-            verify_confirm_token(token)
+            if token:
+                verify_confirm_token(token)
+            else:
+                current_app.logger.warning("Missing token.")
+                return render_template('440.html')
         except (SignatureExpired, BadSignature):
             current_app.logger.warning("Stale or invalid confirm token")
-            abort(404)
+            return render_template('440.html')
 
         # ── 3) Extra clock-based guard (belt-and-braces) ──
         if time.time() > session.get("confirm_expires", 0):
             current_app.logger.info("Confirm window elapsed – clearing session")
             session.clear()
-            abort(404)
+            return render_template('440.html')
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if pickup is None:
@@ -637,6 +641,8 @@ def create_app():
 
 
     @app.route('/update_address', methods=['POST'])
+    @approval_scope
+    @code_email_scope
     def update_address():
         form = UpdateAddressForm()
         if form.validate_on_submit():
@@ -672,18 +678,12 @@ def create_app():
             )
 
             # Redirect based on the page value
-            if page == "edit_request":
-                current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
-                send_edited_request_email(pickup)
-                current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
+            current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
+            send_edited_request_email(pickup)
+            current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
 
-                return redirect(url_for('edit_request', request_id=request_id))
-            else:
-                current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
-                send_edited_request_email(pickup)
-                current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
-                session['pickup_request_id'] = request_id
-                return redirect(url_for('confirmation', request_id=request_id))
+            return redirect(url_for('edit_request', request_id=request_id))
+        
         else:
             current_app.logger.warning(
                 "Form validation failed for update_address. Errors: %s", form.errors
@@ -2028,7 +2028,7 @@ def create_app():
         Handle 'page not found' errors. We email the error details, then
         redirect the user to the /error page.
         """
-        current_app.logger.exception("Unhandled exception occurred:")
+        current_app.logger.exception("Unhandled exception occurred.")
         # send_error_report(
         #     error_type="404 Not Found",
         #     error_message=str(e),
@@ -2040,7 +2040,7 @@ def create_app():
         #     user_agent=request.headers.get('User-Agent'),
         #     remote_addr=request.remote_addr,
         # )
-        return redirect(url_for('error', error_message=str(e), traceback=traceback.format_exc()))
+        return redirect(url_for('error', error_message=str(e)))
 
     @app.errorhandler(Exception)
     def handle_exception(e):
@@ -2061,7 +2061,7 @@ def create_app():
         #     user_agent=request.headers.get('User-Agent'),
         #     remote_addr=request.remote_addr,
         # )
-        return redirect(url_for('error', error_message=str(e), traceback=traceback.format_exc()))
+        return redirect(url_for('error', error_message=str(e)))
     
     @app.errorhandler(413)
     def request_entity_too_large(error):

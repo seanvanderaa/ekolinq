@@ -27,7 +27,7 @@ class RequestForm(FlaskForm):
         DataRequired(), Length(max=200)
     ])
     city = StringField("City", validators=[
-        DataRequired(), Length(max=100)
+        DataRequired(), Length(max=50)
     ])
     zip = StringField("Zip Code", validators=[
         DataRequired(),
@@ -36,7 +36,7 @@ class RequestForm(FlaskForm):
     
     # Additional Notes
     notes = TextAreaField("Notes", validators=[
-        Optional(), Length(max=1000)
+        Optional(), Length(max=400)
     ])
     
     # Gated Info

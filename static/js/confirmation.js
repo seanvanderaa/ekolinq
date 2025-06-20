@@ -1,33 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const editAddressText = document.getElementById('address-info');
-    const editAddressForm = document.getElementById('edit-address-form');
-    const editAddressPencil = document.getElementById('edit-address');
-    const addressHeader = document.getElementById('address-header');
-    const closeUpdate = document.getElementById('cancel-update-address');
-
-    editAddressPencil.addEventListener('click', displayForm);
-    closeUpdate.addEventListener('click', displayForm)
-
-    function displayForm() {
-      // Use getComputedStyle to see if the text-div is currently shown or hidden
-      const textIsVisible = window
-        .getComputedStyle(editAddressText)
-        .display !== "none";
-
-      if (textIsVisible) {
-        // If the text is visible, hide it and show the form
-        editAddressText.style.display = "none";
-        addressHeader.textContent = "Edit Address";
-        editAddressForm.style.display = "flex";
-      } else {
-        // Otherwise, show the text and hide the form
-        editAddressText.style.display = "flex";
-        addressHeader.textContent = "Address";
-        editAddressForm.style.display = "none";
-      }
-    }
-
-  });
   // Retrieve the raw data directly from the DOM
   const requestDateEl = document.getElementById('request-date');
   const requestTimeEl = document.getElementById('request-time');
@@ -67,29 +38,5 @@ document.addEventListener("DOMContentLoaded", function () {
   // Update the content
   document.getElementById('pickup-info').textContent = `${formattedDate} between 8am-4pm`;
   
-  const updateAddressForm = document.getElementById('edit-address-form');
-  const loadingDiv = document.getElementById('loading-popup');
 
-  updateAddressForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-
-    const zipcode = document.getElementById('zipcode').value;
-
-
-    try {
-      const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-      const data = await response.json();
-
-      if (data.valid) {
-        // If ZIP is valid, submit for real
-        overlay.style.display = "block";
-        loadingDiv.style.display = "block";
-        updateAddressForm.submit(); 
-      } else {
-        alert(`${data.reason}`);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Error verifying ZIP code. Please try again.');
-    }
-  });
+});

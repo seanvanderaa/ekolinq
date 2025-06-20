@@ -5,8 +5,7 @@ strong {
 #header-content {
     display: flex;
     flex-direction: row;
-    column-gap: 36px;
-    width: 100%;
+    column-gap: 100px;
     max-width: 960px;
     align-items: center;
     justify-content: center;
@@ -43,7 +42,7 @@ strong {
 }
 
 .website-notice {
-    background-color: var(--l-green);
+    background-color: var(--yel);
     color: black;
     z-index: 1;
     box-sizing: border-box;
@@ -59,7 +58,7 @@ strong {
     z-index: 2;
     display: flex;
     flex-direction: row;
-    column-gap: 36px;
+    column-gap: 100px;
     align-items: flex-start;
 }
 
@@ -108,16 +107,6 @@ strong {
 #central-cta {
     margin-top: 48px;
     z-index: 100;
-}
-
-.main-btn2 {
-    width: 360px !important;
-    height: 80px !important;
-    border-radius: 10px !important;
-    font-size: 20px !important;
-
-    /* background: linear-gradient(to right, var(--m-blue), var(--m-green)) !important; */
-    background: var(--yel) !important;
 }
 
 #request-form {
@@ -201,49 +190,85 @@ strong {
 }
 
 
+/* Keyframes for the slow-moving conic gradient --------------------------- */
+@keyframes spin-ring {
+  from { transform: rotate(-180deg); }
+  to   { transform: rotate(180deg); }
+}
+
+/* ----------------------------------------------------------------------- */
+/*  MAIN CALL-TO-ACTION BUTTON                                             */
+/* ----------------------------------------------------------------------- */
 .main-btn {
-    position: relative; /* Allows pseudo-element positioning */
-    border-radius: 100px;
-    background-color: var(--m-green);
-    color: black;
-    height: 48px;
-    width: 200px;
-    font-family: var(--mont);
-    border: none;
-    font-weight: 600;
-    font-size: 16px;
-    overflow: hidden; /* Prevents content overflow during animation */
-    transition: color 0.4s ease, transform .2s ease; /* Smooth transition for text color */
-}
+  /* layout */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;           /* tweak to taste */
+  font-weight: 300;
 
-.main-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%; /* Start position off-screen */
-    width: 100%;
-    height: 100%;
-    background: var(--m-green) !important;
-    transition: left 0.4s ease; /* Transition for wipe effect */
-    z-index: 0; /* Behind the text */
-}
+  /* look & feel */
+  background: var(--m-green);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font: 600 16px/1 var(--mont);
+  overflow: hidden;          /* keep the glow inside the pill */
+  cursor: pointer;
 
-.main-btn:hover::before {
-    left: 0; /* Move the wipe effect to cover the button */
+  /* motion */
+  transition: color .1s ease, transform .2s ease, font-weight .2s ease;
+  z-index: 0; 
+  width: 360px;
+  height: 80px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .main-btn:hover {
-    color: white; /* Change text color */
-    cursor: pointer;
-    transform: scale(1.04);
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.15);
+  transform: scale(1.02);
+  color: white;
+  background: var(--m-green);
+  font-weight: 600;
 }
 
-/* Ensure text stays above the wipe */
-.main-btn span {
-    position: relative;
-    z-index: 1;
+/* ----------------------------------------------------------------------- */
+/*  VIBRANT GRADIENT RING  ( ::before )                                    */
+/* ----------------------------------------------------------------------- */
+.main-btn::before {
+  content: '';
+  position: absolute;
+  inset: -50%;                            /* make it much larger than btn   */
+  background: conic-gradient(
+      var(--yel) 0%,
+      white 20%,
+      rgba(255, 255, 255, 0) 25% 360deg);                    /* seamless loop                  */
+  border-radius: 50%;                     /* full circle so rotation is smooth */
+  animation: spin-ring 8s linear infinite;
+  filter: blur(15px);                      /* soft glow                      */
+  z-index: -1;
+  transition: opacity .4s ease;           /* lets us “dissipate” on hover   */
 }
+
+/* Fade the ring away on hover */
+.main-btn:hover::before { opacity: 0; }
+
+/* ----------------------------------------------------------------------- */
+/*  INNER MASK  ( ::after )                                                */
+/*  Creates a solid fill so only the 2-3 px rim shows the gradient         */
+/* ----------------------------------------------------------------------- */
+.main-btn::after {
+  content: '';
+  position: absolute;
+  inset: 3px;                             /* width of the rim               */
+  background-color: var(--m-green);
+  border-radius: inherit;
+  z-index: -1;
+  transition: background-color .4 ease;
+}
+
 
 #ekolinq-info {
     margin-top: 0px;
@@ -393,9 +418,19 @@ strong {
     width: 100%;
     background-image: url('/static/images/GettyImages-1061829496.webp');
     background-size: cover;
-    background-position: center;
+    background-position: center 60%;
     background-repeat: no-repeat;
     border-radius: 20px;
+    position: relative;
+}
+
+#problem-left p {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    color: white;
+    background-color: black;
+    font-size: 12px;
 }
 
 #mobile-section-title {
@@ -695,6 +730,10 @@ strong {
         margin: 0px;
     }
 
+    .main-btn2 {
+        width: 100%;
+    }
+
     #header-right h2 {
         font-size: 24px;
     }
@@ -965,4 +1004,8 @@ strong {
 }
 .initiatives p {
   max-width: 280px;
+}
+
+.bi-exclamation-square {
+    margin-right: 6px;
 }

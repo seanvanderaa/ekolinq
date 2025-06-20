@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
         cancelRequestInit.classList.remove('active');
       }
       else {
-        console.log("Here");
         cancelRequestWrapper.style.display = "flex";
         cancelRequestInit.classList.add('active');
       }
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to handle time slot click
     function handleClick(event) {
-      console.log('Clicked');
       const el = event.currentTarget;
 
       // If the user clicks an already-active slot, let’s unselect it
@@ -83,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update hidden inputs
       chosenDateInput.value = dayIso;   // "2025-01-11"
-      console.log(dayIso);
       chosenTimeInput.value = "08:00-16:00"; // "08:00-12:00"
 
       // Also update the small text below the button:
@@ -168,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Add ordinal suffix for the day
       const ordinal = (n) => n + (["th", "st", "nd", "rd"][(n % 10 > 3 || Math.floor(n % 100 / 10) === 1) ? 0 : n % 10] || "th");
-      console.log(`${dayName}, ${monthName} ${ordinal(day)}`);
       return `${dayName}, ${monthName} ${ordinal(day)}`;
   };
 
@@ -191,34 +187,100 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById('pickup-info').textContent = `${formattedDate} between 8am-4pm`;
   
   const updateAddressForm = document.getElementById('edit-address-form');
+  let alreadyPosted       = false;
 
-  updateAddressForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
+  updateAddressForm.addEventListener('submit', verifyAndSubmit);
 
-    const zipcode = document.getElementById('zipcode').value;
+  async function verifyAndSubmit(evt) {
+    if (alreadyPosted) return;   // allow the second call to actually submit
+    evt.preventDefault();
 
+    // grab & trim all values
+    const address = document.getElementById('address').value.trim();
+    const city    = document.getElementById('city').value.trim();
+    const zipcode = document.getElementById('zipcode').value.trim();
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
 
+    // clear any prior error messages
+    document.querySelectorAll('.user-notice-warn').forEach(el => el.remove());
+
+    // 1️⃣ Sanity‐check
+    if (!address || !city || !zipcode) {
+      if (!address) showFormError('address', 'Address is required.');
+      if (!city)    showFormError('city',    'City is required.');
+      if (!zipcode) showFormError('zipcode', 'ZIP code is required.');
+      return;
+    }
+
+    // 2️⃣ ZIP validation
     try {
-      const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-      const data = await response.json();
-
-      if (data.valid) {
-        // If ZIP is valid, submit for real
-        overlay.style.display = "block";
-        loadingDiv.style.display = "block";
-        updateAddressForm.submit(); 
-      } else {
-        alert(`${data.reason}`);
+      const zipRes  = await fetch(`/verify_zip?zipcode=${encodeURIComponent(zipcode)}`);
+      const zipData = await zipRes.json();
+      if (!zipData.valid) {
+        showFormError('zipcode', zipData.reason);
+        return;
       }
     } catch (err) {
       console.error(err);
-      alert('Error verifying ZIP code. Please try again.');
+      showFormError('zipcode', 'ZIP‐code validation failed. Please try again.');
+      return;
     }
-  });
 
-  submitBtn.addEventListener('click', function() {
-    overlay.style.display = "block";
-    loadingDiv.style.display = "block";
+    // 3️⃣ Address‐existence check
+    console.log(`${address}, ${city}, CA ${zipcode}`);
+    try {
+      const payload = {
+        full_addr: `${address}, ${city}, CA ${zipcode}`,
+        place_id:  null,
+        city:      city,
+        zip:       zipcode
+      };
+      const aRes = await fetch('/api/validate_address', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken':  csrfToken
+        },
+        body: JSON.stringify(payload)
+      });
+      const aData = await aRes.json();
+      if (!aData.valid) {
+        showFormError('address', aData.message);
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+      showFormError('address',
+        'Address validation service unavailable. Please try again.');
+      return;
+    }
+
+    // 4️⃣ All good → flip guard, show overlay, and submit for real
+    alreadyPosted = true;
+    overlay.style.display    = 'block';
+    loadingDiv.style.display = 'block';
+    updateAddressForm.submit();
+  }
+
+  // ─── your existing helper ────────────────────────────────────────────────
+  function showFormError(fieldName, msg) {
+    const noticeDiv = document.getElementById('address-form-failure-notice');
+    const noticeP   = noticeDiv.querySelector('p.user-notice');
+
+    // Put the new message in
+    noticeP.textContent = msg;
+    noticeP.classList.add('user-notice', `err-${fieldName}`);
+
+    // Make sure the container is visible
+    noticeDiv.style.display = 'block';
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      overlay.style.display    = 'block';
+      loadingDiv.style.display = 'block';
+    });
+  }
+
   });
-});
 

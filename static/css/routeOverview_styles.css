@@ -121,6 +121,7 @@ h1 {
     border: 1px solid var(--border-grey);
     border-top: none;
     border-radius: 0px 0px 10px 10px;
+    row-gap: 12px;
 }
 
 .subtle-date {

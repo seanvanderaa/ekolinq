@@ -126,6 +126,10 @@ main {
     margin-bottom: 16px;
 }
 
+#address-form-failure-notice {
+    display: none;
+}
+
 .form-group-div {
     display: flex;
     flex-direction: row;

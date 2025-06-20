@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Too Many Requests | EkoLinq{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<main id="main-429" class="content-width align-center">
+  <div id="div-wrapper-429" class="align-center">
+    <h1>
+      <i class="bi bi-alarm"></i><i> Your session has expired.</i>
+    </h1>
+    <h3>For your security, we don't allow certain pages to remain accessible after a bit of time. If you were editing your request, please <b><a href="/edit-request-init" class="a-green">verify your information again.</a></b></h3>
+    <button id="error-back-to-home" class="submit-btn">
+      Back to the Homepage
+    </button>
+  </div>
+</main>
+{% endblock %}
