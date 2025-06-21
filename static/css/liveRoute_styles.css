@@ -57,7 +57,7 @@ main {
 
 .completed-header {
     background-color: rgb(201, 201, 201);
-    padding: 6px 24px !important;
+    padding: 12px 24px !important;
     color: black;
     border-radius: 10px 10px 0px 0px;
 }
@@ -128,7 +128,7 @@ main {
 }
 
 .button-wrapper-btn {
-    width: 220px;
+    width: 280px;
     max-width: 100%;
     padding: 24px 0px;
     font-family: var(--mont);

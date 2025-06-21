@@ -24,7 +24,7 @@
         {% for pickup in pickups_completed %}
           <div class="pickup-stop completed-stop">
             <div class="completed-header">
-              <h4>Request Status: {{ pickup.status }}</h4>
+              <h4>Request Status: <b>{{ pickup.status }}</b></h4>
             </div>
             <div class="pickup-content completed-content">
               <p>{{ pickup.address }} {{ pickup.city }}, CA</p>
@@ -33,7 +33,7 @@
                 <button class="mark-complete mark-incomplete button-wrapper-btn"
                         data-pickup-id="{{ pickup.id }}"
                         data-current-status="Complete">
-                  <i class="bi bi-x-octagon"></i> Mark as Incomplete
+                  <i class="bi bi-x-octagon"></i> Move Back To Pickup Queue
                 </button>
               </div>
             </div>
@@ -103,7 +103,7 @@
       </div>
     {% endfor %}
   {% else %}
-    <h3>Either there are no pickups scheduled for this route or you have completed all of the stops.</h3>
+    <h3>🎉 You have completed all of the stops!</h3>
   {% endif %}
 </main>
 {% endblock %}
