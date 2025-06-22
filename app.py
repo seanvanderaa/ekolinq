@@ -312,6 +312,7 @@ def create_app():
 
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
 
+    app.logger.info('FLASK LEVEL: %s', CONFIG_NAME)
 
 
     # --------------------------------------------------
@@ -412,6 +413,10 @@ def create_app():
         site_origin = urlparse(app.config["SITE_URL"]).netloc
         origin_hdr  = request.headers.get("Origin")       # preferred
         referrer    = request.headers.get("Referer")      # fallback for older XHR
+        current_app.logger.debug(
+            "same-origin check: Origin=%s Referer=%s expected=%s",
+            origin_hdr, referrer, current_app.config["SITE_URL"]
+        )
         sender      = urlparse(origin_hdr or referrer or "").netloc
         if not sender or sender != site_origin:
             abort(403)                                    # silently drop strangers

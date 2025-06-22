@@ -63,7 +63,7 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = require("DATABASE_URI", "sqlite:///dev.db")
     SESSION_COOKIE_SECURE = False
     RATELIMIT_ENABLED = False
-    SITE_URL="http://localhost:3000"
+    SITE_URL=require("SITE_URL")
 
 
 # config.py – only the prod class changes
@@ -77,7 +77,7 @@ class ProductionConfig(BaseConfig):
     UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
     UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
     RATE_LIMIT_STORAGE_URL = require("UPSTASH_REDIS_TLS_URL")
-    SITE_URL="https://ekolinq.onrender.com"
+    SITE_URL=require("SITE_URL")
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
