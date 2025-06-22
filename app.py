@@ -40,6 +40,7 @@ from helpers.analytics import get_admin_metrics, city_distribution, awareness_di
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip, verifyAddress, AddressError
 from helpers.helpers import format_date
+from helpers.capture_ip import client_ip
 import helpers.import_backfill as backfill_mod
 from helpers.routing import compute_optimized_route, seconds_to_hms
 from helpers.scheduling import build_schedule
@@ -79,7 +80,7 @@ ConfigClass  = CONFIG_MAP.get(CONFIG_NAME, DevelopmentConfig)
 # ──────────────────────────────────────────────────────────────────────────
 csrf    = CSRFProtect()
 limiter = Limiter(
-    key_func=get_remote_address,
+    key_func=client_ip,
     default_limits=ConfigClass.DEFAULT_RATE_LIMITS
 )
 
@@ -219,14 +220,14 @@ def create_app():
     def user_or_ip():
         if g.get("current_user"):                 # set in the login_required wrapper
             return g.current_user["sub"]
-        return get_remote_address()
+        return client_ip()
 
     edit_scope = limiter.shared_limit("20 per hour;4 per minute",
                                       scope="edit-flow", key_func=user_or_ip)
     
     approval_scope = limiter.shared_limit("15 per hour;5 per minute",
                                         scope="edit-approval",
-                                        key_func=get_remote_address)
+                                        key_func=client_ip)
 
     in_window_scope = limiter.shared_limit("300 per hour;30 per minute",
                                         scope="edit-inwindow",
@@ -320,23 +321,15 @@ def create_app():
     # --------------------------------------------------
 
     def new_confirm_token(request_id: str) -> str:
-        """
-        Returns a signed, timestamped token bound to this request id
-        *and* the caller’s IP address (binds the session to one IP).
-        """
-        payload = {"rid": request_id, "ip": get_remote_address()}
-        return serializer.dumps(payload)          # timestamp is implicit
+        """Token contains request id and caller’s IP."""
+        return serializer.dumps({"rid": request_id, "ip": client_ip()})
 
-    def verify_confirm_token(token: str, max_age: int = 300) -> dict:
-        """
-        Reverse of new_confirm_token().  Raises SignatureExpired or BadSignature
-        if the token is tampered with or older than *max_age* seconds.
-        """
+    def verify_confirm_token(token: str, max_age: int = 300) -> str:
+        """Return rid if token is valid, otherwise raise."""
         data = serializer.loads(token, max_age=max_age)
-        # extra defence: the token is only valid from the same IP
-        if data["ip"] != get_remote_address():
+        if data.get("ip") != client_ip():
             raise BadSignature("IP mismatch")
-        return data
+        return data["rid"]
     
     # --------------------------------------------------
     # EDIT REQUEST SESSION HANDLING
@@ -346,14 +339,14 @@ def create_app():
 
     def new_edit_token(request_id: str) -> str:
         """Signed 20-min token, bound to caller’s IP *and* request_id."""
-        payload = {"rid": request_id, "ip": get_remote_address()}
+        payload = {"rid": request_id, "ip": client_ip()}
         return serializer.dumps(payload)          # timestamp is implicit
 
     def verify_edit_token(token: str, request_id: str) -> bool:
         """True ⇢ token is intact, <20 min old, from same IP & matches id."""
         try:
             data = serializer.loads(token, max_age=EDIT_WINDOW_SECS)
-            return data["ip"] == get_remote_address() and data["rid"] == request_id
+            return data["ip"] == client_ip() and data["rid"] == request_id
         except (BadSignature, SignatureExpired):
             return False
     # --------------------------------------------------
