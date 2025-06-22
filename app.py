@@ -19,10 +19,14 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 from flask_sitemap import Sitemap
+
+
 from logging.handlers import RotatingFileHandler
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import traceback
+
+from upstash_redis import Redis
 
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
@@ -80,6 +84,8 @@ limiter = Limiter(
     default_limits=ConfigClass.DEFAULT_RATE_LIMITS
 )
 
+redis = Redis.from_env() 
+
 # ──────────────────────────────────────────────────────────────────────────
 # Factory
 # ──────────────────────────────────────────────────────────────────────────
@@ -119,6 +125,12 @@ def create_app():
     # --------------------------------------------------
     if app.config["RATE_LIMIT_STORAGE_URL"]:
         limiter.storage_uri = app.config["RATE_LIMIT_STORAGE_URL"]  # e.g. Redis in prod
+
+    from limits.storage import RedisStorage
+    if CONFIG_NAME == "production":
+        limiter.storage = RedisStorage(redis)
+    else:
+        limiter.storage_uri = "memory://"
     limiter.init_app(app)
 
     # Put ProxyFix before the limiter so it sees the real client IP
@@ -199,7 +211,7 @@ def create_app():
     # Create tables once if needed
     with app.app_context():
         #db.drop_all()
-        db.create_all()
+        #db.create_all()
         seed_schedule_if_necessary()
 
     # --------------------------------------------------

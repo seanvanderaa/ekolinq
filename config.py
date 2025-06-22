@@ -35,7 +35,7 @@ class BaseConfig:
     MAIL_DEBUG = False 
 
     # ───── Rate limiting / Redis ────────────────────────────────────────
-    RATE_LIMIT_STORAGE_URL = require("RATE_LIMIT_STORAGE_URL", "")
+    RATE_LIMIT_STORAGE_URL = ""
     DEFAULT_RATE_LIMITS    = ["100 per hour"]
 
     # ───── Security headers (Flask-Talisman) ───────────────────────────
@@ -72,6 +72,9 @@ class ProductionConfig(BaseConfig):
     FORCE_HTTPS = True
     STRICT_TRANSPORT_SECURITY = True
     RATELIMIT_ENABLED = True
+    UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
+    UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
+    RATE_LIMIT_STORAGE_URL = require("UPSTASH_REDIS_TLS_URL")
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):

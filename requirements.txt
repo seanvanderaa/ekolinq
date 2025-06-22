@@ -85,6 +85,7 @@ tqdm==4.67.1
 typing_extensions==4.12.2
 tzdata==2025.1
 update-checker==0.18.0
+upstash-redis==1.4.0
 urllib3==2.3.0
 websocket-client==1.8.0
 Werkzeug==3.1.3
