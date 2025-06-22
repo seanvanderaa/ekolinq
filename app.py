@@ -209,10 +209,10 @@ def create_app():
     migrate = Migrate(app, db)
 
     # Create tables once if needed
-    with app.app_context():
+    #with app.app_context():
         #db.drop_all()
         #db.create_all()
-        seed_schedule_if_necessary()
+        #seed_schedule_if_necessary()
 
     # --------------------------------------------------
     # RATE-LIMIT SCOPES (shared limits)
