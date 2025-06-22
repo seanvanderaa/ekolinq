@@ -1043,8 +1043,10 @@ def create_app():
     @limiter.limit("10 per hour")
     def admin_login():
         """Kick off OIDC flow."""
-        redirect_uri = url_for("callback", _external=True)  # HTTPS in prod
-        #redirect_uri = url_for("callback", _external=True, _scheme="https")  # HTTPS in prod
+        if CONFIG_NAME == "development":
+            redirect_uri = url_for("callback", _external=True)
+        else:
+            redirect_uri = url_for("callback", _external=True, _scheme="https")
         current_app.logger.debug("Redirecting admin to Cognito login.")
         return oauth.oidc.authorize_redirect(redirect_uri)
     

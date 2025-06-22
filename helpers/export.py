@@ -5,6 +5,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from flask import current_app
 from models import PickupRequest, db
+from google_creds import get_google_credentials
 
 ###############################################################################
 # Mapping helpers
@@ -60,18 +61,7 @@ def weekly_export() -> None:  # noqa: WPS231, WPS430 – readability > strict ru
     logger = current_app.logger  # local alias for brevity
     logger.info("[export] Starting weekly export job…")
 
-    # ── Google credentials ───────────────────────────────────────────────────
-    creds_path = current_app.config.get(
-        "GOOGLE_SERVICE_ACCOUNT_JSON",
-        os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "credentials/service_account.json"),
-    )
-    creds = Credentials.from_service_account_file(
-        creds_path,
-        scopes=[
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive",
-        ],
-    )
+    creds = get_google_credentials()
     client = gspread.authorize(creds)
     spreadsheet = client.open("[DO NOT EDIT] EkoLinq Website Requests")
     worksheet = spreadsheet.worksheet("Requests")
