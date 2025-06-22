@@ -5,7 +5,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from flask import current_app
 from models import PickupRequest, db
-from google_creds import get_google_credentials
+from helpers.google_creds import get_google_credentials
 
 ###############################################################################
 # Mapping helpers
