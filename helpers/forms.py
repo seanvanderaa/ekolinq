@@ -66,50 +66,6 @@ class RequestForm(FlaskForm):
     )
 
     recaptcha = RecaptchaField()
-    # --------------------------------------------------
-    # GLOBAL VALIDATOR
-    # --------------------------------------------------
-    def validate(self, extra_validators=None):
-        if not super().validate(extra_validators):
-            return False              # built-ins failed first
-
-        # 1) Compose the full address
-        full_addr = f"{self.address.data}, {self.city.data} {self.zip.data}"
-
-        try:
-            _verify(full_addr, self.place_id.data)
-        except ValidationError as ve:
-            self.address.errors.append(str(ve))
-            return False
-        except Exception:
-            self.address.errors.append("Address validation service unavailable. Please try again.")
-            return False
-
-        return True   # all good
-
-
-# ---------------- provider helpers ----------------
-
-def _verify(full_addr: str, place_id: str):
-    """Raise ValidationError if address cannot be confirmed."""
-    key = current_app.config["GOOGLE_API_KEY"]
-    if place_id:                                       # fastest path
-        resp = requests.get(
-            "https://maps.googleapis.com/maps/api/place/details/json",
-            params={"place_id": place_id, "key": key, "fields": "formatted_address"}
-        )
-        data = resp.json()
-        if data.get("status") == "OK":
-            return
-    # fallback: forward-geocode the string
-    resp = requests.get(
-        "https://maps.googleapis.com/maps/api/geocode/json",
-        params={"address": full_addr, "key": key, "components": "country:US"}
-    )
-    data = resp.json()
-    if data.get("status") != "OK" or not data["results"]:
-        raise ValidationError("Address not found—please check spelling.")
-    # ⬆ We don’t need to compare exact strings—Google found it, that’s enough.
 
 
 
