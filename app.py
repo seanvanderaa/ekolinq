@@ -185,7 +185,7 @@ def create_app():
         content_security_policy=csp,
         content_security_policy_nonce_in=["script-src"],
         frame_options="DENY",
-        referrer_policy="no-referrer",
+        referrer_policy="same-origin",
         permissions_policy={"geolocation": "()", "microphone": "()"},
         force_https=app.config["FORCE_HTTPS"],
         strict_transport_security=app.config["STRICT_TRANSPORT_SECURITY"],
@@ -403,30 +403,14 @@ def create_app():
 
         return jsonify(result)
     
-    @csrf.exempt
     @app.post("/api/validate_address")
     @limiter.limit("20 per hour")
     def validate_address():
         log = current_app.logger
         log.debug("POST /api/validate_address – verifying user address.")
 
-        site_origin = urlparse(app.config["SITE_URL"]).netloc
-        origin_hdr  = request.headers.get("Origin")       # preferred
-        referrer    = request.headers.get("Referer")      # fallback for older XHR
-        current_app.logger.debug(
-            "same-origin check: Origin=%s Referer=%s expected=%s",
-            origin_hdr, referrer, current_app.config["SITE_URL"]
-        )
-        sender      = urlparse(origin_hdr or referrer or "").netloc
-        if not sender or sender != site_origin:
-            abort(403)                                    # silently drop strangers
-
         # ③ token check -------------------------------------------------------
-        try:
-            validate_csrf(request.headers.get("X-CSRFToken", ""))
-        except CSRFError:
-            abort(403)
-
+        validate_csrf(request.headers.get("X-CSRFToken", ""))
 
         # 1️⃣ Extract body --------------------------------------------------
         data = request.get_json(force=True) or {}
