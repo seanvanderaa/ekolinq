@@ -39,8 +39,6 @@ class PickupRequest(db.Model):
 
     admin_notes = db.Column(db.String(2000), nullable=True)
 
-    testing_db_upgrade = db.Column(db.String(8), unique=True, nullable=False)
-
 
 import string
 import secrets

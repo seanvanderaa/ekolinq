@@ -8,13 +8,13 @@ import time
 import logging
 from datetime import date, datetime, timedelta
 from functools import wraps
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 from flask import (Flask, request, render_template, redirect, url_for, jsonify,
                    make_response, session, current_app, flash, abort, g)
 from flask_wtf import CSRFProtect
 from wtforms import ValidationError
-from flask_wtf.csrf import validate_csrf
+from flask_wtf.csrf import validate_csrf, CSRFError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
@@ -39,7 +39,6 @@ from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from helpers.analytics import get_admin_metrics, city_distribution, awareness_distribution
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip, verifyAddress, AddressError
-from helpers.contact import submitContact
 from helpers.helpers import format_date
 import helpers.import_backfill as backfill_mod
 from helpers.routing import compute_optimized_route, seconds_to_hms
@@ -134,7 +133,7 @@ def create_app():
     limiter.init_app(app)
 
     # Put ProxyFix before the limiter so it sees the real client IP
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
     # --------------------------------------------------
     # FLASK TALISMAN & SECURE HEADERS
@@ -304,15 +303,15 @@ def create_app():
     # LOGGING
     # --------------------------------------------------
     if not app.debug and not app.testing:
-        file_handler = RotatingFileHandler("app.log", maxBytes=102_400, backupCount=5)
-        file_handler.setLevel(app.config["LOGGER_LEVEL"])
-        formatter = logging.Formatter(
+        handler = logging.StreamHandler()           # writes to STDOUT
+        handler.setLevel(app.config["LOGGER_LEVEL"])
+        handler.setFormatter(logging.Formatter(
             "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
-        )
-        file_handler.setFormatter(formatter)
-        app.logger.addHandler(file_handler)
+        ))
+        app.logger.addHandler(handler)
 
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
+
 
 
     # --------------------------------------------------
@@ -403,14 +402,26 @@ def create_app():
 
         return jsonify(result)
     
+    @csrf.exempt
     @app.post("/api/validate_address")
     @limiter.limit("20 per hour")
     def validate_address():
         log = current_app.logger
         log.debug("POST /api/validate_address – verifying user address.")
 
-        # 0️⃣ CSRF guard ----------------------------------------------------
-        validate_csrf(request.headers.get("X-CSRFToken", ""))
+        site_origin = urlparse(app.config["SITE_URL"]).netloc
+        origin_hdr  = request.headers.get("Origin")       # preferred
+        referrer    = request.headers.get("Referer")      # fallback for older XHR
+        sender      = urlparse(origin_hdr or referrer or "").netloc
+        if not sender or sender != site_origin:
+            abort(403)                                    # silently drop strangers
+
+        # ③ token check -------------------------------------------------------
+        try:
+            validate_csrf(request.headers.get("X-CSRFToken", ""))
+        except CSRFError:
+            abort(403)
+
 
         # 1️⃣ Extract body --------------------------------------------------
         data = request.get_json(force=True) or {}

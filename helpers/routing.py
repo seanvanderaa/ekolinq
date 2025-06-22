@@ -12,7 +12,7 @@ def fetch_distance_matrix(locations, api_key=None):
     """
     print("Fetching distance matrix from Google.")
     if not api_key:
-        api_key = os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GOOGLE_BACKEND_API_KEY")
     if not api_key:
         raise ValueError("Missing Google Maps API key.")
 

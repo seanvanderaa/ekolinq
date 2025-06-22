@@ -40,7 +40,7 @@ def verifyAddress(full_addr: str,
     • Surfaces a clear message when the Address Validation API is unavailable.
     """
     log = current_app.logger
-    key = current_app.config["GOOGLE_API_KEY"]
+    key = current_app.config["GOOGLE_BACKEND_API_KEY"]
 
     def _anonymise(text: str) -> str:
         """8-char stable hash for traceability without leaking PII."""
@@ -93,7 +93,6 @@ def verifyAddress(full_addr: str,
         "address":         {"regionCode": "US", "addressLines": [full_addr]},
         "enableUspsCass":  True,
     }
-    print(full_addr)
     resp = requests.post(
         "https://addressvalidation.googleapis.com/v1:validateAddress",
         params={"key": key},
