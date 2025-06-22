@@ -128,7 +128,7 @@ def create_app():
 
     from limits.storage import RedisStorage
     if CONFIG_NAME == "production":
-        limiter.storage = RedisStorage(redis)
+        limiter.storage_uri = app.config["RATE_LIMIT_STORAGE_URL"]
     else:
         limiter.storage_uri = "memory://"
     limiter.init_app(app)
