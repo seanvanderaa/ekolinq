@@ -153,6 +153,7 @@ def create_app():
             "https://www.gstatic.com",         # reCAPTCHA iframe
             "https://maps.googleapis.com",
             'https://maps.gstatic.com',
+            "https://www.googletagmanager.com"
         ],
         "style-src":     [
             SELF,
@@ -162,7 +163,7 @@ def create_app():
         ],
         "img-src":       [SELF, "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
         "font-src":      ["https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
-        "connect-src":   [SELF, "https://maps.googleapis.com"],
+        "connect-src":   [SELF, "https://maps.googleapis.com", "https://www.google-analytics.com"],
         "worker-src": [
             "blob:"                       # required for Web Workers in Search JS
         ],
@@ -312,7 +313,7 @@ def create_app():
         app.logger.addHandler(handler)
 
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
-
+    app.logger.info('LOGGER LEVEL: %s', app.config["LOGGER_LEVEL"])
     app.logger.info('FLASK LEVEL: %s', CONFIG_NAME)
 
 
