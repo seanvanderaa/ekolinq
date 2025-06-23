@@ -24,9 +24,14 @@ h1 {
 
 th, td, tr {
     font-family: var(--mont);
-    padding: 8px 12px;
-    border-right: 1px solid grey;
-    border-bottom: 1px solid grey;
+    font-size: 14px;
+    padding: 10px 12px;
+    border-right: none;
+    border-bottom: none;
+}
+
+td {
+    border-bottom: 1px solid lightgrey !important;
 }
 
 input, select {
@@ -66,21 +71,26 @@ input:placeholder-shown {
 
 table {
     border-radius: 5px;
-    border: 1px solid grey;
+    border: none;
+
 }
 
 .action-container {
-    column-gap: 16px;
+    column-gap: 4px;
     height: 100%;
 }
 
 th {
-    border-bottom: 1px solid grey;
+    border: none;
     text-align: left;
+    border-bottom: 1px solid lightgrey;
 }
 
 #table-wrapper {
     overflow-x: scroll; padding-bottom: 50px;
+    background-color: rgb(236, 236, 236);
+    border-radius: 10px;
+    margin-top: 24px;
 }
 
 #table-wrapper form {
@@ -88,25 +98,54 @@ th {
 }
 
 #table-wrapper tr {
-    max-height: 20px;
     overflow-y: scroll;
+    max-height: none;
+    height: 48px;
+    border-top: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+}
+
+thead {
+    border-bottom: 1px solid lightgrey;
 }
 
 .delete-request-btn {
-    background-color: rgb(255, 226, 226);
-    width: 100px;
+    background-color: transparent;
+    width: 90px;
+    padding: 8px 0px;
 }
 
 .delete-request-btn:hover {
-    background-color: rgb(255, 170, 170);
+    background-color: rgb(216, 196, 196);
 }
 
 #view-request {
-    width: 90px;
+    width: 80px;
+    padding: 8px 0px;
+    background-color: transparent;
+}
+
+#view-request:hover {
+    background-color: rgb(204, 204, 204);
 }
 
 .bi {
     margin-right: 8px;
+}
+
+#requests-table th:nth-child(1),
+#requests-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  /* give it a solid background so you don’t see content scrolling underneath */
+  background-color: rgb(226, 226, 226);
+  /* ensure it sits above the other cells */
+  z-index: 2;
+}
+
+/* bump up the header a bit higher so it stays above even the first-col cells */
+#requests-table thead th:nth-child(1) {
+  z-index: 3;
 }
 
 @media only screen and (max-width: 768px) {
@@ -133,13 +172,13 @@ th {
 }
 
 .min-w-80   { min-width: 80px; }
-.min-w-120  { min-width: 120px; }
-.min-w-150  { min-width: 150px; }
-.min-w-200  { min-width: 200px; }
-.min-w-250  { min-width: 250px; }
-.min-w-300  { min-width: 300px; }
-.min-w-75   { min-width: 75px; }
-.min-w-50   { min-width: 50px; }
+.min-w-120  { min-width: 100px; }
+.min-w-150  { min-width: 130px; }
+.min-w-200  { min-width: 170px; }
+.min-w-250  { min-width: 220px; }
+.min-w-300  { min-width: 270px; }
+.min-w-75   { min-width: 60px; }
+.min-w-50   { min-width: 40px; }
 
 /* Utility class for word-breaking long text */
 .word-break { word-break: break-word; }
