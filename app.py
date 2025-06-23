@@ -548,31 +548,31 @@ def create_app():
 
             session['pickup_request_id'] = request_id
 
-            if session.get('confirmation_email_sent') and session["pickup_request_id"] == pickup.request_id:
-                current_app.logger.info("Sending edited pickup request email for request_id=%s", request_id)
-                send_edited_request_email(pickup)
-                current_app.logger.debug("Edited pickup request email sent for request_id=%s", request_id)
-                token = new_confirm_token(request_id)
-                session.update({
-                    "pickup_request_id": request_id,
-                    "confirm_token":    token,
-                    "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
-                })
-                return redirect(url_for('confirmation',
-                                    request_id=request_id,
-                                    t=token))  
-            else:
-                current_app.logger.info("Confirmation email not yet sent for request_id=%s, sending to confirmation page", request_id)
-                session.clear()                               # blow away any old pickup flow
-                token = new_confirm_token(request_id)
-                session.update({
-                    "pickup_request_id": request_id,
-                    "confirm_token":    token,
-                    "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
-                })
-                return redirect(url_for('confirmation',
-                                    request_id=request_id,
-                                    t=token))  
+            # if session.get('confirmation_email_sent') and session["pickup_request_id"] == pickup.request_id:
+            #     current_app.logger.info("Sending edited pickup request email for request_id=%s", request_id)
+            #     send_edited_request_email(pickup)
+            #     current_app.logger.debug("Edited pickup request email sent for request_id=%s", request_id)
+            #     token = new_confirm_token(request_id)
+            #     session.update({
+            #         "pickup_request_id": request_id,
+            #         "confirm_token":    token,
+            #         "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+            #     })
+            #     return redirect(url_for('confirmation',
+            #                         request_id=request_id,
+            #                         t=token))  
+            # else:
+            current_app.logger.info("Confirmation email not yet sent for request_id=%s, sending to confirmation page", request_id)
+            session.clear()                               # blow away any old pickup flow
+            token = new_confirm_token(request_id)
+            session.update({
+                "pickup_request_id": request_id,
+                "confirm_token":    token,
+                "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+            })
+            return redirect(url_for('confirmation',
+                                request_id=request_id,
+                                t=token))  
         
         current_app.logger.info(
             "User is selecting a date/time for request_id=%s, offset=%d. Rendering select_date.html.",
