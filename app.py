@@ -157,13 +157,23 @@ def create_app():
         ],
         "style-src":     [
             SELF,
-            "https://fonts.googleapis.com",
-            "'nonce-{{nonce}}'", 
+            "https://fonts.googleapis.com", 
             "https://cdn.jsdelivr.net",       
         ],
-        "img-src":       [SELF, "data:", "https://maps.gstatic.com", "https://maps.googleapis.com"],
-        "font-src":      ["https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "data:"],
-        "connect-src":   [SELF, "https://maps.googleapis.com", "https://www.google-analytics.com"],
+        "img-src":     [
+            SELF, 
+            "data:",
+            "https://*.google-analytics.com",
+            "https://*.analytics.google.com",
+            "https://maps.gstatic.com",
+            "https://maps.googleapis.com"
+        ],
+        "connect-src":   [SELF,
+            "https://maps.googleapis.com",
+            "https://*.google-analytics.com",
+            "https://*.analytics.google.com",
+            "https://www.googletagmanager.com"
+        ],
         "worker-src": [
             "blob:"                       # required for Web Workers in Search JS
         ],

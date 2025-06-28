@@ -10,6 +10,15 @@
         content="{% block meta_description %}EkoLinq – Schedule free textile-waste pickups in the Tri Valley.{% endblock %}">
   <meta name="robots" content="index, follow">
 
+  <script nonce="{{ csp_nonce() }}" async src="https://www.googletagmanager.com/gtag/js?id=G-0NCMTDXTHR"></script>
+  <script nonce="{{ csp_nonce() }}">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0NCMTDXTHR');
+  </script>
+
   <!-- Canonical -->
   <link rel="canonical" href="{{ request.url }}"/>
 
@@ -34,14 +43,6 @@
 
   {% block extra_head %}{% endblock %}
 </head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0NCMTDXTHR"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0NCMTDXTHR');
-</script>
 <body>
 
   <!-- Include a site-wide navbar -->

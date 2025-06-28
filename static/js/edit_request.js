@@ -226,8 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // 3️⃣ Address‐existence check
-    console.log(`${address}, ${city}, CA ${zipcode}`);
     try {
       const payload = {
         full_addr: `${address}, ${city}, CA ${zipcode}`,
