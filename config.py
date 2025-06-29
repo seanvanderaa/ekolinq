@@ -56,7 +56,6 @@ class BaseConfig:
     GOOGLE_API_KEY=require("GOOGLE_API_KEY")
     GOOGLE_BACKEND_API_KEY=require("GOOGLE_BACKEND_API_KEY")
 
-
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     LOGGER_LEVEL = "DEBUG"
@@ -66,7 +65,6 @@ class DevelopmentConfig(BaseConfig):
     SITE_URL=require("SITE_URL")
 
 
-# config.py – only the prod class changes
 class ProductionConfig(BaseConfig):
     DEBUG = False
     LOGGER_LEVEL = "INFO"
@@ -74,15 +72,9 @@ class ProductionConfig(BaseConfig):
     FORCE_HTTPS = True
     STRICT_TRANSPORT_SECURITY = True
     RATELIMIT_ENABLED = True
+    SQLALCHEMY_DATABASE_URI = require("DATABASE_URI")
     UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
     UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
     RATE_LIMIT_STORAGE_URL = require("UPSTASH_REDIS_TLS_URL")
     SITE_URL=require("SITE_URL")
-
-    @property
-    def SQLALCHEMY_DATABASE_URI(self):
-        uri = os.getenv("DATABASE_URL")
-        if not uri:
-            raise RuntimeError("DATABASE_URL must be set when FLASK_CONFIG=production")
-        return uri
 
