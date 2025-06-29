@@ -62,6 +62,7 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = require("DATABASE_URI", "sqlite:///dev.db")
     SESSION_COOKIE_SECURE = False
     RATELIMIT_ENABLED = False
+    RATELIMIT_STORAGE_URI  = "memory://"
     SITE_URL=require("SITE_URL")
 
 
@@ -75,6 +76,6 @@ class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = require("DATABASE_URI")
     UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
     UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
-    RATELIMIT_STORAGE_URL = require("UPSTASH_REDIS_TLS_URL")
+    RATELIMIT_STORAGE_URI = require("UPSTASH_REDIS_TLS_URL")
     SITE_URL=require("SITE_URL")
 

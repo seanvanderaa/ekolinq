@@ -119,17 +119,20 @@ def create_app():
     # --------------------------------------------------
     # LIMITER FUNCTIONALITY
     # --------------------------------------------------
-    if app.config["RATE_LIMIT_STORAGE_URL"]:
-        limiter.storage_uri = app.config["RATE_LIMIT_STORAGE_URL"]  # e.g. Redis in prod
+    if app.config["RATELIMIT_STORAGE_URI"]:
+        limiter.storage_uri = app.config["RATELIMIT_STORAGE_URI"]  # e.g. Redis in prod
 
     from limits.storage import RedisStorage
     if CONFIG_NAME == "production":
-        limiter.storage_uri = app.config["RATE_LIMIT_STORAGE_URL"]
+        limiter.storage_uri = app.config["RATELIMIT_STORAGE_URI"]
     else:
         limiter.storage_uri = "memory://"
     limiter.init_app(app)
 
-    app.logger.info("Rate-limit storage: %s", limiter.storage)
+    if limiter.enabled:            # only safe when enabled
+        app.logger.info("Rate-limit storage: %s", limiter.storage)
+    else:
+        app.logger.info("Rate limiting disabled")
     # Put ProxyFix before the limiter so it sees the real client IP
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
