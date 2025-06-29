@@ -8,7 +8,7 @@ import time
 import logging
 from datetime import date, datetime, timedelta
 from functools import wraps
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode, urlparse, quote_plus
 
 from flask import (Flask, request, render_template, redirect, url_for, jsonify,
                    make_response, session, current_app, flash, abort, g)
@@ -1046,13 +1046,17 @@ def create_app():
     @app.route("/admin/login")
     @limiter.limit("10 per hour")
     def admin_login():
-        """Kick off OIDC flow."""
-        if CONFIG_NAME == "development":
-            redirect_uri = url_for("callback", _external=True)
-        else:
-            redirect_uri = url_for("callback", _external=True, _scheme="https")
-        current_app.logger.debug("Redirecting admin to Cognito login.")
-        return oauth.oidc.authorize_redirect(redirect_uri)
+        redirect_uri = url_for(
+            "callback",
+            _external=True,
+            _scheme="https" if CONFIG_NAME != "development" else "http"
+        )
+
+        # Kick off /oauth2/authorize with "prompt=login"
+        return oauth.oidc.authorize_redirect(
+            redirect_uri,
+            prompt="login"        # ← forces real credential entry
+        )
     
     @app.route("/callback")
     @limiter.limit("10 per hour")
@@ -1084,14 +1088,21 @@ def create_app():
         return redirect(url_for("admin_console"))
 
 
-    @app.route("/admin/logout")
+    @app.route("/logout")
     def admin_logout():
-        """Clear local session *and* hit Cognito’s global-sign-out endpoint."""
-        session.clear()
-        logout_uri   = url_for("/", _external=True, _scheme="https")
-        cognito_url  = (f"https://{COGNITO_DOMAIN}/logout"
-                        f"?client_id={COGNITO_CLIENT_ID}&logout_uri={logout_uri}")
-        return redirect(cognito_url)
+        session.clear()                               # 1. Drop everything we stored
+
+        logout_uri = url_for("home", _external=True,
+                            _scheme="https" if CONFIG_NAME != "development" else "http")
+        print(logout_uri)
+
+        cognito_logout = (
+            f"https://{COGNITO_DOMAIN}/logout"
+            f"?client_id={COGNITO_CLIENT_ID}"
+            f"&logout_uri={quote_plus(logout_uri)}"
+            f"&federated"
+        )
+        return redirect(cognito_logout)  
         
     @app.route('/admin-console', methods=['GET', 'POST'])
     @login_required
@@ -1994,14 +2005,6 @@ def create_app():
         for field, errs in form.errors.items():
             messages += errs
         return jsonify(valid=False, reason=" ".join(messages)), 400
-
-    
-    @app.route('/logout')
-    def logout():
-        current_app.logger.info("GET /logout - Logging out user and clearing session.")
-
-        session.clear()
-        return redirect(url_for('admin_login'))
 
 
 
