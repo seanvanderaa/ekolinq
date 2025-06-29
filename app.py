@@ -325,56 +325,45 @@ def create_app():
     # --------------------------------------------------
     # OTEL → Grafana Cloud (only in prod / Render)
     # --------------------------------------------------
-    # --- OpenTelemetry log pipeline (SDK 1.34.1) ---------------------------
     otel_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
     otel_headers  = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
 
     if otel_endpoint and otel_headers:
-        # 1️⃣ Imports – verified against 1.34.1
-        from opentelemetry import _logs as logs                                      # :contentReference[oaicite:0]{index=0}
-        from opentelemetry.sdk._logs import (
-            LoggerProvider,
-            LoggingHandler,
-        )
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor            # :contentReference[oaicite:1]{index=1}
-        from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter  # :contentReference[oaicite:2]{index=2}
+        from opentelemetry import _logs as logs
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor  # ← EXISTS in 1.34.1
+        from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
         from opentelemetry.instrumentation.logging import LoggingInstrumentor
         from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+        import atexit, logging
 
-        # 2️⃣ Figure out service.name (use OTEL_SERVICE_NAME or fall back to OTEL_RESOURCE_ATTRIBUTES)
+        # ── service.name (reuse what you already send for traces) ───────────
         service_name = (
-            os.getenv("OTEL_SERVICE_NAME")
-            or next(
-                (kv.split("=", 1)[1]
+            os.getenv("OTEL_SERVICE_NAME") or
+            next((kv.split("=", 1)[1]
                 for kv in os.getenv("OTEL_RESOURCE_ATTRIBUTES", "").split(",")
-                if kv.startswith("service.name=")),
-                "my-app",
-            )
+                if kv.startswith("service.name=")), "flask-app")
         )
 
-        # 3️⃣ Create exporter → provider → processor
         exporter = OTLPLogExporter(
             endpoint=otel_endpoint,
             headers=(("Authorization", otel_headers.split("=", 1)[1]),),
         )
 
         provider = LoggerProvider(resource=Resource({SERVICE_NAME: service_name}))
-        provider.add_log_record_processor(                                           # method exists :contentReference[oaicite:3]{index=3}
-            BatchLogRecordProcessor(exporter)
-        )
+        provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
         logs.set_logger_provider(provider)
+        atexit.register(provider.shutdown)        # ⬅ lets `flask db upgrade` exit cleanly
 
-        # 4️⃣ Bridge stdlib logging into OTLP
         logging.getLogger().addHandler(
             LoggingHandler(level=logging.INFO, logger_provider=provider)
         )
-
-        # 5️⃣ Optionally include trace/span IDs
         LoggingInstrumentor().instrument(set_logging_format=True)
 
-        app.logger.info("OpenTelemetry log exporter enabled (endpoint=%s)", otel_endpoint)
+        app.logger.info("OTLP log exporter enabled → %s", otel_endpoint)
     else:
-        app.logger.info("OpenTelemetry log exporter NOT enabled (missing OTEL vars)")
+        app.logger.info("OTLP log exporter NOT enabled (missing vars)")
+
 
 
 
