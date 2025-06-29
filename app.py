@@ -63,12 +63,12 @@ from extensions import mail
 # ──────────────────────────────────────────────────────────────────────────
 # Environment & configuration
 # ──────────────────────────────────────────────────────────────────────────
-if os.getenv("FLASK_ENV") != "production":
+if os.getenv("FLASK_CONFIG") != "production":
     load_dotenv()    
 
 from config import DevelopmentConfig, ProductionConfig
 
-CONFIG_NAME = os.getenv("FLASK_ENV", "development")   # default “development”
+CONFIG_NAME = os.getenv("FLASK_CONFIG", "development")   # default “development”
 ConfigClass = ProductionConfig if CONFIG_NAME == "production" else DevelopmentConfig
 
 # ──────────────────────────────────────────────────────────────────────────
