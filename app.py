@@ -321,10 +321,50 @@ def create_app():
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
     app.logger.info('LOGGER LEVEL: %s', app.config["LOGGER_LEVEL"])
     app.logger.info('FLASK LEVEL: %s', CONFIG_NAME)
+
+    # --------------------------------------------------
+    # OTEL → Grafana Cloud (only in prod / Render)
+    # --------------------------------------------------
+    otel_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+    otel_headers  = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
+    if otel_endpoint and otel_headers:
+        # Only wire OTLP when the env vars exist
+        from opentelemetry import logs
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs.export import BatchLogProcessor
+        from opentelemetry.exporter.otlp.proto.http.log_exporter import OTLPLogExporter
+        from opentelemetry.instrumentation.logging import LoggingInstrumentor
+        from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+
+        service_name = os.getenv("OTEL_SERVICE_NAME")
+        # Re-use the same endpoint/headers you already set for traces/metrics
+        exporter = OTLPLogExporter(
+            endpoint=otel_endpoint,
+            headers=(("Authorization", otel_headers.split("=", 1)[1]),),
+        )
+
+        # Create a provider with the same service.name resource
+        provider = LoggerProvider(
+            resource=Resource({SERVICE_NAME: service_name})
+        )
+        provider.add_log_processor(BatchLogProcessor(exporter))
+        logs.set_logger_provider(provider)
+
+        # Plug Python logging into OTLP
+        otlp_handler = LoggingHandler(level=logging.INFO, logger_provider=provider)
+        logging.getLogger().addHandler(otlp_handler)
+
+        # (optional) automatically inject trace/span IDs into log records
+        LoggingInstrumentor().instrument(set_logging_format=True)
+
+        app.logger.info("OpenTelemetry log exporter enabled (endpoint=%s)", otel_endpoint)
+    else:
+        app.logger.info("OpenTelemetry log exporter NOT enabled (missing OTEL vars)")
+
     if limiter.enabled:            # only safe when enabled
         app.logger.info("Rate-limit storage: %s", limiter.storage)
     else:
-        app.logger.info("Rate limiting disabled")
+        app.logger.info("WARN: Rate limiting disabled!")
 
 
     # --------------------------------------------------
