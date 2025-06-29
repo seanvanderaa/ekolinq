@@ -329,7 +329,7 @@ def create_app():
     otel_headers  = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
     if otel_endpoint and otel_headers:
         # Only wire OTLP when the env vars exist
-        from opentelemetry import logs
+        from opentelemetry import _logs as logs
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogProcessor
         from opentelemetry.exporter.otlp.proto.http.log_exporter import OTLPLogExporter
