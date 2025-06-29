@@ -129,10 +129,6 @@ def create_app():
         limiter.storage_uri = "memory://"
     limiter.init_app(app)
 
-    if limiter.enabled:            # only safe when enabled
-        app.logger.info("Rate-limit storage: %s", limiter.storage)
-    else:
-        app.logger.info("Rate limiting disabled")
     # Put ProxyFix before the limiter so it sees the real client IP
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
@@ -325,6 +321,10 @@ def create_app():
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
     app.logger.info('LOGGER LEVEL: %s', app.config["LOGGER_LEVEL"])
     app.logger.info('FLASK LEVEL: %s', CONFIG_NAME)
+    if limiter.enabled:            # only safe when enabled
+        app.logger.info("Rate-limit storage: %s", limiter.storage)
+    else:
+        app.logger.info("Rate limiting disabled")
 
 
     # --------------------------------------------------
