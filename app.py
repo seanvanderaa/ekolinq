@@ -342,7 +342,7 @@ def create_app():
             os.getenv("OTEL_SERVICE_NAME") or
             next((kv.split("=", 1)[1]
                 for kv in os.getenv("OTEL_RESOURCE_ATTRIBUTES", "").split(",")
-                if kv.startswith("service.name=")), "flask-app")
+                if kv.startswith("service.name=")), "my-app")
         )
 
         exporter = OTLPLogExporter(
