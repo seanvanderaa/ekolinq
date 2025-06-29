@@ -68,8 +68,8 @@ if os.getenv("FLASK_ENV") != "production":
 
 from config import DevelopmentConfig, ProductionConfig
 
-env = os.getenv("FLASK_ENV", "development")   # default “development”
-ConfigClass = ProductionConfig if env == "production" else DevelopmentConfig
+CONFIG_NAME = os.getenv("FLASK_ENV", "development")   # default “development”
+ConfigClass = ProductionConfig if CONFIG_NAME == "production" else DevelopmentConfig
 
 # ──────────────────────────────────────────────────────────────────────────
 # Extension singletons
