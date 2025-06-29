@@ -322,51 +322,6 @@ def create_app():
     app.logger.info('LOGGER LEVEL: %s', app.config["LOGGER_LEVEL"])
     app.logger.info('FLASK LEVEL: %s', CONFIG_NAME)
 
-    # --------------------------------------------------
-    # OTEL → Grafana Cloud (only in prod / Render)
-    # --------------------------------------------------
-    otel_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-    otel_headers  = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
-
-    if otel_endpoint and otel_headers:
-        from opentelemetry import _logs as logs
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor  # ← EXISTS in 1.34.1
-        from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
-        from opentelemetry.instrumentation.logging import LoggingInstrumentor
-        from opentelemetry.sdk.resources import Resource, SERVICE_NAME
-        import atexit, logging
-
-        # ── service.name (reuse what you already send for traces) ───────────
-        service_name = (
-            os.getenv("OTEL_SERVICE_NAME") or
-            next((kv.split("=", 1)[1]
-                for kv in os.getenv("OTEL_RESOURCE_ATTRIBUTES", "").split(",")
-                if kv.startswith("service.name=")), "my-app")
-        )
-
-        exporter = OTLPLogExporter(
-            endpoint=otel_endpoint,
-            headers=(("Authorization", otel_headers.split("=", 1)[1]),),
-        )
-
-        provider = LoggerProvider(resource=Resource({SERVICE_NAME: service_name}))
-        provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
-        logs.set_logger_provider(provider)
-        atexit.register(provider.shutdown)        # ⬅ lets `flask db upgrade` exit cleanly
-
-        logging.getLogger().addHandler(
-            LoggingHandler(level=logging.INFO, logger_provider=provider)
-        )
-        LoggingInstrumentor().instrument(set_logging_format=True)
-
-        app.logger.info("OTLP log exporter enabled → %s", otel_endpoint)
-    else:
-        app.logger.info("OTLP log exporter NOT enabled (missing vars)")
-
-
-
-
     if limiter.enabled:            # only safe when enabled
         app.logger.info("Rate-limit storage: %s", limiter.storage)
     else:
