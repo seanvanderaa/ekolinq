@@ -543,6 +543,11 @@ main {
       padding-right: 24px;
     }
 
+    .user-notice-warn {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
 }
 
 /*─────────────────────────────────────────────────────────────────────────
@@ -649,6 +654,7 @@ main {
 
 .user-notice-warn {
   max-width: 460px;
+  box-sizing: border-box;
 }
 
 
@@ -908,3 +914,11 @@ main {
                     border-radius: .25rem; cursor: pointer; user-select: none; transition: border .2s ease, background-color .2s ease, color .2s ease;}
 .btn-check:checked + .btn,
 .btn:hover        { background: var(--m-green); color: #fff;}
+
+#awarenessOptions {
+  font-size: 16px;
+}
+
+#gated-error-info {
+  display: none;
+}

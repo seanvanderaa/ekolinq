@@ -75,10 +75,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const selectedGate = document.getElementById('selected-gate');
     const radios       = document.querySelectorAll('input[name="gated"]');
+    const gatedError = document.getElementById('gated-error-info');
 
     function toggleGateInfo() {
       const yesChosen = document.querySelector('input[name="gated"][value="yes"]').checked;
       selectedGate.style.display = yesChosen ? 'block' : 'none';
+      gatedError.style.display = "none";
     }
 
     radios.forEach(r => r.addEventListener('change', toggleGateInfo));
@@ -98,10 +100,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  const gatedError = document.getElementById('gated-error-info');
+
   initForm.addEventListener('submit', async function handleSubmit (evt) {
     if (alreadyPosted) return;                    // second call = real submit
 
     evt.preventDefault();
+
+    if (!document.querySelector('input[name="gated"]:checked')) {
+      gatedError.style.display = "block";
+      return;
+    }
+    else {
+      gatedError.style.display = "none";
+    }
 
     // 0️⃣ reCAPTCHA client-side guard
     if (grecaptcha.getResponse().length === 0) {
@@ -173,6 +185,10 @@ document.addEventListener('DOMContentLoaded', function() {
     div.textContent = msg;
     div.className   = `user-notice-warn err-${fieldName}`;
     field.insertAdjacentElement('afterend', div);
+
+    // scroll the error into view and focus the field
+    div.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
 
 

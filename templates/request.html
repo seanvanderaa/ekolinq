@@ -88,12 +88,15 @@
                       value="{{ choice.data }}"
                       class="btn-check"
                       {% if choice.checked %}checked{% endif %}
-                      required>
+                      >
 
               <label class="btn btn-outline-primary" for="{{ choice.id }}">
                 {{ choice.label.text }}
               </label>
             {% endfor %}
+          </div>
+          <div class="user-notice-warn" id="gated-error-info">
+            Please answer this question.
           </div>
 
           <span class="info-icon">i</span>
@@ -155,7 +158,7 @@
       </div>
       <div class="faq-popup" id="faq-better-popup">
         <h3>Why is it better to use EkoLinq?</h3>
-        <p>EkoLinq is heavily involved in our local ecosystem—whether through collaborations with other businesses, donating proceeds from our work to community members, or by providing a better outlet for textile waste, EkoLinq aims to have a positive impact in the Tri-Valley.</p>
+        <p>At EkoLinq, we’re committed to strengthening our local ecosystem. From collaborating with businesses to donating proceeds to those in need, and providing responsible solutions for textile waste — we work to drive meaningful change across the Tri-Valley.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
     </section>

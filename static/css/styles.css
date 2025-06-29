@@ -678,7 +678,7 @@ li {
     .navbar__menu.active {
         padding: 36px 0px;
         padding-left: 24px;
-        max-height: 300px; /* Arbitrary max height for the dropdown */
+        max-height: 340px; /* Arbitrary max height for the dropdown */
     }
 }
 
