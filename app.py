@@ -129,6 +129,7 @@ def create_app():
         limiter.storage_uri = "memory://"
     limiter.init_app(app)
 
+    app.logger.info("Rate-limit storage: %s", limiter.storage)
     # Put ProxyFix before the limiter so it sees the real client IP
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
