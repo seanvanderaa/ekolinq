@@ -52,7 +52,12 @@ document.getElementById('contactForm').addEventListener('submit', async function
       contactFormConf.style.display    = 'flex';
     } else {
       // Show server‑side validation error
-      alert(data.reason);
+      if (data.reason == "The response parameter is missing.") {
+        alert("Please ensure you check the captcha to verify you're not a robot.");
+      }
+      else {
+        alert(data.reason);
+      }
     }
 
   } catch (err) {
