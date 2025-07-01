@@ -13,7 +13,7 @@ strong {
 
 #header {
     position: relative;
-    background-image: url('/static/images/landing_hero.jpeg');
+    background-image: url('/static/images/landing_hero.webp');
     display: flex;
     align-items: center;
     justify-content: center;

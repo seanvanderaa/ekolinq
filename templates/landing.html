@@ -6,6 +6,11 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+<link
+  rel="preload"
+  as="image"
+  href="{{ url_for('static', filename='images/landing_hero.webp') }}"
+/>
 {% endblock %}
 {% block content %}
 <div id="header">
