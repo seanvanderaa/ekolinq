@@ -119,19 +119,26 @@ main {
 }
 
 .resource-file {
-    padding: 1em 2em;
+    padding: 1em 0em;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    column-gap: 16px;
+    column-gap: 48px;
     color: black;
-    background-color: rgb(215, 215, 215);
+    border-top: 1px solid lightgrey;
+    background-color: transparent;
+}
+
+.resource-file:nth-child(2) {
+    border-top: none;
+    background-color: transparent;
 }
 
 .resource-link {
     text-decoration: none;
-    color: black;
+    color: #055d18;
+    font-weight: 500;
 }
 
 .resource-link:hover {
@@ -139,11 +146,17 @@ main {
 }
 
 .resource-file:nth-child(odd) {
-    background-color: rgb(176, 176, 176);
+    border-top: 1px solid lightgrey;
+    background-color: transparent;
 }
 
 .resource-file:last-child {
     border-radius: 0px 0px 10px 10px;
+}
+
+.info-h3 {
+  font-weight: 500;
+  font-size: 22px;
 }
 
 .resource-file h3 {
@@ -152,18 +165,17 @@ main {
 }
 
 #resource-file-header {
-    column-gap: 16px;
-    background-color: rgb(176, 176, 176);
+    column-gap: 48px;
+    background-color: transparent;
     color: rgb(55,55,55);
-    border-radius: 10px 10px 0px 0px;
     width: 100%;
-    padding: 0em 2em;
+    padding: 0em 0em;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    border-bottom: 1px solid lightgray;
 }
 
 #resource-file-header p {
@@ -381,16 +393,51 @@ main {
 
     #resource-files {
         box-sizing: border-box;
-        overflow-x: scroll;
+        overflow-x: none;
     }
 
     .resource-file {
-        width: 600px;
+      box-sizing: border-box;
+        width: 100%;
+        padding: 2em 0em;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        column-gap: 16px;
+        color: black;
+        background-color: rgb(215, 215, 215);
+    }
+
+    .resource-file:nth-child(2) {
+      border-radius: 10px 10px 0px 0px !important;
+    }
+
+    .resource-file h3 {
+      width: 100%;
+      font-weight: 500;
+    }
+
+
+    .resource-file {
+        border-top: 1px solid lightgrey;
+        background-color: transparent;
+    }
+    .resource-file:nth-child(odd) {
+        border-top: 1px solid lightgrey;
+        background-color: transparent;
+    }
+
+    .resource-file:nth-child(2) {
+        border-top: none;
+        background-color: transparent;
+    }
+
+    .resource-link {
+      color: #055d18 !important;
     }
 
     #resource-file-header {
-        width: 600px;
-        box-sizing: content-box;
+      display: none;
     }
 
     #request-form-input {
