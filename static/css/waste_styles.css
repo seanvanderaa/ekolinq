@@ -1,6 +1,6 @@
 main {
-    background-color: rgb(19, 19, 19);
-    color: white;
+    background-color: var(--off-white);
+    color: black;
     padding-bottom: 160px;
     overflow-x: hidden;
 }
@@ -31,7 +31,7 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* Adjust the opacity (0.5) for desired darkness */
+    background-color: rgba(0, 0, 0, 0.0); /* Adjust the opacity (0.5) for desired darkness */
     z-index: 1; /* Ensure it is layered below the content */
 }
 
@@ -68,7 +68,7 @@ main {
     text-align: center;
     align-items: center;
     justify-content: flex-start;
-    background-color: rgb(35, 35, 35);
+    background-color: var(--m-blue);
 }
 
 .info-block:hover {
@@ -125,12 +125,13 @@ main {
     align-items: center;
     justify-content: flex-start;
     column-gap: 16px;
-    background-color: rgb(42, 42, 42);
+    color: black;
+    background-color: rgb(215, 215, 215);
 }
 
 .resource-link {
     text-decoration: none;
-    color: white;
+    color: black;
 }
 
 .resource-link:hover {
@@ -138,7 +139,7 @@ main {
 }
 
 .resource-file:nth-child(odd) {
-    background-color: rgb(35, 35, 35);
+    background-color: rgb(176, 176, 176);
 }
 
 .resource-file:last-child {
@@ -152,8 +153,8 @@ main {
 
 #resource-file-header {
     column-gap: 16px;
-    background-color: rgb(25, 25, 25);
-    color: white;
+    background-color: rgb(176, 176, 176);
+    color: rgb(55,55,55);
     border-radius: 10px 10px 0px 0px;
     width: 100%;
     padding: 0em 2em;
@@ -177,7 +178,6 @@ main {
 
 #footer {
     margin-top: 0px;
-    box-shadow: none;
 }
 
 #request-form {
@@ -499,10 +499,6 @@ main {
   margin-top: 24px;
 }
 
-/* That block’s paragraphs */
-#section-three + .fade-in-section p {
-  margin-top: 24px;
-}
 
 
 /*─────────────────────────────────────────────────────────────────────────
