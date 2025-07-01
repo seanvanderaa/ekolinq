@@ -849,6 +849,21 @@ main {
   margin-bottom: 16px;
 }
 
+#items-popup {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  text-align: left;
+}
+
+#items-popup ul {
+  padding-left: 20px;
+}
+
+#items-popup li {
+  margin-left: 0px;
+}
+
 /* For #faq-better-popup image: 10px top margin */
 #faq-better-popup img {
   margin-top: 10px;

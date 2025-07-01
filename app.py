@@ -473,7 +473,7 @@ def create_app():
 
 
     @app.route('/request_init', methods=['GET', 'POST'])
-    @limiter.limit("5 per hour")
+    @limiter.limit("10 per hour")
     def request_init():
         form = RequestForm()
         if form.validate_on_submit():
@@ -2062,6 +2062,8 @@ def create_app():
         #     user_agent=request.headers.get('User-Agent'),
         #     remote_addr=request.remote_addr,
         # )
+        if request.path.startswith('/.well-known/appspecific/'):
+            return '', 204
         return redirect(url_for('error', error_message=str(e)))
 
     @app.errorhandler(Exception)
