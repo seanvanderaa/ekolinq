@@ -1053,10 +1053,13 @@ def create_app():
             _scheme="https" if CONFIG_NAME != "development" else "http"
         )
 
-        # Kick off /oauth2/authorize with "prompt=login"
-        return oauth.oidc.authorize_redirect(
-            redirect_uri
-        )
+        resp = oauth.oidc.authorize_redirect(redirect_uri)
+
+        # ---------- make the 302 un-cacheable ----------
+        resp.headers["Cache-Control"] = "no-store, private"
+        resp.headers["Pragma"]        = "no-cache"
+        # ----------------------------------------------
+        return resp
     
     @app.route("/callback")
     @limiter.limit("10 per hour")
