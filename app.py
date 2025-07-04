@@ -1055,8 +1055,7 @@ def create_app():
 
         # Kick off /oauth2/authorize with "prompt=login"
         return oauth.oidc.authorize_redirect(
-            redirect_uri,
-            prompt="login"        # ← forces real credential entry
+            redirect_uri
         )
     
     @app.route("/callback")

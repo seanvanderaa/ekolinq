@@ -53,7 +53,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     } else {
       // Show server‑side validation error
       if (data.reason == "The response parameter is missing.") {
-        alert("Please ensure you check the captcha to verify you're not a robot.");
+        alert("Please ensure you fill out the captcha to verify you're not a robot.");
       }
       else {
         alert(data.reason);

@@ -49,7 +49,7 @@ def send_request_email(pickup):
         # --- Setup -----------------------------------------------------------------
         mail = current_app.extensions.get("mail")
 
-        first_name = pickup.fname
+        first_name = ' ' + pickup.fname
         request_id = pickup.request_id
         address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
         gated = bool(pickup.gated)
@@ -97,21 +97,21 @@ def send_request_email(pickup):
             <meta charset=\"UTF-8\" />
             <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
             <title>Pick-up Request Confirmation</title>
-            <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&display=swap\" rel=\"stylesheet\" />
+            <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap\" rel=\"stylesheet\" />
             <style>
               body, p, h1, h2, h3, td, li, a {{
                 font-family: 'Public Sans', Arial, sans-serif !important;
               }}
             </style>
           </head>
-          <body style=\"margin:0; padding:24px 0; background-color:#a1caa0; color:#000;\">
+          <body style=\"margin:0; padding:24px 0; background-color:#104378; color:#000;\">
             <div style=\"width:90%; max-width:600px; margin:30px auto; background:#fff; padding:20px 30px 32px; border:1px solid #ddd; border-radius:40px;\">
               <div style=\"text-align:center;\">
-                <img src=\"https://i.imgur.com/g6QpslJ.png\" alt=\"EkoLinq Logo\" width=\"160\" style=\"display:block; margin:36px auto 24px;\" />
+                <img src=\"https://i.imgur.com/g6QpslJ.png\" alt=\"EkoLinq Logo\" width=\"140\" style=\"display:block; margin:36px auto 24px; margin-bottom: 24px\" />
               </div>
               {gated_notice_html}
-              <h1 style=\"font-size:24px; margin-bottom:16px; margin-top: 16px;\">Request Confirmation</h1>
-              <p style=\"font-size:18px; margin-top:36px;\"><strong>Hello {first_name},</strong></p>
+              <h1 style=\"font-size:16px; margin-bottom:16px; margin-top: 16px; font-weight: 500; text-align:center; margin-bottom: 24px\">Pickup Request Confirmation</h1>
+              <p style=\"font-size:18px; margin-top:36px;\">Hello{first_name},</p>
               <p style=\"font-size:16px;\">Thanks for choosing to get rid of waste the right way. Below is the information for your pick-up request. <b>Please remember to have your items out by 8AM on the day of your pick-up.</b></p>
               <div style=\"background:#098223; color:#fff; padding:16px; border-radius:8px; margin:48px 0;\">
                 <p style=\"margin:12px 0 8px; font-size:14px; font-weight:200;\">Request ID</p>
@@ -163,7 +163,7 @@ def send_request_email(pickup):
                           <ul style=\"padding-left:20px; margin:0;\">
                             <li style=\"margin:8px 0; font-size:16px;\">Textiles that are wet, moldy, or contaminated with chemicals</li>
                             <li style=\"margin:8px 0; font-size:16px;\">Bio-hazardous waste</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Mattresses, furniture, or other similar oversized items</li>
+                            <li style=\"margin:8px 0; font-size:16px;\">Mattresses, pillows, furniture, or other similar oversized items</li>
                           </ul>
                         </td>
                       </tr>
