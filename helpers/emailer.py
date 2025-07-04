@@ -163,7 +163,8 @@ def send_request_email(pickup):
                           <ul style=\"padding-left:20px; margin:0;\">
                             <li style=\"margin:8px 0; font-size:16px;\">Textiles that are wet, moldy, or contaminated with chemicals</li>
                             <li style=\"margin:8px 0; font-size:16px;\">Bio-hazardous waste</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Mattresses, pillows, furniture, or other similar oversized items</li>
+                            <li style=\"margin:8px 0; font-size:16px;\">Pillows and cushions</li>
+                            <li style=\"margin:8px 0; font-size:16px;\">Mattresses, furniture, or other similar oversized items</li>
                           </ul>
                         </td>
                       </tr>

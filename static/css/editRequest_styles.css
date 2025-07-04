@@ -1,5 +1,5 @@
 body {
-    background-color: var(--m-green);
+    background-color: var(--d-green);
     padding-top: 150px;
 }
 
@@ -9,10 +9,6 @@ main {
 
 #nav {
     background-color: rgba(0,0,0,0.2);
-}
-
-#footer {
-    box-shadow: none;
 }
 
 #request-id-modal {
@@ -368,12 +364,36 @@ main {
 }
 
 @media only screen and (max-width: 768px) {
+    body {
+        padding-top: 120px;
+        background-color: var(--off-white);
+    }
+
     #request-id-modal {
         flex-direction: column;
         row-gap: 36px;
+        padding: 0em;
     }
 
-    #nav {
+    .g-recaptcha {
+        max-width: 300px;
+        overflow-y: hidden;
+        overflow-x: scroll;
+    }
+
+    #edit-info-wrapper {
+        background-color: var(--off-white);
+        border-radius: 50px;
+        padding: 0em; 
+        box-sizing: border-box;
+        font-family: var(--mont);
+    }
+
+    #loading-popup {
+        width: 60%;
+    }
+
+    .navbar {
         background-color: var(--d-green);
     }
 
@@ -391,65 +411,6 @@ main {
         width: 100%;
         box-sizing: border-box;
         height: 64px;
-    }
-    
-    #confirmation-wrapper {
-        border-radius: 20px;
-        padding: 2em 1em;
-    }
-    
-    .confirmation-info p {
-        font-size: 14px;
-        color: var(--subtle-text-wbg);
-        margin: 0px;
-        margin-bottom: 4px;
-    }
-    
-    .confirmation-info h4 {
-        font-size: 16px;
-        font-weight: 500;
-        margin: 0px;
-        margin-bottom: 16px;
-    }
-    
-    #items-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        row-gap: 36px;
-        overflow-x: scroll;
-    }
-    
-    .items {
-        padding: 24px;
-        border: 1px solid var(--border-grey);
-        border-radius: 10px;
-        height: 100%;
-    }
-    
-    .edit-pencil {
-        margin-left: 16px;
-        padding: 5px;
-        border: 1px solid rgba(0,0,0,0);
-        transition: border .2s ease;
-        border-radius: 5px;
-    }
-    
-    .edit-pencil:hover {
-        border: 1px solid var(--border-grey);
-        cursor: pointer;
-    }
-    
-    #edit-address-form {
-        flex-direction: column;
-        align-items: flex-start;
-        font-family: var(--mont);
-        margin: 0px;
-        row-gap: 16px;
-        justify-content: flex-start;
-        margin-top: 16px;
-        margin-bottom: 16px;
     }
 
     

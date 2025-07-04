@@ -15,7 +15,9 @@
       <div id="info-header">
         <h1>Is a Drop Box Easier? We've Got Those Too!</h1>
         <h3>In addition to our regular curbside pickup service, we now have drop boxes available in Pleasanton.</h3>
-        <button class="download-btn" id="acceptable-items">See the list of items we accept.</button>
+        <button id="acceptable-items" class="action-btn-dbg">
+          <i class="bi bi-arrow-up-right btn-icon align-center"></i>See the list of items we accept.
+        </button>
       </div>
       <img src="{{ url_for('static', filename='images/Boxes1.jpeg') }}" alt="Dropbox in parking lot 2" id="dropbox-image"/>
     </div>
@@ -45,7 +47,8 @@
     <ul>
       <li>Textiles that are wet, moldy, or contaminated with chemicals</li>
       <li>Bio-hazardous waste</li>
-      <li>Mattresses, pillows, furniture, or other similar oversized items</li>
+      <li>Pillows and cushions</li>
+      <li>Mattresses, furniture, or other similar oversized items</li>
     </ul>
   </div>
   <div id="popup-btn-wrapper" class="align-center w-100">

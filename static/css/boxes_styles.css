@@ -58,17 +58,7 @@
 }
 
 #acceptable-items {
-    cursor: pointer;
-    background-color: var(--yel);
-    color: black;
-    padding: 12px 24px;
     margin-top: 24px;
-    font-weight: 600;
-}
-
-#acceptable-items:hover {
-    background-color: var(--m-green);
-    color: white;
 }
 
 .images {

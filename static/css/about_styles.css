@@ -428,6 +428,26 @@ column-gap: 20px;
   display: block;
 }
 
+#testimonials {
+  margin-top: 90px !important;
+}
+
+.testimonial-slide {
+  padding: 16px 0px;
+}
+
+.testimonial-slider {
+  padding: 12px 0px;
+}
+
+.testimonial-slide h3 {
+  font-size: 24px;
+}
+
+.testimonial-slide h4 {
+  font-size: 20px;
+}
+
 #block-text {
   background-color: var(--l-green);
   padding: 0px;

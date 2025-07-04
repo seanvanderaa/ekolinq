@@ -267,10 +267,30 @@ li {
     resize: vertical;
   }
 
-  #contactPopup form button[type="submit"], #close-confirmation-btn {
+  .large-submit-btn {
+    margin-top: 24px;
+    padding: 24px 20px;
+    background: var(--m-blue);
+    font-family: var(--mont);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform .2s ease, background-color .2s ease, color .2s ease;
+  }
+
+  .large-submit-btn:hover {
+    transform: scale(1.02);
+    background-color: var(--m-green);
+    color: white;
+  }
+
+  /* #contactPopup form button[type="submit"], #close-confirmation-btn {
     margin-top: 24px;
     padding: 20px;
-    background: var(--m-green);
+    background: var(--m-blue);
     font-family: var(--mont);
     border: none;
     color: #fff;
@@ -283,9 +303,9 @@ li {
 
 #contactPopup form button[type="submit"]:hover, #close-confirmation-btn:hover {
     transform: scale(1.02);
-    background-color: var(--yel);
+    background-color: var(--m-green);
     color: black;
-}
+} */
 
 #contact-form-confirmation {
     flex-direction: column;
@@ -415,7 +435,7 @@ li {
     font-weight: 600;
 }
 
-.action-btn {
+.action-btn-wbg {
     border-radius: 100px;
     background-color: var(--m-blue);
     color: white; 
@@ -433,9 +453,38 @@ li {
     transition: color .2s ease, background-color .2s ease;
 }
 
-.action-btn:hover {
+.action-btn-wbg:hover {
     background-color: var(--m-green);
     cursor: pointer;
+}
+
+.action-btn-dbg {
+    border-radius: 100px;
+    background-color: white;
+    color: var(--m-green);
+    height: 40px;
+    display: flex;
+    padding: 0px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border: none;
+    padding-right: 24px;
+    font-size: 14px;
+    font-family: var(--mont);
+    font-weight: 500;
+    transition: color .2s ease, background-color .2s ease;
+}
+
+.action-btn-dbg:hover {
+    background-color: var(--m-green);
+    color: white;
+    cursor:pointer;
+}
+
+.action-btn-dbg .btn-icon {
+  background-color: var(--m-green);
+  color: white;
 }
 
 .submit-btn {
@@ -691,6 +740,11 @@ li {
 @media only screen and (max-width: 768px) {
     .content-width {
         width: calc(95% - 2em);
+    }
+
+    #contactPopup {
+        max-height: 80%;
+        overflow-y: scroll;
     }
 
     .block-margin {
