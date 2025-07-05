@@ -67,3 +67,8 @@ main {
 #date-text {
     margin-top: 8px; color: var(--subtle-text-wbg)
 }
+
+#back-btn {
+    width: 160px;
+    margin-bottom: 24px;
+}

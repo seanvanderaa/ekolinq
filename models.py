@@ -18,6 +18,8 @@ class PickupRequest(db.Model):
     phone_number = db.Column(db.String(20), nullable=True)
 
     address = db.Column(db.String(200), nullable=False)
+    address2 = db.Column(db.String(200), nullable=True)
+    
     city = db.Column(db.String(200), nullable=False)
     zipcode = db.Column(db.String(10), nullable=False)
 

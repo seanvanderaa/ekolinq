@@ -27,7 +27,7 @@
               <h4>Request Status: <b>{{ pickup.status }}</b></h4>
             </div>
             <div class="pickup-content completed-content">
-              <p>{{ pickup.address }} {{ pickup.city }}, CA</p>
+              <p>{{ pickup.address }}{% if pickup.address2%} {{ pickup.address2}}{% endif %}, {{ pickup.city }}, CA</p>
               <div class="align-center button-wrapper">
                 <!-- Button says "Mark as Incomplete" to move back to queue -->
                 <button class="mark-complete mark-incomplete button-wrapper-btn"
@@ -66,14 +66,17 @@
                 <p><strong>Email: </strong><a href="mailto:{{ pickup.email }}">{{ pickup.email }}</a></p>
               </div>
             </div>
-
+            {% if pickup.address2 %}
+              <p class="mt0"><strong>Secondary Address:</strong></p>
+              <p>{{ pickup.address2 }}</p>
+            {% endif %}
             {% if pickup.notes %}
               <p class="mt0"><strong>Customer Notes:</strong></p>
-              <p>{{ pickup.notes}}</p>
+              <p>{{ pickup.notes }}</p>
             {% endif %}
             {% if pickup.admin_notes %}
               <p class="mt0"><strong>Admin Notes:</strong></p>
-              <p>{{ pickup.admin_notes}}</p>
+              <p>{{ pickup.admin_notes }}</p>
             {% endif %}
           {% endif %}
           <div class="align-center button-wrapper">

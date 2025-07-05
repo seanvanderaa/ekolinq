@@ -39,7 +39,7 @@
             <p id="address-header">Address</p>
             <div>
               <div id="address-info">
-                <h4>{{ pickup.address }}, {{ pickup.city }}, {{ pickup.zipcode }} </h4>
+                <h4>{{ pickup.address }} {{ pickup.address2 }}, {{ pickup.city }}, {{ pickup.zipcode }} </h4>
                 <a href="{{ url_for('edit_request_init') }}">
                   <div id="edit-time" class="edit-pencil">
                       <i class="bi bi-pencil"></i>

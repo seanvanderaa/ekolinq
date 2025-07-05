@@ -51,7 +51,10 @@ def send_request_email(pickup):
 
         first_name = ' ' + pickup.fname
         request_id = pickup.request_id
-        address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
+        if pickup.address2: 
+            address_formatted = f"{pickup.address} {pickup.address2}, {pickup.city}, CA {pickup.zipcode}"
+        else:
+            address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
         gated = bool(pickup.gated)
 
         try:
@@ -205,7 +208,10 @@ def send_edited_request_email(pickup):
 
         first_name = pickup.fname
         request_id = pickup.request_id
-        address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
+        if pickup.address2: 
+            address_formatted = f"{pickup.address} {pickup.address2}, {pickup.city}, CA {pickup.zipcode}"
+        else:
+            address_formatted = f"{pickup.address}, {pickup.city}, CA {pickup.zipcode}"
 
         try:
             dt = datetime.strptime(pickup.request_date, "%Y-%m-%d")

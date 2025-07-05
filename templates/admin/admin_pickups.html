@@ -65,6 +65,7 @@
           <th class="min-w-300">Email</th>
           <th class="min-w-200">Phone Number</th>
           <th class="min-w-250">Address</th>
+          <th class="min-w-250">Secondary Address</th>
           <th class="min-w-150">City</th>
           <th class="min-w-75">Zip</th>
           <th class="min-w-300 word-break">Cus. Notes</th>
@@ -103,19 +104,20 @@
           </td>
           <td class="min-w-150">{{ req.date_filed }}</td>
           <td class="min-w-150">{{ req.request_date }}</td>
-          <td class="min-w-300"><a class="action-a" href="mailto:{{ req.email }}">{{ req.email }}</a></td>
-          <td class="min-w-200"><a class="action-a" href="tel:{{ req.phone_number }}">{{ req.phone_number }}</a></td>
+          <td class="min-w-300">{% if req.email %}<a class="action-a" href="mailto:{{ req.email }}">{{ req.email }}</a>{% else %}{% endif %}</td>
+          <td class="min-w-200">{% if req.phone_number %}<a class="action-a" href="tel:{{ req.phone_number }}">{{ req.phone_number }}</a>{% else %}{% endif %}</td>
           <td class="min-w-250">{{ req.address }}</td>
+          <td class="min-w-250">{% if req.address2 %}{{ req.address2 }}{% else %}{% endif %}</td>
           <td class="min-w-150">{{ req.city }}</td>
           <td class="min-w-75">{{ req.zipcode }}</td>
-          <td class="min-w-300 word-break">{{ req.notes }}</td>
-          <td class="min-w-300 word-break">{{ req.admin_notes }}</td>
+          <td class="min-w-300 word-break">{% if req.notes %}{{ req.notes }}{% else %}{% endif %}</td>
+          <td class="min-w-300 word-break">{% if req.admin_notes %}{{ req.admin_notes }}{% else %}{% endif %}</td>
           <td class="min-w-100">{{ req.gated }}</td>
           <td class="min-w-200">{{ req.awareness }}</td>
-          <td class="min-w-150">{{ req.fname }}</td>
-          <td class="min-w-200">{{ req.lname }}</td>
+          <td class="min-w-150">{% if req.fname %}{{ req.fname }}{% else %}{% endif %}</td>
+          <td class="min-w-200">{% if req.lname %}{{ req.lname }}{% else %}{% endif %}</td>
           <td class="min-w-50">{{ req.request_id }}</td>
-          <td class="min-w-250">{{ req.pickup_complete_info }}</td>
+          <td class="min-w-250">{% if req.pickup_complete_info %}{{ req.pickup_complete_info }}{% else %}{% endif %}</td>
         </tr>
         {% endfor %}          
       </tbody>

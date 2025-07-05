@@ -26,6 +26,9 @@ class RequestForm(FlaskForm):
     address = StringField("Address", validators=[
         DataRequired(), Length(max=200)
     ])
+    secondaryAddress = StringField("Secondary Address", validators=[
+        Optional(), Length(max=200)
+    ])
     city = StringField("City", validators=[
         DataRequired(), Length(max=50)
     ])
@@ -84,6 +87,9 @@ class UpdateAddressForm(FlaskForm):
     request_id = HiddenField("Request ID", validators=[DataRequired()])
     address    = StringField("Address", validators=[
         DataRequired(), Length(max=200)
+    ])
+    address2 = StringField("Secondary Address", validators=[
+        Optional(), Length(max=200)
     ])
     city       = StringField("City", validators=[
         DataRequired(), Length(max=100)

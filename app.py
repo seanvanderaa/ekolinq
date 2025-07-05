@@ -141,6 +141,7 @@ def create_app():
         # ───── fetch directives ────────────────────────────────────────────
         "default-src":   [SELF],
         "script-src":    [
+            "strict-dynamic",
             SELF,
             "https://ajax.googleapis.com",
             "https://cdnjs.cloudflare.com",
@@ -186,6 +187,7 @@ def create_app():
             "https://www.google.com",          # reCAPTCHA iframe
             "https://www.gstatic.com",
         ],
+        "base-uri" : [SELF],
     }
 
     talisman = Talisman(
@@ -197,6 +199,8 @@ def create_app():
         permissions_policy={"geolocation": "()", "microphone": "()"},
         force_https=app.config["FORCE_HTTPS"],
         strict_transport_security=app.config["STRICT_TRANSPORT_SECURITY"],
+        strict_transport_security_max_age=31536000,
+        strict_transport_security_preload=True,
     )
 
     # --------------------------------------------------
@@ -252,6 +256,11 @@ def create_app():
         exp = session.get("expires_at")
         if exp and exp < time.time():
             session.clear()
+
+    @app.after_request
+    def set_coop(response):
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        return response
 
     @app.context_processor
     def inject_contact_form():
@@ -484,6 +493,7 @@ def create_app():
             email   = form.email.data
             phone   = form.phone.data
             address = form.address.data
+            address2 = form.secondaryAddress.data
             city    = form.city.data
             zip_    = form.zip.data
             notes   = form.notes.data
@@ -500,6 +510,7 @@ def create_app():
                 email=email,
                 phone_number=phone,
                 address=address,
+                address2 = address2,
                 city=city,
                 zipcode=zip_,
                 notes=notes,
@@ -644,17 +655,9 @@ def create_app():
         else:
             current_app.logger.info("Confirmation email already sent for request_id=%s", request_id)
 
-        update_address_form = UpdateAddressForm(obj=pickup)
-        # In your confirmation route
-        update_address_form.request_id.data = pickup.request_id
-        update_address_form.address.data = pickup.address
-        update_address_form.city.data    = pickup.city
-        update_address_form.zipcode.data = pickup.zipcode
-        update_address_form.page.data    = "confirmation"
-
         current_app.logger.info("Rendering confirmation.html for request_id=%s", request_id)
 
-        return render_template('confirmation.html', pickup=pickup, request_id=pickup.request_id, form=update_address_form)
+        return render_template('confirmation.html', pickup=pickup, request_id=pickup.request_id)
 
 
     @app.route('/update_address', methods=['POST'])
@@ -666,9 +669,9 @@ def create_app():
             # Retrieve validated data from the form
             request_id = form.request_id.data
             address    = form.address.data
+            address2   = form.address2.data
             city       = form.city.data
             zip_code   = form.zipcode.data
-            page       = form.page.data
 
             current_app.logger.info("Received valid POST to update address for request_id=%s", request_id)
 
@@ -684,6 +687,7 @@ def create_app():
 
             # Update the fields
             pickup.address = address
+            pickup.address2 = address2
             pickup.city    = city
             pickup.zipcode = zip_code
 
@@ -1293,7 +1297,6 @@ def create_app():
             return redirect(url_for('admin_schedule'))
 
 
-    # NEED TO CREATE A CSRF FORM HERE
     @app.route('/admin-pickups', methods=['GET', 'POST'])
     @login_required
     def admin_pickups():
@@ -1647,7 +1650,6 @@ def create_app():
                 'timeframe': row.request_time,
                 'count': row.pickup_count
             })
-        current_app.logger.debug("Past grouped pickups: %s", past_grouped)
 
         # Sort past dates descending.
         past_dates_final = [
@@ -1706,7 +1708,7 @@ def create_app():
                 requested_addresses,
                 start_location=depot,           # identical start/end rules as live view
                 end_location=depot,
-                api_key=os.environ.get("GOOGLE_API_KEY")
+                api_key=os.environ.get("GOOGLE_BACKEND_API_KEY")
             )
         except Exception:
             current_app.logger.exception("Distance-matrix/TSP error")

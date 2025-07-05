@@ -8,8 +8,9 @@
 
 {% block content %}
 <main class="content-width">
+  <button id="back-btn" class="download-btn"><i class="bi bi-arrow-left"></i> Back to Routes</button>
   <h2 class="col-green mt0">
-    Route Overview <span class="fs-14 col-subtle-wbg"><i>Est. {{ total_time_str }}</i></span>
+    Route Info
   </h2>
   <p id="date-text">{{ date }}</p>
 
@@ -18,7 +19,7 @@
   {% if all_pickups %}
     {% for pickup in all_pickups %}
       <div class="pickup-stop">      
-        <p class="m08">{{ pickup.address }}</p>
+        <p class="m08">{{ pickup.address }}{% if pickup.address2 %}{{ pickup.address2 }}{% endif %}</p>
         <p class="m08">{{ pickup.city }}, CA</p>
         {% if pickup.email %}
         <p class="mt0">{{ pickup.email }}</p>
@@ -36,5 +37,10 @@
 
 {% block scripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/admin/liveRoute.js') }}"></script>
+  <script nonce="{{ csp_nonce() }}">
+    const backBtn = document.getElementById('back-btn');
+    backBtn.addEventListener('click', function() {
+      window.location.href = '/route-overview';
+    });
+  </script>
 {% endblock %}

@@ -198,11 +198,6 @@ h4 {
   transition: background-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 
-.testimonial-slider:hover {
-  background-color: var(--l-green);
-  box-shadow: 4px 4px 10px 0px rgba(0,0,0,0.1);
-  transform: scale(1.02);
-}
 .testimonial-slide {
   position: absolute;
   top: 0; left: 0;

@@ -548,6 +548,9 @@ main {
       box-sizing: border-box;
     }
 
+    #footer {
+      box-shadow: 0px -40px 50px 0px #D4DECA;
+    }
 }
 
 /*─────────────────────────────────────────────────────────────────────────
@@ -576,8 +579,9 @@ main {
 }
 
 /* Second <hr> inside form#init-form-info: 48px top margin */
-#init-form-info hr:nth-of-type(2) {
+hr {
   margin-top: 48px;
+  margin-bottom: 36px;
 }
 
 
@@ -613,7 +617,7 @@ main {
 
 /* The .form-group that needs 550px maximum width (notes textarea) */
 .form-group.notes-width {
-  max-width: 550px;
+  max-width: 100%;
 }
 
 

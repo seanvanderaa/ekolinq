@@ -11,6 +11,10 @@ main {
     background-color: rgba(0,0,0,0.2);
 }
 
+#footer {
+    box-shadow: none;
+}
+
 #request-id-modal {
     background-color: var(--off-white);
     border-radius: 50px;
@@ -375,12 +379,6 @@ main {
         padding: 0em;
     }
 
-    .g-recaptcha {
-        max-width: 300px;
-        overflow-y: hidden;
-        overflow-x: scroll;
-    }
-
     #edit-info-wrapper {
         background-color: var(--off-white);
         border-radius: 50px;
@@ -454,6 +452,9 @@ main {
 
     #update-address {
         margin-top: 16px;
+    }
+    #footer {
+        box-shadow: 0px -40px 50px 0px #D4DECA;
     }
 }
 
