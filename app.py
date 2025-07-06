@@ -138,7 +138,6 @@ def create_app():
     SELF = "'self'"
 
     csp = {
-        # ───── fetch directives ────────────────────────────────────────────
         "default-src":   [SELF],
         "script-src":    [
             "'strict-dynamic'",

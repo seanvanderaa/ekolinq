@@ -118,5 +118,5 @@
 
   {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/select_date.js') }}"></script>
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/select_date.js') }}"></script>
   {% endblock %}

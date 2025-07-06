@@ -116,8 +116,8 @@
 
   <!-- JS Scripts that are needed everywhere can go here -->
   {% block scripts %}
-  <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+  <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+  <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/site.js') }}"></script>
   {% endblock %}
   
 </body>
