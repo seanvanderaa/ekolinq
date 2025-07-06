@@ -109,7 +109,7 @@
   </div>
   
   <!-- reCAPTCHA script -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer nonce="{{ csp_nonce() }}"></script>
   
   <!-- Include a site-wide footer -->
   {% include 'partials/_footer.html' %}

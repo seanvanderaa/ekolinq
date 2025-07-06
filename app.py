@@ -194,7 +194,7 @@ def create_app():
     talisman = Talisman(
         app,
         content_security_policy=csp,
-        content_security_policy_nonce_in=["script-src"],
+        content_security_policy_nonce_in=["script-src", "style-src"],
         frame_options="DENY",
         referrer_policy="same-origin",
         permissions_policy={"geolocation": "()", "microphone": "()"},
@@ -499,6 +499,7 @@ def create_app():
             zip_    = form.zip.data
             notes   = form.notes.data
             awareness = form.awarenessOptions.data
+            date_filed = date.today()
 
             gated = form.gated.data
             
@@ -506,6 +507,7 @@ def create_app():
             
             # Insert into DB (assuming add_request is defined elsewhere)
             new_id = add_request(
+                date_filed = date_filed,
                 fname=fname,
                 lname=lname,
                 email=email,

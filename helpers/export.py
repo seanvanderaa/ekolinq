@@ -1,9 +1,11 @@
-import os
 import datetime
 import re
+
 import gspread
-from google.oauth2.service_account import Credentials
 from flask import current_app
+from sqlalchemy import or_
+from gspread.utils import rowcol_to_a1
+
 from models import PickupRequest, db
 from helpers.google_creds import get_google_credentials
 
@@ -14,12 +16,14 @@ from helpers.google_creds import get_google_credentials
 #: Spreadsheet column → ORM attribute.
 _EXPLICIT_FIELD_MAP = {
     "Request ID": "request_id",
+    "Secondary Address": "address2",
     "First Name": "fname",
     "Last Name": "lname",
+    "Email Address": "email",
     "Phone": "phone_number",
     "Zipcode": "zipcode",
-    "Gated": "gated",
-    "Completion Info": "pickup_complete_info",
+    "Gated (True or False)": "gated",
+    "Pickup Completed Time": "pickup_complete_info",
 }
 
 #: Title of the “last updated” column in the sheet.
@@ -44,112 +48,123 @@ def _header_to_attr(header: str) -> str | None:
         return None
     return _EXPLICIT_FIELD_MAP.get(header, _snake_case(header))
 
-
 ###############################################################################
 # Main export function
 ###############################################################################
 
-def weekly_export() -> None:  # noqa: WPS231, WPS430 – readability > strict rules
-    """Export completed/incomplete requests to Google Sheets.
+def weekly_export() -> None:  # noqa: WPS231, WPS430
+    """Export all PickupRequest rows to Google Sheets, updating or inserting as needed.
 
-    * Tolerant of DB‑schema changes.
-    * Skips rows with the admin‑note "Imported via import-backfill CLI".
-    * Scrubs PII for exported rows inside the same DB transaction.
-    * Emits detailed *non‑PII* logs for observability.
+    * Exports every request unless admin_notes == _ADMIN_SKIP_NOTE.
+    * If a row is not yet in the sheet, inserts it.
+    * If already present and Status is not Complete/Incomplete, updates that row.
+    * Skips updates for rows already marked Complete/Incomplete in the sheet.
+    * Never scrubs or deletes data in the DB.
     """
-
-    logger = current_app.logger  # local alias for brevity
+    logger = current_app.logger
     logger.info("[export] Starting weekly export job…")
 
     creds = get_google_credentials()
     client = gspread.authorize(creds)
     spreadsheet = client.open("[DO NOT EDIT] EkoLinq Website Requests")
     worksheet = spreadsheet.worksheet("Requests")
-    logger.debug("[export] Connected to Google Sheet ‘%s’ / tab ‘%s’.", spreadsheet.title, worksheet.title)
+    logger.debug("[export] Connected to sheet '%s' / tab '%s'.", spreadsheet.title, worksheet.title)
 
-    # ── Build (header -> attribute) map from the sheet itself ────────────────
+    # Read header and build mapping
     header_row: list[str] = worksheet.row_values(1)
     attr_order: list[str | None] = [_header_to_attr(h) for h in header_row]
-    logger.debug("[export] Detected %d columns in sheet header.", len(header_row))
+    logger.debug("[export] Detected %d columns in header.", len(header_row))
 
-    # ── Already‑exported request_ids ─────────────────────────────────────────
-    existing_id = {row[0] for row in worksheet.get_all_values()[1:] if row}
-    logger.debug("[export] Sheet currently has %d exported requests.", len(existing_id))
+    # Identify key column indexes
+    try:
+        reqid_idx = header_row.index("Request ID")
+        status_idx = header_row.index("Status")
+        ts_idx = header_row.index(_TIMESTAMP_COL)
+    except ValueError as e:
+        logger.error("[export] Missing required column: %s", e)
+        return
 
-    # ── Candidate rows to export ─────────────────────────────────────────────
-    candidates: list[PickupRequest] = (
+    # Load existing sheet rows into map: request_id -> (row_number, status)
+    sheet_values = worksheet.get_all_values()
+    sheet_map: dict[str, tuple[int, str]] = {}
+    for sheet_row_num, row in enumerate(sheet_values[1:], start=2):
+        if len(row) > reqid_idx and row[reqid_idx]:
+            rid = row[reqid_idx]
+            status = row[status_idx] if status_idx < len(row) else ""
+            sheet_map[rid] = (sheet_row_num, status)
+    logger.debug("[export] Found %d existing rows in sheet.", len(sheet_map))
+
+    # Fetch all PickupRequests, skipping admin-skip notes
+    all_reqs = (
         PickupRequest.query
-        .filter(PickupRequest.status.in_(["Complete", "Incomplete"]))
+        .filter(
+            or_(
+                PickupRequest.admin_notes.is_(None),
+                PickupRequest.admin_notes != _ADMIN_SKIP_NOTE,
+            )
+        )
         .all()
     )
-    logger.debug("[export] Fetched %d candidate requests (status Complete/Incomplete).", len(candidates))
+    logger.debug("[export] Retrieved %d total requests from DB.", len(all_reqs))
 
-    new_rows: list[list[str]] = []
-    exported_ids: set[str] = set()
-    skipped_existing = 0
-    skipped_admin = 0
+    to_insert: list[PickupRequest] = []
+    to_update: list[tuple[PickupRequest, int]] = []
+    skipped_complete = skipped_admin = 0
 
-    for req in candidates:
-        if req.request_id in existing_id:
-            skipped_existing += 1
-            logger.debug("[export] Skip existing request_id=%s", req.request_id)
-            continue
+    for req in all_reqs:
         if (req.admin_notes or "").strip() == _ADMIN_SKIP_NOTE:
             skipped_admin += 1
-            logger.debug("[export] Skip request_id=%s due to admin note filter", req.request_id)
             continue
 
-        row: list[str] = []
+        mapping = sheet_map.get(req.request_id)
+        if mapping is None:
+            to_insert.append(req)
+        else:
+            row_num, sheet_status = mapping
+            if sheet_status in ("Complete", "Incomplete"):
+                skipped_complete += 1
+            else:
+                to_update.append((req, row_num))
+
+    logger.info(
+        "[export] %d new rows to insert, %d rows to update, skipped %d completed, %d admin-skip.",
+        len(to_insert), len(to_update), skipped_complete, skipped_admin,
+    )
+
+    # Prepare timestamp
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # INSERT new rows at the top
+    for req in to_insert:
+        row_data: list[str] = []
         for attr in attr_order:
             if attr is None:
-                row.append("«ts»")  # placeholder to be overwritten later
+                row_data.append(timestamp)
             else:
-                value = getattr(req, attr, "")
-                row.append(str(value) if value is not None else "")
-        new_rows.append(row)
-        exported_ids.add(req.request_id)
+                val = getattr(req, attr, "")
+                row_data.append(str(val) if val is not None else "")
+        worksheet.insert_row(row_data, index=2)
+        logger.debug("[export] Inserted request_id=%s", req.request_id)
 
-    logger.info(
-        "[export] Prepared %d new rows (skipped %d existing, %d admin‑filtered).",
-        len(new_rows), skipped_existing, skipped_admin,
-    )
+    # Determine sheet column span for updates
+    last_col = rowcol_to_a1(1, len(header_row)).replace('1', '')
 
-    # ── Bulk‑insert rows ─────────────────────────────────────────────────────
-    if new_rows:
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ts_col_idx = header_row.index(_TIMESTAMP_COL)
-        for row in new_rows:
-            row[ts_col_idx] = timestamp
-            worksheet.insert_row(row, index=2)
-        logger.info("[export] Inserted %d rows into Google Sheet (timestamp %s).", len(new_rows), timestamp)
-    else:
-        logger.info("[export] No new rows to insert this cycle.")
+    # UPDATE existing rows
+    for req, row_num in to_update:
+        row_data: list[str] = []
+        for attr in attr_order:
+            if attr is None:
+                row_data.append(timestamp)
+            else:
+                val = getattr(req, attr, "")
+                row_data.append(str(val) if val is not None else "")
+        cell_range = f"A{row_num}:{last_col}{row_num}"
+        worksheet.update(cell_range, [row_data])
+        logger.debug("[export] Updated request_id=%s at sheet row %d", req.request_id, row_num)
 
-    # ── Scrub PII of exported rows ───────────────────────────────────────────
-    if exported_ids:
-        (
-            PickupRequest.query
-            .filter(PickupRequest.request_id.in_(exported_ids))
-            .update({
-                "fname": "NA",
-                "lname": "NA",
-                "email": "NA",
-                "phone_number": "NA",
-            }, synchronize_session=False)
-        )
-        logger.debug("[export] PII scrubbed for %d newly exported requests.", len(exported_ids))
-
-    # ── Delete every “Unfinished” request ────────────────────────────────────
-    deleted_count = (
-        PickupRequest.query
-        .filter_by(status="Unfinished")
-        .delete(synchronize_session=False)
-    )
-    logger.debug("[export] Deleted %d ‘Unfinished’ requests.", deleted_count)
-
-    # ── Commit everything in one shot ────────────────────────────────────────
+    # Commit DB transaction (no PII scrub or deletes)
     db.session.commit()
     logger.info(
-        "[export] Weekly export complete — %d rows exported, %d unfinished rows deleted.",
-        len(new_rows), deleted_count,
+        "[export] Weekly export complete — %d inserted, %d updated.",
+        len(to_insert), len(to_update),
     )
