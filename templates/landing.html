@@ -56,9 +56,9 @@
       <div id="impact-left">
         <p class="section-title">OUR IMPACT</p>
         <h2>EkoLinq has diverted over</h2>
-        <h1>587,000</h1>
+        <h2 class="number-h2">587,000</h2>
         <h2>pounds of textile waste away from landfill and contributed over</h2>
-        <h1>$32,000</h1>
+        <h2 class="number-h2">$32,000</h2>
         <h2>to schools, non-profits, and businesses throughout the Tri-Valley.</h2>
       </div>
       <div class="fade-overlay">
@@ -67,19 +67,19 @@
           <div class="impact-square fade-up"></div>
           <div class="impact-square fade-up"></div>
           <div class="impact-square align-center highlight-square" data-reveal-target="pickup-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="" height="80px;" aria-hidden="true" aria-hidden="true">
           </div>
           <div class="impact-square align-center " id="fundraiser-reveal">
             <p class="reveal-text">Fundraising collection events.</p>
           </div>
           <div class="impact-square align-center highlight-square" data-reveal-target="collect-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-bin.svg') }}" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-bin.svg') }}" alt="" height="80px;" aria-hidden="true">
           </div>
           <div class="impact-square align-center " id="pickup-reveal">
             <p class="reveal-text">Residential and business site pick-ups.</p>
           </div>
           <div class="impact-square align-center highlight-square" data-reveal-target="fundraiser-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="" height="80px;">
+            <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="" height="80px;" aria-hidden="true">
           </div>
           <div class="impact-square align-center " id="collect-reveal">
             <p class="reveal-text">Collection bins and drop boxes.</p>
@@ -156,7 +156,7 @@
   <div class="content-width">
     <div id="collection-event" class="align-center block-margin box-shadow">
       <div class="align-center">
-        <img src="{{ url_for('static', filename='images/Group 26.png') }}" height="80" alt="">
+        <img src="{{ url_for('static', filename='images/Group 26.png') }}" height="80" alt="" aria-hidden="true">
       </div>
       <div>
         <h2>Interested in hosting a collection event?</h2>
@@ -164,7 +164,7 @@
         <button id="get-in-touch" class="action-btn-wbg"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Get in Touch</button>
       </div>
       <div class="align-center" id="mobile-image-removed">
-        <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="">
+        <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="" aria-hidden="true">
       </div>
     </div>
     <div id="shared-vision" class="align-center block-margin">
@@ -173,15 +173,15 @@
       <p>EkoLinq contributes at least 5% of profits to eco-friendly, carbon capture initiatives such as:</p>
       <div id="shared-vision-orgs" class="align-center">
         <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" alt="" class="box-shadow">
+          <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" aria-hidden="true" class="box-shadow">
           <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
         </div>
         <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/onetree.jpg') }}" height="160" alt="" class="box-shadow">
+          <img src="{{ url_for('static', filename='images/onetree.jpg') }}" height="160" aria-hidden="true" class="box-shadow">
           <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
         </div>
         <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" alt="" class="box-shadow">
+          <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" aria-hidden="true" class="box-shadow">
           <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
         </div>
       </div>

@@ -706,8 +706,8 @@ strong {
 
 @media (max-width: 768px) {
     #header {
-        padding-bottom: 300px;
-        padding-top: 200px;
+        padding-bottom: 240px;
+        padding-top: 240px;
     }
 
     #header-content {
@@ -881,16 +881,16 @@ strong {
 }
 
 /* Impact numbers */
-#impact-left h1 {
+.number-h2 {
   font-size: 64px;
   font-family: var(--mont);
   font-weight: 600;
-  margin: 12px 0px;
+  margin: 16px 0px !important;
 }
-#impact-left h1:first-of-type {
+.number-h2:nth-of-type(2) {
   color: var(--m-blue);
 }
-#impact-left h1:nth-of-type(2) {
+.number-h2:nth-of-type(4) {
   color: var(--m-green);
 }
 

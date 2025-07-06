@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
       gatedError.style.display = "none";
     }
 
-    // 0️⃣ reCAPTCHA client-side guard
+    // reCAPTCHA client-side guard
     if (grecaptcha.getResponse().length === 0) {
       showFormError('recaptcha', 'Please click the “I’m not a robot” box.');
       return;

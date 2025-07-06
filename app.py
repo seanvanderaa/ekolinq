@@ -141,7 +141,7 @@ def create_app():
         # ───── fetch directives ────────────────────────────────────────────
         "default-src":   [SELF],
         "script-src":    [
-            "strict-dynamic",
+            "'strict-dynamic'",
             SELF,
             "https://ajax.googleapis.com",
             "https://cdnjs.cloudflare.com",
@@ -188,6 +188,8 @@ def create_app():
             "https://www.gstatic.com",
         ],
         "base-uri" : [SELF],
+        "frame-ancestors": [SELF],
+        "form-action":     [SELF],
     }
 
     talisman = Talisman(
