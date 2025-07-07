@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", function() {
+  document.body.addEventListener('click', event => {
+    // Did a .btn-close inside a .flash-message get clicked?
+    const btn = event.target.closest('.flash-message .btn-close');
+    if (!btn) return;
+
+    // Find the flash-message wrapper
+    const flash = btn.closest('.flash-message');
+    if (!flash) return;
+
+    // Remove the 'show' class to trigger Bootstrap fade‐out (if used)
+    flash.classList.remove('show');
+
+    // After fade transition (150ms default), actually remove it from the DOM
+    flash.addEventListener('transitionend', () => {
+      flash.remove();
+    }, { once: true });
+  });
   const tableBody  = document.querySelector('#requests-table tbody');
 
   /* ------------------  delete & view buttons  ------------------ */

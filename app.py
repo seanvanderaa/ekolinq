@@ -1328,16 +1328,14 @@ def create_app():
             query = query.filter(PickupRequest.request_date <= end_date)
 
         # Apply sorting based on user selection
-        sort_by = request.args.get('sort_by')
-        if sort_by == 'date_filed':
-            current_app.logger.debug("Sorting pickups by date_filed desc.")
-            query = query.order_by(PickupRequest.date_filed.desc())
-        elif sort_by == 'date_requested':
-            current_app.logger.debug("Sorting pickups by request_date desc.")
-            query = query.order_by(PickupRequest.request_date.desc())
-        else:
-            current_app.logger.debug("Using default sorting by ID desc.")
-            query = query.order_by(PickupRequest.id.desc())
+        sort_mapping = {
+            'date_filed'     : PickupRequest.date_filed,
+            'date_requested': PickupRequest.request_date,
+        }
+        sort_key    = request.args.get('sort_by', 'date_filed')
+        sort_column = sort_mapping.get(sort_key, PickupRequest.date_filed)
+
+        query = query.order_by(sort_column.desc(), PickupRequest.id.desc())
 
         requests = query.all()
         current_app.logger.debug("Found %d pickup requests after applying filters/sorts.", len(requests))
@@ -1486,6 +1484,7 @@ def create_app():
 
         # Always validate *before* doing any work
         if not form.validate_on_submit():
+            flash("Invalid form submission.", "warning")
             return redirect(url_for("admin_pickups"))
 
         current_app.logger.info("ADMIN: triggered /clean_pickups")
@@ -1494,57 +1493,14 @@ def create_app():
             weekly_export()
         except Exception as exc:
             current_app.logger.exception("weekly_export() failed")
+            flash(f"Weekly export failed! Please contact Sean.", "danger")
+
         else:
             current_app.logger.info("weekly_export() completed")
+            flash("Weekly export completed successfully.", "success")
+
 
         return redirect(url_for("admin_pickups"))
-
-
-    # @app.route('/admin/download_csv')
-    # @login_required
-    # def download_csv():
-    #     current_app.logger.info("GET /admin/download_csv - Admin downloading CSV of all pickup requests.")
-
-    #     # Query all pickup requests
-    #     pickup_requests = PickupRequest.query.all()
-    #     current_app.logger.debug("Fetched %d pickup requests to include in CSV.", len(pickup_requests))
-
-    #     # Create an in-memory CSV
-    #     output = io.StringIO()
-    #     writer = csv.writer(output)
-
-    #     # Write header with all fields
-    #     writer.writerow([
-    #         "ID", "First Name", "Last Name", "Email", "Phone Number",
-    #         "Address", "City", "Zipcode", "Notes", "Status",
-    #         "Gated",
-    #         "Request Date", "Request Time", "Date Filed",
-    #         "Pickup Complete Info", "Request ID"
-    #     ])
-
-    #     # Write rows for each pickup request
-    #     for req in pickup_requests:
-    #         writer.writerow([
-    #             req.id, req.fname, req.lname, req.email, req.phone_number,
-    #             req.address, req.city, req.zipcode, req.notes, req.status,
-    #             req.gated,
-    #             req.request_date, req.request_time, req.date_filed,
-    #             req.pickup_complete_info, req.request_id
-    #         ])
-
-    #     # Make a Flask response with the CSV data
-    #     response = make_response(output.getvalue())
-    #     response.headers["Content-Disposition"] = "attachment; filename=pickup_requests.csv"
-    #     response.headers.update({
-    #         "Content-Disposition": "attachment; filename=pickup_requests.csv",
-    #         "Content-Type": "text/csv",
-    #         "Cache-Control": "private, no-store",
-    #         "X-Frame-Options": "DENY"
-    #     })
-
-    #     current_app.logger.info("CSV created and sent to client.")
-
-    #     return response
         
 
 

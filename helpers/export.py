@@ -1,10 +1,11 @@
 import datetime
 import re
+import os
 
 import gspread
 from flask import current_app
-from sqlalchemy import or_
-from gspread.utils import rowcol_to_a1
+from sqlalchemy import or_, desc
+from gspread.exceptions import WorksheetNotFound
 
 from models import PickupRequest, db
 from helpers.google_creds import get_google_credentials
@@ -52,49 +53,70 @@ def _header_to_attr(header: str) -> str | None:
 # Main export function
 ###############################################################################
 
-def weekly_export() -> None:  # noqa: WPS231, WPS430
-    """Export all PickupRequest rows to Google Sheets, updating or inserting as needed.
+def weekly_export() -> None:
+    """Export all PickupRequest rows to Google Sheets via ghost-sheet swap.
 
-    * Exports every request unless admin_notes == _ADMIN_SKIP_NOTE.
-    * If a row is not yet in the sheet, inserts it.
-    * If already present and Status is not Complete/Incomplete, updates that row.
-    * Skips updates for rows already marked Complete/Incomplete in the sheet.
-    * Never scrubs or deletes data in the DB.
+    * Keeps most recent snapshot in 'Requests' tab.
+    * Keeps previous snapshot in 'Requests_Temp' tab.
+    * Dynamically generates headers from DB columns, using explicit map for renames.
+    * Writes entire dump in a single atomic RPC (`values.batchUpdate`).
+    * Orders rows by date_filed desc (newest first).
     """
     logger = current_app.logger
     logger.info("[export] Starting weekly export job…")
 
-    creds = get_google_credentials()
-    client = gspread.authorize(creds)
-    spreadsheet = client.open("[DO NOT EDIT] EkoLinq Website Requests")
-    worksheet = spreadsheet.worksheet("Requests")
-    logger.debug("[export] Connected to sheet '%s' / tab '%s'.", spreadsheet.title, worksheet.title)
+    # — auth & select spreadsheet —
+    creds   = get_google_credentials()
+    client  = gspread.authorize(creds)
+    cfg     = os.getenv("FLASK_CONFIG", "development").lower()
+    env_tag = "[PRODUCTION]" if cfg == "production" else "[DEVELOPMENT]"
+    ss      = client.open(f"{env_tag} [DO NOT EDIT] EkoLinq Website Requests")
 
-    # Read header and build mapping
-    header_row: list[str] = worksheet.row_values(1)
-    attr_order: list[str | None] = [_header_to_attr(h) for h in header_row]
-    logger.debug("[export] Detected %d columns in header.", len(header_row))
-
-    # Identify key column indexes
+    # — Step 1: Rotate main into temp —
     try:
-        reqid_idx = header_row.index("Request ID")
-        status_idx = header_row.index("Status")
-        ts_idx = header_row.index(_TIMESTAMP_COL)
-    except ValueError as e:
-        logger.error("[export] Missing required column: %s", e)
-        return
+        stale = ss.worksheet("Requests_Temp")
+        ss.del_worksheet(stale)
+    except WorksheetNotFound:
+        pass
 
-    # Load existing sheet rows into map: request_id -> (row_number, status)
-    sheet_values = worksheet.get_all_values()
-    sheet_map: dict[str, tuple[int, str]] = {}
-    for sheet_row_num, row in enumerate(sheet_values[1:], start=2):
-        if len(row) > reqid_idx and row[reqid_idx]:
-            rid = row[reqid_idx]
-            status = row[status_idx] if status_idx < len(row) else ""
-            sheet_map[rid] = (sheet_row_num, status)
-    logger.debug("[export] Found %d existing rows in sheet.", len(sheet_map))
+    try:
+        main_ws = ss.worksheet("Requests")
+        main_ws.update_title("Requests_Temp")
+    except WorksheetNotFound:
+        pass
 
-    # Fetch all PickupRequests, skipping admin-skip notes
+    # — Step 2: Create fresh 'Requests' tab —
+    try:
+        new_ws = ss.worksheet("Requests")
+        new_ws.clear()
+    except WorksheetNotFound:
+        # infer size from DB
+        total = (
+            PickupRequest.query
+            .filter(
+                or_(
+                    PickupRequest.admin_notes.is_(None),
+                    PickupRequest.admin_notes != _ADMIN_SKIP_NOTE,
+                )
+            )
+            .count()
+        )
+        # +1 for timestamp column
+        cols = len(PickupRequest.__table__.columns)  
+        new_ws = ss.add_worksheet(title="Requests", rows=str(total + 1), cols=str(cols + 1))
+
+    # — Step 3: Dynamic headers from DB schema (excluding 'id') —
+    cols = [c.name for c in PickupRequest.__table__.columns if c.name != "id"]
+    reverse_map = {v: k for k, v in _EXPLICIT_FIELD_MAP.items()}
+    header_row = [
+        reverse_map.get(col, col.replace("_", " ").title())
+        for col in cols
+    ]
+    header_row.append(_TIMESTAMP_COL)
+    attr_order = [_header_to_attr(h) for h in header_row]
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # — Step 4: Fetch all rows ordered by date_filed desc —
     all_reqs = (
         PickupRequest.query
         .filter(
@@ -103,68 +125,33 @@ def weekly_export() -> None:  # noqa: WPS231, WPS430
                 PickupRequest.admin_notes != _ADMIN_SKIP_NOTE,
             )
         )
+        .order_by(desc(PickupRequest.date_filed))
         .all()
     )
-    logger.debug("[export] Retrieved %d total requests from DB.", len(all_reqs))
 
-    to_insert: list[PickupRequest] = []
-    to_update: list[tuple[PickupRequest, int]] = []
-    skipped_complete = skipped_admin = 0
-
+    # Build matrix: header + rows
+    values = [header_row]
     for req in all_reqs:
         if (req.admin_notes or "").strip() == _ADMIN_SKIP_NOTE:
-            skipped_admin += 1
             continue
-
-        mapping = sheet_map.get(req.request_id)
-        if mapping is None:
-            to_insert.append(req)
-        else:
-            row_num, sheet_status = mapping
-            if sheet_status in ("Complete", "Incomplete"):
-                skipped_complete += 1
-            else:
-                to_update.append((req, row_num))
-
-    logger.info(
-        "[export] %d new rows to insert, %d rows to update, skipped %d completed, %d admin-skip.",
-        len(to_insert), len(to_update), skipped_complete, skipped_admin,
-    )
-
-    # Prepare timestamp
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # INSERT new rows at the top
-    for req in to_insert:
-        row_data: list[str] = []
+        row = []
         for attr in attr_order:
             if attr is None:
-                row_data.append(timestamp)
+                row.append(timestamp)
             else:
                 val = getattr(req, attr, "")
-                row_data.append(str(val) if val is not None else "")
-        worksheet.insert_row(row_data, index=2)
-        logger.debug("[export] Inserted request_id=%s", req.request_id)
+                row.append(str(val) if val is not None else "")
+        values.append(row)
 
-    # Determine sheet column span for updates
-    last_col = rowcol_to_a1(1, len(header_row)).replace('1', '')
+    # — Step 5: Write dump in one atomic RPC —
+    new_ws.update("A1", values, value_input_option="RAW")
 
-    # UPDATE existing rows
-    for req, row_num in to_update:
-        row_data: list[str] = []
-        for attr in attr_order:
-            if attr is None:
-                row_data.append(timestamp)
-            else:
-                val = getattr(req, attr, "")
-                row_data.append(str(val) if val is not None else "")
-        cell_range = f"A{row_num}:{last_col}{row_num}"
-        worksheet.update(cell_range, [row_data])
-        logger.debug("[export] Updated request_id=%s at sheet row %d", req.request_id, row_num)
+    # — Step 6: Cleanup stray worksheets —
+    for ws in ss.worksheets():
+        if ws.title not in ("Requests", "Requests_Temp"):
+            ss.del_worksheet(ws)
 
-    # Commit DB transaction (no PII scrub or deletes)
     db.session.commit()
     logger.info(
-        "[export] Weekly export complete — %d inserted, %d updated.",
-        len(to_insert), len(to_update),
+        "[export] Weekly export complete — 'Requests' holds current dump; 'Requests_Temp' holds prior dump."
     )

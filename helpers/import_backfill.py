@@ -70,9 +70,10 @@ def import_backfill(path: str, purge: bool) -> None:
             delim = '\t' if '\t' in sample else ','
         fh.seek(0)
         reader = csv.DictReader(fh, delimiter=delim)
-
+        rows = list(reader)                 # pull every row into memory
         rows_added = 0
-        for row in reader:
+
+        for row in reversed(rows): 
             raw_date = (row.get('Last Pick-Up / Drop-Off') or '').strip()
             if not raw_date or raw_date.lower() == 'inquiry':
                 continue
@@ -90,7 +91,8 @@ def import_backfill(path: str, purge: bool) -> None:
                 email="",
                 phone_number=None,
 
-                address=address,
+                address=(row.get('Address 1') or '').strip(),
+                address2=(row.get('Address 2') or '').strip(),
                 city=(row.get('City') or '').strip(),
                 zipcode=(row.get('Zip') or '').strip(),
 
