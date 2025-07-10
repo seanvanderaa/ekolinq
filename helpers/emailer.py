@@ -112,8 +112,8 @@ def send_request_email(pickup):
               <div style=\"text-align:center;\">
                 <img src=\"https://i.imgur.com/g6QpslJ.png\" alt=\"EkoLinq Logo\" width=\"140\" style=\"display:block; margin:36px auto 24px; margin-bottom: 24px\" />
               </div>
-              {gated_notice_html}
               <h1 style=\"font-size:16px; margin-bottom:16px; margin-top: 16px; font-weight: 500; text-align:center; margin-bottom: 24px\">Pickup Request Confirmation</h1>
+              {gated_notice_html}
               <p style=\"font-size:18px; margin-top:36px;\">Hello{first_name},</p>
               <p style=\"font-size:16px;\">Thanks for choosing to get rid of waste the right way. Below is the information for your pick-up request. <b>Please remember to have your items out by 8AM on the day of your pick-up.</b></p>
               <div style=\"background:#098223; color:#fff; padding:16px; border-radius:8px; margin:48px 0;\">

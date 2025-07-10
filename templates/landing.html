@@ -14,19 +14,19 @@
 {% endblock %}
 {% block content %}
 <div id="header">
-  <div class="website-notice content-width">
+  <!-- <div class="website-notice content-width">
     <p><strong>Notice: </strong>We just updated our website! Click "Request a pickup" below to get started.</span></p>
-  </div>
+  </div> -->
   <div id="header-content">
     <div id="header-left">
-      <h1 class="col-white">Make Every Thread Matter.</h1>
-      <h1 class="col-white bold">Free curbside textile collection for a greener planet.</h1>
+      <h1 class="col-white bold">Join the loop, not the landfill.</h1>
+      <h3 class="col-white secondary">EkoLinq ensures all items are reused first and recycled second to help you do your part in creating a circular economy for textiles.</h3>
       <div id="central-cta">
         <button class="main-btn main-btn2" id="request-a-pickup"><span>Request a pickup</span></button>
       </div>
     </div>
     <div id="header-right">
-      <h2>EkoLinq provides <strong>free,
+      <h2>We providee <strong>free,
           contactless curbside pickups</strong> to individuals and businesses to redirect textile waste away from
         landfills.</h2>
       <p><a href="/about">Learn more</a> about what we do.</p>
@@ -60,6 +60,9 @@
         <h2>pounds of textile waste away from landfill and contributed over</h2>
         <h2 class="number-h2">$32,000</h2>
         <h2>to schools, non-profits, and businesses throughout the Tri-Valley.</h2>
+        <button id="about-us-btn" class="action-btn-wbg">
+          <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn more about us
+        </button>
       </div>
       <div class="fade-overlay">
         <div id="impact-right">
@@ -109,7 +112,7 @@
           significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
           future.</p>
           <button id="nav-textile-waste" class="action-btn-wbg">
-            <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn More
+            <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn more about textile waste
           </button>
           
       </div>
@@ -122,7 +125,7 @@
           <p class="section-title">ABOUT US</p>
           <h2>What kinds of items does EkoLinq accept?</h2>
           <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
-            list below for any specific items you’re curious about.</p>
+            list below for any specific items you’re curious about. Would you prefer to leave clothes at a dropbox? <a class="a-yel" href="/drop-boxes">We have those too.</a></p>
         </div>
       </div>
       <div id="items-info">
@@ -148,9 +151,6 @@
           </ul>
         </div>
       </div>
-      <button id="about-us-btn" class="action-btn-dbg">
-        <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn More About Us
-      </button>
     </div>
   </div>
   <div class="content-width">
@@ -161,7 +161,7 @@
       <div>
         <h2>Interested in hosting a collection event?</h2>
         <p>You bring the people, we take the waste. Collection events are a great way to engage your community toward a sustainable future.</p>
-        <button id="get-in-touch" class="action-btn-wbg"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Get in Touch</button>
+        <button id="get-in-touch" class="action-btn-wbg"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Get in touch</button>
       </div>
       <div class="align-center" id="mobile-image-removed">
         <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="" aria-hidden="true">

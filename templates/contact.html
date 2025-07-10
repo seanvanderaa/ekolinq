@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}EkoLinq | Contact Us{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact_styles.css') }}">
+{% endblock %}
+{% block content %}
+<main>
+    <div id="contact-content">
+        <div class="hero-content">
+            <h1>Contact us.</h1>
+            <h3>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</h>
+            <div class="main-contact-info" id="desktop-main-contact-info">
+                <p>Use the form or the methods below to contact us.</p>
+                <div class="contact-info-wrapper">
+                    <h4><i class="bi bi-telephone"></i> Call us</h4>
+                    <p><a href="tel:8663464765" class="a-yel">866.346.4765</a></p>
+                </div>
+                <div class="contact-info-wrapper">
+                    <h4><i class="bi bi-envelope"></i> Email us</h4>
+                    <p><a href="mailto:contact@ekolinq.com" class="a-yel">contact@ekolinq.com</a></p>
+                </div>
+                <div class="contact-info-wrapper">
+                    <h4><i class="bi bi-phone"></i> Social media</h4>
+                    <p>@ekolinq on <a href="https://www.facebook.com/ekolinq/" class="a-yel">Facebook</a> and <a href="https://www.linkedin.com/company/ekolinq/" class="a-yel">LinkedIn</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div id="contact-form-wrapper" class="content-width">
+            <form id="contactForm"
+                action="{{ url_for('contact_form_entry') }}"
+                method="POST">
+                {{ contact_form.hidden_tag() }}
+                <h3>Get in touch.</h3>
+                <div class="contact-form-group">
+                    {{ contact_form.name.label }}
+                    {{ contact_form.name(id="name", placeholder="Your name") }}
+                    {% if contact_form.name.errors %}
+                    <div class="error">{{ contact_form.name.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="contact-form-group">
+                    {{ contact_form.email.label }}
+                    {{ contact_form.email(id="email", placeholder="you@example.com") }}
+                    {% if contact_form.email.errors %}
+                    <div class="error">{{ contact_form.email.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="contact-form-group">
+                    {{ contact_form.message.label }}
+                    {{ contact_form.message(id="message", rows="8", placeholder="Your message") }}
+                    {% if contact_form.message.errors %}
+                    <div class="error">{{ contact_form.message.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="contact-form-group" id="recaptcha-form">
+                    {{ contact_form.recaptcha }}
+                    {% if contact_form.recaptcha.errors %}
+                    <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" id="contactFormBtn" class="large-submit-btn">Submit</button>
+            </form>
+            <div id="contact-form-confirmation" style="display: none;">
+                <h2>Thanks for getting in touch!</h2>
+                <p>We'll follow up with you shortly.</p>
+                <button
+                    type="button"
+                    id="new-request-btn"
+                    class="large-submit-btn">
+                    Submit another request
+                </button>
+            </div>
+        </div>
+        <div class="main-contact-info" id="mobile-main-contact-info">
+            <h3>Would you prefer to contact us a different way?</h3>
+            <p>Use the methods below.</p>
+            <div class="contact-info-wrapper">
+                <h4><i class="bi bi-telephone"></i> Call us</h4>
+                <p><a href="tel:8663464765" class="a-green">866.346.4765</a></p>
+            </div>
+            <div class="contact-info-wrapper">
+                <h4><i class="bi bi-envelope"></i> Email us</h4>
+                <p><a href="mailto:contact@ekolinq.com" class="a-green">contact@ekolinq.com</a></p>
+            </div>
+            <div class="contact-info-wrapper">
+                <h4><i class="bi bi-phone"></i> Social media</h4>
+                <p>@ekolinq on <a href="https://www.facebook.com/ekolinq/" class="a-green">Facebook</a> and <a href="https://www.linkedin.com/company/ekolinq/" class="a-green">LinkedIn</a>.</p>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+
+  {% block scripts %}
+    {{ super() }}
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/contact.js') }}"></script>
+  {% endblock %}
+
+{% endblock %}

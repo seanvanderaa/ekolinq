@@ -1,0 +1,219 @@
+body {
+    background-color: var(--m-green);
+    min-height: 100vh;
+}
+
+h3 {
+    margin-bottom: 0px;
+}
+
+#main-content {
+    display: flex;
+    justify-content: center;
+    min-height: calc(100vh - 300px);
+}
+
+main {
+    padding-top: 160px;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#contact-content {
+    display: flex;
+    flex-direction: row;
+    column-gap: 120px;
+    width: 80vw;
+    max-width: 1200px;
+}
+
+.hero-banner {
+    margin-top: 0px;
+    background-color: var(--m-green);
+    display: flex;
+    color: white;
+}
+
+.hero-content {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    color: white;
+    flex: 1.3;
+}
+
+.main-contact-info {
+    flex-direction: column;
+    row-gap: 16px;
+    margin-top: 48px;
+}
+
+.main-contact-info p {
+    width: 100%;
+    text-align: left;
+    color: rgb(255, 255, 255);
+}
+
+.contact-info-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: rgba(255, 255, 255, 0.199);
+    padding: 16px;
+    border-radius: 5px;
+    row-gap: 12px;
+    box-sizing: border-box;
+}
+
+.contact-info-wrapper h4, .contact-info-wrapper p {
+    margin: 0px;
+}
+
+.contact-info-wrapper .bi {
+    margin-right: 8px;
+}
+
+.contact-info-wrapper h4 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+#contact-form-wrapper {
+    background-color: white;
+    padding: 24px;
+    border-radius: 20px;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+#contact-form-wrapper h3 {
+    margin-top: 0px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+form label {
+    margin-top: 10px;
+    font-weight: 500;
+    font-family: var(--mont);
+}
+form input, form textarea {
+    margin-top: 5px;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: var(--mont);
+}
+form textarea {
+    resize: vertical;
+}
+
+#desktop-main-contact-info {
+    display: flex;
+}
+
+#mobile-main-contact-info {
+    display: none;
+}
+
+#footer {
+    box-shadow: none;
+}
+
+@media only screen and (max-width: 1000px) {
+    body {
+        background-color: white;
+        color: black;
+    }
+
+    main {
+        padding-top: 120px;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    #contact-content {
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        width: 90vw;
+    }
+
+    .hero-content {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        color: black;
+        flex: 1;
+    }
+
+    .main-contact-info {
+        border-top: 1px solid lightgrey;
+        padding-top: 36px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+        margin-top: 48px;
+    }
+
+    .main-contact-info h3 {
+        margin-bottom: 0px;
+    }
+
+    .main-contact-info p {
+        width: 100%;
+        text-align: left;
+        color: black;
+    }
+
+    .contact-info-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: #055d1835;
+        margin-top: 16px;
+        color: black;
+        border-radius: 5px;
+        row-gap: 12px;
+        box-sizing: border-box;
+    }
+
+    .contact-info-wrapper h4, .contact-info-wrapper p {
+        margin: 0px;
+        color: black;
+    }
+
+    .contact-info-wrapper h4 {
+        font-size: 20px;
+    }
+
+    #contact-form-wrapper {
+        margin-top: 24px;
+        width: 100%;
+        padding: 0px;
+        border-top: 1px solid lightgrey;
+        border-radius: 0px;
+        padding-top: 16px;
+    }
+    #desktop-main-contact-info {
+        display: none;
+    }
+
+    #mobile-main-contact-info {
+        display: flex;
+    }
+}

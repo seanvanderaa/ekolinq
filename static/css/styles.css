@@ -77,6 +77,10 @@ li {
   text-decoration: underline; color: var(--m-green);
 }
 
+.a-yel {
+    text-decoration: underline; color: var(--yel);
+}
+
 .col-white {
     color: white !important;
 }

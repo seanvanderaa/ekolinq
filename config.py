@@ -33,6 +33,7 @@ class BaseConfig:
     MAIL_USERNAME = require("MAIL_USERNAME")
     MAIL_PASSWORD = require("MAIL_PASSWORD")
     MAIL_DEBUG = False 
+    MAIL_ERROR_ADDRESS = require("MAIL_ERROR_ADDRESS")
 
     # ───── Rate limiting / Redis ────────────────────────────────────────
     RATE_LIMIT_STORAGE_URL = ""

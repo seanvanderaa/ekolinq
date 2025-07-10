@@ -42,14 +42,15 @@ strong {
 }
 
 .website-notice {
-    background-color: var(--yel);
+    background-color: #eab208;
     color: black;
     z-index: 1;
     box-sizing: border-box;
     padding: 0px 12px;
     border-radius: 5px;
     position: absolute;
-    top: 90px;
+    bottom: 16px;
+
 }
 
 
@@ -63,7 +64,7 @@ strong {
 }
 
 #header-left {
-    flex: 1;
+    flex: 1.2;
 }
 
 #header-left .col-white {
@@ -73,6 +74,13 @@ strong {
 
 #header-left .bold {
     font-weight: 600;
+    font-size: 52px;
+    max-width: 400px;
+}
+
+#header-left .secondary {
+    font-size: 20px;
+    font-weight: 400;
 }
 
 #header-right {
@@ -413,7 +421,7 @@ strong {
     display: flex;
     flex-direction: row;
     column-gap: 64px;
-    margin-top: 100px;
+    margin-top: 140px;
 }
 
 #problem-left {
@@ -562,7 +570,7 @@ strong {
 
     #header {
         padding-bottom: 300px;
-        padding-top: 140px;
+        padding-top: 100px;
     }
 
     #header-content {
@@ -700,14 +708,13 @@ strong {
     
     .section-title {
         color: var(--m-green);
-        font-weight: 600;
     }
 }
 
 @media (max-width: 768px) {
     #header {
-        padding-bottom: 240px;
-        padding-top: 240px;
+        padding-bottom: 260px;
+        padding-top: 120px;
     }
 
     #header-content {
@@ -722,6 +729,10 @@ strong {
 
     #header-right #header-left {
         margin: 0px;
+    }
+
+    #header-left .bold {
+        font-size: 2.6em;
     }
 
     .main-btn2 {
@@ -918,9 +929,7 @@ strong {
 /* Items header section */
 #items-header .section-title {
   color: white;
-}
-#items-header h2 {
-  color: var(--yel);
+  font-weight: 500;
 }
 
 /* Items info columns */
@@ -933,11 +942,7 @@ strong {
 
 /* About Us button */
 #about-us-btn {
-  margin-top: 36px;
-}
-#about-us-btn .btn-icon {
-  background-color: var(--m-green);
-  color: white;
+  margin-top: 48px;
 }
 
 /* Collection Event layout */

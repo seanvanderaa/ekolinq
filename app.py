@@ -20,8 +20,6 @@ from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 from flask_sitemap import Sitemap
 
-
-from logging.handlers import RotatingFileHandler
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import traceback
@@ -37,6 +35,13 @@ from pycognito import Cognito
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from helpers.analytics import get_admin_metrics, city_distribution, awareness_distribution
+from helpers.monitoring import (
+    EmailErrorHandler,
+    record_login_failure,    # already in use
+    record_404,
+    record_5xx,
+    record_slow,
+)
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip, verifyAddress, AddressError
 from helpers.helpers import format_date
@@ -258,9 +263,26 @@ def create_app():
         if exp and exp < time.time():
             session.clear()
 
+    @app.before_request
+    def _monitor_start():
+        g._start_time = time.time()
+
     @app.after_request
     def set_coop(response):
         response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        return response
+
+    @app.after_request
+    def _monitor_response(response):
+        if response.status_code == 404:
+            record_404()
+        elif 500 <= response.status_code < 600:
+            record_5xx()
+
+        # slow-response spike
+        duration = time.time() - getattr(g, "_start_time", time.time())
+        record_slow(duration)
+
         return response
 
     @app.context_processor
@@ -275,11 +297,13 @@ def create_app():
         def wrapper(*args, **kwargs):
             id_token = session.get("id_token")
             if not id_token:
+                record_login_failure()
                 return redirect(url_for("admin_login", next=request.url))
             try:
                 claims = verify_cognito_jwt(id_token)
             except JoseError:
                 session.clear()
+                record_login_failure()
                 return redirect(url_for("admin_login", next=request.url))
             g.current_user = {
                 "sub": claims["sub"],
@@ -336,6 +360,11 @@ def create_app():
         app.logger.info("Rate-limit storage: %s", limiter.storage)
     else:
         app.logger.info("WARN: Rate limiting disabled!")
+    
+    if not app.debug and not app.testing and app.config.get("MAIL_SERVER"):
+        email_handler = EmailErrorHandler()
+        email_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(email_handler)
 
 
     # --------------------------------------------------
@@ -391,6 +420,14 @@ def create_app():
         current_app.logger.info("GET /about - Rendering about page.")
         return render_template('about.html')
     
+    @app.route('/contact', methods=['GET', 'POST'])
+    def contact():
+        if request.method == 'GET':
+            current_app.logger.info("GET /contact - Rendering about page.")
+        else:
+            current_app.logger.info("POST /contact - Rendering about page.")
+        return render_template('contact.html')
+
     @app.route('/drop-boxes', methods=['GET'])
     def dropBoxes():
         current_app.logger.info("GET /drop-boxes - Rendering drop boxes page.")
@@ -446,6 +483,7 @@ def create_app():
         except AddressError as ae:
             # Google service down / quota exhausted, etc.
             # Preserve front-end expectations: valid:false, HTTP-200
+            current_app.logger.error("Validate address endpoint error: %s", ae)
             return jsonify(valid=False, message=str(ae)), 200
         except Exception:                           # truly unexpected
             log.exception("Unexpected error in validate_address")
@@ -534,6 +572,7 @@ def create_app():
 
 
     @app.route('/date', methods=['GET', 'POST'])
+    @limiter.limit("30 per hour")
     def select_date():
         request_id = request.args.get('request_id')
         current_app.logger.debug("select_date route accessed with request_id=%s", request_id)
@@ -615,6 +654,7 @@ def create_app():
                             base_date_str=base_date_str)
     
     @app.route('/confirmation')
+    @limiter.limit("30 per hour")
     def confirmation():
         request_id = request.args.get('request_id')
         token      = request.args.get('t')
@@ -623,7 +663,7 @@ def create_app():
 
         # ── 1) Session must still be alive and point at the same request  ──
         if session.get("pickup_request_id") != request_id:
-            current_app.logger.warning("Session mismatch for /confirmation")
+            current_app.logger.error("Session mismatch for /confirmation")
             abort(404)
 
         # ── 2) Token must verify, be <5 min old, and come from same IP ──
@@ -709,7 +749,7 @@ def create_app():
             return redirect(url_for('edit_request', request_id=request_id))
         
         else:
-            current_app.logger.warning(
+            current_app.logger.error(
                 "Form validation failed for update_address. Errors: %s", form.errors
             )
             return jsonify({
@@ -728,7 +768,7 @@ def create_app():
 
 
     @app.route('/edit-request-init', methods=['GET'])
-    @limiter.limit("10 per hour")
+    @limiter.limit("20 per hour")
     def edit_request_init():
         current_app.logger.info("GET /edit-request-init - User accessing the edit request initialization page.")
         edit_request_form = EditRequestInitForm()
@@ -777,7 +817,7 @@ def create_app():
                         "That request date has already passed and can’t be edited."
                     )
             except ValueError:
-                current_app.logger.error("Bad date on request %s", request_id)
+                current_app.logger.warning("Bad date on request %s", request_id)
                 return False, (
                     "We couldn’t verify the request date. Please contact us."
                 )
@@ -866,7 +906,6 @@ def create_app():
         request_id = request.args.get('request_id')
         if not request_id:
             current_app.logger.warning("No request_id provided in query string; session may have expired.")
-
             return "Session expired, please restart.", 400
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
@@ -2013,21 +2052,10 @@ def create_app():
         Handle 'page not found' errors. We email the error details, then
         redirect the user to the /error page.
         """
-        current_app.logger.exception("Unhandled exception occurred.")
-        # send_error_report(
-        #     error_type="404 Not Found",
-        #     error_message=str(e),
-        #     traceback_info=traceback.format_exc(),
-        #     request_method=request.method,
-        #     request_path=request.path,
-        #     form_data=request.form.to_dict(),
-        #     args_data=request.args.to_dict(),
-        #     user_agent=request.headers.get('User-Agent'),
-        #     remote_addr=request.remote_addr,
-        # )
-        if request.path.startswith('/.well-known/appspecific/'):
+        current_app.logger.warning(f"404 Not Found: {request.path}")
+        if request.path.startswith('/.well-known/'):
             return '', 204
-        return redirect(url_for('error', error_message=str(e)))
+        return redirect(url_for('error'))
 
     @app.errorhandler(Exception)
     def handle_exception(e):
@@ -2035,29 +2063,11 @@ def create_app():
         Handle any other uncaught exceptions (including 500 errors).
         We email the error details, then redirect the user to /error.
         """
-        print("Exception occurred.")
-        current_app.logger.exception("Unhandled exception occurred:")
-        # send_error_report(
-        #     error_type=str(type(e)),
-        #     error_message=str(e),
-        #     traceback_info=traceback.format_exc(),
-        #     request_method=request.method,
-        #     request_path=request.path,
-        #     form_data=request.form.to_dict(),
-        #     args_data=request.args.to_dict(),
-        #     user_agent=request.headers.get('User-Agent'),
-        #     remote_addr=request.remote_addr,
-        # )
-        return redirect(url_for('error', error_message=str(e)))
-    
-    @app.errorhandler(413)
-    def request_entity_too_large(error):
-        return "File is too large (must be under 5mb).", 413
+        current_app.logger.exception("Unhandled exception occurred.")
+        return redirect(url_for('error'))
 
     @app.route('/error')
     def error():
-        error=request.args.get('error_message')
-        traceback=request.args.get('traceback')
         return render_template('error.html')
 
     # --------------------------------------------------
