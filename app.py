@@ -420,12 +420,9 @@ def create_app():
         current_app.logger.info("GET /about - Rendering about page.")
         return render_template('about.html')
     
-    @app.route('/contact', methods=['GET', 'POST'])
+    @app.route('/contact', methods=['GET'])
     def contact():
-        if request.method == 'GET':
-            current_app.logger.info("GET /contact - Rendering about page.")
-        else:
-            current_app.logger.info("POST /contact - Rendering about page.")
+        current_app.logger.info("GET /contact - Rendering about page.")
         return render_template('contact.html')
 
     @app.route('/drop-boxes', methods=['GET'])

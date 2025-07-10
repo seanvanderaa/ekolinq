@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const getInTouch = document.getElementById('get-in-touch');
-    if (getInTouch) getInTouch.addEventListener('click', openContactPopup);
+    if (getInTouch) {
+      getInTouch.addEventListener('click', () => {
+        // this only runs when you click
+        window.location.href = '/contact';
+      });
+    }
     // Find all highlight squares
     
     const highlightSquares = document.querySelectorAll('.highlight-square');

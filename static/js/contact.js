@@ -1,13 +1,13 @@
 // ---- contact.js ----
 document.addEventListener('DOMContentLoaded', () => {
-const form  = document.getElementById('contactForm');
-  const btn   = document.getElementById('contactFormBtn');
-  const wrap  = document.getElementById('contact-form-wrapper');
-  const done  = document.getElementById('contact-form-confirmation');
+    const form  = document.getElementById('contactForm');
+    const btn   = document.getElementById('contactFormBtn');
+    const wrap  = document.getElementById('contact-form-wrapper');
+    const done  = document.getElementById('contact-form-confirmation');
 
-  done.style.display = 'none';
+    done.style.display = 'none';
 
-  form.addEventListener('submit', onSubmit, { once: true });   // <── only once
+    form.addEventListener('submit', onSubmit, { once: true });   // <── only once
 });
 
 async function onSubmit (e) {

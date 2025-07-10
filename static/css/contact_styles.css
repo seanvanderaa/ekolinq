@@ -89,6 +89,7 @@ main {
     border-radius: 20px;
     flex: 1;
     box-sizing: border-box;
+    box-shadow: 8px 8px 20px 0px rgba(0,0,0,0.2);
 }
 
 #contact-form-wrapper h3 {
@@ -208,6 +209,7 @@ form textarea {
         border-top: 1px solid lightgrey;
         border-radius: 0px;
         padding-top: 16px;
+        box-shadow: none;
     }
     #desktop-main-contact-info {
         display: none;
@@ -215,5 +217,8 @@ form textarea {
 
     #mobile-main-contact-info {
         display: flex;
+    }
+    #footer {
+        box-shadow: 0px -40px 50px 0px #D4DECA;
     }
 }
