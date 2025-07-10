@@ -11,7 +11,7 @@
     <div id="contact-content">
         <div class="hero-content">
             <h1>Contact us.</h1>
-            <h3>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</h>
+            <h3>Whether it's about our collection events, pickup system, or mission, we'd love to hear from you!</h3>
             <div class="main-contact-info" id="desktop-main-contact-info">
                 <p>Use the form or the methods below to contact us.</p>
                 <div class="contact-info-wrapper">
@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="contact-form-group" id="recaptcha-form">
-                    {{ contact_form.recaptcha }}
+                    {{ contact_form.recaptcha(script=False) }}
                     {% if contact_form.recaptcha.errors %}
                     <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
                     {% endif %}
@@ -67,7 +67,7 @@
 
                 <button type="submit" id="contactFormBtn" class="large-submit-btn">Submit</button>
             </form>
-            <div id="contact-form-confirmation" style="display: none;">
+            <div id="contact-form-confirmation">
                 <h2>Thanks for getting in touch!</h2>
                 <p>We'll follow up with you shortly.</p>
                 <button
@@ -99,9 +99,9 @@
 
 </main>
 
-  {% block scripts %}
-    {{ super() }}
-    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/contact.js') }}"></script>
-  {% endblock %}
+{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/contact.js') }}"></script>
 {% endblock %}

@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const icon = toggleButton.querySelector('i');
   
     toggleButton.addEventListener('click', () => {
+      console.log("Here");
       const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
       toggleButton.setAttribute('aria-expanded', !isExpanded);
       menu.classList.toggle('active');

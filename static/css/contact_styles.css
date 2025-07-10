@@ -130,6 +130,10 @@ form textarea {
     box-shadow: none;
 }
 
+#contact-form-confirmation {
+    display: none;
+}
+
 @media only screen and (max-width: 1000px) {
     body {
         background-color: white;
