@@ -191,3 +191,15 @@ class AddPickupNotes(FlaskForm):
         validators=[DataRequired(), Length(max=2000)]
     )
     submit = SubmitField("Update Notes")
+
+class RatingForm(FlaskForm):
+    request_id = HiddenField(validators=[DataRequired()])
+    rating = StringField(
+        'Rating',
+        validators=[DataRequired(), Length(max=5)]
+    )
+    comments = TextAreaField(
+        'Comments',
+        validators=[DataRequired(), Length(max=2000)]
+    )
+    submit = SubmitField("Update Notes")

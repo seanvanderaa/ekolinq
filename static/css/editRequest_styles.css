@@ -374,7 +374,7 @@ main {
 @media only screen and (max-width: 768px) {
     body {
         padding-top: 120px;
-        background-color: var(--off-white);
+        background: var(--off-white);
     }
 
     #request-id-modal {

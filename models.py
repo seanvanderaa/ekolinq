@@ -147,7 +147,17 @@ class DriverLocation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(255), nullable=True)
     city = db.Column(db.String(255), nullable=True)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     def full_address(self):
         return f"{self.address}, {self.city} CA" if (self.address and self.city) else None
+    
+class SiteRating(db.Model):
+    """
+    Stores the driver's last known location, so the route can start from there.
+    This is useful once they've begun making pickups.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    request_id = db.Column(db.String(8), nullable=False)
+    rating = db.Column(db.String(255), nullable=False)
+    notes = db.Column(db.String(400), nullable=True)

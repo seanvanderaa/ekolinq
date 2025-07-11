@@ -58,7 +58,7 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
                            DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
-                           updateCustomerNotes)
+                           updateCustomerNotes, RatingForm)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
@@ -754,7 +754,12 @@ def create_app():
                 "message": "Invalid form submission."
             }), 400
 
-
+    @app.route('/submit-rating', methods=['POST'])
+    @limiter.limit("5 per hour")
+    def submit_rating():
+        current_app.logger.info("POST /submit-rating - User rating their experience on the platform.")
+        form = RatingForm()
+        return
 
     # --------------------------------------------------
 
