@@ -1,10 +1,14 @@
 body {
-    background-color: var(--d-green);
+    background: linear-gradient(to bottom, var(--m-green), var(--d-green));
     padding-top: 150px;
+    padding-bottom: 0px;
 }
 
 main {
-    min-height: calc(100vh - 650px);
+    min-height: calc(100vh - 550px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #nav {

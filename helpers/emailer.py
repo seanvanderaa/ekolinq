@@ -115,7 +115,7 @@ def send_request_email(pickup):
               <h1 style=\"font-size:16px; margin-bottom:16px; margin-top: 16px; font-weight: 500; text-align:center; margin-bottom: 24px\">Pickup Request Confirmation</h1>
               {gated_notice_html}
               <p style=\"font-size:18px; margin-top:36px;\">Hello{first_name},</p>
-              <p style=\"font-size:16px;\">Thanks for choosing to get rid of waste the right way. Below is the information for your pick-up request. <b>Please remember to have your items out by 8AM on the day of your pick-up.</b></p>
+              <p style=\"font-size:16px;\">Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pick-up request. <b>Please remember to have your items out by 8AM on the day of your pick-up.</b></p>
               <div style=\"background:#098223; color:#fff; padding:16px; border-radius:8px; margin:48px 0;\">
                 <p style=\"margin:12px 0 8px; font-size:14px; font-weight:200;\">Request ID</p>
                 <p style=\"margin:0; font-weight:500; font-size:16px;\">{request_id}</p>

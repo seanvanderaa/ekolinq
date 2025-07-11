@@ -1,6 +1,10 @@
 body {
-    background-color: var(--m-green);
+    background: linear-gradient(to bottom right, var(--m-blue), black);
     min-height: 100vh;
+}
+
+h1 {
+    font-size: 48px;
 }
 
 h3 {

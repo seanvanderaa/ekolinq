@@ -93,13 +93,17 @@ h4 {
   display: block;
 }
 
+#desk-icons p {
+  color: grey;
+}
+
 #mobile-icons {
   margin-top: 24px;
   display: none;
 }
 
 #mobile-icons p {
-  font-size: 12px; color: var(--border-grey); max-width: 300px; margin-top: 16px;
+  font-size: 12px; color: grey; max-width: 300px; margin-top: 16px;
 }
 
 #header-icons {

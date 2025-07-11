@@ -12,8 +12,7 @@
     <section id="init-form" class="content-width  request-form">
       <h1>Request a Pickup</h1>
       <p>
-        After filling in the below information, you’ll be able to select 
-        a timeframe for us to pick up your textiles.
+        After filling out the information below, you'll be able to select a timeframe for us to pick up your clothes and other textiles.
       </p>
       <form action="{{ url_for('request_init') }}" method="POST" id="init-form-info" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
@@ -145,7 +144,7 @@
           <img src="{{ url_for('static', filename='images/Cloth Items.png') }}" aria-hidden="true" height="80">
         </div>
         <div class="faq-item align-center" id="faq-result">
-          <h3>What do you do with my textile waste?</h3>
+          <h3>What do you do with my clothes?</h3>
           <img src="{{ url_for('static', filename='images/van black.png') }}" aria-hidden="true" height="80">
         </div>
         <div class="faq-item align-center" id="faq-better">
@@ -187,8 +186,8 @@
         <button class="popup-close download-btn">Close</button>
       </div>
       <div class="faq-popup" id="faq-result-popup">
-        <h3>What do you do with my textile waste?</h3>
-        <p>Whenever possible, we try to recycle all textile waste donated to us. If this isn't possible, or if the clothes are better off being recycled, they are turned into shoddy—fibers used for fillings or in lower-grade textile products. Regardless, 100% of the textiles we collect are diverted from landfill.</p>
+        <h3>What do you do with my clothes?</h3>
+        <p>Whenever possible, we try to reuse all clothing and textiles given to us. If this isn't possible, or if the clothes are better off being recycled, they are turned into shoddy—fibers used for fillings or in lower-grade textile products.</p>
         <button class="popup-close download-btn">Close</button>
       </div>
       <div class="faq-popup" id="faq-better-popup">

@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="contact-form-group" id="recaptcha-form">
-                    {{ contact_form.recaptcha(script=False) }}
+                    {{ contact_form.recaptcha }}
                     {% if contact_form.recaptcha.errors %}
                     <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
                     {% endif %}

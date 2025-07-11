@@ -23,7 +23,7 @@ strong {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 80vh;
+    height: 70vh;
     padding-bottom: 120px;
     padding-top: 150px;
     max-height: 500px;
@@ -65,6 +65,8 @@ strong {
 
 #header-left {
     flex: 1.2;
+    text-align: center;
+    flex-direction: column;
 }
 
 #header-left .col-white {
@@ -76,14 +78,17 @@ strong {
     font-weight: 600;
     font-size: 52px;
     max-width: 400px;
+    text-align: center;
 }
 
 #header-left .secondary {
     font-size: 20px;
     font-weight: 400;
+    max-width: 500px;
 }
 
 #header-right {
+    display: none;
     flex: 1;
     background-color: #3131319c;
     backdrop-filter: blur(5px);
@@ -569,8 +574,8 @@ strong {
     }
 
     #header {
-        padding-bottom: 300px;
-        padding-top: 100px;
+        padding-bottom: 200px;
+        padding-top: 80px;
     }
 
     #header-content {
@@ -713,8 +718,8 @@ strong {
 
 @media (max-width: 768px) {
     #header {
-        padding-bottom: 260px;
-        padding-top: 120px;
+        padding-bottom: 200px;
+        padding-top: 80px;
     }
 
     #header-content {
@@ -735,8 +740,14 @@ strong {
         font-size: 2.6em;
     }
 
+    #central-cta {
+        width: 90%;
+        max-width: 400px;
+    }
+
     .main-btn2 {
         width: 100%;
+        padding: 0px;
     }
 
     #header-right h2 {
@@ -896,7 +907,7 @@ strong {
   font-size: 64px;
   font-family: var(--mont);
   font-weight: 600;
-  margin: 16px 0px !important;
+  margin: 4px 0px !important;
 }
 .number-h2:nth-of-type(2) {
   color: var(--m-blue);

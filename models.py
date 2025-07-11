@@ -44,7 +44,7 @@ class PickupRequest(db.Model):
 
 import string
 import secrets
-_BASE62 = string.ascii_letters + string.digits
+_BASE62 = string.ascii_uppercase + string.digits
 
 def generate_unique_request_id(length: int = 8, max_attempts: int = 20) -> str:
     """
