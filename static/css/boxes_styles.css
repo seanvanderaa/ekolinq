@@ -15,11 +15,12 @@
 }
 
 #dropbox-image {
-    border-radius: 10px;
+    border-radius: 50px;
     width: 400px;
     height: 400px;
     object-fit: cover;
     object-position: right bottom;
+    box-shadow: 10px 10px 20px 0px rgba(0,0,0,0.1);
 }
 
 #info-header {
