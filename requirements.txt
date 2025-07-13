@@ -30,6 +30,13 @@ Flask-WTF==1.2.2
 future==0.18.3
 google-auth==2.38.0
 google-auth-oauthlib==1.2.1
+google-api-core==2.25.1
+google-auth==2.38.0
+google-auth-oauthlib==1.2.1
+google-cloud-core==2.4.3
+google-cloud-storage==3.2.0
+google-crc32c==1.7.1
+google-resumable-media==2.7.2
 googleapis-common-protos==1.70.0
 grpcio==1.73.1
 gspread==6.1.4
@@ -41,6 +48,7 @@ idna==3.10
 immutabledict==4.2.1
 importlib_metadata==8.7.0
 itsdangerous==2.2.0
+Jinja2==3.1.6
 jiter==0.8.2
 jmespath==1.0.1
 limits==5.0.0

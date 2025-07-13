@@ -8,6 +8,7 @@ helpers/__pycache__/
 
 credentials/*.json
 credentials/
+*.json
 
 static/images/qr_codes/
 
