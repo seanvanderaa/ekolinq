@@ -1,7 +1,8 @@
 import logging
 import threading
+import sys
 from datetime import datetime, timedelta
-from flask import request, current_app
+from flask import request
 import traceback
 
 from helpers.emailer import send_error_report
@@ -15,23 +16,20 @@ class EmailErrorHandler(logging.Handler):
 
     def emit(self, record):
         try:
-            # Gather record info
-            error_type    = record.levelname
+            error_type = record.levelname
             error_message = record.getMessage()
 
-            # Traceback if available
             if record.exc_info:
                 traceback_info = "".join(traceback.format_exception(*record.exc_info))
             else:
                 traceback_info = record.stack_info or ""
 
-            # Request context
             try:
-                req_method  = request.method
-                req_path    = request.path
-                form_data   = request.form.to_dict()
-                args_data   = request.args.to_dict()
-                user_agent  = request.headers.get("User-Agent", "")
+                req_method = request.method
+                req_path = request.path
+                form_data = request.form.to_dict()
+                args_data = request.args.to_dict()
+                user_agent = request.headers.get("User-Agent", "")
                 remote_addr = request.remote_addr
             except RuntimeError:
                 req_method = req_path = user_agent = remote_addr = ""
@@ -48,88 +46,102 @@ class EmailErrorHandler(logging.Handler):
                 user_agent,
                 remote_addr
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            sys.stderr.write(f"[monitoring] EmailErrorHandler failed: {exc}\n")
+
 
 # ──────────────────────────────────────────────────────────────────────────
-# Login failure monitoring (background thread)
+# Login failure monitoring
 # ──────────────────────────────────────────────────────────────────────────
 _login_fail_count = 0
-_login_fail_window_start = datetime.utcnow()
+_login_fail_window_start = datetime.now()
 _login_fail_lock = threading.Lock()
-
-THRESHOLDS = {
-    'login_fail': {'count': lambda: _login_fail_count, 'threshold': 5, 'window': timedelta(minutes=5)}
-}
+_stop_event = threading.Event()
 
 def record_login_failure():
-    """
-    Increment login failure counter for sliding window.
-    """
     global _login_fail_count
     with _login_fail_lock:
         _login_fail_count += 1
 
-# Background monitor thread for login failures (fires every 5 minutes)
-def _monitor_login_failures(interval_min=5, threshold=5):
-    global _login_fail_count, _login_fail_window_start
-    while True:
-        threading.Event().wait(interval_min * 60)
-        with _login_fail_lock:
-            now = datetime.utcnow()
-            if _login_fail_count > threshold:
-                subject = f"⚠️ High login failures: {_login_fail_count} in {interval_min}m"
-                body = (
-                    f"{_login_fail_count} login checks failed\n"
-                    f"from {_login_fail_window_start.isoformat()} to {now.isoformat()}"
-                )
-                send_error_report(
-                    error_type="Login failures threshold",
-                    error_message=body,
-                    traceback_info="",
-                    request_method="",
-                    request_path="",
-                    form_data={},
-                    args_data={},
-                    user_agent="",
-                    remote_addr="",
-                )
-            _login_fail_count = 0
-            _login_fail_window_start = now
 
-# Start the login failure monitor thread on import
-threading.Thread(
-    target=_monitor_login_failures,
-    args=(5, 5),
-    daemon=True
-).start()
+# ────────────────────────────────────────────────────────────────────
+#  Single-shot checker (useful for unit-tests)
+# ────────────────────────────────────────────────────────────────────
+def _login_failure_check(threshold: int = 5) -> bool:
+    """
+    Inspect the counter once, send alert if needed, then reset.
+    Returns True if an alert was triggered.
+    """
+    global _login_fail_count, _login_fail_window_start
+    now = datetime.now()
+    alert_sent = False
+
+    with _login_fail_lock:
+        if _login_fail_count >= threshold:
+            body = (
+                f"{_login_fail_count} login checks failed\n"
+                f"from {_login_fail_window_start.isoformat()} to {now.isoformat()}"
+            )
+            send_error_report(
+                error_type="Login failures threshold",
+                error_message=body,
+                traceback_info="",
+                request_method="",
+                request_path="",
+                form_data={},
+                args_data={},
+                user_agent="",
+                remote_addr="",
+            )
+            alert_sent = True
+
+        # reset window regardless
+        _login_fail_count = 0
+        _login_fail_window_start = now
+
+    return alert_sent
+
+
+def _monitor_login_failures(interval_min=5, threshold=5):
+    ev = threading.Event()
+    while not _stop_event.is_set():
+        ev.wait(interval_min * 60)
+        _login_failure_check(threshold)
+
+
 
 # ──────────────────────────────────────────────────────────────────────────
 # Sliding-window monitors for HTTP events
 # ──────────────────────────────────────────────────────────────────────────
-# Configuration
 _WINDOW = timedelta(minutes=5)
-_404_THRESHOLD = 50
-_5XX_THRESHOLD = 10
+_ALERT_RESET_GRACE = timedelta(minutes=10)
+
+_404_THRESHOLD = 25
+_5XX_THRESHOLD = 4
 _SLOW_COUNT_THRESHOLD = 20
 _SLOW_DURATION_THRESHOLD = 0.5  # seconds
 
-# State for each event
-_404_state = {'count': 0, 'window_start': datetime.utcnow(), 'alerted': False}
-_5xx_state = {'count': 0, 'window_start': datetime.utcnow(), 'alerted': False}
-_slow_state = {'count': 0, 'window_start': datetime.utcnow(), 'alerted': False}
+_404_state = {'count': 0, 'window_start': datetime.now(), 'alerted': False}
+_5xx_state = {'count': 0, 'window_start': datetime.now(), 'alerted': False}
+_slow_state = {'count': 0, 'window_start': datetime.now(), 'alerted': False}
 
-# Helper to reset state
 def _reset_state(state):
     state['count'] = 0
-    state['window_start'] = datetime.utcnow()
+    state['window_start'] = datetime.now()
     state['alerted'] = False
 
-# Record functions
+def _auto_reset_states():
+    """Clears 'alerted' flag on stale state windows even without new events."""
+    ev = threading.Event()
+    while not _stop_event.is_set():
+        now = datetime.now()
+        for state in (_404_state, _5xx_state, _slow_state):
+            if state['alerted'] and now - state['window_start'] > _WINDOW + _ALERT_RESET_GRACE:
+                _reset_state(state)
+        ev.wait(_WINDOW.total_seconds())
 
 def record_404():
-    """Call on each 404 response to detect spikes."""
-    now = datetime.utcnow()
+    now = datetime.now()
     st = _404_state
     if now - st['window_start'] > _WINDOW:
         _reset_state(st)
@@ -142,7 +154,7 @@ def record_404():
             f"IP: {request.remote_addr}"
         )
         send_error_report(
-            error_type="404 spike",
+            error_type="404 Spike",
             error_message=body,
             traceback_info="",
             request_method=request.method,
@@ -153,10 +165,8 @@ def record_404():
             remote_addr=request.remote_addr,
         )
 
-
 def record_5xx():
-    """Call on each 5xx response to detect spikes."""
-    now = datetime.utcnow()
+    now = datetime.now()
     st = _5xx_state
     if now - st['window_start'] > _WINDOW:
         _reset_state(st)
@@ -180,12 +190,10 @@ def record_5xx():
             remote_addr=request.remote_addr,
         )
 
-
 def record_slow(duration):
-    """Call with request duration (s) to detect slow-response spikes."""
     if duration < _SLOW_DURATION_THRESHOLD:
         return
-    now = datetime.utcnow()
+    now = datetime.now()
     st = _slow_state
     if now - st['window_start'] > _WINDOW:
         _reset_state(st)
@@ -209,3 +217,29 @@ def record_slow(duration):
             user_agent=request.headers.get("User-Agent", ""),
             remote_addr=request.remote_addr,
         )
+
+# ──────────────────────────────────────────────────────────────────────────
+# Start/stop hooks for Flask app lifecycle
+# ──────────────────────────────────────────────────────────────────────────
+
+_threads = []
+
+def start_monitoring_threads():
+    if _threads:
+        return  # already started
+
+    login_thread = threading.Thread(
+        target=_monitor_login_failures,
+        args=(5, 5),
+        daemon=True
+    )
+    reset_thread = threading.Thread(
+        target=_auto_reset_states,
+        daemon=True
+    )
+    _threads.extend([login_thread, reset_thread])
+    for t in _threads:
+        t.start()
+
+def stop_monitoring_threads():
+    _stop_event.set()

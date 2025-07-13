@@ -95,96 +95,181 @@ def send_request_email(pickup):
         # Compose the HTML body
         # ---------------------------------------------------------------------------
         msg.html = f"""
+        <!DOCTYPE html>
         <html>
-          <head>
-            <meta charset=\"UTF-8\" />
-            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
-            <title>Pick-up Request Confirmation</title>
-            <link href=\"https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap\" rel=\"stylesheet\" />
-            <style>
-              body, p, h1, h2, h3, td, li, a {{
-                font-family: 'Public Sans', Arial, sans-serif !important;
-              }}
-            </style>
-          </head>
-          <body style=\"margin:0; padding:24px 0; background-color:#104378; color:#000;\">
-            <div style=\"width:90%; max-width:600px; margin:30px auto; background:#fff; padding:20px 30px 32px; border:1px solid #ddd; border-radius:40px;\">
-              <div style=\"text-align:center;\">
-                <img src=\"https://i.imgur.com/g6QpslJ.png\" alt=\"EkoLinq Logo\" width=\"140\" style=\"display:block; margin:36px auto 24px; margin-bottom: 24px\" />
-              </div>
-              <h1 style=\"font-size:16px; margin-bottom:16px; margin-top: 16px; font-weight: 500; text-align:center; margin-bottom: 24px\">Pickup Request Confirmation</h1>
-              {gated_notice_html}
-              <p style=\"font-size:18px; margin-top:36px;\">Hello{first_name},</p>
-              <p style=\"font-size:16px;\">Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pick-up request. <b>Please remember to have your items out by 8AM on the day of your pick-up.</b></p>
-              <div style=\"background:#098223; color:#fff; padding:16px; border-radius:8px; margin:48px 0;\">
-                <p style=\"margin:12px 0 8px; font-size:14px; font-weight:200;\">Request ID</p>
-                <p style=\"margin:0; font-weight:500; font-size:16px;\">{request_id}</p>
-                <p style=\"margin:12px 0 8px; font-size:14px; font-weight:200;\">Address</p>
-                <p style=\"margin:0; font-weight:500; font-size:16px;\">{address_formatted}</p>
-                <p style=\"margin:12px 0 8px; font-size:14px; font-weight:200;\">Date &amp; Time</p>
-                <p style=\"margin:0; font-weight:500; font-size:16px;\">{formatted_date_time}</p>
-                <a href=\"https://ekolinq.com/edit-request\" style=\"text-decoration:none;\">
-                  <p style=\"margin-top:36px; border-radius:5px; padding:12px 16px; color:#000; background-color:#EAB308; width:120px; text-align:center; font-weight:500; font-size:16px;\">Edit Details</p>
-                </a>
-              </div>
-              <h3 style=\"margin-top:36px; font-size:20px;\">Reminder: Here's what you can and can't give us</h3>
-              <table style=\"width:100%; border-collapse:separate;\" cellspacing=\"4\">
-                <tr>
-                  <td style=\"vertical-align:top; width:50%;\">
-                    <table style=\"width:100%; border:1px solid #c6c6c6; border-radius:10px; padding:10px; background:#fff; padding-bottom:24px;\">
-                      <tr>
-                        <th style=\"font-size:20px; padding:10px; text-align:left; font-weight:bold;\">
-                          <span style=\"color:#098223; font-size:24px; margin-right:12px; vertical-align:middle;\">&#10003;</span>
-                          DO Accept
-                        </th>
-                      </tr>
-                      <tr>
-                        <td style=\"padding:10px;\">
-                          <ul style=\"padding-left:20px; margin:0;\">
-                            <li style=\"margin:8px 0; font-size:16px;\">Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Coats, jackets, gloves, hats, scarves</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Shoes, boots, heels, sneakers, sandals, socks</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Bras, underwear, slips, camisoles, tights</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Handbags, belts, ties, headbands</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Towels, sheets, comforters, blankets, tablecloths</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Wallets, totes, backpacks, stuffed animals</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td style=\"vertical-align:top; width:50%;\">
-                    <table style=\"width:100%; border:1px solid #c6c6c6; border-radius:10px; padding:10px; background:#fff; padding-bottom:24px;\">
-                      <tr>
-                        <th style=\"font-size:20px; padding:10px; text-align:left; font-weight:bold;\">
-                          <span style=\"color:red; font-size:24px; margin-right:12px; vertical-align:middle;\">&#10005;</span>
-                          DON'T Accept
-                        </th>
-                      </tr>
-                      <tr>
-                        <td style=\"padding:10px;\">
-                          <ul style=\"padding-left:20px; margin:0;\">
-                            <li style=\"margin:8px 0; font-size:16px;\">Textiles that are wet, moldy, or contaminated with chemicals</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Bio-hazardous waste</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Pillows and cushions</li>
-                            <li style=\"margin:8px 0; font-size:16px;\">Mattresses, furniture, or other similar oversized items</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              <p style=\"font-size:16px; margin-top:36px;\">If you have any questions we can help answer, please respond to this email!</p>
-              <p style=\"font-size:16px; margin:24px 0 8px;\">Thanks,</p>
-              <p style=\"font-size:16px; margin:8px 0;\">EkoLinq Support Team</p>
-              <p style=\"font-size:16px; margin:8px 0;\">(866) 346-4765</p>
-              <p style=\"font-size:16px; margin:16px 0 8px;\"><a href=\"mailto:contact@ekolinq.com\" style=\"color:#007bff; text-decoration:none;\">contact@ekolinq.com</a></p>
-              <p style=\"font-size:16px; margin:8px 0;\"><a href=\"https://ekolinq.com\" style=\"color:#007bff; text-decoration:none;\">www.ekolinq.com</a></p>
-            </div>
-          </body>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1.0">
+          <meta name="color-scheme" content="light dark">
+          <meta name="supported-color-schemes" content="light dark">
+          <title>Pick-up Request Confirmation</title>
+          <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+          <style>
+            /* ---------- Base typography ---------- */
+            body,p,h1,h2,h3,td,li,a{{
+              font-family:'Public Sans',Arial,sans-serif!important;
+            }}
+
+            /* ---------- Dark-mode overrides (iOS, Apple Mail, Outlook.com) ---------- */
+            @media (prefers-color-scheme: dark) {{
+              .bg-body   {{background:#104378!important;}}
+              .bg-card   {{background:#ffffff!important;}}
+              .bg-green  {{background:#0c6a28!important;}}
+              .text-dark {{color:#ffffff!important;}}
+              a          {{color:#8ac8ff!important;}}
+            }}
+
+            /* ---------- Dark-mode overrides (Gmail / Outlook on Android) ---------- */
+            [data-ogsc] .bg-body  {{background:#104378!important;}}
+            [data-ogsc] .bg-card  {{background:#ffffff!important;}}
+            [data-ogsc] .bg-green {{background:#0c6a28!important;}}
+            [data-ogsc] .text-dark{{color:#ffffff!important;}}
+            [data-ogsc] a         {{color:#8ac8ff!important;}}
+            
+            @media only screen and (max-width:600px){{
+              .stack-col      {{display:block!important;width:100%!important;max-width:100%!important;}}
+              .stack-col > table{{width:100%!important;}}
+            }}
+
+            /* Gmail / Outlook on Android */
+            [data-ogsc] .stack-col,
+            [data-ogsc] .stack-col > table{{
+              display:block!important;width:100%!important;max-width:100%!important;
+            }}
+          </style>
+        </head>
+
+        <body bgcolor="#104378" class="bg-body" style="margin:0;padding:0;background-color:#104378;">
+          <!-- Full-width wrapper -->
+          <table role="presentation" width="100%" bgcolor="#104378" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="center" style="padding:24px 0;">
+                <!-- Constrained column -->
+                <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td bgcolor="#ffffff" class="bg-card" style="border:1px solid #ddd;border-radius:40px;padding:30px;">
+                      <!-- ---------- Logo ---------- -->
+                      <table role="presentation" width="100%">
+                        <tr>
+                          <td align="center" style="padding:0 0 24px 0;">
+                            <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="140" style="display:block;height:auto;border:0;">
+                          </td>
+                        </tr>
+                      </table>
+
+                      <h1 style="font-size:20px;line-height:1.4;margin:0 0 24px;font-weight:500;text-align:center;">
+                        Pickup Request Confirmation
+                      </h1>
+
+                      {gated_notice_html}
+
+                      <p style="font-size:18px;line-height:1.5;margin:36px 0 16px;">Hello{first_name},</p>
+
+                      <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
+                        Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pick-up request.
+                        <b>Please remember to have your items out by 8&nbsp;AM on the day of your pick-up.</b>
+                      </p>
+
+                      <!-- ---------- Green info module ---------- -->
+                      <table role="presentation" width="100%" bgcolor="#098223" class="bg-green" style="background:#098223;border-radius:8px;">
+                        <tr>
+                          <td style="padding:16px;color:#ffffff;" class="text-dark">
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Request&nbsp;ID</p>
+                            <p style="margin:0 0 16px;font-weight:500;font-size:16px;">{request_id}</p>
+
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Address</p>
+                            <p style="margin:0 0 16px;font-weight:500;font-size:16px; color: white; text-decoration: none;">{address_formatted}</p>
+
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Date&nbsp;&amp;&nbsp;Time</p>
+                            <p style="margin:0;font-weight:500;font-size:16px;">{formatted_date_time}</p>
+
+                            <!-- Button -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
+                              <tr>
+                                <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
+                                  <a href="https://ekolinq.com/edit-request"
+                                    style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
+                                    Edit&nbsp;Details
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- ---------- Accept / Don’t Accept ---------- -->
+                      <h3 style="margin:36px 0 16px;font-size:20px;">Reminder: Here's what you can and can't give us</h3>
+
+                      <table role="presentation" width="100%">
+                        <tr>
+                          <!-- DO Accept -->
+                          <td class="stack-col" width="50%" valign="top" style="padding-right:4px;">
+                            <table role="presentation" width="100%" style="border:1px solid #c6c6c6;border-radius:10px;">
+                              <tr>
+                                <td style="padding:10px;">
+                                  <h4 style="margin:0 0 8px;font-size:20px;font-weight:bold;">
+                                    <span style="color:#098223;font-size:24px;vertical-align:middle;margin-right:6px;">&#10003;</span>
+                                    DO&nbsp;Accept
+                                  </h4>
+                                  <ul style="padding-left:20px;margin:0;">
+                                    <li style="margin:8px 0;font-size:16px;">Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+                                    <li style="margin:8px 0;font-size:16px;">Coats, jackets, gloves, hats, scarves</li>
+                                    <li style="margin:8px 0;font-size:16px;">Shoes, boots, heels, sneakers, sandals, socks</li>
+                                    <li style="margin:8px 0;font-size:16px;">Bras, underwear, slips, camisoles, tights</li>
+                                    <li style="margin:8px 0;font-size:16px;">Handbags, belts, ties, headbands</li>
+                                    <li style="margin:8px 0;font-size:16px;">Towels, sheets, comforters, blankets, tablecloths</li>
+                                    <li style="margin:8px 0;font-size:16px;">Wallets, totes, backpacks, stuffed animals</li>
+                                  </ul>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+
+                          <!-- DON'T Accept -->
+                          <td class="stack-col" width="50%" valign="top" style="padding-left:4px;">
+                            <table role="presentation" width="100%" style="border:1px solid #c6c6c6;border-radius:10px;">
+                              <tr>
+                                <td style="padding:10px;">
+                                  <h4 style="margin:0 0 8px;font-size:20px;font-weight:bold;">
+                                    <span style="color:#ff0000;font-size:24px;vertical-align:middle;margin-right:6px;">&#10005;</span>
+                                    DON'T&nbsp;Accept
+                                  </h4>
+                                  <ul style="padding-left:20px;margin:0;">
+                                    <li style="margin:8px 0;font-size:16px;">Textiles that are wet, moldy, or contaminated with chemicals</li>
+                                    <li style="margin:8px 0;font-size:16px;">Bio-hazardous waste</li>
+                                    <li style="margin:8px 0;font-size:16px;">Pillows and cushions</li>
+                                    <li style="margin:8px 0;font-size:16px;">Mattresses, furniture, or other similar oversized items</li>
+                                  </ul>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- ---------- Footer ---------- -->
+                      <p style="font-size:16px;line-height:1.5;margin:36px 0 0;">If you have any questions we can help answer, please respond to this email!</p>
+                      <p style="font-size:16px;margin:24px 0 8px;">Thanks,</p>
+                      <p style="font-size:16px;margin:8px 0;">EkoLinq Support Team</p>
+                      <p style="font-size:16px;margin:8px 0;">(866)&nbsp;346-4765</p>
+                      <p style="font-size:16px;margin:16px 0 8px;">
+                        <a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a>
+                      </p>
+                      <p style="font-size:16px;margin:8px 0;">
+                        <a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
         </html>
         """
+
 
         # ---------------------------------------------------------------------------
         # Send & Return -------------------------------------------------------------
@@ -227,99 +312,174 @@ def send_edited_request_email(pickup):
             subject,
             sender=current_app.config["MAIL_USERNAME"],
             recipients=recipients,
-            bcc=["seanpvanderaa@gmail.com", current_app.config["MAIL_USERNAME"]]
+            bcc=["seanpvanderaa@gmail.com"]
         )
-
-        # Email-safe HTML with fallback font:
-        msg.html = f"""<html>
+        
+        msg.html = f"""
+        <!DOCTYPE html>
+        <html>
         <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1.0">
+          <meta name="color-scheme" content="light dark">
+          <meta name="supported-color-schemes" content="light dark">
           <title>Pick-up Request Confirmation</title>
-          <!-- Attempt to load Public Sans from Google Fonts. Some email clients will block this. -->
-          <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&display=swap" rel="stylesheet" />
+          <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
           <style>
-            /* Fallback approach: specify Public Sans first, then a system sans-serif */
-            body, p, h1, h2, h3, td, li, a {{
-              font-family: 'Public Sans', Arial, sans-serif !important;
+            /* ---------- Base typography ---------- */
+            body,p,h1,h2,h3,td,li,a{{
+              font-family:'Public Sans',Arial,sans-serif!important;
+            }}
+
+            /* ---------- Dark-mode overrides (iOS, Apple Mail, Outlook.com) ---------- */
+            @media (prefers-color-scheme: dark) {{
+              .bg-body   {{background:#104378!important;}}
+              .bg-card   {{background:#ffffff!important;}}
+              .bg-green  {{background:#0c6a28!important;}}
+              .text-dark {{color:#ffffff!important;}}
+              a          {{color:#8ac8ff!important;}}
+            }}
+
+            /* ---------- Dark-mode overrides (Gmail / Outlook on Android) ---------- */
+            [data-ogsc] .bg-body  {{background:#104378!important;}}
+            [data-ogsc] .bg-card  {{background:#ffffff!important;}}
+            [data-ogsc] .bg-green {{background:#0c6a28!important;}}
+            [data-ogsc] .text-dark{{color:#ffffff!important;}}
+            [data-ogsc] a         {{color:#8ac8ff!important;}}
+            
+            @media only screen and (max-width:600px){{
+              .stack-col      {{display:block!important;width:100%!important;max-width:100%!important;}}
+              .stack-col > table{{width:100%!important;}}
+            }}
+
+            /* Gmail / Outlook on Android */
+            [data-ogsc] .stack-col,
+            [data-ogsc] .stack-col > table{{
+              display:block!important;width:100%!important;max-width:100%!important;
             }}
           </style>
         </head>
-        <body style="margin:0;padding:24px 0;background-color:#a1caa0;color:#000;font-family:'Public Sans',Arial,sans-serif;">
-          <div style="width:90%;max-width:600px;margin:30px auto;background:#fff;padding:20px 30px 32px;border:1px solid #ddd;border-radius:40px;">
-            <div style="text-align:center;">
-              <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="160" style="display:block;margin:36px auto 48px;" />
-            </div>
-            <h1 style="font-size:24px;margin-bottom:16px;">Update: A Change to Your Request Details</h1>
-            <p style="font-size:18px;margin-top:36px;"><strong>Hello {first_name},</strong></p>
-            <p style="font-size:16px;">We've just received an update to your pickup request. Below are your updated details:</p>
-            <div style="background:#098223;color:#fff;padding:16px;border-radius:8px;margin:48px 0;">
-              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Request ID</p>
-              <p style="margin:0;font-weight:500;font-size:16px;">{request_id}</p>
-              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Address</p>
-              <p style="margin:0;font-weight:500;font-size:16px;">{address_formatted}</p>
-              <p style="margin:12px 0 8px;font-size:14px;font-weight:200;">Date &amp; Time</p>
-              <p style="margin:0;font-weight:500;font-size:16px;">{formatted_date_time}</p>
-              <a href="https://ekolinq.com/edit-request" style="text-decoration:none;">
-                <p style="margin-top:36px;border-radius:5px;padding:12px 16px;color:#000;background-color:#EAB308;width:120px;text-align:center;font-weight:500;font-size:16px;">Edit Details</p>
-              </a>
-            </div>
-            <h3 style="margin-top:36px;font-size:20px;">Reminder: Here's what you can and can't give us</h3>
-            <table style="width:100%;border-collapse:separate;" cellspacing="4">
-              <tr>
-                <td style="vertical-align:top;width:50%;">
-                  <table style="width:100%;border:1px solid #c6c6c6;border-radius:10px;padding:10px;background:#fff;padding-bottom:24px;">
-                    <tr>
-                      <th style="font-size:20px;padding:10px;text-align:left;font-weight:bold;">
-                        <span style="color:#098223;font-size:24px;margin-right:12px;vertical-align:middle;">&#10003;</span>
-                        DO Accept
-                      </th>
-                    </tr>
-                    <tr>
-                      <td style="padding:10px;">
-                        <ul style="padding-left:20px;margin:0;">
-                          <li style="margin:8px 0;font-size:16px;">Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
-                          <li style="margin:8px 0;font-size:16px;">Coats, jackets, gloves, hats, scarves</li>
-                          <li style="margin:8px 0;font-size:16px;">Shoes, boots, heels, sneakers, sandals, socks</li>
-                          <li style="margin:8px 0;font-size:16px;">Bras, underwear, slips, camisoles, tights</li>
-                          <li style="margin:8px 0;font-size:16px;">Handbags, belts, ties, headbands</li>
-                          <li style="margin:8px 0;font-size:16px;">Towels, sheets, comforters, blankets, tablecloths</li>
-                          <li style="margin:8px 0;font-size:16px;">Wallets, totes, backpacks, stuffed animals</li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-                <td style="vertical-align:top;width:50%;">
-                  <table style="width:100%;border:1px solid #c6c6c6;border-radius:10px;padding:10px;background:#fff;padding-bottom:24px;">
-                    <tr>
-                      <th style="font-size:20px;padding:10px;text-align:left;font-weight:bold;">
-                        <span style="color:red;font-size:24px;margin-right:12px;vertical-align:middle;">&#10005;</span>
-                        DON'T Accept
-                      </th>
-                    </tr>
-                    <tr>
-                      <td style="padding:10px;">
-                        <ul style="padding-left:20px;margin:0;">
-                          <li style="margin:8px 0;font-size:16px;">Textiles that are wet, moldy, or contaminated with chemicals</li>
-                          <li style="margin:8px 0;font-size:16px;">Bio-hazardous waste</li>
-                          <li style="margin:8px 0;font-size:16px;">Mattresses, furniture, or other similar oversized items</li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-            <p style="font-size:16px;margin-top:36px;">If you have any questions we can help answer, please respond to this email!</p>
-            <p style="font-size:16px;margin:24px 0 8px;">Thanks,</p>
-            <p style="font-size:16px;margin:8px 0;">EkoLinq Support Team</p>
-            <p style="font-size:16px;margin:8px 0;">(866) 346-4765</p>
-            <p style="font-size:16px;margin:16px 0 8px;"><a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a></p>
-            <p style="font-size:16px;margin:8px 0;"><a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a></p>
-          </div>
+
+        <body bgcolor="#104378" class="bg-body" style="margin:0;padding:0;background-color:#104378;">
+          <!-- Full-width wrapper -->
+          <table role="presentation" width="100%" bgcolor="#104378" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="center" style="padding:24px 0;">
+                <!-- Constrained column -->
+                <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td bgcolor="#ffffff" class="bg-card" style="border:1px solid #ddd;border-radius:40px;padding:30px;">
+                      <!-- ---------- Logo ---------- -->
+                      <table role="presentation" width="100%">
+                        <tr>
+                          <td align="center" style="padding:0 0 24px 0;">
+                            <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="140" style="display:block;height:auto;border:0;">
+                          </td>
+                        </tr>
+                      </table>
+                      <h1 style="font-size:24px;margin-bottom:16px;">Update: A Change to Your Request Details</h1>
+                      <p style="font-size:18px;margin-top:36px;"><strong>Hello {first_name},</strong></p>
+                      <p style="font-size:16px;">We've just received an update to your pickup request. Below are your updated details:</p>
+                      <!-- ---------- Green info module ---------- -->
+                      <table role="presentation" width="100%" bgcolor="#098223" class="bg-green" style="background:#098223;border-radius:8px;">
+                        <tr>
+                          <td style="padding:16px;color:#ffffff;" class="text-dark">
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Request&nbsp;ID</p>
+                            <p style="margin:0 0 16px;font-weight:500;font-size:16px;">{request_id}</p>
+
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Address</p>
+                            <p style="margin:0 0 16px;font-weight:500;font-size:16px; color: white; text-decoration: none;">{address_formatted}</p>
+
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Date&nbsp;&amp;&nbsp;Time</p>
+                            <p style="margin:0;font-weight:500;font-size:16px;">{formatted_date_time}</p>
+
+                            <!-- Button -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
+                              <tr>
+                                <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
+                                  <a href="https://ekolinq.com/edit-request"
+                                    style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
+                                    Edit&nbsp;Details
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- ---------- Accept / Don’t Accept ---------- -->
+                      <h3 style="margin:36px 0 16px;font-size:20px;">Reminder: Here's what you can and can't give us</h3>
+
+                      <table role="presentation" width="100%">
+                        <tr>
+                          <!-- DO Accept -->
+                          <td class="stack-col" width="50%" valign="top" style="padding-right:4px;">
+                            <table role="presentation" width="100%" style="border:1px solid #c6c6c6;border-radius:10px;">
+                              <tr>
+                                <td style="padding:10px;">
+                                  <h4 style="margin:0 0 8px;font-size:20px;font-weight:bold;">
+                                    <span style="color:#098223;font-size:24px;vertical-align:middle;margin-right:6px;">&#10003;</span>
+                                    DO&nbsp;Accept
+                                  </h4>
+                                  <ul style="padding-left:20px;margin:0;">
+                                    <li style="margin:8px 0;font-size:16px;">Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+                                    <li style="margin:8px 0;font-size:16px;">Coats, jackets, gloves, hats, scarves</li>
+                                    <li style="margin:8px 0;font-size:16px;">Shoes, boots, heels, sneakers, sandals, socks</li>
+                                    <li style="margin:8px 0;font-size:16px;">Bras, underwear, slips, camisoles, tights</li>
+                                    <li style="margin:8px 0;font-size:16px;">Handbags, belts, ties, headbands</li>
+                                    <li style="margin:8px 0;font-size:16px;">Towels, sheets, comforters, blankets, tablecloths</li>
+                                    <li style="margin:8px 0;font-size:16px;">Wallets, totes, backpacks, stuffed animals</li>
+                                  </ul>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+
+                          <!-- DON'T Accept -->
+                          <td class="stack-col" width="50%" valign="top" style="padding-left:4px;">
+                            <table role="presentation" width="100%" style="border:1px solid #c6c6c6;border-radius:10px;">
+                              <tr>
+                                <td style="padding:10px;">
+                                  <h4 style="margin:0 0 8px;font-size:20px;font-weight:bold;">
+                                    <span style="color:#ff0000;font-size:24px;vertical-align:middle;margin-right:6px;">&#10005;</span>
+                                    DON'T&nbsp;Accept
+                                  </h4>
+                                  <ul style="padding-left:20px;margin:0;">
+                                    <li style="margin:8px 0;font-size:16px;">Textiles that are wet, moldy, or contaminated with chemicals</li>
+                                    <li style="margin:8px 0;font-size:16px;">Bio-hazardous waste</li>
+                                    <li style="margin:8px 0;font-size:16px;">Pillows and cushions</li>
+                                    <li style="margin:8px 0;font-size:16px;">Mattresses, furniture, or other similar oversized items</li>
+                                  </ul>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- ---------- Footer ---------- -->
+                      <p style="font-size:16px;line-height:1.5;margin:36px 0 0;">If you have any questions we can help answer, please respond to this email!</p>
+                      <p style="font-size:16px;margin:24px 0 8px;">Thanks,</p>
+                      <p style="font-size:16px;margin:8px 0;">EkoLinq Support Team</p>
+                      <p style="font-size:16px;margin:8px 0;">(866)&nbsp;346-4765</p>
+                      <p style="font-size:16px;margin:16px 0 8px;">
+                        <a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a>
+                      </p>
+                      <p style="font-size:16px;margin:8px 0;">
+                        <a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
         </body>
-        </html>"""
+        </html>
+        """
+
 
         mail.send(msg)
         return True

@@ -41,6 +41,7 @@ from helpers.monitoring import (
     record_404,
     record_5xx,
     record_slow,
+    start_monitoring_threads,
 )
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip, verifyAddress, AddressError
@@ -351,6 +352,9 @@ def create_app():
             "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
         ))
         app.logger.addHandler(handler)
+
+    if not app.testing:
+        start_monitoring_threads()
 
     app.logger.setLevel(app.config["LOGGER_LEVEL"])
     app.logger.info('LOGGER LEVEL: %s', app.config["LOGGER_LEVEL"])
@@ -1126,6 +1130,7 @@ def create_app():
             id_token = jwt.decode(token["id_token"], jwks)  # verifies signature
             id_token.validate()                            # exp, iat, aud, iss…
         except Exception as exc:
+            record_login_failure()
             current_app.logger.exception("ID-token validation failed: %s", exc)
             return "Invalid id_token", 400
 
@@ -1134,7 +1139,7 @@ def create_app():
         session["id_token"]  = token["id_token"]
         session["expires_at"] = id_token["exp"]
 
-        current_app.logger.info("Admin logged in")
+        current_app.logger.info("Admin logged in.")
 
         return redirect(url_for("admin_console"))
 
@@ -2055,6 +2060,7 @@ def create_app():
         redirect the user to the /error page.
         """
         current_app.logger.warning(f"404 Not Found: {request.path}")
+        record_404()
         if request.path.startswith('/.well-known/'):
             return '', 204
         return redirect(url_for('error'))
@@ -2062,6 +2068,7 @@ def create_app():
     @app.errorhandler(500)
     def handle_500(e):
         current_app.logger.error("500 error occurred.")
+        record_5xx
         return redirect(url_for('error'))
 
     @app.errorhandler(Exception)
