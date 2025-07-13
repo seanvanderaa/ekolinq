@@ -69,6 +69,7 @@ class DevelopmentConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+    PROPAGATE_EXCEPTIONS=False
     LOGGER_LEVEL = "INFO"
     SESSION_COOKIE_SECURE = True
     FORCE_HTTPS = True

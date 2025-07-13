@@ -30,7 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('contactForm').style.display = 'none';
             document.getElementById('contact-form-confirmation').style.display = 'flex';
             } else {
-            alert(json.reason);
+                if (json.reason == "The response parameter is missing.") {
+                    alert("Please be sure to check the box to prove you're not a robot.");
+                }
+                else {
+                    alert(json.reason);
+                }
             }
         } catch (err) {
             console.error(err);

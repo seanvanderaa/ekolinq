@@ -2058,6 +2058,11 @@ def create_app():
         if request.path.startswith('/.well-known/'):
             return '', 204
         return redirect(url_for('error'))
+    
+    @app.errorhandler(500)
+    def handle_500(e):
+        current_app.logger.error("500 error occurred.")
+        return redirect(url_for('error'))
 
     @app.errorhandler(Exception)
     def handle_exception(e):

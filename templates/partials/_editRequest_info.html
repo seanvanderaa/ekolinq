@@ -34,7 +34,7 @@
     <p id="address-header">Address</p>
     <div>
       <div id="address-info" class="flex-row-center">
-        <h4 class="no-margin">{{ pickup.address }} {{ pickup.address2 }}, {{ pickup.city }}, {{ pickup.zipcode }}</h4>
+        <h4 class="no-margin">{{ pickup.address }}{% if pickup.address 2%} {{ pickup.address2 }}{% endif %}, {{ pickup.city }}, {{ pickup.zipcode }}</h4>
         <div id="edit-address" class="edit-pencil">
           <i class="bi bi-pencil icon-gray"></i>
         </div>
