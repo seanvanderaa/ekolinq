@@ -3,6 +3,7 @@ from flask_mail import Message
 from flask import current_app  # helpful if you’re using the application factory pattern
 from extensions import mail   # <--- no more "from app import mail"
 from datetime import datetime
+import os
 
 def send_contact_email(name, email, message):
     """
@@ -64,6 +65,10 @@ def send_request_email(pickup):
             formatted_date = pickup.request_date
 
         formatted_date_time = f"{formatted_date} between 8am-4pm"
+
+        SITE_URL = os.getenv("SITE_URL")
+
+        edit_request_url = SITE_URL + '/edit-request-init'
 
         # ---------------------------------------------------------------------------
         # Subject & Recipients
@@ -188,7 +193,7 @@ def send_request_email(pickup):
                             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
                               <tr>
                                 <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
-                                  <a href="https://ekolinq.com/edit-request"
+                                  <a href="{edit_request_url}"
                                     style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
                                     Edit&nbsp;Details
                                   </a>
@@ -306,6 +311,10 @@ def send_edited_request_email(pickup):
 
         formatted_date_time = f"{formatted_date} between 8am-4pm"
 
+        SITE_URL = os.getenv("SITE_URL")
+
+        edit_request_url = SITE_URL + '/edit-request-init'
+
         subject = f"EkoLinq: Updated Request Info For {formatted_date}"
         recipients = [pickup.email]
         msg = Message(
@@ -398,7 +407,7 @@ def send_edited_request_email(pickup):
                             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
                               <tr>
                                 <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
-                                  <a href="https://ekolinq.com/edit-request"
+                                  <a href="{edit_request_url}"
                                     style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
                                     Edit&nbsp;Details
                                   </a>

@@ -137,7 +137,7 @@ li {
     z-index: 2;
     padding: 16px 24px;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .navbar__toggle {

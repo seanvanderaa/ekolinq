@@ -561,8 +561,15 @@ def create_app():
                 status="Unfinished"
             )
             pickup = db.session.get(PickupRequest, new_id)
-            pickup_code= pickup.request_id
+            pickup_code = pickup.request_id
             current_app.logger.info("New pickup request created.")
+            session.clear()                               # blow away any old pickup flow
+            token = new_confirm_token(pickup_code)
+            session.update({
+                "pickup_request_id": pickup_code,
+                "confirm_token":    token,
+                "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+            })
             return redirect(url_for('select_date', request_id=pickup_code))
         
         if request.method == 'POST':
@@ -576,6 +583,27 @@ def create_app():
     @limiter.limit("30 per hour")
     def select_date():
         request_id = request.args.get('request_id')
+        token      = session.get('confirm_token')
+
+        current_app.logger.debug("Select date route accessed with request_id=%s", request_id)
+
+        # ── 1) Session must still be alive and point at the same request  ──
+        if session.get("pickup_request_id") != request_id:
+            current_app.logger.error("Session mismatch for /select-date")
+            abort(404)
+
+        # ── 2) Token must verify, be <5 min old, and come from same IP ──
+        try:
+            verify_confirm_token(token)
+        except (SignatureExpired, BadSignature, TypeError):
+            current_app.logger.warning("Missing or invalid confirm token")
+            return render_template('440.html')
+
+        # ── 3) Extra clock-based guard (belt-and-braces) ──
+        if time.time() > session.get("confirm_expires", 0):
+            current_app.logger.info("Confirm window elapsed – clearing session")
+            session.clear()
+            return render_template('440.html')
         current_app.logger.debug("select_date route accessed with request_id=%s", request_id)
 
         if not request_id:
@@ -594,8 +622,7 @@ def create_app():
             offset = 2
 
         days_list, base_date_str = build_schedule(offset)
-        current_app.logger.debug("Built schedule for offset=%d. base_date_str=%s, days_list=%s",
-                             offset, base_date_str, days_list)
+        current_app.logger.debug("Built schedule and sending to /select-date")
         form = DateSelectionForm()
 
         if form.validate_on_submit():
@@ -629,16 +656,8 @@ def create_app():
             #                         t=token))  
             # else:
             current_app.logger.info("Confirmation email not yet sent for request_id=%s, sending to confirmation page", request_id)
-            session.clear()                               # blow away any old pickup flow
-            token = new_confirm_token(request_id)
-            session.update({
-                "pickup_request_id": request_id,
-                "confirm_token":    token,
-                "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
-            })
             return redirect(url_for('confirmation',
-                                request_id=request_id,
-                                t=token))  
+                                request_id=request_id))  
         
         current_app.logger.info(
             "User is selecting a date/time for request_id=%s, offset=%d. Rendering select_date.html.",
@@ -658,7 +677,7 @@ def create_app():
     @limiter.limit("30 per hour")
     def confirmation():
         request_id = request.args.get('request_id')
-        token      = request.args.get('t')
+        token      = session.get('confirm_token')
 
         current_app.logger.debug("Confirmation route accessed with request_id=%s", request_id)
 
@@ -669,13 +688,9 @@ def create_app():
 
         # ── 2) Token must verify, be <5 min old, and come from same IP ──
         try:
-            if token:
-                verify_confirm_token(token)
-            else:
-                current_app.logger.warning("Missing token.")
-                return render_template('440.html')
-        except (SignatureExpired, BadSignature):
-            current_app.logger.warning("Stale or invalid confirm token")
+            verify_confirm_token(token)
+        except (SignatureExpired, BadSignature, TypeError):
+            current_app.logger.warning("Missing or invalid confirm token")
             return render_template('440.html')
 
         # ── 3) Extra clock-based guard (belt-and-braces) ──
@@ -794,10 +809,12 @@ def create_app():
         (True,  pickup)         – all checks passed
         (False, error_message)  – failed, give the reason that should be shown
         """
+        request_id = request_id.strip().upper()
+
         # 1) basic format
         if len(request_id) != 8:
             return False, (
-                "Your code must be exactly 6 digits. "
+                "Your code must be exactly 8 digits. "
                 "Please double-check and try again."
             )
 
@@ -815,13 +832,25 @@ def create_app():
                 "matches exactly what appears in your confirmation email."
             )
 
-        # 3) date in the past?
+        # 4) date checks
         if pickup.request_date:
             try:
-                if datetime.strptime(pickup.request_date, '%Y-%m-%d').date() < datetime.now().date():
+                req_date = datetime.strptime(pickup.request_date, '%Y-%m-%d').date()
+                today = datetime.now().date()
+
+                # no same-day edits
+                if req_date == today:
                     return False, (
-                        "That request date has already passed and can’t be edited."
+                        "Sorry, requests cannot be edited on the day of pickup. "
+                        "Please contact us if there is an urgent change needed for your request."
                     )
+
+                # no edits once the date has passed
+                if req_date < today:
+                    return False, (
+                        "The date you requested for your pickup has already passed and can’t be edited."
+                    )
+
             except ValueError:
                 current_app.logger.warning("Bad date on request %s", request_id)
                 return False, (
@@ -930,8 +959,7 @@ def create_app():
         
         days_list, base_date_str = build_schedule(offset)
         current_app.logger.debug(
-            "Built schedule for offset=%d (base_date_str=%s). Days list: %s",
-            offset, base_date_str, days_list
+            "Built schedule and routing to edit_request"
         )
 
         update_address_form = UpdateAddressForm(obj=pickup)

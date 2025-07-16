@@ -1,3 +1,13 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+
 #nav {
     background-color: var(--d-green);
 }
@@ -7,9 +17,9 @@ main {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 100vh;
-    padding: 20vh 0;
-    min-height: calc(100vh - 650px);
+    flex: 1;            /* take up all available space */
+    padding: 160px 0px;
+    box-sizing: border-box;
 }
 
 #loading-popup h3 {
