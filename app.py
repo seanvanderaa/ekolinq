@@ -49,7 +49,7 @@ from helpers.helpers import format_date
 from helpers.capture_ip import client_ip
 import helpers.import_backfill as backfill_mod
 # from helpers.routing import compute_optimized_route, seconds_to_hms
-from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms
+from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms, _maybe_geocode, _coords_like
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
                              send_error_report, send_edited_request_email)
@@ -542,6 +542,19 @@ def create_app():
             date_filed = date.today()
 
             gated = form.gated.data
+
+            token = os.getenv("MAPBOX_ACCESS_TOKEN")
+            if not token:
+                raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
+
+            # build one full address string
+            full_address = ", ".join(filter(None, [address, city, "CA", zip_]))
+            try:
+                geocoded_addr = _maybe_geocode(full_address, token)
+            except Exception as e:
+                current_app.logger.error("Geocoding failed for %r: %s", full_address, e)
+                # fallback to raw address string (or handle as you prefer)
+                geocoded_addr = None
             
             current_app.logger.debug("New request created.")
             
@@ -556,6 +569,7 @@ def create_app():
                 address2 = address2,
                 city=city,
                 zipcode=zip_,
+                geocoded_addr = geocoded_addr,
                 notes=notes,
                 gated=gated,
                 awareness=awareness,
@@ -725,54 +739,66 @@ def create_app():
     @code_email_scope
     def update_address():
         form = UpdateAddressForm()
-        if form.validate_on_submit():
-            # Retrieve validated data from the form
-            request_id = form.request_id.data
-            address    = form.address.data
-            address2   = form.address2.data
-            city       = form.city.data
-            zip_code   = form.zipcode.data
-
-            current_app.logger.info("Received valid POST to update address for request_id=%s", request_id)
-
-            # Fetch the pickup request from the database
-            pickup = PickupRequest.query.filter_by(request_id=request_id).first()
-
-            if not pickup:
-                current_app.logger.warning("No PickupRequest found for request_id=%s", request_id)
-                return jsonify({
-                    "status": "error",
-                    "message": f"No record found for request_id={request_id}"
-                }), 400
-
-            # Update the fields
-            pickup.address = address
-            pickup.address2 = address2
-            pickup.city    = city
-            pickup.zipcode = zip_code
-
-            # Commit changes to the database
-            db.session.commit()
-            current_app.logger.info(
-                "Successfully updated address for request_id=%s",
-                request_id
-            )
-
-            # Redirect based on the page value
-            current_app.logger.debug("Sending edited request email for request_id=%s", request_id)
-            send_edited_request_email(pickup)
-            current_app.logger.debug("Edited request email sent for request_id=%s", request_id)
-
-            return redirect(url_for('edit_request', request_id=request_id))
-        
-        else:
+        if not form.validate_on_submit():
             current_app.logger.error(
                 "Form validation failed for update_address. Errors: %s", form.errors
             )
-            return jsonify({
-                "status": "error",
-                "message": "Invalid form submission."
-            }), 400
+            return jsonify({"status": "error",
+                            "message": "Invalid form submission."}), 400
+
+        # ─── 1. Get the new pieces ───────────────────────────────────────────
+        request_id = form.request_id.data
+        address    = form.address.data
+        address2   = form.address2.data
+        city       = form.city.data
+        zip_code   = form.zipcode.data
+        current_app.logger.info(
+            "Received valid POST to update address for request_id=%s", request_id
+        )
+
+        # ─── 2. Find the row ─────────────────────────────────────────────────
+        pickup = PickupRequest.query.filter_by(request_id=request_id).first()
+        if not pickup:
+            current_app.logger.warning(
+                "No PickupRequest found for request_id=%s", request_id
+            )
+            return jsonify({"status": "error",
+                            "message": f"No record found for request_id={request_id}"}), 400
+
+        # ─── 3. Update plain‑text fields ─────────────────────────────────────
+        pickup.address  = address
+        pickup.address2 = address2
+        pickup.city     = city
+        pickup.zipcode  = zip_code
+
+        # ─── 4. Geocode the *new* full address  ──────────────────────────────
+        full_addr = ", ".join(filter(None, [address, address2, city, zip_code]))
+        geocoded = None
+        try:
+            token = os.getenv("MAPBOX_ACCESS_TOKEN")
+            if not token:
+                raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
+            geocoded = _maybe_geocode(full_addr, token)
+            # optional: strip whitespace
+            if geocoded and _coords_like(geocoded):
+                geocoded = geocoded.replace(" ", "")
+            current_app.logger.debug("Geocoded address")
+        except Exception as e:
+            # Don’t block the update; just log.
+            current_app.logger.error("Geocoding failed for request ID: %s", request_id)
+
+        pickup.geocoded_address = geocoded    # may be None if failure
+
+        # ─── 5. Commit & notify ──────────────────────────────────────────────
+        db.session.commit()
+        current_app.logger.info(
+            "Successfully updated address (and geocode) for request_id=%s", request_id
+        )
+
+        send_edited_request_email(pickup)
+        current_app.logger.debug("Edited‑request email sent for request_id=%s", request_id)
+
+        return redirect(url_for('edit_request', request_id=request_id))
 
     @app.route('/submit-rating', methods=['POST'])
     @limiter.limit("5 per hour")
@@ -840,11 +866,11 @@ def create_app():
                 today = datetime.now().date()
 
                 #no same-day edits
-                if req_date == today:
-                    return False, (
-                        "Sorry, requests cannot be edited on the day of pickup. "
-                        "Please contact us if there is an urgent change needed for your request."
-                    )
+                # if req_date == today:
+                #     return False, (
+                #         "Sorry, requests cannot be edited on the day of pickup. "
+                #         "Please contact us if there is an urgent change needed for your request."
+                #     )
 
                 # no edits once the date has passed
                 if req_date < today:
@@ -1311,25 +1337,7 @@ def create_app():
                 current_app.logger.info("Schedule data updated; redirecting to /admin-schedule.")
 
                 return redirect(url_for('admin_schedule'))
-            elif admin_address_form.submit.data and admin_address_form.validate_on_submit():
-                # Process address update
-                new_address = admin_address_form.admin_address.data
-                current_app.logger.info("AdminAddressForm was submitted and validated.")
-
-                config = DBConfig.query.filter_by(key='admin_address').first()
-                if config:
-                    old_address_val = config.value
-                    config.value = new_address
-                    current_app.logger.debug("Updated admin_address.")
-                else:
-                    config = DBConfig(key='admin_address', value=new_address)
-                    db.session.add(config)
-                    current_app.logger.debug("Created new admin_address config entry.")
-                
-                db.session.commit()
-                current_app.logger.info("Address updated; redirecting to /admin-schedule.")
-
-                return redirect(url_for('admin_schedule'))
+            
             else:
                 current_app.logger.warning("POST to /admin-schedule but neither form validated successfully. Errors: %s, %s",
                                             admin_schedule_form.errors, admin_address_form.errors)
@@ -1347,32 +1355,62 @@ def create_app():
         )
 
     
+
     @app.route('/admin-set-address', methods=["POST"])
     @login_required
     def admin_set_address():
         current_app.logger.info("POST /admin-set-address - Admin attempting to set the address.")
-
         form = AdminAddressForm()
-        if form.validate_on_submit():
-            new_address = form.admin_address.data
-            current_app.logger.debug("Form validated. New address value.")
 
-            config = DBConfig.query.filter_by(key='admin_address').first()
-            if config:
-                old_address = config.value
-                config.value = new_address
-                current_app.logger.debug("Updated existing admin_address.")
-            else:
-                config = DBConfig(key='admin_address', value=new_address)
-                db.session.add(config)
-                current_app.logger.debug("Created new DBConfig entry for admin_address.")
-            
-            db.session.commit()
-            current_app.logger.info("Admin address updated. Redirecting to admin_schedule.")
+        if not form.validate_on_submit():
+            current_app.logger.warning(
+                "Form validation failed in admin_set_address. Errors: %s",
+                form.errors
+            )
             return redirect(url_for('admin_schedule'))
+
+        # 1) Get the new text address
+        new_address = form.admin_address.data
+        current_app.logger.debug("Form validated. New address: %r", new_address)
+
+        # 2) Persist the raw text under key "admin_address"
+        admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
+        if admin_cfg:
+            admin_cfg.value = new_address
+            current_app.logger.debug("Updated existing admin_address config.")
         else:
-            current_app.logger.warning("Form validation failed in admin_set_address. Errors: %s", form.errors)
-            return redirect(url_for('admin_schedule'))
+            admin_cfg = DBConfig(key='admin_address', value=new_address)
+            db.session.add(admin_cfg)
+            current_app.logger.debug("Created new admin_address config.")
+
+        # 3) Geocode it
+        token = os.getenv("MAPBOX_ACCESS_TOKEN")
+        if not token:
+            raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
+        try:
+            # if you want to include city/zip you can expand new_address here
+            geocoded = _maybe_geocode(new_address, token)
+            current_app.logger.debug("Geocoded admin address to %r", geocoded)
+        except Exception as e:
+            current_app.logger.error(
+                "Failed to geocode admin_address %r: %s", new_address, e
+            )
+            geocoded = None
+
+        # 4) Persist the geocode under key "geocoded_admin_addr"
+        geo_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+        if geo_cfg:
+            geo_cfg.value = geocoded
+            current_app.logger.debug("Updated existing geocoded_admin_addr config.")
+        else:
+            geo_cfg = DBConfig(key='geocoded_admin_addr', value=geocoded)
+            db.session.add(geo_cfg)
+            current_app.logger.debug("Created new geocoded_admin_addr config.")
+
+        # 5) Commit once, then redirect
+        db.session.commit()
+        current_app.logger.info("Admin address and geocode updated. Redirecting.")
+        return redirect(url_for('admin_schedule'))
 
 
     @app.route('/admin-pickups', methods=['GET', 'POST'])
@@ -1757,12 +1795,29 @@ def create_app():
             total_time_str = total_time_str,
         )
     
+    def _clean_coord(s: str | None) -> str | None:
+        """Tidy a 'lon,lat' string – Mapbox accepts it w/ no spaces."""
+        if s and _coords_like(s):
+            return s.replace(" ", "")
+        return s
+
+    def _pickup_addr(pr) -> str:
+        """
+        Return either the geocode 'lon,lat' (preferred) or a
+        plain‑text address for a PickupRequest row.
+        """
+        geo = _clean_coord(getattr(pr, "geocoded_address", None))
+        if geo:
+            return geo
+        # Fallback – tweak to match how you normally format text addresses
+        return f"{pr.address}, {pr.city}, CA {pr.zipcode}"
+    
     @app.route('/live-route', methods=['GET'])
     @login_required
     def live_route():
         current_app.logger.info("GET /live-route - showing live route info.")
 
-        CACHE_MAX_AGE_MINUTES = 10
+        CACHE_MAX_AGE_MINUTES = 15
         pickup_status_form = PickupStatusForm()
         selected_date = request.args.get('date')
         if not selected_date:
@@ -1780,23 +1835,24 @@ def create_app():
         # 2) Driver location or fallback
         driver_loc = DriverLocation.query.first()
         if driver_loc and driver_loc.full_address():
-            driver_current_location = driver_loc.full_address()
-            current_app.logger.debug("Using driver's current location.")
-
+            driver_current_location = _clean_coord(driver_loc.full_address())
         else:
-            admin_config = DBConfig.query.filter_by(key='admin_address').first()
-            driver_current_location = admin_config.value if admin_config else "5831 Mallard Dr., Pleasanton CA"
-            current_app.logger.debug("No valid driver location, falling back to admin address.")
-
+            admin_config = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+            driver_current_location = _clean_coord(
+                admin_config.value if admin_config else "5389 Mallard Dr., Pleasanton, CA 94566"
+            )
 
         # 3) Always end at admin location
-        final_admin_config = DBConfig.query.filter_by(key='admin_address').first()
-        final_admin_address = final_admin_config.value if final_admin_config else "5831 Mallard Dr., Pleasanton CA"
+        final_admin_config = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+        final_admin_address = _clean_coord(
+            final_admin_config.value if final_admin_config else "5389 Mallard Dr., Pleasanton, CA 94566"
+        )
 
         addresses = [driver_current_location]
         for p in pickups_requested:
-            addresses.append(f"{p.address}, {p.city} CA")
-        addresses.append(final_admin_address)  # this is n-1
+            addresses.append(_pickup_addr(p))                       # 1..n‑2
+
+        addresses.append(final_admin_address)  
 
         current_app.logger.debug("Successfully compiled addresses for route.")
 

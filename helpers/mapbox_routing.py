@@ -12,11 +12,14 @@ continues to call `compute_optimized_route()` with raw address strings.
 """
 from __future__ import annotations
 
+import logging
+
 import os
 import time
 from collections import defaultdict
 from typing import List, Tuple
 from urllib.parse import quote_plus
+from flask import current_app
 
 import requests
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
@@ -30,6 +33,13 @@ MB_ENDPOINT = "https://api.mapbox.com/directions-matrix/v1"
 FALLBACK_LARGE = 999_999  # penalty (seconds) for unreachable legs
 _REQ_WINDOW_SEC = 60      # coarse rate‑limit window
 _req_ts: defaultdict[str, List[float]] = defaultdict(list)
+
+
+def _t(label: str) -> callable:
+    """Return a lambda that logs elapsed seconds when invoked."""
+    logger = current_app.logger
+    start = time.perf_counter()
+    return lambda: logger.info("%s took %.3f s", label, time.perf_counter() - start)
 
 def _ratelimit(profile: str) -> None:
     """Sleep just enough to stay within Mapbox per‑minute quotas."""
@@ -52,18 +62,20 @@ def _coords_like(s: str) -> bool:
 def _maybe_geocode(addr: str, token: str) -> str:
     if _coords_like(addr):
         return addr  # already "lon,lat"
+    
+    done = _t(f"GEOCODE '{addr[:40]}…'")
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{quote_plus(addr)}.json"
     params = {"limit": 1, "access_token": token}
     r = requests.get(url, params=params, timeout=10)
     r.raise_for_status()
     feat = r.json()["features"][0]
+    done()  
     lon, lat = feat["center"]
     return f"{lon},{lat}"
 
 ###############################################################################
 # Matrix builder
 ###############################################################################
-
 def fetch_distance_matrix_mapbox(
     locations: List[str],
     *,
@@ -71,15 +83,24 @@ def fetch_distance_matrix_mapbox(
     profile: str = MB_PROFILE_DEFAULT,
 ) -> List[List[int]]:
     """Return an *N×N* travel‑time matrix (seconds) via Mapbox Matrix API."""
+    logger = current_app.logger
 
     token = access_token or os.getenv("MAPBOX_ACCESS_TOKEN")
     if not token:
         raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
 
-    # -- 1. Geocode / normalise ------------------------------------------------
-    coords_raw = [_maybe_geocode(addr, token) for addr in locations]
+    timer_fetch = _t("fetch_distance_matrix_mapbox")      ##### NEW/CHANGED >>>
 
-    # -- 2. Collapse duplicates ------------------------------------------------
+    # ------------------------------------------------------------------ #
+    # 1. Geocode / normalise                                             #
+    # ------------------------------------------------------------------ #
+    t_geo = _t(f"– geocoding {len(locations)} address(es)")  ##### NEW/CHANGED >>>
+    coords_raw = [_maybe_geocode(addr, token) for addr in locations]
+    t_geo()                                                  ##### NEW/CHANGED >>>
+
+    # ------------------------------------------------------------------ #
+    # 2. Collapse duplicates (unchanged)                                 #
+    # ------------------------------------------------------------------ #
     uniq_coords: List[str] = []
     idx_map: List[int] = []  # original index -> unique index
     for c in coords_raw:
@@ -96,19 +117,34 @@ def fetch_distance_matrix_mapbox(
 
     max_coords = 10 if profile.endswith("traffic") else 25
 
-    # -- 3. Fast path: single call suffices -----------------------------------
+    # Helpers for timing every Matrix HTTP call ------------------------ #
+    api_calls = 0                                           ##### NEW/CHANGED >>>
+    api_time  = 0.0                                         ##### NEW/CHANGED >>>
+
+    def _matrix_get(url: str, params: dict):               ##### NEW/CHANGED >>>
+        """Wrapped requests.get() that records elapsed time."""         # noqa
+        nonlocal api_calls, api_time
+        api_calls += 1
+        t0 = time.perf_counter()
+        r = requests.get(url, params=params, timeout=15)
+        api_time += time.perf_counter() - t0
+        return r
+
+    # ------------------------------------------------------------------ #
+    # 3. Fast path: single call suffices                                 #
+    # ------------------------------------------------------------------ #
     if u <= max_coords:
         coord_str = ";".join(uniq_coords)
         params = {"annotations": "duration", "access_token": token}
         _ratelimit(profile)
-        r = requests.get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params=params, timeout=15)
+        r = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)  ##### NEW/CHANGED >>>
         r.raise_for_status()
         res = r.json()
         if res.get("code") != "Ok":
             raise RuntimeError(f"Matrix API error: {res.get('message')}")
         u_matrix = [[int(v) if v else FALLBACK_LARGE for v in row] for row in res["durations"]]
     else:
-        # -- 4. Row‑stream for large sets --------------------------------------
+        # 4. Row‑stream for large sets ----------------------------------
         dest_chunk = max_coords - 1  # 1 slot reserved for origin
         u_matrix: List[List[int]] = [[FALLBACK_LARGE] * u for _ in range(u)]
         for i in range(u):
@@ -122,7 +158,6 @@ def fetch_distance_matrix_mapbox(
                     if remaining:
                         chunk.append(remaining.pop(0))
                     else:
-                        # borrow from previous chunk
                         chunk.insert(0, chunks[-1].pop())
                 chunks.append(chunk)
             # API calls
@@ -135,7 +170,7 @@ def fetch_distance_matrix_mapbox(
                     "access_token": token,
                 }
                 _ratelimit(profile)
-                r = requests.get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params=params, timeout=15)
+                r = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)  ##### NEW/CHANGED >>>
                 if r.status_code == 422:
                     raise RuntimeError(f"Matrix API InvalidInput – {r.json().get('message','')}" )
                 r.raise_for_status()
@@ -147,7 +182,9 @@ def fetch_distance_matrix_mapbox(
                     u_matrix[i][j] = int(durations[off]) if durations[off] else FALLBACK_LARGE
             u_matrix[i][i] = 0
 
-    # -- 5. Expand to full N×N -------------------------------------------------
+    # ------------------------------------------------------------------ #
+    # 5. Expand to full N×N (unchanged)                                  #
+    # ------------------------------------------------------------------ #
     n = len(locations)
     matrix = [[0] * n for _ in range(n)]
     for i in range(n):
@@ -155,6 +192,15 @@ def fetch_distance_matrix_mapbox(
         for j in range(n):
             uj = idx_map[j]
             matrix[i][j] = u_matrix[ui][uj]
+
+    # ------------------------------------------------------------------ #
+    # 6. Final timing summary                                            #
+    # ------------------------------------------------------------------ #
+    logger.info(                                             ##### NEW/CHANGED >>>
+        "Matrix summary: %d coords → %d call(s); matrix %.2f s",
+        len(locations), api_calls, api_time
+    )
+    timer_fetch()                                            ##### NEW/CHANGED >>>
     return matrix
 
 ###############################################################################

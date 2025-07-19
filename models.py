@@ -23,6 +23,8 @@ class PickupRequest(db.Model):
     city = db.Column(db.String(200), nullable=False)
     zipcode = db.Column(db.String(10), nullable=False)
 
+    geocoded_addr = db.Column(db.String(50), nullable=True)
+
     notes = db.Column(db.String(400), nullable=True)
     status = db.Column(db.String(50), default='Pending')
     
