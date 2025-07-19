@@ -48,7 +48,8 @@ from helpers.address import verifyZip, verifyAddress, AddressError
 from helpers.helpers import format_date
 from helpers.capture_ip import client_ip
 import helpers.import_backfill as backfill_mod
-from helpers.routing import compute_optimized_route, seconds_to_hms
+# from helpers.routing import compute_optimized_route, seconds_to_hms
+from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
                              send_error_report, send_edited_request_email)
@@ -838,7 +839,7 @@ def create_app():
                 req_date = datetime.strptime(pickup.request_date, '%Y-%m-%d').date()
                 today = datetime.now().date()
 
-                # no same-day edits
+                #no same-day edits
                 if req_date == today:
                     return False, (
                         "Sorry, requests cannot be edited on the day of pickup. "
@@ -1827,7 +1828,6 @@ def create_app():
         # 6) Either use the cached route or recalc
         if should_refresh:
             try:
-
                 final_route, total_seconds, _ = compute_optimized_route(
                     waypoints=addresses[1:-1],
                     start_location=addresses[0],
