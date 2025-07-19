@@ -130,7 +130,7 @@ def fetch_distance_matrix_mapbox(
                 coord_str = ";".join(uniq_coords[k] for k in [i] + dest_idx)
                 params = {
                     "sources": "0",
-                    "destinations": ",".join(str(d + 1) for d in range(len(dest_idx))),
+                    "destinations": ";".join(str(d + 1) for d in range(len(dest_idx))),
                     "annotations": "duration",
                     "access_token": token,
                 }
