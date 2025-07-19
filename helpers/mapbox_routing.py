@@ -25,7 +25,7 @@ from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 # Constants & utilities
 ###############################################################################
 
-MB_PROFILE_DEFAULT = "mapbox/driving-traffic"  # 10 coords/call
+MB_PROFILE_DEFAULT = "mapbox/driving"  # 10 coords/call -traffic
 MB_ENDPOINT = "https://api.mapbox.com/directions-matrix/v1"
 FALLBACK_LARGE = 999_999  # penalty (seconds) for unreachable legs
 _REQ_WINDOW_SEC = 60      # coarse rate‑limit window

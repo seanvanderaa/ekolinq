@@ -1838,13 +1838,13 @@ def create_app():
                 if cached_solution:
                     cached_solution.route_json     = json.dumps(final_route)
                     cached_solution.total_time_str = total_time_str
-                    cached_solution.last_updated   = datetime.utcnow()
+                    cached_solution.last_updated   = datetime.now()
                 else:
                     cached_solution = RouteSolution(
                         date            = selected_date,
                         route_json      = json.dumps(final_route),
                         total_time_str  = total_time_str,
-                        last_updated    = datetime.utcnow()
+                        last_updated    = datetime.now()
                     )
                     db.session.add(cached_solution)
                 db.session.commit()
