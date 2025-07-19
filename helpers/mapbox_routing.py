@@ -2,7 +2,6 @@
 ========================================================
 Stable, minimal, and thoroughly linted version.
 
-* **Traffic‑aware** by default (`mapbox/driving-traffic`, 10 coords.request).
 * Automatic chunking for arbitrarily large waypoint lists.
 * Guarantees every Matrix call has **≥ 2 destinations** to avoid Mapbox 422.
 * Deduplicates identical coordinates (same address repeated).
@@ -41,15 +40,28 @@ def _t(label: str) -> callable:
     start = time.perf_counter()
     return lambda: logger.info("%s took %.3f s", label, time.perf_counter() - start)
 
-def _ratelimit(profile: str) -> None:
-    """Sleep just enough to stay within Mapbox per‑minute quotas."""
-    limit = 30 if profile.endswith("traffic") else 60
-    now = time.time()
-    window = _req_ts[profile]
+# helpers/mapbox_routing.py
+_MB_RPM = int(os.getenv("MAPBOX_MATRIX_RPM", "300"))   # Mapbox spec: 300 req/min
+
+def _ratelimit() -> None:
+    """
+    Sleep just enough to stay below the per‑minute cap.
+    Signature takes no args so callers don’t have to pass `profile`.
+    """
+    now   = time.time()
+    limit = _MB_RPM
+    window = _req_ts["global"]            # single shared window
     window[:] = [t for t in window if now - t < _REQ_WINDOW_SEC]
     if len(window) >= limit:
-        time.sleep(_REQ_WINDOW_SEC - (now - window[0]) + 0.05)
-    window.append(time.time())
+        sleep_for = _REQ_WINDOW_SEC - (now - window[0]) + 0.05
+        current_app.logger.warning(
+            "Matrix rate‑limit hit: sleeping %.1f s to stay under %d rpm",
+            sleep_for, limit
+        )
+        time.sleep(sleep_for)
+    window.append(now)
+
+
 
 def _coords_like(s: str) -> bool:
     try:
@@ -121,70 +133,96 @@ def fetch_distance_matrix_mapbox(
     api_calls = 0                                           ##### NEW/CHANGED >>>
     api_time  = 0.0                                         ##### NEW/CHANGED >>>
 
-    def _matrix_get(url: str, params: dict):               ##### NEW/CHANGED >>>
-        """Wrapped requests.get() that records elapsed time."""         # noqa
+    # ------------------------------------------------------------------ #
+    # Helper: timed HTTP wrapper                                         #
+    # ------------------------------------------------------------------ #
+    def _matrix_get(url: str, params: dict) -> dict:
+        """requests.get() that counts calls and measures elapsed time."""
         nonlocal api_calls, api_time
         api_calls += 1
         t0 = time.perf_counter()
         r = requests.get(url, params=params, timeout=15)
         api_time += time.perf_counter() - t0
-        return r
+        r.raise_for_status()
+        data = r.json()
+        if data.get("code") != "Ok":
+            raise RuntimeError(f"Matrix API error: {data.get('message')}")
+        return data
 
     # ------------------------------------------------------------------ #
-    # 3. Fast path: single call suffices                                 #
+    # 3. Build the unique‑coords matrix                                  #
     # ------------------------------------------------------------------ #
     if u <= max_coords:
+        # ---------- tiny set: one call ---------------------------------
         coord_str = ";".join(uniq_coords)
         params = {"annotations": "duration", "access_token": token}
-        _ratelimit(profile)
-        r = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)  ##### NEW/CHANGED >>>
-        r.raise_for_status()
-        res = r.json()
-        if res.get("code") != "Ok":
-            raise RuntimeError(f"Matrix API error: {res.get('message')}")
-        u_matrix = [[int(v) if v else FALLBACK_LARGE for v in row] for row in res["durations"]]
+        _ratelimit()
+        res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
+        u_matrix = [[int(v) if v else FALLBACK_LARGE for v in row]
+                    for row in res["durations"]]
+
+    elif max_coords == 25:
+        # ---------- block streaming (25×25) -----------------------------
+        block     = 25                     # Mapbox limit for non‑traffic
+        u_matrix  = [[FALLBACK_LARGE] * u for _ in range(u)]
+
+        def _fill(src_idx, dst_idx, sub):
+            for ii, si in enumerate(src_idx):
+                for jj, dj in enumerate(dst_idx):
+                    u_matrix[si][dj] = int(sub[ii][jj]) if sub[ii][jj] else FALLBACK_LARGE
+
+        blocks = [list(range(i, min(i + block, u))) for i in range(0, u, block)]
+
+        for src_idx in blocks:
+            for dst_idx in blocks:
+                union_idx = sorted(set(src_idx) | set(dst_idx))      # ≤ 25
+                coord_str  = ";".join(uniq_coords[k] for k in union_idx)
+                params = {
+                    "sources":      ";".join(str(union_idx.index(k)) for k in src_idx),
+                    "destinations": ";".join(str(union_idx.index(k)) for k in dst_idx),
+                    "annotations":  "duration",
+                    "access_token": token,
+                }
+                _ratelimit()
+                res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
+                _fill(src_idx, dst_idx, res["durations"])
+
     else:
-        # 4. Row‑stream for large sets ----------------------------------
-        dest_chunk = max_coords - 1  # 1 slot reserved for origin
-        u_matrix: List[List[int]] = [[FALLBACK_LARGE] * u for _ in range(u)]
+        # ---------- traffic profile row‑stream (10×10) ------------------
+        dest_chunk = max_coords - 1        # 9 when traffic
+        u_matrix   = [[FALLBACK_LARGE] * u for _ in range(u)]
+
         for i in range(u):
             remaining = [j for j in range(u) if j != i]
-            chunks: List[List[int]] = []
+            chunks = []
             while remaining:
-                chunk = remaining[:dest_chunk]
-                remaining = remaining[dest_chunk:]
-                # Avoid 1‑element chunk (would yield 1 matrix element error)
-                if len(chunk) == 1:
+                chunk, remaining = remaining[:dest_chunk], remaining[dest_chunk:]
+                if len(chunk) == 1:                        # avoid 1‑dest chunk
                     if remaining:
                         chunk.append(remaining.pop(0))
                     else:
                         chunk.insert(0, chunks[-1].pop())
                 chunks.append(chunk)
-            # API calls
+
             for dest_idx in chunks:
                 coord_str = ";".join(uniq_coords[k] for k in [i] + dest_idx)
                 params = {
-                    "sources": "0",
+                    "sources":      "0",
                     "destinations": ";".join(str(d + 1) for d in range(len(dest_idx))),
-                    "annotations": "duration",
+                    "annotations":  "duration",
                     "access_token": token,
                 }
-                _ratelimit(profile)
-                r = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)  ##### NEW/CHANGED >>>
-                if r.status_code == 422:
-                    raise RuntimeError(f"Matrix API InvalidInput – {r.json().get('message','')}" )
-                r.raise_for_status()
-                res = r.json()
-                if res.get("code") != "Ok":
-                    raise RuntimeError(f"Matrix API error: {res.get('message')}")
+                _ratelimit()
+                res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
                 durations = res["durations"][0]
                 for off, j in enumerate(dest_idx):
                     u_matrix[i][j] = int(durations[off]) if durations[off] else FALLBACK_LARGE
-            u_matrix[i][i] = 0
+            u_matrix[i][i] = 0   # diagonal
 
     # ------------------------------------------------------------------ #
-    # 5. Expand to full N×N (unchanged)                                  #
+    # 5. Expand to full N×N (existing code below remains unchanged)      #
     # ------------------------------------------------------------------ #
+
     n = len(locations)
     matrix = [[0] * n for _ in range(n)]
     for i in range(n):

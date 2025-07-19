@@ -1,8 +1,8 @@
 <div class="content-width" id="edit-info-wrapper">
-  <h1>Edit Your Request</h1>
+  <h1>Edit Your Pickup Request</h1>
 
   <p class="intro-text">
-    Edit the address or select a new time for your pickup. If you have any questions about making changes to your request, please don't hesitate to
+    Edit the address or select a new time for your pickup. If you have any questions about making changes to your pickup request, please don't hesitate to
     <a id="edit-request-info-open-contact" class="contact-link">contact us.</a>
   </p>
 
@@ -83,13 +83,13 @@
     </div>
   </div>
   <div class="confirmation-info">
-    <p>Request Notes</p>
+    <p>Pickup Notes</p>
       <form action="{{ url_for('edit_request_notes', pickup_id=pickup.request_id) }}"
           method="POST"
           class="notes-form">
         {{ notes_form.csrf_token }}
         <input type="hidden" name="request_id" value="{{ pickup.request_id }}">
-        {{ notes_form.notes(class="notes-textarea", rows="2", placeholder="Add any relevant information you want us to know for this request.") }}
+        {{ notes_form.notes(class="notes-textarea", rows="2", placeholder="Add any relevant information you want us to know for this pickup request.") }}
         {{ notes_form.submit(class="download-btn") }}
       </form>
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -108,7 +108,7 @@
   <div id="cancel-wrapper" class="align-right full-width">
     <button id="cancel-request-init" class="warning-btn mt-64">
       <i class="bi bi-ban mr-8"></i>
-      Cancel Request
+      Cancel Pickup
     </button>
 
     <div id="cancel-confirm-wrapper" class="hidden">

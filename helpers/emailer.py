@@ -73,7 +73,7 @@ def send_request_email(pickup):
         # ---------------------------------------------------------------------------
         # Subject & Recipients
         # ---------------------------------------------------------------------------
-        subject = f"EkoLinq: Request Confirmation for {formatted_date}"
+        subject = f"EkoLinq: Pickup Confirmation for {formatted_date}"
         recipients = [pickup.email]
         msg = Message(
             subject=subject,
@@ -107,7 +107,7 @@ def send_request_email(pickup):
           <meta name="viewport" content="width=device-width,initial-scale=1.0">
           <meta name="color-scheme" content="light dark">
           <meta name="supported-color-schemes" content="light dark">
-          <title>Pick-up Request Confirmation</title>
+          <title>Confirmation of Your Pickup</title>
           <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
           <style>
@@ -164,7 +164,7 @@ def send_request_email(pickup):
                       </table>
 
                       <h1 style="font-size:20px;line-height:1.4;margin:0 0 24px;font-weight:500;text-align:center;">
-                        Pickup Request Confirmation
+                        Textile Pickup Confirmation
                       </h1>
 
                       {gated_notice_html}
@@ -172,7 +172,7 @@ def send_request_email(pickup):
                       <p style="font-size:18px;line-height:1.5;margin:36px 0 16px;">Hello{first_name},</p>
 
                       <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
-                        Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pick-up request.
+                        Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pickup request.
                         <b>Please remember to have your items out by 8&nbsp;AM on the day of your pick-up.</b>
                       </p>
 
@@ -180,7 +180,7 @@ def send_request_email(pickup):
                       <table role="presentation" width="100%" bgcolor="#098223" class="bg-green" style="background:#098223;border-radius:8px;">
                         <tr>
                           <td style="padding:16px;color:#ffffff;" class="text-dark">
-                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Request&nbsp;ID</p>
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Pickup &nbsp;ID</p>
                             <p style="margin:0 0 16px;font-weight:500;font-size:16px;">{request_id}</p>
 
                             <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Address</p>
@@ -315,7 +315,7 @@ def send_edited_request_email(pickup):
 
         edit_request_url = SITE_URL + '/edit-request-init'
 
-        subject = f"EkoLinq: Updated Request Info For {formatted_date}"
+        subject = f"EkoLinq: Updated Pickup Request Info For {formatted_date}"
         recipients = [pickup.email]
         msg = Message(
             subject,
@@ -332,7 +332,7 @@ def send_edited_request_email(pickup):
           <meta name="viewport" content="width=device-width,initial-scale=1.0">
           <meta name="color-scheme" content="light dark">
           <meta name="supported-color-schemes" content="light dark">
-          <title>Pick-up Request Confirmation</title>
+          <title>Edited Pickup Request Confirmation</title>
           <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
           <style>
@@ -387,14 +387,14 @@ def send_edited_request_email(pickup):
                           </td>
                         </tr>
                       </table>
-                      <h1 style="font-size:24px;margin-bottom:16px;">Update: A Change to Your Request Details</h1>
+                      <h1 style="font-size:24px;margin-bottom:16px;">Update: A Change to Your Pickup Details</h1>
                       <p style="font-size:18px;margin-top:36px;"><strong>Hello {first_name},</strong></p>
                       <p style="font-size:16px;">We've just received an update to your pickup request. Below are your updated details:</p>
                       <!-- ---------- Green info module ---------- -->
                       <table role="presentation" width="100%" bgcolor="#098223" class="bg-green" style="background:#098223;border-radius:8px;">
                         <tr>
                           <td style="padding:16px;color:#ffffff;" class="text-dark">
-                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Request&nbsp;ID</p>
+                            <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Pickup &nbsp;ID</p>
                             <p style="margin:0 0 16px;font-weight:500;font-size:16px;">{request_id}</p>
 
                             <p style="margin:0 0 8px;font-size:14px;font-weight:200;">Address</p>
