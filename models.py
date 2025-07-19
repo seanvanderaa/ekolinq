@@ -127,7 +127,7 @@ class RouteSolution(db.Model):
     date = db.Column(db.String(50), nullable=False)  
     route_json = db.Column(db.Text, nullable=True)
     total_time_str = db.Column(db.String(50), nullable=True)
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=datetime.now)
     
     def to_dict(self):
         return {
