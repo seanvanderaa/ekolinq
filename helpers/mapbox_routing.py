@@ -160,64 +160,41 @@ def fetch_distance_matrix_mapbox(
         res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
         u_matrix = [[int(v) if v else FALLBACK_LARGE for v in row]
                     for row in res["durations"]]
+        
+    else:
+        # ------------------------------------------------------------------ #
+        # 4. Half‑block tiling (union ≤ max_coords)                          #
+        # ------------------------------------------------------------------ #
+        M = max_coords // 2                  # 12 (driving) or 5 (traffic)
+        if M == 0:
+            raise RuntimeError("max_coords must be ≥ 2")
 
-    elif max_coords == 25:
-        # ---------- block streaming (25×25) -----------------------------
-        block     = 25                     # Mapbox limit for non‑traffic
-        u_matrix  = [[FALLBACK_LARGE] * u for _ in range(u)]
+        # Partition indices into chunks of size ≤ M
+        chunks: List[List[int]] = [list(range(i, min(i + M, u)))
+                                for i in range(0, u, M)]
 
-        def _fill(src_idx, dst_idx, sub):
-            for ii, si in enumerate(src_idx):
-                for jj, dj in enumerate(dst_idx):
+        u_matrix = [[FALLBACK_LARGE] * u for _ in range(u)]
+
+        def _fill(union_idx: List[int], sub: List[List[int]]) -> None:
+            """Place returned sub‑matrix into the big matrix."""
+            for ii, si in enumerate(union_idx):
+                for jj, dj in enumerate(union_idx):
                     u_matrix[si][dj] = int(sub[ii][jj]) if sub[ii][jj] else FALLBACK_LARGE
 
-        blocks = [list(range(i, min(i + block, u))) for i in range(0, u, block)]
-
-        for src_idx in blocks:
-            for dst_idx in blocks:
-                union_idx = sorted(set(src_idx) | set(dst_idx))      # ≤ 25
-                coord_str  = ";".join(uniq_coords[k] for k in union_idx)
+        # Iterate over unordered pairs (i ≤ j) so we never exceed union ≤ max_coords
+        for i, src_chunk in enumerate(chunks):
+            for j, dst_chunk in enumerate(chunks[i:], start=i):
+                union_idx = sorted(set(src_chunk) | set(dst_chunk))  # ≤ max_coords
+                coord_str = ";".join(uniq_coords[k] for k in union_idx)
                 params = {
-                    "sources":      ";".join(str(union_idx.index(k)) for k in src_idx),
-                    "destinations": ";".join(str(union_idx.index(k)) for k in dst_idx),
+                    "sources":      ";".join(str(idx) for idx in range(len(union_idx))),
+                    "destinations": ";".join(str(idx) for idx in range(len(union_idx))),
                     "annotations":  "duration",
                     "access_token": token,
                 }
                 _ratelimit()
                 res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
-                _fill(src_idx, dst_idx, res["durations"])
-
-    else:
-        # ---------- traffic profile row‑stream (10×10) ------------------
-        dest_chunk = max_coords - 1        # 9 when traffic
-        u_matrix   = [[FALLBACK_LARGE] * u for _ in range(u)]
-
-        for i in range(u):
-            remaining = [j for j in range(u) if j != i]
-            chunks = []
-            while remaining:
-                chunk, remaining = remaining[:dest_chunk], remaining[dest_chunk:]
-                if len(chunk) == 1:                        # avoid 1‑dest chunk
-                    if remaining:
-                        chunk.append(remaining.pop(0))
-                    else:
-                        chunk.insert(0, chunks[-1].pop())
-                chunks.append(chunk)
-
-            for dest_idx in chunks:
-                coord_str = ";".join(uniq_coords[k] for k in [i] + dest_idx)
-                params = {
-                    "sources":      "0",
-                    "destinations": ";".join(str(d + 1) for d in range(len(dest_idx))),
-                    "annotations":  "duration",
-                    "access_token": token,
-                }
-                _ratelimit()
-                res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
-                durations = res["durations"][0]
-                for off, j in enumerate(dest_idx):
-                    u_matrix[i][j] = int(durations[off]) if durations[off] else FALLBACK_LARGE
-            u_matrix[i][i] = 0   # diagonal
+                _fill(union_idx, res["durations"])
 
     # ------------------------------------------------------------------ #
     # 5. Expand to full N×N (existing code below remains unchanged)      #

@@ -866,11 +866,11 @@ def create_app():
                 today = datetime.now().date()
 
                 #no same-day edits
-                # if req_date == today:
-                #     return False, (
-                #         "Sorry, requests cannot be edited on the day of pickup. "
-                #         "Please contact us if there is an urgent change needed for your request."
-                #     )
+                if req_date == today:
+                    return False, (
+                        "Sorry, requests cannot be edited on the day of pickup. "
+                        "Please contact us if there is an urgent change needed for your request."
+                    )
 
                 # no edits once the date has passed
                 if req_date < today:
