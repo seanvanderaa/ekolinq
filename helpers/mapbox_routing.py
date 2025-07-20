@@ -19,6 +19,7 @@ from collections import defaultdict
 from typing import List, Tuple
 from urllib.parse import quote_plus
 from flask import current_app
+import re
 
 import requests
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
@@ -274,5 +275,20 @@ def compute_optimized_route(
 
 def seconds_to_hms(sec: int) -> str:
     h, rem = divmod(sec, 3600)
+    m, s = divmod(rem, 60)
+    return f"{h:02}:{m:02}:{s:02}"
+
+def hms_to_seconds(hms: str) -> int:
+    """'02:13:45' -> 8025  |  returns 0 for blank / malformed strings."""
+    m = re.match(r"^(\d+):(\d\d):(\d\d)$", hms or "")
+    return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3)) if m else 0
+
+def seconds_to_pretty(sec: int) -> str:
+    """3600 → '1 hr',  8025 → '2 hr 13 min'."""
+    h, rem = divmod(sec, 3600)
     m = rem // 60
-    return f"{h} hr {m} min" if h else f"{m} min"
+    if h and m:
+        return f"{h} hr {m} min"
+    if h:
+        return f"{h} hr"
+    return f"{m} min"

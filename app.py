@@ -49,7 +49,7 @@ from helpers.helpers import format_date
 from helpers.capture_ip import client_ip
 import helpers.import_backfill as backfill_mod
 # from helpers.routing import compute_optimized_route, seconds_to_hms
-from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms, _maybe_geocode, _coords_like
+from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms, _maybe_geocode, _coords_like, hms_to_seconds, seconds_to_pretty
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
                              send_error_report, send_edited_request_email)
@@ -1786,7 +1786,7 @@ def create_app():
             current_app.logger.exception("Distance-matrix/TSP error")
             sorted_addresses, total_time_seconds, leg_times = requested_addresses, 0, []
 
-        total_time_str = seconds_to_hms(total_time_seconds)
+        total_time_str = seconds_to_pretty(total_time_seconds)
 
         return render_template(
             'admin/view_route_info.html',
@@ -1815,239 +1815,221 @@ def create_app():
     @app.route('/live-route', methods=['GET'])
     @login_required
     def live_route():
-        current_app.logger.info("GET /live-route - showing live route info.")
+        """
+        Serve the live route.
+        Re‑optimise only if:
+        • the cache is >15 min old, or
+        • RouteSolution.needs_refresh is True.
+        """
+        current_app.logger.info("GET /live-route")
 
         CACHE_MAX_AGE_MINUTES = 15
-        pickup_status_form = PickupStatusForm()
-        selected_date = request.args.get('date')
+        pickup_status_form    = PickupStatusForm()
+        selected_date         = request.args.get('date')
         if not selected_date:
-            current_app.logger.warning("No 'date' provided for /live-route.")
             return "Date parameter is required", 400
-        
-        # 1) Get pickups
-        current_app.logger.debug("Loading pickups for date=%s with status='Requested'.", selected_date)
 
+        # ------------------------------------------------------------------ #
+        # 1) Build today's waypoint list
+        # ------------------------------------------------------------------ #
         pickups_requested = PickupRequest.query.filter_by(
-            request_date=selected_date,
-            status='Requested'
+            request_date=selected_date, status='Requested'
         ).all()
 
-        # 2) Driver location or fallback
         driver_loc = DriverLocation.query.first()
         if driver_loc and driver_loc.full_address():
             driver_current_location = _clean_coord(driver_loc.full_address())
         else:
-            admin_config = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+            admin_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
             driver_current_location = _clean_coord(
-                admin_config.value if admin_config else "5389 Mallard Dr., Pleasanton, CA 94566"
+                admin_cfg.value if admin_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
             )
 
-        # 3) Always end at admin location
-        final_admin_config = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
-        final_admin_address = _clean_coord(
-            final_admin_config.value if final_admin_config else "5389 Mallard Dr., Pleasanton, CA 94566"
+        depot_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+        depot_address = _clean_coord(
+            depot_cfg.value if depot_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
         )
 
-        addresses = [driver_current_location]
-        for p in pickups_requested:
-            addresses.append(_pickup_addr(p))                       # 1..n‑2
+        addresses = [driver_current_location] + [_pickup_addr(p) for p in pickups_requested] + [depot_address]
 
-        addresses.append(final_admin_address)  
+        # ------------------------------------------------------------------ #
+        # 2) Cache handling
+        # ------------------------------------------------------------------ #
+        cached = RouteSolution.query.filter_by(date=selected_date).first()
+        should_refresh = cached is None
+        display_str    = ""
 
-        current_app.logger.debug("Successfully compiled addresses for route.")
+        if cached:
+            age = datetime.now() - cached.last_updated
+            if age >= timedelta(minutes=CACHE_MAX_AGE_MINUTES) or cached.needs_refresh:
+                should_refresh = True
+                cached.needs_refresh = False      # we'll satisfy it right now
+            else:
+                old_route = json.loads(cached.route_json)
+                old_legs  = json.loads(cached.legs_json or "[]")
 
-        
-        # 5) Check cache for 'selected_date'
-        cached_solution = RouteSolution.query.filter_by(date=selected_date).first()
-        should_refresh = True
+                # Peel off already‑visited legs (difference in list lengths)
+                removed_count = max(0, len(old_route) - len(addresses))
+                travelled_sec = 0
+                for _ in range(removed_count):
+                    if len(old_route) > 2:
+                        travelled_sec += old_legs.pop(0)
+                        old_route.pop(1)
 
-        if cached_solution:
-            age = datetime.now() - cached_solution.last_updated
-            current_app.logger.debug("Cached route solution found for date=%s; age=%s", selected_date, age)
+                old_route[0] = driver_current_location
+                remaining_sec = max(0, hms_to_seconds(cached.total_time_str) - travelled_sec)
 
-            if age < timedelta(minutes=CACHE_MAX_AGE_MINUTES):
-                # Compare route size and start/end
-                cached_route_list = json.loads(cached_solution.route_json)
-
-                # Quick checks:
-                same_size = (len(cached_route_list) == len(addresses))
-                same_start = (cached_route_list[0] == driver_current_location)
-                same_end = (cached_route_list[-1] == final_admin_address)
-                if same_size and same_start and same_end:
-                    current_app.logger.debug("Cache is still valid (size/start/end match). Using cached route.")
-                    should_refresh = False
-        
-        current_app.logger.debug("Calling optimizer with:")
-        current_app.logger.debug("Start: %s", addresses[0])
-        current_app.logger.debug("Waypoints: %s", addresses[1:-1])
-        current_app.logger.debug("End: %s", addresses[-1])
-        # 6) Either use the cached route or recalc
-        if should_refresh:
-            try:
-                final_route, total_seconds, _ = compute_optimized_route(
-                    waypoints=addresses[1:-1],
-                    start_location=addresses[0],
-                    end_location=addresses[-1],
-                )
-                total_time_str = seconds_to_hms(total_seconds)
-                current_app.logger.debug("Total Time: %s", total_time_str)
-                if cached_solution:
-                    cached_solution.route_json     = json.dumps(final_route)
-                    cached_solution.total_time_str = total_time_str
-                    cached_solution.last_updated   = datetime.now()
-                else:
-                    cached_solution = RouteSolution(
-                        date            = selected_date,
-                        route_json      = json.dumps(final_route),
-                        total_time_str  = total_time_str,
-                        last_updated    = datetime.now()
-                    )
-                    db.session.add(cached_solution)
+                cached.route_json     = json.dumps(old_route)
+                cached.legs_json      = json.dumps(old_legs)
+                cached.total_time_str = seconds_to_hms(remaining_sec)
+                cached.last_updated   = datetime.now()
                 db.session.commit()
-            except Exception:
-                current_app.logger.exception("Routing failure – falling back to straight list")
-                final_route, total_time_str = addresses, "N/A"
-            # --------------------------------------------------
-            # NEW: save (or update) the freshly-computed route
-            # --------------------------------------------------
 
-        else:
-            print("Using cached route.")
-            data = cached_solution.to_dict()
-            final_route = data["route"]
-            total_time_str = data["total_time_str"]
-            current_app.logger.debug("Using cached route with total_time_str=%s", total_time_str)
+                addresses     = old_route
+                display_str   = seconds_to_pretty(remaining_sec)
 
-        # 7) Re-order pickups in the final route order
-        route_map = {addr: idx for idx, addr in enumerate(final_route)}
-        def sort_key(pr):
-            full_addr = f"{pr.address}, {pr.city} CA"
-            return route_map.get(full_addr, 999999)
-        pickups_requested.sort(key=sort_key)
+        # ------------------------------------------------------------------ #
+        # 3) Re‑optimise if required
+        # ------------------------------------------------------------------ #
+        if should_refresh:
+            final_route, total_seconds, legs_seconds = compute_optimized_route(
+                waypoints=addresses[1:-1],
+                start_location=addresses[0],
+                end_location=addresses[-1],
+            )
 
-        # 8) Completed or Incomplete
+            if cached:
+                cached.route_json     = json.dumps(final_route)
+                cached.legs_json      = json.dumps(legs_seconds)
+                cached.total_time_str = seconds_to_hms(total_seconds)
+                cached.last_updated   = datetime.now()
+            else:
+                cached = RouteSolution(
+                    date=selected_date,
+                    route_json=json.dumps(final_route),
+                    legs_json=json.dumps(legs_seconds),
+                    total_time_str=seconds_to_hms(total_seconds),
+                    last_updated=datetime.now(),
+                    needs_refresh=False,
+                )
+                db.session.add(cached)
+
+            db.session.commit()
+            addresses   = final_route
+            display_str = seconds_to_pretty(total_seconds)
+
+        # ------------------------------------------------------------------ #
+        # 4) Sort pickups by live route order
+        # ------------------------------------------------------------------ #
+        route_map = {addr: idx for idx, addr in enumerate(addresses)}
+        pickups_requested.sort(
+            key=lambda pr: route_map.get(f"{pr.address}, {pr.city} CA", 999_999)
+        )
+
         pickups_completed = PickupRequest.query.filter(
             PickupRequest.request_date == selected_date,
             or_(PickupRequest.status == 'Complete', PickupRequest.status == 'Incomplete')
         ).all()
-        current_app.logger.debug("Found %d 'Requested' pickups and %d completed/incomplete pickups.", 
-                                    len(pickups_requested), len(pickups_completed))
-        
-        current_app.logger.info("Rendering live_route.html for date=%s.", selected_date)
-
-        pretty_date = format_iso_to_pretty(selected_date)
 
         return render_template(
-            'admin/live_route.html',
-            date=pretty_date,
+            "admin/live_route.html",
+            date=format_iso_to_pretty(selected_date),
             pickups_requested=pickups_requested,
             pickups_completed=pickups_completed,
-            route=final_route,
+            route=addresses,
             pickup_status_form=pickup_status_form,
-            total_time_str=total_time_str
+            total_time_str=display_str,
         )
+
 
 
     @app.route('/toggle_pickup_status', methods=['POST'])
     @login_required
     def toggle_pickup_status():
         """
-        Toggles between 'Requested' and 'Complete' (or 'Incomplete') for a given pickup.
-        If new status is 'Complete', we also update driver location to this pickup's address.
+        Toggle between 'Requested' and 'Complete'/'Incomplete' for a pickup.
+        • When a stop is *added back* to the route (→ 'Requested') mark
+        the day's RouteSolution as needing a refresh.
+        • When a stop is *removed* (→ 'Complete' or 'Incomplete') keep the
+        cached route and just move the driver location forward.
         """
-
         current_app.logger.info("POST /toggle_pickup_status - Toggle pickup status initiated.")
-
         form = PickupStatusForm()
-        if form.validate_on_submit():
-            pickup_id = form.pickup_id.data
-            current_app.logger.debug("PickupStatusForm validated. pickup_id: %s", pickup_id)
 
-        else:
-            current_app.logger.warning("Toggle pickup status form validation failed. Errors: %s", form.errors)
-
+        if not form.validate_on_submit():
+            current_app.logger.warning("Form validation failed: %s", form.errors)
             return "Error: Form validation failed", 400
 
-        if not pickup_id:
-            current_app.logger.warning("No pickup_id provided in toggle_pickup_status request.")
-            return "Error: No pickup_id provided", 400
+        pickup_id = form.pickup_id.data
+        pickup    = db.session.get(PickupRequest, pickup_id)
 
-        pickup = db.session.get(PickupRequest, pickup_id)
         if not pickup:
-            current_app.logger.warning("Pickup not found for pickup_id: %s", pickup_id)
-            return "Error: Pickup not found, contact Sean!", 404
+            current_app.logger.warning("Pickup not found: %s", pickup_id)
+            return "Error: Pickup not found", 404
 
-        # Current status could be 'Requested', 'Complete', or 'Incomplete'.
-        # We want to toggle between 'Complete' and 'Requested' for this route.
-        current_app.logger.info("Current pickup status for pickup_id %s is '%s'", pickup_id, pickup.status)
+        old_status = pickup.status
+        current_app.logger.info("Current pickup status for %s is '%s'", pickup_id, old_status)
 
-        if pickup.status in ["Complete", "Incomplete"]:
-            pickup.status = "Requested"
+        # ------------------------------------------------------------------ #
+        # 1) Flip the status
+        # ------------------------------------------------------------------ #
+        if old_status in ("Complete", "Incomplete"):
+            new_status = "Requested"
+            pickup.status = new_status
             pickup.pickup_complete_info = None
-        else:                                   # now == 'Requested'
-            pickup.status = "Complete"
+        else:
+            new_status = "Complete"
+            pickup.status = new_status
             pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
-            update_driver_location(pickup.address, pickup.city)   # <- only here
+            update_driver_location(pickup.address, pickup.city)
 
-        # -------------------------------------------
-        # 2.  ALWAYS nuke the cached route for the day
-        # -------------------------------------------
-        cached_solution = RouteSolution.query.filter_by(date=pickup.request_date).first()
-        if cached_solution:
-            db.session.delete(cached_solution)
+        # ------------------------------------------------------------------ #
+        # 2) Flag the route cache intelligently
+        # ------------------------------------------------------------------ #
+        cached = RouteSolution.query.filter_by(date=pickup.request_date).first()
+        if cached:
+            cached.needs_refresh = (new_status == "Requested")  # True = added stop
 
         db.session.commit()
+        current_app.logger.info("Pickup %s toggled to '%s'", pickup_id, new_status)
 
-        current_app.logger.info("Pickup status updated successfully for pickup_id: %s. New status: %s", pickup_id, pickup.status)
+        return jsonify({"message": "Status updated successfully", "new_status": new_status})
 
-        return jsonify({
-            "message": "Status updated successfully",
-            "new_status": pickup.status
-        })
 
 
     @app.route('/mark-pickup-not-possible', methods=['POST'])
     @login_required
     def mark_pickup_not_possible():
-        current_app.logger.info("POST /mark-pickup-not-possible - Mark pickup as not possible.")
-
+        """
+        Mark a pickup as 'Incomplete' (cannot be done today).
+        Does NOT invalidate the cache (it only removes a stop).
+        """
+        current_app.logger.info("POST /mark-pickup-not-possible")
         form = PickupStatusForm()
-        if form.validate_on_submit():
-            pickup_id = form.pickup_id.data
-            current_app.logger.debug("PickupStatusForm validated for mark_pickup_not_possible with pickup_id: %s", pickup_id)
 
-        else:
-            current_app.logger.warning("mark_pickup_not_possible form validation failed. Errors: %s", form.errors)
+        if not form.validate_on_submit():
+            current_app.logger.warning("Form validation failed: %s", form.errors)
             return "Error: Form validation failed", 400
 
-        if not pickup_id:
-            current_app.logger.warning("No pickup_id provided in mark_pickup_not_possible request.")
-            return "Error: No pickup_id provided", 400
-
-        pickup = db.session.get(PickupRequest, pickup_id)
+        pickup_id = form.pickup_id.data
+        pickup    = db.session.get(PickupRequest, pickup_id)
 
         if not pickup:
-            current_app.logger.warning("Pickup not found for mark_pickup_not_possible with pickup_id: %s", pickup_id)
+            current_app.logger.warning("Pickup not found: %s", pickup_id)
             return "Error: Pickup not found", 404
-
-        # Mark the pickup as incomplete
-        current_app.logger.info("Marking pickup_id %s as 'Incomplete'.", pickup_id)
 
         pickup.status = "Incomplete"
         pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
 
-        cached_solution = RouteSolution.query.filter_by(date=pickup.request_date).first()
-        if cached_solution:
-            db.session.delete(cached_solution)
+        cached = RouteSolution.query.filter_by(date=pickup.request_date).first()
+        if cached:
+            cached.needs_refresh = False   # removing a stop never forces a reroute
 
         db.session.commit()
-        
-        current_app.logger.info("Pickup marked as 'Incomplete' for pickup_id: %s", pickup_id)
+        current_app.logger.info("Pickup %s marked 'Incomplete'.", pickup_id)
 
-        return jsonify({
-            "message": "Status updated successfully",
-            "new_status": pickup.status
-        })
+        return jsonify({"message": "Status updated successfully", "new_status": pickup.status})
+
 
     def update_driver_location(address, city):
         """

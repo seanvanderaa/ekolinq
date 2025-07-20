@@ -172,8 +172,8 @@ def send_request_email(pickup):
                       <p style="font-size:18px;line-height:1.5;margin:36px 0 16px;">Hello{first_name},</p>
 
                       <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
-                        Thanks for giving your clothes and other textiles a second life, not a landfill. Below is the information for your pickup request.
-                        <b>Please remember to have your items out by 8&nbsp;AM on the day of your pick-up.</b>
+                        Thanks for sparing the landfill and giving your clothes and other textiles a second life. Below is the information for your pickup request.
+                        <b>Please remember to have your items out by 8&nbsp;AM on the day of your pickup.</b>
                       </p>
 
                       <!-- ---------- Green info module ---------- -->

@@ -16,7 +16,7 @@
       <h4 class="subheading-h4">
         Available Day(s) for the Week of <span id="week-specification" data-base-date="{{ base_date_str }}">Jan. 26</span>
       </h4>      <!-- We wrap everything in a form so we can POST chosen_date/time -->
-      <p class="mt0"><i>All pick ups happen between 8am-4pm.</i></p>
+      <p class="mt0"><i>All pickups happen between 8am-4pm.</i></p>
       <form action="{{ url_for('select_date', request_id=pickup.request_id, week_offset=offset) }}" method="POST" id="timeframe-form" class="align-center">
         {{ form.hidden_tag() }}
         <!-- Render hidden fields from the FlaskForm -->

@@ -130,6 +130,9 @@ class RouteSolution(db.Model):
     route_json = db.Column(db.Text, nullable=True)
     total_time_str = db.Column(db.String(50), nullable=True)
     last_updated = db.Column(db.DateTime, default=datetime.now)
+    legs_json = db.Column(db.Text)
+    needs_refresh = db.Column(db.Boolean, default=False, nullable=False)
+
     
     def to_dict(self):
         return {
