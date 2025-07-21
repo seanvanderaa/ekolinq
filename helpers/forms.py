@@ -159,7 +159,7 @@ class updateCustomerNotes(FlaskForm):
         'Notes',
         validators=[Length(max=400)]
     )
-    submit = SubmitField("Save Notes")
+    submit = SubmitField("Save Changes & Exit")
 
 class DeletePickupForm(FlaskForm):
     pickup_id = HiddenField(validators=[DataRequired()])
@@ -202,4 +202,4 @@ class RatingForm(FlaskForm):
         'Comments',
         validators=[DataRequired(), Length(max=2000)]
     )
-    submit = SubmitField("Update Notes")
+    submit = SubmitField("Save Review")

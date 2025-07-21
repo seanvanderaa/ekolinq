@@ -52,7 +52,7 @@ import helpers.import_backfill as backfill_mod
 from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms, _maybe_geocode, _coords_like, hms_to_seconds, seconds_to_pretty
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
-                             send_error_report, send_edited_request_email)
+                             send_error_report, send_edited_request_email, send_cancellation_email)
 from helpers.auth import verify_cognito_jwt, JoseError
 from helpers.export import weekly_export
 from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
@@ -787,7 +787,7 @@ def create_app():
             # Don’t block the update; just log.
             current_app.logger.error("Geocoding failed for request ID: %s", request_id)
 
-        pickup.geocoded_address = geocoded    # may be None if failure
+        pickup.geocoded_addr = geocoded    # may be None if failure
 
         # ─── 5. Commit & notify ──────────────────────────────────────────────
         db.session.commit()
@@ -795,7 +795,7 @@ def create_app():
             "Successfully updated address (and geocode) for request_id=%s", request_id
         )
 
-        send_edited_request_email(pickup)
+        #send_edited_request_email(pickup)
         current_app.logger.debug("Edited‑request email sent for request_id=%s", request_id)
 
         return redirect(url_for('edit_request', request_id=request_id))
@@ -1047,7 +1047,7 @@ def create_app():
                 request_id, chosen_date, chosen_time
             )
 
-            send_edited_request_email(pickup)
+            #send_edited_request_email(pickup)
 
             return redirect(url_for('edit_request', request_id = pickup.request_id))
         else:
@@ -1087,8 +1087,11 @@ def create_app():
             current_app.logger.exception("Failed to update notes for pickup %s.", pickup_id)
             flash("Database error—could not save notes.", "error")
             return "Error updating notes.", 404
-        flash("Notes updated successfully.", "success")
-        return redirect(url_for("edit_request", request_id=pickup_id))
+        send_edited_request_email(pickup)
+        current_app.logger.debug("Updated request email sent for request ID: %s", pickup_id)
+        session.clear()
+        flash("Your pickup details have been updated and a confirmation email has been sent.", "success")
+        return redirect(url_for('edit_request_init'))
 
     
     @app.route('/cancel-request', methods=["POST"])
@@ -1118,9 +1121,14 @@ def create_app():
                     "Request for request_id=%s successfully changed to Cancelled.",
                     request_id
                 )
+                send_cancellation_email(pickup)
+                current_app.logger.debug(
+                    "Cancellation email sent for request ID: %s",
+                    request_id
+                )
                 return jsonify({
                     "valid": True,
-                    "reason": "Request cancelled."
+                    "reason": "Your pickup request has been cancelled. We have sent you an email confirmation."
                 })
             else:
                 current_app.logger.warning("Pickup status failed to update to Cancelled for request_id=%s.", request_id)
@@ -1135,8 +1143,6 @@ def create_app():
                 "reason": "Invalid form submission.",
                 "errors": form.errors
             }), 400
-
-
 
     # --------------------------------------------------
 
@@ -1806,7 +1812,7 @@ def create_app():
         Return either the geocode 'lon,lat' (preferred) or a
         plain‑text address for a PickupRequest row.
         """
-        geo = _clean_coord(getattr(pr, "geocoded_address", None))
+        geo = _clean_coord(getattr(pr, "geocoded_addr", None))
         if geo:
             return geo
         # Fallback – tweak to match how you normally format text addresses

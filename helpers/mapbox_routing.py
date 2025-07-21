@@ -39,7 +39,7 @@ def _t(label: str) -> callable:
     """Return a lambda that logs elapsed seconds when invoked."""
     logger = current_app.logger
     start = time.perf_counter()
-    return lambda: logger.info("%s took %.3f s", label, time.perf_counter() - start)
+    return lambda: logger.debug("%s took %.3f s", label, time.perf_counter() - start)
 
 # helpers/mapbox_routing.py
 _MB_RPM = int(os.getenv("MAPBOX_MATRIX_RPM", "300"))   # Mapbox spec: 300 req/min
@@ -76,7 +76,7 @@ def _maybe_geocode(addr: str, token: str) -> str:
     if _coords_like(addr):
         return addr  # already "lon,lat"
     
-    done = _t(f"GEOCODE '{addr[:40]}…'")
+    done = _t(f"Geocoding address '{addr[:40]}…'")
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{quote_plus(addr)}.json"
     params = {"limit": 1, "access_token": token}
     r = requests.get(url, params=params, timeout=10)

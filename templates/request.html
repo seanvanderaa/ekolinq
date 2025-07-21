@@ -32,8 +32,8 @@
         <div id="form-group-1" class="form-group-div">
           <div class="form-group half-width">
             <label for="email">Email<span class="col-red">*</span></label>
-            <label for="email" class="explanatory-label">We use this to send you a confirmation of your pickup request.</label>
-            {{ form.email(id="email", placeholder="jdoe@gmail.com", required=True) }}
+            <label for="email" class="explanatory-label">We use this to send you confirmation and update emails.</label>
+            {{ form.email(id="email", placeholder="jdoe@example.com", required=True) }}
           </div>
           <div class="form-group half-width">
             <label for="phone">Phone Number<span class="col-red">*</span></label>
@@ -65,23 +65,7 @@
             {{ form.zip(id="zip", placeholder="Zip Code", required=True, autocomplete="off") }}
           </div>
         </div>
-        <hr>
-        <h3>Other Info</h3>
-        <div class="form-group notes-width">
-          <label for="notes">Any additional notes about where you’ll leave your items?</label>
-          {{ form.notes(id="notes", placeholder="They'll be in front of the garage.", rows="3") }}
-        </div>
-        <div class="form-group-div">
-          <div class="form-group half-width">
-            <label for="awarenessOptions">How did you hear about us?<span class="col-red">*</span></label>
-            {{ form.awarenessOptions(id="awarenessOptions") }}
-            {% for error in form.awarenessOptions.errors %}
-              <div class="user-notice-warn">{{ error }}</div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Gated Section -->
+                <!-- Gated Section -->
         <div class="gated-wrapper">
           <label class="form-label">
             Do we need a gate code or permission to access your address?<span class="col-red">*</span>
@@ -108,8 +92,8 @@
 
           <span class="info-icon">i</span>
           <div class="info-text">
-            If you select <strong>Yes</strong>, we'll ask you for the gate or QR code,
-            or confirmation that the gate attendant has been notified.
+            If you select <strong>Yes</strong>, you'll be asked via email to send us your gate or QR code,
+            or confirm that the gate attendant has been notified.
           </div>
 
           <div id="selected-gate" style="display:none;">
@@ -119,8 +103,21 @@
             </p>
           </div>
         </div>
-
-
+        <hr>
+        <h3>Other Info</h3>
+        <div class="form-group notes-width">
+          <label for="notes">Any additional notes about where you’ll leave your items?</label>
+          {{ form.notes(id="notes", placeholder="They'll be in front of the garage.", rows="3") }}
+        </div>
+        <div class="form-group-div">
+          <div class="form-group half-width">
+            <label for="awarenessOptions">How did you hear about us?<span class="col-red">*</span></label>
+            {{ form.awarenessOptions(id="awarenessOptions") }}
+            {% for error in form.awarenessOptions.errors %}
+              <div class="user-notice-warn">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
 
         <div class="form-group" id="recaptcha-form">
           {{ form.recaptcha }}

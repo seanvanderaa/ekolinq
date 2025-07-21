@@ -280,5 +280,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  });
+});
 

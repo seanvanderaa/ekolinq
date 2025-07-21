@@ -39,6 +39,30 @@ main {
     font-family: var(--mont);
 }
 
+
+.save-and-exit-btn {
+    margin-top: 24px;
+    border-radius: 5px;
+    background-color: var(--m-blue);
+    color: white; 
+    width: 240px;
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: var(--mont);
+    font-weight: 500;
+    transition: border .2s ease, background-color .2s ease;
+    border: none;
+}
+
+.save-and-exit-btn:hover {
+    background-color: var(--m-green);
+    cursor: pointer;
+}
+
 .action-btn {
     padding: 28px 16px;
     font-size: 16px;
@@ -172,14 +196,19 @@ main {
     color: black;
 }
 
+#edit-request-btns-wrapper {
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
 #cancel-wrapper {
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 #cancel-confirm-wrapper {
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     margin-top: 12px;
 }
 
@@ -194,8 +223,13 @@ main {
     cursor: not-allowed;
 }
 
+#cancel-request-form {
+    display: flex;
+    column-gap: 16px;
+}
+
 #cancel-confirm-btn-wrapper {
-    column-gap: 24px;
+    column-gap: 48px;
 }
 
 #cancel-btn {
@@ -501,6 +535,7 @@ main {
 /* Text utilities                           */
 /* ----------------------------------------- */
 .text-right       { text-align: right; }
+.text-left       { text-align: left; }
 
 /* ----------------------------------------- */
 /* Special “intro” paragraph styling         */
@@ -530,6 +565,28 @@ main {
 /* them in your base CSS. Only padding is    */
 /* extracted here.                           */
 /* ----------------------------------------- */
+
+.warning-btn {
+    border-radius: 5px;
+    background-color: rgb(196, 0, 0);
+    border: 3px solid rgb(93, 0, 0);
+    color: white; 
+    width: 180px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: var(--mont);
+    font-weight: 500;
+    transition: border .2s ease, background-color .2s ease;
+}
+
+.warning-btn:hover {
+    border: 1px solid rgb(196, 0, 0);
+    cursor: pointer;
+}
 
 /* 1) Styles for the day‐labels inside .day-wrapper */
 .day-wrapper h4 {

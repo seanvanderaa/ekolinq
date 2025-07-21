@@ -1,5 +1,5 @@
 <div class="content-width" id="edit-info-wrapper">
-  <h1>Edit Your Pickup Request</h1>
+  <h1>Edit Your Scheduled Pickup</h1>
 
   <p class="intro-text">
     Edit the address or select a new time for your pickup. If you have any questions about making changes to your pickup request, please don't hesitate to
@@ -90,7 +90,7 @@
         {{ notes_form.csrf_token }}
         <input type="hidden" name="request_id" value="{{ pickup.request_id }}">
         {{ notes_form.notes(class="notes-textarea", rows="2", placeholder="Add any relevant information you want us to know for this pickup request.") }}
-        {{ notes_form.submit(class="download-btn") }}
+        {{ notes_form.submit(class="save-and-exit-btn") }}
       </form>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -104,17 +104,16 @@
         {% endif %}
       {% endwith %}
   </div>
-
-  <div id="cancel-wrapper" class="align-right full-width">
-    <button id="cancel-request-init" class="warning-btn mt-64">
+  <div id="cancel-wrapper" class="align-right full-width mt-64">
+    <button id="cancel-request-init" class="warning-btn">
       <i class="bi bi-ban mr-8"></i>
       Cancel Pickup
     </button>
 
     <div id="cancel-confirm-wrapper" class="hidden">
-      <p class="text-right">
-        Are you sure you want to cancel this request?<br>
-        This action cannot be undone.
+      <p class="text-left">
+        Are you sure you want to cancel your scheduled pickup?<br>
+        <b>This action cannot be undone.</b>
       </p>
       <div id="cancel-confirm-btn-wrapper" class="align-right">
         <form action="{{ url_for('cancel_request') }}"
@@ -132,4 +131,5 @@
       </div>
     </div>
   </div>
+
 </div>

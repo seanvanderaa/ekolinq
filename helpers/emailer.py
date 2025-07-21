@@ -195,7 +195,7 @@ def send_request_email(pickup):
                                 <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
                                   <a href="{edit_request_url}"
                                     style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
-                                    Edit&nbsp;Details
+                                    Edit Pickup Details
                                   </a>
                                 </td>
                               </tr>
@@ -374,7 +374,7 @@ def send_edited_request_email(pickup):
           <!-- Full-width wrapper -->
           <table role="presentation" width="100%" bgcolor="#104378" cellpadding="0" cellspacing="0">
             <tr>
-              <td align="center" style="padding:24px 0;">
+              <td align="center" style="padding:48px 0;">
                 <!-- Constrained column -->
                 <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
                   <tr>
@@ -409,7 +409,7 @@ def send_edited_request_email(pickup):
                                 <td align="center" bgcolor="#EAB308" style="border-radius:5px;">
                                   <a href="{edit_request_url}"
                                     style="display:inline-block;padding:12px 16px;font-size:16px;font-weight:500;color:#000;text-decoration:none;">
-                                    Edit&nbsp;Details
+                                    Edit Pickup Details
                                   </a>
                                 </td>
                               </tr>
@@ -495,6 +495,164 @@ def send_edited_request_email(pickup):
     except Exception as e:
         print(f"Error while sending email: {str(e)}")
         return False
+
+
+
+def send_cancellation_email(pickup):
+    """
+    Sends a pick‑up request confirmation email.
+
+    If ``pickup.gated`` is truthy, a highlighted banner will be injected beneath the
+    logo reminding the recipient to provide gate access details. Otherwise the
+    banner is omitted entirely.
+
+    Returns ``True`` when the email is dispatched successfully, ``False`` when an
+    exception is raised.
+    """
+    try:
+        # --- Setup -----------------------------------------------------------------
+        mail = current_app.extensions.get("mail")
+
+        first_name = ' ' + pickup.fname
+        request_id = pickup.request_id
+
+        try:
+            dt = datetime.strptime(pickup.request_date, "%Y-%m-%d")
+            formatted_date = dt.strftime("%A, %b. %d")
+        except Exception:
+            formatted_date = pickup.request_date
+
+        formatted_date_time = f"{formatted_date}"
+
+        SITE_URL = os.getenv("SITE_URL")
+
+        # ---------------------------------------------------------------------------
+        # Subject & Recipients
+        # ---------------------------------------------------------------------------
+        subject = f"EkoLinq: Pickup Request Cancelled for {formatted_date}"
+        recipients = [pickup.email]
+        msg = Message(
+            subject=subject,
+            sender=current_app.config["MAIL_USERNAME"],
+            recipients=recipients,
+            bcc=[current_app.config["MAIL_USERNAME"]],
+        )
+
+        # ---------------------------------------------------------------------------
+        # Compose the HTML body
+        # ---------------------------------------------------------------------------
+        msg.html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1.0">
+          <meta name="color-scheme" content="light dark">
+          <meta name="supported-color-schemes" content="light dark">
+          <title>Pickup Cancellation Confirmation</title>
+          <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+          <style>
+            /* ---------- Base typography ---------- */
+            body,p,h1,h2,h3,td,li,a{{
+              font-family:'Public Sans',Arial,sans-serif!important;
+            }}
+
+            /* ---------- Dark-mode overrides (iOS, Apple Mail, Outlook.com) ---------- */
+            @media (prefers-color-scheme: dark) {{
+              .bg-body   {{background:#098223!important;}}
+              .bg-card   {{background:#ffffff!important;}}
+              .bg-green  {{background:#0c6a28!important;}}
+              .text-dark {{color:#ffffff!important;}}
+              a          {{color:#8ac8ff!important;}}
+            }}
+
+            /* ---------- Dark-mode overrides (Gmail / Outlook on Android) ---------- */
+            [data-ogsc] .bg-body  {{background:#098223!important;}}
+            [data-ogsc] .bg-card  {{background:#ffffff!important;}}
+            [data-ogsc] .bg-green {{background:#0c6a28!important;}}
+            [data-ogsc] .text-dark{{color:#ffffff!important;}}
+            [data-ogsc] a         {{color:#8ac8ff!important;}}
+            
+            @media only screen and (max-width:600px){{
+              .stack-col      {{display:block!important;width:100%!important;max-width:100%!important;}}
+              .stack-col > table{{width:100%!important;}}
+            }}
+
+            /* Gmail / Outlook on Android */
+            [data-ogsc] .stack-col,
+            [data-ogsc] .stack-col > table{{
+              display:block!important;width:100%!important;max-width:100%!important;
+            }}
+          </style>
+        </head>
+
+        <body bgcolor="#098223" class="bg-body" style="margin:0;padding:0;background-color:#098223;">
+          <!-- Full-width wrapper -->
+          <table role="presentation" width="100%" bgcolor="#098223" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="center" style="padding:48px 0;">
+                <!-- Constrained column -->
+                <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td bgcolor="#ffffff" class="bg-card" style="border:1px solid #ddd;border-radius:40px;padding:30px;">
+                      <!-- ---------- Logo ---------- -->
+                      <table role="presentation" width="100%">
+                        <tr>
+                          <td align="center" style="padding:16px 0 48px 0;">
+                            <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="140" style="display:block;height:auto;border:0;">
+                          </td>
+                        </tr>
+                      </table>
+
+                      <h1 style="line-height:1.4;margin:0 0 24px;font-weight:500;text-align:left;">
+                        Your pickup request has been cancelled.
+                      </h1>
+
+                      <p style="font-size:18px;line-height:1.5;margin:36px 0 16px;">Hello{first_name},</p>
+
+                      <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
+                        As per your request, we have cancelled your pickup request (ID: {request_id}) scheduled for <b>{formatted_date}</b>. If this was done in error, or if you did not cancel the request yourself, please respond to this email.
+                      </p>
+
+                      <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
+                        If you would like to schedule a pickup in the future to help keep clothing and textiles out of the landfill, you can do so at any time at <a href="{SITE_URL}">ekolinq.com</a>. 
+                      </p>
+
+                      <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
+                        Warm regards,
+                      </p>
+                      <p style="font-size:16px;line-height:1.5;margin:0 0 24px;">
+                        The EkoLinq Team
+                      </p>
+                      <p style="font-size:16px;margin:8px 0;">(866)&nbsp;346-4765</p>
+                      <p style="font-size:16px;margin:16px 0 8px;">
+                        <a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a>
+                      </p>
+                      <p style="font-size:16px;margin:8px 0;">
+                        <a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        """
+
+
+        # ---------------------------------------------------------------------------
+        # Send & Return -------------------------------------------------------------
+        # ---------------------------------------------------------------------------
+        mail.send(msg)
+        return True
+
+    except Exception as exc:
+        print(f"Error while sending email: {exc}")
+        return False
+
 
 
 def send_error_report(error_type, error_message, traceback_info, request_method, request_path, form_data, args_data, user_agent, remote_addr):
