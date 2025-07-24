@@ -21,6 +21,7 @@ from flask_talisman import Talisman
 from flask_sitemap import Sitemap
 
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.exceptions import HTTPException
 
 import traceback
 
@@ -42,6 +43,12 @@ from helpers.monitoring import (
     record_5xx,
     record_slow,
     start_monitoring_threads,
+    record_440
+)
+from helpers.flow_session import (
+    pickup_flow_required,
+    new_confirm_token,          # replace the inline version
+    SessionExpired
 )
 from helpers.cus_limiter import code_email_key
 from helpers.address import verifyZip, verifyAddress, AddressError
@@ -109,6 +116,8 @@ def create_app():
     GOOGLE_API_KEY = app.config["GOOGLE_API_KEY"]
 
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'], salt="pickup-confirm")
+
+    app.serializer = serializer
 
     issuer_base = (
         f"https://cognito-idp.{app.config['COGNITO_REGION']}.amazonaws.com/"
@@ -603,34 +612,11 @@ def create_app():
 
     @app.route('/date', methods=['GET', 'POST'])
     @limiter.limit("30 per hour")
+    @pickup_flow_required
     def select_date():
         request_id = request.args.get('request_id')
-        token      = session.get('confirm_token')
 
         current_app.logger.debug("Select date route accessed with request_id=%s", request_id)
-
-        # ── 1) Session must still be alive and point at the same request  ──
-        if session.get("pickup_request_id") != request_id:
-            current_app.logger.error("Session mismatch for /select-date")
-            abort(404)
-
-        # ── 2) Token must verify, be <5 min old, and come from same IP ──
-        try:
-            verify_confirm_token(token)
-        except (SignatureExpired, BadSignature, TypeError):
-            current_app.logger.warning("Missing or invalid confirm token")
-            return render_template('440.html')
-
-        # ── 3) Extra clock-based guard (belt-and-braces) ──
-        if time.time() > session.get("confirm_expires", 0):
-            current_app.logger.info("Confirm window elapsed – clearing session")
-            session.clear()
-            return render_template('440.html')
-        current_app.logger.debug("select_date route accessed with request_id=%s", request_id)
-
-        if not request_id:
-            current_app.logger.warning("No request_id in query parameters; session may have expired.")
-            return "Session expired, please restart.", 400
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if not pickup:
@@ -697,29 +683,11 @@ def create_app():
     
     @app.route('/confirmation')
     @limiter.limit("30 per hour")
+    @pickup_flow_required  
     def confirmation():
         request_id = request.args.get('request_id')
-        token      = session.get('confirm_token')
 
         current_app.logger.debug("Confirmation route accessed with request_id=%s", request_id)
-
-        # ── 1) Session must still be alive and point at the same request  ──
-        if session.get("pickup_request_id") != request_id:
-            current_app.logger.error("Session mismatch for /confirmation")
-            abort(404)
-
-        # ── 2) Token must verify, be <5 min old, and come from same IP ──
-        try:
-            verify_confirm_token(token)
-        except (SignatureExpired, BadSignature, TypeError):
-            current_app.logger.warning("Missing or invalid confirm token")
-            return render_template('440.html')
-
-        # ── 3) Extra clock-based guard (belt-and-braces) ──
-        if time.time() > session.get("confirm_expires", 0):
-            current_app.logger.info("Confirm window elapsed – clearing session")
-            session.clear()
-            return render_template('440.html')
 
         pickup = PickupRequest.query.filter_by(request_id=request_id).first()
         if pickup is None:
@@ -2143,6 +2111,16 @@ def create_app():
         if request.path.startswith('/.well-known/'):
             return '', 204
         return redirect(url_for('error'))
+
+    
+    @app.errorhandler(SessionExpired)
+    def handle_session_expired(e):
+        current_app.logger.info(
+            "440 at %s – UA=%s", request.path,
+            request.headers.get("User-Agent", "")
+        )
+        record_440()
+        return render_template("440.html"), 440
     
     @app.errorhandler(500)
     def handle_500(e):
@@ -2162,6 +2140,16 @@ def create_app():
     @app.route('/error')
     def error():
         return render_template('error.html')
+    
+    # --------------------------------------------------
+    # CSRF ERROR HANDLER
+    # --------------------------------------------------
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        current_app.logger.warning(f"CSRF failure at {request.path}: {e.description}")
+        # Redirect to our custom “session expired” page
+        raise SessionExpired()
 
     # --------------------------------------------------
 

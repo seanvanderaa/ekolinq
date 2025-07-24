@@ -135,7 +135,7 @@ def _auto_reset_states():
     ev = threading.Event()
     while not _stop_event.is_set():
         now = datetime.now()
-        for state in (_404_state, _5xx_state, _slow_state):
+        for state in (_404_state, _5xx_state, _slow_state, _440_state):
             if state['alerted'] and now - state['window_start'] > _WINDOW + _ALERT_RESET_GRACE:
                 _reset_state(state)
         ev.wait(_WINDOW.total_seconds())
@@ -163,6 +163,36 @@ def record_404():
             args_data={},
             user_agent=request.headers.get("User-Agent", ""),
             remote_addr=request.remote_addr,
+        )
+
+_440_THRESHOLD = 50
+_440_WINDOW    = timedelta(hours=1)
+_440_state     = {'count': 0, 'window_start': datetime.now(), 'alerted': False}
+
+def record_440():
+    now = datetime.now()
+    st = _440_state
+    # reset the window if it’s older than one hour
+    if now - st['window_start'] > _440_WINDOW:
+        _reset_state(st)
+    st['count'] += 1
+
+    if st['count'] >= _440_THRESHOLD and not st['alerted']:
+        st['alerted'] = True
+        body = (
+            f"{st['count']} session‑expired (440) responses between "
+            f"{st['window_start'].isoformat()} and {now.isoformat()}"
+        )
+        send_error_report(
+            error_type   = "440 spike",
+            error_message= body,
+            traceback_info = "",
+            request_method = request.method,
+            request_path   = request.path,
+            form_data      = request.form.to_dict(),
+            args_data      = request.args.to_dict(),
+            user_agent     = request.headers.get("User‑Agent", ""),
+            remote_addr    = request.remote_addr,
         )
 
 def record_5xx():
