@@ -1,5 +1,0 @@
-2025-07-12 18:49:41,868 INFO gcs_db_backup — Starting backup → gs://ekolinq_backup/pickup_requests_20250712_184941.csv
-2025-07-12 18:49:42,038 INFO app — LOGGER LEVEL: DEBUG
-2025-07-12 18:49:42,038 INFO app — FLASK LEVEL: development
-2025-07-12 18:49:42,038 INFO app — WARN: Rate limiting disabled!
-2025-07-12 18:49:43,430 INFO gcs_db_backup — Backup complete: gs://ekolinq_backup/pickup_requests_20250712_184941.csv (rows=23)

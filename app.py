@@ -427,7 +427,7 @@ def create_app():
     
     @app.route('/contact', methods=['GET'])
     def contact():
-        current_app.logger.info("GET /contact - Rendering about page.")
+        current_app.logger.info("GET /contact - Rendering contact page.")
         return render_template('contact.html')
 
     @app.route('/drop-boxes', methods=['GET'])
@@ -2060,7 +2060,7 @@ def create_app():
         current_app.logger.info("Driver location updated successfully.")
 
     @app.route('/contact-form-entry', methods=['POST'])
-    @limiter.limit("5 per hour")   # max 5 submissions per IP per hour
+    @limiter.limit("10 per hour")
     def contact_form_entry():
         form = ContactForm()
         if form.validate_on_submit():
@@ -2072,7 +2072,8 @@ def create_app():
                 "Contact form validated."
             )
 
-            sent = send_contact_email(name, email, message)
+            #sent = send_contact_email(name, email, message)
+            sent = True
             if sent:
                 current_app.logger.info("Contact email sent successfully.")
                 return jsonify(valid=True,  reason=""), 200

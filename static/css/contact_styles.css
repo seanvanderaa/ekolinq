@@ -134,6 +134,10 @@ form textarea {
     display: none;
 }
 
+#contact-form-confirmation p {
+    margin: 0px;
+}
+
 @media only screen and (max-width: 1000px) {
     body {
         background: white;

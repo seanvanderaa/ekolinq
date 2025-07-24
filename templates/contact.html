@@ -31,7 +31,8 @@
         <div id="contact-form-wrapper" class="content-width">
             <form id="contactForm"
                 action="{{ url_for('contact_form_entry') }}"
-                method="POST">
+                method="POST"
+                autocomplete="off">
                 {{ contact_form.hidden_tag() }}
                 <h3>Get in touch.</h3>
                 <div class="contact-form-group">

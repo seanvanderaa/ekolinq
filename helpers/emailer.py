@@ -718,16 +718,16 @@ def send_error_report(error_type, error_message, traceback_info, request_method,
         <body>
             <div class="container">
                 <h1>Error Report</h1>
-                <p><strong>Error Type:</strong> {error_type}</p>
-                <p><strong>Error Message:</strong> {error_message}</p>
-                <p><strong>Traceback Information:</strong></p>
-                <div class="detail">{traceback_info}</div>
                 <p><strong>Request Method:</strong> {request_method}</p>
                 <p><strong>Request Path:</strong> {request_path}</p>
                 <p><strong>Form Data:</strong></p>
                 <div class="detail">{form_data}</div>
                 <p><strong>Arguments Data:</strong></p>
                 <div class="detail">{args_data}</div>
+                <p><strong>Error Type:</strong> {error_type}</p>
+                <p><strong>Error Message:</strong> {error_message}</p>
+                <p><strong>Traceback Information:</strong></p>
+                <div class="detail">{traceback_info}</div>
                 <p><strong>User Agent:</strong> {user_agent}</p>
                 <p><strong>Remote Address:</strong> {remote_addr}</p>
             </div>
