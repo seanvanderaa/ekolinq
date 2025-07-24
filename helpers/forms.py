@@ -17,10 +17,14 @@ class RequestForm(FlaskForm):
     email = EmailField("Email", validators=[
         DataRequired(), Email(), Length(max=120)
     ])
-    phone = StringField("Phone Number", validators=[
-        DataRequired(), Length(max=20),
-        Regexp(r'^\+?[0-9\-\s]*$', message="Invalid phone number format")
-    ])
+    phone = StringField(
+        "Phone Number",
+        validators=[
+            DataRequired(),
+            Length(min=10, max=11, message="Phone number must be either 10 or 11 digits"),
+            Regexp(r'^[0-9]+$', message="Phone number must contain only digits"),
+        ],
+    )
     
     # Address
     address = StringField("Address", validators=[
