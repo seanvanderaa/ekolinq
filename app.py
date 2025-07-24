@@ -588,6 +588,13 @@ def create_app():
             return redirect(url_for('select_date', request_id=pickup_code))
         
         if request.method == 'POST':
+            for field_name, error_list in form.errors.items():
+                label = getattr(form, field_name).label.text
+                for err in error_list:
+                    if err == "The response parameter is missing.":
+                        flash(f"Please make sure to click the reCAPTCHA form to verify you're not a robot.")
+                    else:
+                        flash(f"{err}")
             current_app.logger.warning("POST /request_init - Form validation failed. Errors: %s", form.errors)
 
         current_app.logger.info("GET /request_init - Rendering request form.")
@@ -2072,8 +2079,7 @@ def create_app():
                 "Contact form validated."
             )
 
-            #sent = send_contact_email(name, email, message)
-            sent = True
+            sent = send_contact_email(name, email, message)
             if sent:
                 current_app.logger.info("Contact email sent successfully.")
                 return jsonify(valid=True,  reason=""), 200

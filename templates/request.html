@@ -14,6 +14,17 @@
       <p>
         After filling out the information below, you'll be able to select a timeframe for us to pick up your clothes and other textiles.
       </p>
+      {% with msgs = get_flashed_messages(with_categories=True) %}
+        {% if msgs %}
+        <div id="msgs">
+          {% for category, message in msgs %}
+            <div class="alert alert-{{ category }} flash-message">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
       <form action="{{ url_for('request_init') }}" method="POST" id="init-form-info" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <input type="hidden" id="place_id" name="place_id">

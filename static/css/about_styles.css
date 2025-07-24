@@ -73,15 +73,21 @@ h4 {
 }
 
 #header-left p {
-    font-size: 12px; color: var(--border-grey); max-width: 300px; margin-top: 16px;
+    font-size: 12px; color: rgb(60, 60, 60); max-width: 300px; margin-top: 16px;
+    transition: color .2s ease, font-weight .2s ease;
+}
+
+#header-left p:hover {
+    color: black;
+    font-weight: 500;
 }
 
 #header-a {
-    text-decoration: underline; color: var(--border-grey);
+    text-decoration: underline; color: var(--m-green);
 }
 
 #mobile-header-a {
-  text-decoration: underline; color: var(--border-grey);
+  text-decoration: underline; color: var(--m-green);
 }
 
 #header h4 {

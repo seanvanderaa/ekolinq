@@ -23,10 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
             form.style.display = 'none';
             done.style.display = 'flex';
         } else {
-            alert(json.reason || "Please complete the recaptcha.");
+            if (window.grecaptcha) grecaptcha.reset();
+            if (json.reason == "The response parameter is missing.") {
+                alert("Please be sure to check the box to prove you're not a robot.");
+            } else {
+                alert(json.reason || "Please complete the recaptcha.");
+            }
         }
         } catch {
-        alert('An error occurred. Please try again.');
+        alert('An error occurred. Please refresh the page and try again.');
         } finally {
         submitBtn.disabled   = false;
         submitBtn.textContent = 'Submit';

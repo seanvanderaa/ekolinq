@@ -396,8 +396,8 @@ li {
 
 #footer-info-bottom {
     border-top: 1px solid var(--d-green);
-    padding-top: 16px;
-    margin-top: 16px;
+    padding-top: 12px;
+    margin-top: 12px;
     width: 100%;
     flex-direction: row;
     justify-content: space-between;
@@ -432,6 +432,19 @@ li {
 
 #footer-socials a:hover {
     transform: scale(1.1);
+}
+
+.contact-a {
+    color: var(--m-blue);
+    font-weight: 500;
+}
+
+#footer .bi {
+    padding-top: 4px;
+}
+
+#nextdoor-logo {
+    padding-top: 2px;
 }
 
 .section-title {

@@ -178,17 +178,27 @@ document.addEventListener('DOMContentLoaded', function() {
   /* Tiny util to display inline messages          */
   function showFormError(fieldName, msg) {
     // remove any earlier message
-    document.querySelectorAll(`.err-${fieldName}`).forEach(el => el.remove());
+    document
+      .querySelectorAll(`.err-${fieldName}`)
+      .forEach(el => el.remove());
 
     const field = document.getElementById(fieldName);
     const div   = document.createElement('div');
+
+    // always wrap the condition in parentheses, and use === for comparison
+    if (msg === "The response parameter is missing.") {
+      msg = 'Please click the “I’m not a robot” box.';
+    }
+
+    // set the message text
     div.textContent = msg;
     div.className   = `user-notice-warn err-${fieldName}`;
-    field.insertAdjacentElement('afterend', div);
 
-    // scroll the error into view and focus the field
+    // insert the error and scroll it into view
+    field.insertAdjacentElement('afterend', div);
     div.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
 
 
 
