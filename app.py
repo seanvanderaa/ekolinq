@@ -1760,8 +1760,7 @@ def create_app():
             sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
                 requested_addresses,
                 start_location=depot,           # identical start/end rules as live view
-                end_location=depot,
-                api_key=os.environ.get("GOOGLE_BACKEND_API_KEY")
+                end_location=depot
             )
         except Exception:
             current_app.logger.exception("Distance-matrix/TSP error")

@@ -11,6 +11,20 @@ main {
     background-color: white;
 }
 
+h2 {
+    display: flex;
+    align-items: center;
+}
+
+#estimated-time {
+    background-color: var(--l-green);
+    padding: 8px 16px;
+    border-radius: 3px;
+    font-size: 16px;
+    color: black;
+    margin-left: 16px;
+}
+
 .pickup-stop {
     margin-bottom: 24px;
     border-left: 3px solid var(--m-green);
