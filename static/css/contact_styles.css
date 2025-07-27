@@ -109,7 +109,7 @@ form label {
 form input, form textarea {
     margin-top: 5px;
     padding: 12px;
-    font-size: 14px;
+    font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 3px;
     font-family: var(--mont);

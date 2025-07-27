@@ -21,7 +21,7 @@ class RequestForm(FlaskForm):
         "Phone Number",
         validators=[
             DataRequired(),
-            Length(min=10, max=11, message="Phone number must be either 10 or 11 digits"),
+            Length(min=10, max=10, message="Phone number must be 10 digits, including the 3-digit areacode number and 7-digit phone number."),
             Regexp(r'^[0-9]+$', message="Phone number must contain only digits"),
         ],
     )
