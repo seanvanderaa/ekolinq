@@ -299,6 +299,17 @@ def create_app():
     @app.context_processor
     def inject_contact_form():
         return {"contact_form": ContactForm()}
+    
+    def no_cache(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            resp = make_response(view(*args, **kwargs))
+            resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            resp.headers["Pragma"]        = "no-cache"
+            resp.headers["Expires"]       = "0"
+            return resp
+        wrapped.__name__ = view.__name__
+        return wrapped
 
     # --------------------------------------------------
     # LOGIN SECURITY (verify Cognito JWT)
@@ -435,6 +446,7 @@ def create_app():
         return render_template('about.html')
     
     @app.route('/contact', methods=['GET'])
+    @no_cache
     def contact():
         current_app.logger.info("GET /contact - Rendering contact page.")
         return render_template('contact.html')
@@ -532,6 +544,7 @@ def create_app():
 
 
     @app.route('/request_init', methods=['GET', 'POST'])
+    @no_cache
     @limiter.limit("10 per hour")
     def request_init():
         form = RequestForm()
@@ -611,6 +624,7 @@ def create_app():
 
 
     @app.route('/date', methods=['GET', 'POST'])
+    @no_cache
     @limiter.limit("30 per hour")
     @pickup_flow_required
     def select_date():
