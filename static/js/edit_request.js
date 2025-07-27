@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadingDiv = document.getElementById('loading-popup');
     const overlay = document.getElementById('overlay');
 
+    const dateTimeDiv = document.getElementById('pickup-date-wrapper');
+    const addressDiv = document.getElementById('address-info-wrapper');
+    const notesDiv = document.getElementById('notes-wrapper');
+    const cancelBtnWrapper = document.getElementById('cancel-wrapper');
+
     if(editAddressPencil) editAddressPencil.addEventListener('click', displayForm);
     if(closeUpdate) closeUpdate.addEventListener('click', displayForm);
 
@@ -22,11 +27,17 @@ document.addEventListener("DOMContentLoaded", function () {
         editAddressText.style.display = "none";
         addressHeader.textContent = "Edit Address";
         editAddressForm.style.display = "flex";
+        notesDiv.style.display = "none";
+        cancelBtnWrapper.style.display = "none";
+        dateTimeDiv.style.display = "none";
       } else {
         // Otherwise, show the text and hide the form
         editAddressText.style.display = "flex";
         addressHeader.textContent = "Address";
         editAddressForm.style.display = "none";
+        notesDiv.style.display = "block";
+        cancelBtnWrapper.style.display = "block";
+        dateTimeDiv.style.display = "block";
       }
     }
 

@@ -6,7 +6,7 @@
     <a id="edit-request-info-open-contact" class="contact-link">contact us.</a>
   </p>
 
-  <div class="confirmation-info">
+  <div class="confirmation-info" id="pickup-date-wrapper">
     <p>Pick Up Date and Time</p>
 
     <div id="pickup-date-time" class="flex-row-center">
@@ -25,12 +25,30 @@
   {% if edit_request %}
     {% include edit_request %}
     <script nonce="{{ csp_nonce() }}">
-      const hideDiv = document.getElementById('pickup-date-time');
-      hideDiv.style.display = "none";
+      document.addEventListener('DOMContentLoaded', () => {
+        const hideDiv = document.getElementById('pickup-date-time');
+        if (hideDiv) {
+          hideDiv.style.display = "none";
+        }
+
+        const saveBtn = document.getElementById('save-and-exit-btn');
+        if (saveBtn) {
+          saveBtn.style.display = "none";
+        }
+
+        const addressDiv = document.getElementById('address-info-wrapper');
+        const notesDiv = document.getElementById('notes-wrapper');
+        const cancelBtnWrapper = document.getElementById('cancel-wrapper');
+
+        addressDiv.style.display = "none";
+        notesDiv.style.display = "none";
+        cancelBtnWrapper.style.display = "none";
+      });
     </script>
+
   {% endif %}
 
-  <div class="confirmation-info">
+  <div class="confirmation-info" id="address-info-wrapper">
     <p id="address-header">Address</p>
     <div>
       <div id="address-info" class="flex-row-center">
@@ -82,7 +100,7 @@
       </div>
     </div>
   </div>
-  <div class="confirmation-info">
+  <div class="confirmation-info" id="notes-wrapper">
     <p>Pickup Notes</p>
       <form action="{{ url_for('edit_request_notes', pickup_id=pickup.request_id) }}"
           method="POST"
@@ -90,7 +108,7 @@
         {{ notes_form.csrf_token }}
         <input type="hidden" name="request_id" value="{{ pickup.request_id }}">
         {{ notes_form.notes(class="notes-textarea", rows="2", placeholder="Add any relevant information you want us to know for this pickup request.") }}
-        {{ notes_form.submit(class="save-and-exit-btn") }}
+        {{ notes_form.submit(class="save-and-exit-btn", id="save-and-exit-btn") }}
       </form>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
