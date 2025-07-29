@@ -140,7 +140,11 @@ def create_app():
 
     from limits.storage import RedisStorage
     if CONFIG_NAME == "production":
-        limiter.storage_uri = app.config["RATELIMIT_STORAGE_URI"]
+        limiter = Limiter(
+            app,
+            key_func=get_remote_address,
+            storage_uri=app.config["RATELIMIT_STORAGE_URI"],  # your rediss:// URI
+        )
     else:
         limiter.storage_uri = "memory://"
     limiter.init_app(app)
@@ -391,6 +395,8 @@ def create_app():
         email_handler.setLevel(logging.ERROR)
         app.logger.addHandler(email_handler)
 
+    backend = limiter._storage.__class__.__name__
+    app.logger.info("Using rate‑limit storage backend: %s", backend)
 
     # --------------------------------------------------
     # REQUEST SESSION HANDLING FOR NEW REQUESTS & CONFIRMATION
