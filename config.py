@@ -6,6 +6,8 @@ from pathlib import Path
 from datetime import timedelta
 from typing import Type
 
+from upstash_redis import Redis
+
 BASE_DIR = Path(__file__).parent
 
 
@@ -23,6 +25,7 @@ class BaseConfig:
     SECRET_KEY = require("SECRET_KEY")
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_USE_SIGNER = True
     PERMANENT_SESSION_LIFETIME = timedelta(days=1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -65,6 +68,8 @@ class DevelopmentConfig(BaseConfig):
     RATELIMIT_ENABLED = False
     RATELIMIT_STORAGE_URI  = "memory://"
     SITE_URL=require("SITE_URL")
+    SESSION_TYPE = "filesystem"       # keep dev sessions on disk
+    SESSION_FILE_DIR = "/tmp/flask_session"
 
 
 class ProductionConfig(BaseConfig):
@@ -74,10 +79,12 @@ class ProductionConfig(BaseConfig):
     SESSION_COOKIE_SECURE = True
     FORCE_HTTPS = True
     STRICT_TRANSPORT_SECURITY = True
-    RATELIMIT_ENABLED = False
+    RATELIMIT_ENABLED = True
     SQLALCHEMY_DATABASE_URI = require("DATABASE_URI")
     UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
     UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
     RATELIMIT_STORAGE_URI = require("UPSTASH_REDIS_TLS_URL")
     SITE_URL=require("SITE_URL")
+    SESSION_TYPE = "redis"
+    SESSION_REDIS = Redis.from_env()
 

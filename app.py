@@ -12,6 +12,7 @@ from urllib.parse import urlencode, urlparse, quote_plus
 
 from flask import (Flask, request, render_template, redirect, url_for, jsonify,
                    make_response, session, current_app, flash, abort, g)
+from flask_session import Session
 from flask_wtf import CSRFProtect
 from wtforms import ValidationError
 from flask_wtf.csrf import validate_csrf, CSRFError
@@ -107,6 +108,9 @@ def create_app():
     app = Flask(__name__)
     sitemap = Sitemap(app=app)
     app.config.from_object(ConfigClass)
+
+    sess = Session()
+    sess.init_app(app)
 
     # OAuth (Amazon Cognito)
     oauth = OAuth(app)
@@ -386,6 +390,14 @@ def create_app():
 
     backend = limiter._storage.__class__.__name__
     app.logger.info("Using rate‑limit storage backend: %s", backend)
+    if app.config["SESSION_TYPE"] == "redis":
+        # grab just host & port from the URL, so we don’t accidentally log credentials
+        from urllib.parse import urlparse
+        url = app.config["SESSION_REDIS"].url
+        p = urlparse(url)
+        app.logger.info("Session store -> redis://%s:%s", p.hostname, p.port)
+    else:
+        app.logger.info("Session store -> %s", app.config["SESSION_TYPE"])
 
     # --------------------------------------------------
     # REQUEST SESSION HANDLING FOR NEW REQUESTS & CONFIRMATION
