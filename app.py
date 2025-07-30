@@ -109,6 +109,13 @@ def create_app():
     sitemap = Sitemap(app=app)
     app.config.from_object(ConfigClass)
 
+    if app.config["SESSION_TYPE"] == "redis":
+        import redis
+        # now we know UPSTASH_TLS_URL is set (and only needed in prod)
+        app.config["SESSION_REDIS"] = redis.from_url(
+            app.config["UPSTASH_TLS_URL"], decode_responses=True
+        )
+
     sess = Session()
     sess.init_app(app)
 
@@ -392,11 +399,6 @@ def create_app():
     app.logger.info("Using rate‑limit storage backend: %s", backend)
 
     if app.config["SESSION_TYPE"] == "redis":
-        import redis
-        # now we know UPSTASH_TLS_URL is set (and only needed in prod)
-        app.config["SESSION_REDIS"] = redis.from_url(
-            app.config["UPSTASH_TLS_URL"], decode_responses=True
-        )
         raw = app.config["UPSTASH_TLS_URL"]
         p   = urlparse(raw)
         app.logger.info(
