@@ -180,7 +180,7 @@ class ContactForm(FlaskForm):
     )
     message = TextAreaField(
         'Message',
-        validators=[DataRequired(), Length(max=2000)]
+        validators=[DataRequired(), Length(max=1000)]
     )
     # Override default message
     recaptcha = RecaptchaField()

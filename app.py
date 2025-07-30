@@ -135,18 +135,7 @@ def create_app():
     # --------------------------------------------------
     # LIMITER FUNCTIONALITY
     # --------------------------------------------------
-    if app.config["RATELIMIT_STORAGE_URI"]:
-        limiter.storage_uri = app.config["RATELIMIT_STORAGE_URI"]  # e.g. Redis in prod
 
-    from limits.storage import RedisStorage
-    if CONFIG_NAME == "production":
-        limiter = Limiter(
-            app,
-            key_func=get_remote_address,
-            storage_uri=app.config["RATELIMIT_STORAGE_URI"],  # your rediss:// URI
-        )
-    else:
-        limiter.storage_uri = "memory://"
     limiter.init_app(app)
 
     # Put ProxyFix before the limiter so it sees the real client IP

@@ -701,6 +701,8 @@ hr {
 /* All pop-up boxes start hidden */
 .faq-popup {
   display: none;
+  max-height: 80vh;
+  overflow-y: scroll;
 }
 
 /* Headings inside any .faq-popup: same margin as above FAQs */
