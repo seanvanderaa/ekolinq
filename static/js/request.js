@@ -1,51 +1,49 @@
 window.initAutocomplete = function () {
-  const input = document.getElementById('address');
+  const addressEl = document.getElementById('address');
 
-  const ac = new google.maps.places.Autocomplete(input, {
-    types: ['address'],
-    componentRestrictions: { country: 'us' },
-    fields: ['address_components', 'formatted_address', 'place_id']
+  // 2️⃣  Create the widget – keep one “display” field in the mask
+  const ac = new google.maps.places.Autocomplete(addressEl, {
+    componentRestrictions: { country: "us" },
+    types   : ["address"],
+    fields  : ["address_components", "name", "place_id"], // name lets Google fill the box
   });
 
-  ac.addListener('place_changed', () => {
-    const place = ac.getPlace();
-    if (!place.address_components) return;
+  ac.addListener("place_changed", () => fillForm(ac.getPlace()));
+};
 
-    // clear previous values
-    document.getElementById('city').value     = '';
-    document.getElementById('zip').value      = '';
-    document.getElementById('place_id').value = place.place_id || '';
+// 3️⃣  Map Google component types → your inputs
+const MAP = {
+  street_number        : { id: "address", cat: "street" },
+  route                : { id: "address", cat: "street" },
+  locality             : { id: "city"    },
+  postal_town          : { id: "city"    }, // UK/SE
+  sublocality_level_1  : { id: "city"    }, // e.g. Brooklyn
+  administrative_area_level_3: { id: "city" },
+  postal_code          : { id: "zip"     },
+};
 
-    // ---- OPTION A: use address_components ----
-    let streetNumber = '';
-    let route        = '';
-    place.address_components.forEach(c => {
-      if (c.types.includes('street_number')) {
-        streetNumber = c.long_name;
-      }
-      if (c.types.includes('route')) {
-        route = c.long_name;
-      }
-      switch (c.types[0]) {
-        case 'locality':    // city
-          document.getElementById('city').value = c.long_name;
-          break;
-        case 'postal_code': // zip
-          document.getElementById('zip').value  = c.long_name;
-          break;
+function fillForm(place) {
+  if (!place.address_components) return;
+
+  // clear previous values
+  ["address","city","zip"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("place_id").value = place.place_id || "";
+
+  place.address_components.forEach(c => {
+    c.types.forEach(t => {
+      const cfg = MAP[t];
+      if (!cfg) return;
+      const el  = document.getElementById(cfg.id);
+      if (cfg.cat === "street") {
+        // concatenate street_number + route
+        el.value = [el.value, c.long_name].filter(Boolean).join(" ");
+      } else {
+        el.value = c.long_name;
       }
     });
-    // join number + street name
-    const streetOnly = [streetNumber, route].filter(Boolean).join(' ');
-    document.getElementById('address').value = streetOnly;
-
-
-    // ---- OPTION B: use formatted_address.split(',') ----
-    // this will grab everything before the first comma
-    // const streetOnly = place.formatted_address.split(',')[0];
-    // document.getElementById('address').value = streetOnly;
   });
-};
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const overlay = document.getElementById('overlay');
