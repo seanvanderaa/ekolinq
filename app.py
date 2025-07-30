@@ -390,12 +390,19 @@ def create_app():
 
     backend = limiter._storage.__class__.__name__
     app.logger.info("Using rate‑limit storage backend: %s", backend)
+
     if app.config["SESSION_TYPE"] == "redis":
-        # grab just host & port from the URL, so we don’t accidentally log credentials
-        from urllib.parse import urlparse
-        url = app.config["SESSION_REDIS"].url
-        p = urlparse(url)
-        app.logger.info("Session store -> redis://%s:%s", p.hostname, p.port)
+        import redis
+        # now we know UPSTASH_TLS_URL is set (and only needed in prod)
+        app.config["SESSION_REDIS"] = redis.from_url(
+            app.config["UPSTASH_TLS_URL"], decode_responses=True
+        )
+        raw = app.config["UPSTASH_TLS_URL"]
+        p   = urlparse(raw)
+        app.logger.info(
+            "Session store -> %s://%s:%s",
+            p.scheme, p.hostname, p.port
+        )
     else:
         app.logger.info("Session store -> %s", app.config["SESSION_TYPE"])
 

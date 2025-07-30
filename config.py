@@ -6,7 +6,9 @@ from pathlib import Path
 from datetime import timedelta
 from typing import Type
 
-from upstash_redis import Redis
+import redis
+
+from upstash_redis import Redis as UpstashRedis
 
 BASE_DIR = Path(__file__).parent
 
@@ -73,18 +75,27 @@ class DevelopmentConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    DEBUG = False
-    PROPAGATE_EXCEPTIONS=False
-    LOGGER_LEVEL = "INFO"
-    SESSION_COOKIE_SECURE = True
-    FORCE_HTTPS = True
-    STRICT_TRANSPORT_SECURITY = True
-    RATELIMIT_ENABLED = True
-    SQLALCHEMY_DATABASE_URI = require("DATABASE_URI")
-    UPSTASH_REDIS_REST_URL  = require("UPSTASH_REDIS_REST_URL")
-    UPSTASH_REDIS_REST_TOKEN = require("UPSTASH_REDIS_REST_TOKEN")
-    RATELIMIT_STORAGE_URI = require("UPSTASH_REDIS_TLS_URL")
-    SITE_URL=require("SITE_URL")
-    SESSION_TYPE = "redis"
-    SESSION_REDIS = Redis.from_env()
+    DEBUG                      = False
+    PROPAGATE_EXCEPTIONS       = False
+    LOGGER_LEVEL               = "INFO"
+    SESSION_COOKIE_SECURE      = True
+    FORCE_HTTPS                = True
+    STRICT_TRANSPORT_SECURITY  = True
+
+    # ─── Database & Site ───────────────────────────────────────────────
+    SQLALCHEMY_DATABASE_URI    = require("DATABASE_URI")
+    SITE_URL                   = require("SITE_URL")
+
+    # ─── Upstash Redis (for both sessions & rate limiting) ─────────────
+    # must be the rediss://… URL from Upstash
+    UPSTASH_TLS_URL            = require("UPSTASH_REDIS_TLS_URL")
+
+    # Flask‑Limiter will pick this up automatically:
+    RATELIMIT_ENABLED          = True
+    RATELIMIT_STORAGE_URI      = UPSTASH_TLS_URL
+
+    # Flask‑Session:
+    SESSION_TYPE               = "redis"
+    SESSION_USE_SIGNER         = True
+
 
