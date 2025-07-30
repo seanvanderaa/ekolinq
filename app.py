@@ -113,7 +113,7 @@ def create_app():
         import redis
         # now we know UPSTASH_TLS_URL is set (and only needed in prod)
         app.config["SESSION_REDIS"] = redis.from_url(
-            app.config["UPSTASH_TLS_URL"], decode_responses=True
+            app.config["UPSTASH_TLS_URL"]
         )
 
     sess = Session()
@@ -402,8 +402,8 @@ def create_app():
         raw = app.config["UPSTASH_TLS_URL"]
         p   = urlparse(raw)
         app.logger.info(
-            "Session store -> %s://%s:%s",
-            p.scheme, p.hostname, p.port
+            "Session store -> %s://%s",
+            p.scheme, p.hostname
         )
     else:
         app.logger.info("Session store -> %s", app.config["SESSION_TYPE"])
@@ -441,6 +441,8 @@ def create_app():
             return data["ip"] == client_ip() and data["rid"] == request_id
         except (BadSignature, SignatureExpired):
             return False
+        
+
     # --------------------------------------------------
     # START APPLICATION ENDPOINTS
     # --------------------------------------------------
