@@ -269,8 +269,67 @@ def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
 
 
 def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
-    return _categorical_distribution(
-        column=PickupRequest.awareness,
-        start_date=start_date,
-        end_date=end_date,
+    """
+    Return unique‐address awareness distribution, using each address's
+    most‐recent request. Duplicates (multiple requests from same address)
+    are eliminated by taking the awareness value on the latest date.
+
+    Output dict keys:
+      - categories
+      - counts_all, percents_all
+      - counts_window, percents_window
+    """
+    sess = db.session
+
+    rows: List[Tuple[str, str, str]] = (
+        sess.query(
+            PickupRequest.address,
+            PickupRequest.date_filed,
+            PickupRequest.awareness,
+        )
+        .filter(
+            PickupRequest.address.isnot(None),
+            PickupRequest.awareness.isnot(None),
+            PickupRequest.awareness != "",
+            PickupRequest.awareness != "Unknown",   # ← filter this out
+        )
+        .all()
     )
+
+    # 2) group by address
+    recs_by_addr: Dict[str, List[Tuple[date, str]]] = {}
+    for addr, datestr, awareness in rows:
+        d = _parse_iso(datestr)
+        if not addr or d is None:
+            continue
+        recs_by_addr.setdefault(addr, []).append((d, awareness))
+
+    # 3) pick latest per address
+    latest_by_addr: Dict[str, Tuple[date, str]] = {}
+    for addr, recs in recs_by_addr.items():
+        # the tuple with max date
+        latest_date, latest_aw = max(recs, key=lambda tup: tup[0])
+        latest_by_addr[addr] = (latest_date, latest_aw)
+
+    # 4) count categories
+    counter_all: Counter[str] = Counter()
+    counter_window: Counter[str] = Counter()
+    for latest_date, awareness in latest_by_addr.values():
+        counter_all[awareness] += 1
+        if start_date <= latest_date <= end_date:
+            counter_window[awareness] += 1
+
+    # build sorted category list
+    categories = [cat for cat, _ in counter_all.most_common()]
+
+    total_all = sum(counter_all.values()) or 1
+    total_window = sum(counter_window.values()) or 1
+
+    return {
+        "categories":       categories,
+        "counts_all":       [counter_all[c]       for c in categories],
+        "percents_all":     [_pct(counter_all[c],       total_all)   for c in categories],
+        "counts_window":    [counter_window.get(c, 0) for c in categories],
+        "percents_window":  [_pct(counter_window.get(c, 0), total_window) for c in categories],
+    }
+

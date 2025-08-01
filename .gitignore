@@ -16,3 +16,5 @@ app.*
 
 import/
 backfill.csv
+
+.vscode/
