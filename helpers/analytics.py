@@ -209,51 +209,75 @@ def get_admin_metrics(start_date: date, end_date: date) -> Dict[str, float | Non
 
 def _categorical_distribution(
     *,
-    column,                        # SQLAlchemy column obj (PickupRequest.city …)
+    column,                        # SQLAlchemy column obj (PickupRequest.city, PickupRequest.awareness, …)
     start_date: date,
     end_date: date,
 ) -> Dict[str, list]:
-    """Return dict ⇒ {categories, counts_all, percents_all, counts_window, …}."""
+    """
+    Return dict ⇒ {categories, counts_all, percents_all, counts_window, percents_window},
+    counting each unique address only once:
+
+      - overall (“*_all”): each address’s latest-ever value
+      - window (“*_window”): each address’s latest value within [start_date, end_date]
+
+    Rows with column == None, empty, or "Unknown" are skipped.
+    """
     sess = db.session
-    rows: List[Tuple[str, str]] = (
-        sess.query(column, PickupRequest.date_filed)
-        .filter(column.isnot(None), column != "", column != "Unknown")
+
+    # 1) pull address, date_filed, and the chosen category column
+    rows: List[Tuple[str, str, str]] = (
+        sess.query(
+            PickupRequest.address,
+            PickupRequest.date_filed,
+            column,
+        )
+        .filter(
+            PickupRequest.address.isnot(None),
+            column.isnot(None),
+            column != "",
+            column != "Unknown",
+        )
         .all()
     )
 
-    if not rows:
-        empty = {k: [] for k in (
-            "categories",
-            "counts_all",
-            "percents_all",
-            "counts_window",
-            "percents_window",
-        )}
-        return empty
-
-    counter_all: Counter[str] = Counter()
-    counter_window: Counter[str] = Counter()
-
-    for cat, datestr in rows:
-        if not cat or not cat.strip():
-            continue
-        counter_all[cat] += 1
+    # 2) group by address
+    recs_by_addr: Dict[str, List[Tuple[date, str]]] = {}
+    for addr, datestr, cat in rows:
         d = _parse_iso(datestr)
-        if d and start_date <= d <= end_date:
-            counter_window[cat] += 1
+        if not addr or d is None:
+            continue
+        recs_by_addr.setdefault(addr, []).append((d, cat))
 
-    categories = [c for c, _ in counter_all.most_common()]
+    # 3) for each address pick:
+    #    - latest overall
+    #    - latest within window (if any)
+    latest_all: Dict[str, Tuple[date, str]] = {}
+    latest_win: Dict[str, Tuple[date, str]] = {}
+    for addr, recs in recs_by_addr.items():
+        # overall latest
+        latest_all[addr] = max(recs, key=lambda pair: pair[0])
+        # window-limited latest
+        in_window = [(d, cat) for d, cat in recs if start_date <= d <= end_date]
+        if in_window:
+            latest_win[addr] = max(in_window, key=lambda pair: pair[0])
 
-    total_all = sum(counter_all.values()) or 1
-    total_window = sum(counter_window.values()) or 1
+    # 4) tally counts
+    counter_all   = Counter(cat for _, cat in latest_all.values())
+    counter_window = Counter(cat for _, cat in latest_win.values())
+
+    # 5) build final lists in most-common order (by all-time)
+    categories    = [c for c, _ in counter_all.most_common()]
+    total_all     = sum(counter_all.values()) or 1
+    total_window  = sum(counter_window.values()) or 1
 
     return {
-        "categories": categories,
-        "counts_all": [counter_all[c] for c in categories],
-        "percents_all": [_pct(counter_all[c], total_all) for c in categories],
-        "counts_window": [counter_window.get(c, 0) for c in categories],
+        "categories":      categories,
+        "counts_all":      [counter_all[c]       for c in categories],
+        "percents_all":    [_pct(counter_all[c],      total_all)   for c in categories],
+        "counts_window":   [counter_window.get(c, 0) for c in categories],
         "percents_window": [_pct(counter_window.get(c, 0), total_window) for c in categories],
     }
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -267,70 +291,12 @@ def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
         end_date=end_date,
     )
 
-
 def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
-    """
-    Return unique‐address awareness distribution.
-    
-    Uses each address's most‐recent request overall for the "all" metrics,
-    and each address's most‐recent request within the given window for the
-    "window" metrics.
-    """
-    sess = db.session
-
-    # 1) Pull address, date_filed, awareness; skip bad or unknown values
-    rows: List[Tuple[str, str, str]] = (
-        sess.query(
-            PickupRequest.address,
-            PickupRequest.date_filed,
-            PickupRequest.awareness,
-        )
-        .filter(
-            PickupRequest.address.isnot(None),
-            PickupRequest.awareness.isnot(None),
-            PickupRequest.awareness != "",
-            PickupRequest.awareness != "Unknown",
-        )
-        .all()
+    return _categorical_distribution(
+        column=PickupRequest.awareness,
+        start_date=start_date,
+        end_date=end_date,
     )
 
-    # 2) Group all records by address
-    recs_by_addr: Dict[str, List[Tuple[date, str]]] = {}
-    for addr, datestr, awareness in rows:
-        d = _parse_iso(datestr)
-        if not addr or d is None:
-            continue
-        recs_by_addr.setdefault(addr, []).append((d, awareness))
-
-    # 3a) For each address, pick its latest overall record
-    latest_by_addr: Dict[str, Tuple[date, str]] = {
-        addr: max(recs, key=lambda pair: pair[0])
-        for addr, recs in recs_by_addr.items()
-    }
-
-    # 3b) For each address, pick its latest record inside [start_date, end_date]
-    latest_win_by_addr: Dict[str, Tuple[date, str]] = {}
-    for addr, recs in recs_by_addr.items():
-        in_window = [(d, aw) for d, aw in recs if start_date <= d <= end_date]
-        if in_window:
-            latest_win_by_addr[addr] = max(in_window, key=lambda pair: pair[0])
-
-    # 4) Tally counts
-    counter_all = Counter(aw for _, aw in latest_by_addr.values())
-    counter_window = Counter(aw for _, aw in latest_win_by_addr.values())
-
-    # 5) Build ordered category list from all‐time counts
-    categories = [cat for cat, _ in counter_all.most_common()]
-
-    total_all = sum(counter_all.values()) or 1
-    total_window = sum(counter_window.values()) or 1
-
-    return {
-        "categories":      categories,
-        "counts_all":      [counter_all[c] for c in categories],
-        "percents_all":    [_pct(counter_all[c], total_all) for c in categories],
-        "counts_window":   [counter_window.get(c, 0) for c in categories],
-        "percents_window": [_pct(counter_window.get(c, 0), total_window) for c in categories],
-    }
 
 
