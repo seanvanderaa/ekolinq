@@ -270,17 +270,15 @@ def city_distribution(start_date: date, end_date: date) -> Dict[str, list]:
 
 def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
     """
-    Return unique‐address awareness distribution, using each address's
-    most‐recent request. Duplicates (multiple requests from same address)
-    are eliminated by taking the awareness value on the latest date.
-
-    Output dict keys:
-      - categories
-      - counts_all, percents_all
-      - counts_window, percents_window
+    Return unique‐address awareness distribution.
+    
+    Uses each address's most‐recent request overall for the "all" metrics,
+    and each address's most‐recent request within the given window for the
+    "window" metrics.
     """
     sess = db.session
 
+    # 1) Pull address, date_filed, awareness; skip bad or unknown values
     rows: List[Tuple[str, str, str]] = (
         sess.query(
             PickupRequest.address,
@@ -291,12 +289,12 @@ def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
             PickupRequest.address.isnot(None),
             PickupRequest.awareness.isnot(None),
             PickupRequest.awareness != "",
-            PickupRequest.awareness != "Unknown",   # ← filter this out
+            PickupRequest.awareness != "Unknown",
         )
         .all()
     )
 
-    # 2) group by address
+    # 2) Group all records by address
     recs_by_addr: Dict[str, List[Tuple[date, str]]] = {}
     for addr, datestr, awareness in rows:
         d = _parse_iso(datestr)
@@ -304,32 +302,35 @@ def awareness_distribution(start_date: date, end_date: date) -> Dict[str, list]:
             continue
         recs_by_addr.setdefault(addr, []).append((d, awareness))
 
-    # 3) pick latest per address
-    latest_by_addr: Dict[str, Tuple[date, str]] = {}
+    # 3a) For each address, pick its latest overall record
+    latest_by_addr: Dict[str, Tuple[date, str]] = {
+        addr: max(recs, key=lambda pair: pair[0])
+        for addr, recs in recs_by_addr.items()
+    }
+
+    # 3b) For each address, pick its latest record inside [start_date, end_date]
+    latest_win_by_addr: Dict[str, Tuple[date, str]] = {}
     for addr, recs in recs_by_addr.items():
-        # the tuple with max date
-        latest_date, latest_aw = max(recs, key=lambda tup: tup[0])
-        latest_by_addr[addr] = (latest_date, latest_aw)
+        in_window = [(d, aw) for d, aw in recs if start_date <= d <= end_date]
+        if in_window:
+            latest_win_by_addr[addr] = max(in_window, key=lambda pair: pair[0])
 
-    # 4) count categories
-    counter_all: Counter[str] = Counter()
-    counter_window: Counter[str] = Counter()
-    for latest_date, awareness in latest_by_addr.values():
-        counter_all[awareness] += 1
-        if start_date <= latest_date <= end_date:
-            counter_window[awareness] += 1
+    # 4) Tally counts
+    counter_all = Counter(aw for _, aw in latest_by_addr.values())
+    counter_window = Counter(aw for _, aw in latest_win_by_addr.values())
 
-    # build sorted category list
+    # 5) Build ordered category list from all‐time counts
     categories = [cat for cat, _ in counter_all.most_common()]
 
     total_all = sum(counter_all.values()) or 1
     total_window = sum(counter_window.values()) or 1
 
     return {
-        "categories":       categories,
-        "counts_all":       [counter_all[c]       for c in categories],
-        "percents_all":     [_pct(counter_all[c],       total_all)   for c in categories],
-        "counts_window":    [counter_window.get(c, 0) for c in categories],
-        "percents_window":  [_pct(counter_window.get(c, 0), total_window) for c in categories],
+        "categories":      categories,
+        "counts_all":      [counter_all[c] for c in categories],
+        "percents_all":    [_pct(counter_all[c], total_all) for c in categories],
+        "counts_window":   [counter_window.get(c, 0) for c in categories],
+        "percents_window": [_pct(counter_window.get(c, 0), total_window) for c in categories],
     }
+
 
