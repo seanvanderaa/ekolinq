@@ -20,6 +20,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 from flask_sitemap import Sitemap
+from flask.cli import with_appcontext
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.exceptions import HTTPException
@@ -2197,6 +2198,30 @@ def create_app():
             print("Creating all tables...")
             db.create_all()
             print("Database reset complete.")
+
+    @app.cli.command("generate-sitemap")
+    @with_appcontext
+    def generate_sitemap():
+        """Dump sitemap.xml into static/ so your webserver can serve it."""
+        pages = []
+        lastmod = date.today().isoformat()
+        for rule in current_app.url_map.iter_rules():
+            if "GET" in rule.methods and len(rule.arguments) == 0:
+                pages.append({
+                    "loc": url_for(rule.endpoint, _external=True),
+                    "lastmod": lastmod
+                })
+
+        # render via Jinja (you can reuse sitemap_template.xml)
+        from flask import render_template_string
+        xml = render_template_string(
+            current_app.jinja_loader.get_source(current_app.jinja_env, 'sitemap_template.xml')[0],
+            pages=pages
+        )
+        path = current_app.static_folder + '/sitemap.xml'
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(xml)
+        click.echo(f'Wrote sitemap to {path}.')
 
     backfill_mod.register(app)
 
