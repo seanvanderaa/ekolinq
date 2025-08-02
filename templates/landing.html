@@ -65,31 +65,55 @@
         </button>
       </div>
       <div class="fade-overlay">
-        <div id="impact-right">
-          <div class="impact-square fade-up"></div>
-          <div class="impact-square fade-up"></div>
-          <div class="impact-square fade-up"></div>
-          <div class="impact-square align-center highlight-square" data-reveal-target="pickup-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="" height="80px;" aria-hidden="true" aria-hidden="true">
+        <h3>What we offer.</h3>
+        <div class="carousel">
+          <div class="group">
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
+              </div>
+              <p class="impact-square-text">Residential and business pickups.</p>
+              <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+            </div>
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}" alt="Collect icon" aria-hidden="true" height="70">
+              </div>
+              <p class="impact-square-text">Local dropboxes.</p>
+              <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+            </div>
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
+              </div>
+              <p class="impact-square-text">Fundraising collection events.</p>
+              <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
+            </div>
           </div>
-          <div class="impact-square align-center " id="fundraiser-reveal">
-            <p class="reveal-text">Fundraising collection events.</p>
+          <!-- Add `aria-hidden` to hide the duplicated cards from screen readers. -->
+          <div aria-hidden class="group">
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
+              </div>
+              <p class="impact-square-text">Residential and business pickups.</p>
+              <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+            </div>
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}" alt="Collect icon" aria-hidden="true" height="70">
+              </div>
+              <p class="impact-square-text">Local dropboxes.</p>
+              <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+            </div>
+            <div class="card">
+              <div class="impact-square align-center highlight-square">
+                <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
+              </div>
+              <p class="impact-square-text">Fundraising collection events.</p>
+              <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
+            </div>
           </div>
-          <div class="impact-square align-center highlight-square" data-reveal-target="collect-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-bin.svg') }}" alt="" height="80px;" aria-hidden="true">
-          </div>
-          <div class="impact-square align-center " id="pickup-reveal">
-            <p class="reveal-text">Residential and business site pick-ups.</p>
-          </div>
-          <div class="impact-square align-center highlight-square" data-reveal-target="fundraiser-reveal">
-            <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="" height="80px;" aria-hidden="true">
-          </div>
-          <div class="impact-square align-center " id="collect-reveal">
-            <p class="reveal-text">Collection bins and drop boxes.</p>
-          </div>
-          <div class="impact-square fade-down"></div>
-          <div class="impact-square fade-down"></div>
-          <div class="impact-square fade-down"></div>
         </div>
       </div>
     </div>
@@ -124,7 +148,7 @@
           <p class="section-title">ABOUT US</p>
           <h2>What kinds of items does EkoLinq accept?</h2>
           <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
-            list below for any specific items you’re curious about. Would you prefer to leave clothes at a dropbox? <a class="a-yel" href="/drop-boxes">We have those too.</a></p>
+            list below for any specific items you’re curious about. Want to drop off your textiles yourself? <a class="a-yel" href="/drop-boxes">Check out our dropboxes.</a></p>
         </div>
       </div>
       <div id="items-info">

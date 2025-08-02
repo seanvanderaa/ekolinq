@@ -297,6 +297,7 @@ strong {
     justify-content: space-between;
     align-items: center;
     margin-top: 50px;
+    column-gap: 48px;
 }
 
 #impact-left {
@@ -304,124 +305,134 @@ strong {
 }
 
 .fade-overlay {
-    position: relative; /* so pseudo-elements can be absolutely positioned inside */
-    /* (Optionally) set a fixed height if needed, 
-       or let the content define its height. */
-
-  }
-  
-  .fade-overlay::before,
-  .fade-overlay::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 250px;            /* Adjust as needed to control the fade distance */
-    pointer-events: none;    /* let clicks pass through to the squares */
-    z-index: 2;            /* on top of the squares */
-  }
-  
-  /* Top fade: from white -> transparent */
-  .fade-overlay::before {
-    top: 0;
-    background: linear-gradient(
-      to bottom,
-      #FAFAFA,
-      rgba(255, 255, 255, 0)
-    );
-  }
-  
-  /* Bottom fade: from white -> transparent */
-  .fade-overlay::after {
-    bottom: 0;
-    background: linear-gradient(
-      to top,
-      #FAFAFA,
-      rgba(255, 255, 255, 0)
-    );
-  }
-  
-
-#impact-right {
-    position: relative;
+    max-width: 50%;
+    flex: 1;
     display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap; /* Allows wrapping to multiple rows */
-    gap: 6px; /* Spacing between squares */
-    max-width: calc(4 * 120px + 3 * 4px); /* Width for 4 columns including gaps */
+    flex-direction: column;
+    max-height: 100%;
+    margin-top: 36px;
+    padding-top: 20px;
+    padding-left: 60px;
+    box-sizing: border-box;
 }
 
-.impact-square {
-    width: 120px; /* Fixed width for each square */
-    height: 120px; /* Fixed height for each square */
-    border: 1px solid var(--border-grey);
-    border-radius: 10px;
-    padding: 5px;
-}
-
-.highlight-square {
-    width: 120px;
-    height: 120px;
-    position: relative; 
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0);
-    transition: background-color 0.2s ease, transform .2s ease, box-shadow .2s ease;
-    background-color: #10427810;
-  }
-  
-  .highlight-square::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 4px;
-  
-    /* The base “flowing” gradient */
-    background: linear-gradient(-45deg, 
-                  var(--yel), 
-                #104378,
-                  var(--m-green)
-                );
-    background-size: 200% 200%;
-    animation: flowing-border 3s linear infinite;
-  
-    -webkit-mask:
-      linear-gradient(rgba(255, 255, 255, 0.95) 0 0) content-box,
-      linear-gradient(#fff 0 0) padding-box;
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-  
-  /* Continuous gradient movement */
-  @keyframes flowing-border {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-
-.highlight-square:hover {
-    cursor: pointer;
-    background-color: #055d182c;
-    box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.05);
-    transform: scale(1.03);
-    box-shadow: 0px 0px 20px 4px rgba(0, 0, 0, 0.1);
-}
-
-.reveal-text {
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+.fade-overlay h3 {
     text-align: center;
-    /* If you want a background color around the text itself:
-       background-color: #ffeeba; 
-       transition: background-color 0.4s ease-in-out, opacity 0.4s ease-in-out; */
+    padding-bottom: 16px;
+    font-weight: 600;
 }
+
+  .carousel {
+    position: relative;
+    margin: 0 auto;
+    padding: 10px 10px;
+    max-width: 700px;
+    height: 500px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    > * {
+      flex: 0 0 100%;
+    }
+    &:hover .group {
+      animation-play-state: paused;
+    }
+  }
+.carousel::before,
+.carousel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 140px;              /* adjust this to control fade distance */
+  pointer-events: none;       /* so underlying items are still clickable */
+  z-index: 10;                /* sit above your carousel content */
+}
+
+.carousel::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--off-white) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.carousel::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--off-white) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+  .card {
+    color: black;
+    border-radius: 24px;
+    padding: 20px;
+    font-size: xx-large;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.1);
+
+    &:nth-child(1) {
+      background: #E4EBF2;
+    }
+
+    &:nth-child(2) {
+      background: #f2f1e4;
+    }
+
+    &:nth-child(3) {
+      background: #E6EEDF;
+    }
+  }
+    .group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* Add padding to the right to create a gap between the last and first card. */
+    padding-bottom: 24px;
+    will-change: transform; /* We should be nice to the browser - let it know what we're going to animate. */
+    animation: scrolling 20s linear infinite;
+  }
+@keyframes scrolling {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
   
-  /* Visible text */
-.reveal-text.active {
-    opacity: 1;
-/* background-color: #ffeeba; */
+.impact-square-text {
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+.impact-square-link {
+    font-size: 16px;
+    text-align: center;
+    color: var(--m-green) !important;
+    margin: 0px;
+    width: 100%;
+    font-family: var(--mont);
+}
+
+.impact-square-link a {
+    color: var(--m-green) !important;
+}
+
+.bin-png {
+    padding: 15px;
 }
 
 #problem {
@@ -500,6 +511,7 @@ strong {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 50px;
+    padding-bottom: 70px;
     color: white;
 }
 
@@ -624,10 +636,6 @@ strong {
     
     #request-form-input input {
         width: 100%;
-    }
-
-    #impact-right {
-        max-width: calc(4 * 100px + 3 * 4px); /* Width for 4 columns including gaps */
     }
 
     .impact-square {
@@ -908,7 +916,7 @@ strong {
 .number-h2 {
   font-size: 64px;
   font-family: var(--mont);
-  font-weight: 600;
+  font-weight: 700;
   margin: 4px 0px !important;
 }
 .number-h2:nth-of-type(2) {
@@ -916,6 +924,11 @@ strong {
 }
 .number-h2:nth-of-type(4) {
   color: var(--m-green);
+}
+
+.number-h2 span {
+    font-size: 24px;
+    font-weight: 500;
 }
 
 /* Impact paragraphs */
