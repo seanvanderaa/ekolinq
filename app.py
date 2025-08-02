@@ -11,7 +11,7 @@ from functools import wraps
 from urllib.parse import urlencode, urlparse, quote_plus
 
 from flask import (Flask, request, render_template, redirect, url_for, jsonify,
-                   make_response, session, current_app, flash, abort, g)
+                   make_response, session, current_app, flash, abort, g, render_template_string)
 from flask_session import Session
 from flask_wtf import CSRFProtect
 from wtforms import ValidationError
@@ -2189,39 +2189,33 @@ def create_app():
     
     # --------------------------------------------------
 
-    @app.cli.command('reset-db')
-    def reset_db():
-        """Drops all tables and recreates them."""
-        with app.app_context():
-            print("Dropping all tables...")
-            db.drop_all()
-            print("Creating all tables...")
-            db.create_all()
-            print("Database reset complete.")
-
     @app.cli.command("generate-sitemap")
     @with_appcontext
     def generate_sitemap():
-        """Dump sitemap.xml into static/ so your webserver can serve it."""
+        base = "https://ekolinq.com"
         pages = []
         lastmod = date.today().isoformat()
-        for rule in current_app.url_map.iter_rules():
-            if "GET" in rule.methods and len(rule.arguments) == 0:
-                pages.append({
-                    "loc": url_for(rule.endpoint, _external=True),
-                    "lastmod": lastmod
-                })
 
-        # render via Jinja (you can reuse sitemap_template.xml)
-        from flask import render_template_string
-        xml = render_template_string(
-            current_app.jinja_loader.get_source(current_app.jinja_env, 'sitemap_template.xml')[0],
-            pages=pages
-        )
-        path = current_app.static_folder + '/sitemap.xml'
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(xml)
-        click.echo(f'Wrote sitemap to {path}.')
+        # one big fake request context:
+        with current_app.test_request_context(base_url=base):
+            # now both url_for() and session + CSRF work
+            for rule in current_app.url_map.iter_rules():
+                if "GET" in rule.methods and not rule.arguments:
+                    pages.append({
+                        "loc": url_for(rule.endpoint, _external=True),
+                        "lastmod": lastmod
+                    })
+
+            # load & render your template
+            tmpl_src, _, _ = current_app.jinja_loader.get_source(
+                current_app.jinja_env, "sitemap_template.xml"
+            )
+            xml = render_template_string(tmpl_src, pages=pages)
+
+        out = current_app.static_folder + "/sitemap.xml"
+        open(out, "w", encoding="utf-8").write(xml)
+        print(f"Wrote sitemap to {out}.")
+
 
     backfill_mod.register(app)
 
