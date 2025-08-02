@@ -21,7 +21,8 @@
     --mont: 'Montserrat', sans-serif;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 }
@@ -53,7 +54,7 @@ h3 {
     font-weight: 400;
 }
 
-h4{
+h4 {
     font-size: var(--p);
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
@@ -65,7 +66,8 @@ p {
     line-height: 1.4em;
 }
 
-ul, li {
+ul,
+li {
     font-family: var(--mont);
 }
 
@@ -74,11 +76,13 @@ li {
 }
 
 .a-green {
-  text-decoration: underline; color: var(--m-green);
+    text-decoration: underline;
+    color: var(--m-green);
 }
 
 .a-yel {
-    text-decoration: underline; color: var(--yel);
+    text-decoration: underline;
+    color: var(--yel);
 }
 
 .col-white {
@@ -153,7 +157,8 @@ li {
     column-gap: 16px;
 }
 
-.navbar__menu li, a {
+.navbar__menu li,
+a {
     margin: 0px;
     text-decoration: none;
     list-style: none;
@@ -214,12 +219,13 @@ li {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    display: none; /* hidden by default */
+    display: none;
+    /* hidden by default */
     z-index: 1000;
-  }
+}
 
-  /* The popup form container */
-  #contactPopup {
+/* The popup form container */
+#contactPopup {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -229,15 +235,16 @@ li {
     padding-top: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    display: none; /* hidden by default */
+    display: none;
+    /* hidden by default */
     z-index: 1001;
     width: 40%;
     min-width: 300px;
     max-width: 500px;
-  }
+}
 
-  /* Close button styling */
-  #contactPopup .close-btn {
+/* Close button styling */
+#contactPopup .close-btn {
     position: absolute;
     background: transparent;
     border: none;
@@ -245,33 +252,36 @@ li {
     right: 24px;
     top: 24px;
     cursor: pointer;
-  }
+}
 
-  /* Form elements styling */
-  #contactPopup form {
+/* Form elements styling */
+#contactPopup form {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
-  }
-  #contactPopup form label {
+}
+
+#contactPopup form label {
     margin-top: 10px;
     font-weight: 500;
     font-family: var(--mont);
-  }
-  #contactPopup form input,
-  #contactPopup form textarea {
+}
+
+#contactPopup form input,
+#contactPopup form textarea {
     margin-top: 5px;
     padding: 12px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 3px;
     font-family: var(--mont);
-  }
-  #contactPopup form textarea {
-    resize: vertical;
-  }
+}
 
-  .large-submit-btn {
+#contactPopup form textarea {
+    resize: vertical;
+}
+
+.large-submit-btn {
     margin-top: 24px;
     padding: 24px 20px;
     background: var(--m-blue);
@@ -283,15 +293,15 @@ li {
     cursor: pointer;
     width: 100%;
     transition: transform .2s ease, background-color .2s ease, color .2s ease;
-  }
+}
 
-  .large-submit-btn:hover {
+.large-submit-btn:hover {
     transform: scale(1.02);
     background-color: var(--m-green);
     color: white;
-  }
+}
 
-  /* #contactPopup form button[type="submit"], #close-confirmation-btn {
+/* #contactPopup form button[type="submit"], #close-confirmation-btn {
     margin-top: 24px;
     padding: 20px;
     background: var(--m-blue);
@@ -326,7 +336,7 @@ li {
 #footer-content {
     display: flex;
     flex-direction: row;
-    box-sizing:border-box;
+    box-sizing: border-box;
     justify-content: space-between;
     max-width: 960px;
     width: 960px;
@@ -455,7 +465,7 @@ li {
 .action-btn-wbg {
     border-radius: 100px;
     background-color: var(--m-blue);
-    color: white; 
+    color: white;
     height: 40px;
     display: flex;
     padding: 0px;
@@ -496,16 +506,17 @@ li {
 .action-btn-dbg:hover {
     background-color: var(--m-green);
     color: white;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .action-btn-dbg .btn-icon {
-  background-color: var(--m-green);
-  color: white;
+    background-color: var(--m-green);
+    color: white;
 }
 
 .submit-btn {
-    position: relative; /* Allows pseudo-element positioning */
+    position: relative;
+    /* Allows pseudo-element positioning */
     border-radius: 100px;
     background-color: var(--m-green);
     color: white;
@@ -515,12 +526,15 @@ li {
     border: none;
     font-weight: 600;
     font-size: 16px;
-    overflow: hidden; /* Prevents content overflow during animation */
-    transition: color 0.4s ease, transform .2s ease, background-color .2s ease; /* Smooth transition for text color */
+    overflow: hidden;
+    /* Prevents content overflow during animation */
+    transition: color 0.4s ease, transform .2s ease, background-color .2s ease;
+    /* Smooth transition for text color */
 }
 
 .submit-btn:hover {
-    color: black; /* Change text color */
+    color: black;
+    /* Change text color */
     cursor: pointer;
     background-color: var(--yel);
 }
@@ -660,7 +674,8 @@ li {
     margin-top: 12px;
 }
 
-.contact-form-group input, .contact-form-group textarea {
+.contact-form-group input,
+.contact-form-group textarea {
     width: 100%;
     box-sizing: border-box;
     padding: 12px 16px;
@@ -674,6 +689,7 @@ li {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -687,7 +703,7 @@ li {
     .navbar__toggle {
         display: block;
     }
-      
+
     .navbar__menu {
         z-index: 3;
         flex-direction: column;
@@ -705,7 +721,7 @@ li {
         padding-left: 24px;
         box-sizing: border-box;
     }
-    
+
     .navbar__item {
         width: 100%;
         box-sizing: border-box;
@@ -718,11 +734,12 @@ li {
     .navbar__item a {
         font-size: 18px;
     }
-    
+
     .navbar__menu.active {
         padding: 36px 0px;
         padding-left: 24px;
-        max-height: 340px; /* Arbitrary max height for the dropdown */
+        max-height: 340px;
+        /* Arbitrary max height for the dropdown */
     }
 }
 
@@ -801,7 +818,7 @@ li {
         margin-top: 36px;
         flex-direction: column;
     }
-    
+
     #footer-info-bottom i {
         font-size: 20px;
     }

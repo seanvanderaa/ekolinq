@@ -1,15 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}EkoLinq | Free Textile Pickups {% endblock %}
-{% block meta_description %}Schedule your free textile-waste pick up and join EkoLinq’s mission to keep textiles out of landfills!{% endblock %}
+{% block meta_description %}Schedule your free textile-waste pick up and join EkoLinq’s mission to keep textiles out of
+landfills!{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_styles.css') }}">
-<link
-  rel="preload"
-  as="image"
-  href="{{ url_for('static', filename='images/landing_hero.webp') }}"
-/>
+<link rel="preload" as="image" href="{{ url_for('static', filename='images/landing_hero.webp') }}" />
 {% endblock %}
 {% block content %}
 <div id="header">
@@ -19,7 +16,8 @@
   <div id="header-content">
     <div id="header-left" class="align-center">
       <h1 class="col-white bold">Join the loop, not the landfill.</h1>
-      <h3 class="col-white secondary">EkoLinq provides free curbside pickup of clothes and textiles for Tri-Valley residents—ensuring reuse first, recycling second.</h3>
+      <h3 class="col-white secondary">EkoLinq provides free curbside pickup of clothes and textiles for Tri-Valley
+        residents—ensuring reuse first, recycling second.</h3>
       <div id="central-cta">
         <button class="main-btn main-btn2" id="request-a-pickup"><span>Schedule a free pickup</span></button>
       </div>
@@ -40,8 +38,7 @@
       region toward a more sustainable future. <b>Enter your zip code below to see if we pickup in your area.</b></p>
     <form action="/find-time" method="GET" id="request-form-input">
       <div>
-        <input type="text" id="zipcode" name="zipcode" placeholder="Enter ZIP Code"
-          class="align-center" required>
+        <input type="text" id="zipcode" name="zipcode" placeholder="Enter ZIP Code" class="align-center" required>
         <span class="info-icon">i</span>
         <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
           only serves the Tri-Valley.</div>
@@ -50,169 +47,184 @@
     </form>
   </div>
 </div>
-  <div id="ekolinq-info" class="content-width">
-    <div id="impact" class="block-margin">
-      <div id="impact-left">
-        <p class="section-title">OUR IMPACT</p>
-        <h2>EkoLinq has diverted over</h2>
-        <h2 class="number-h2">778,550</h2>
-        <h2>pounds of textile waste away from landfill and contributed over</h2>
-        <h2 class="number-h2">$45,250</h2>
-        <h2>to schools, non-profits, and climate initiatives throughout the Tri-Valley.</h2>
-        <p>Since 2021, we’ve been making it easy to do the right thing with your unused textiles, and giving back to the community in the process. We’re striving for an entirely circular textile economy and taking all the steps we can to bring this reality to the Tri-Valley. We’d love for you to be a part of this mission.</p>
-        <button id="about-us-btn" class="action-btn-wbg">
-          <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn more about us
-        </button>
-      </div>
-      <div class="fade-overlay">
-        <h3>What we offer.</h3>
-        <div class="carousel">
-          <div class="group">
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
-              </div>
-              <p class="impact-square-text">Residential and business pickups.</p>
-              <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+<div id="ekolinq-info" class="content-width">
+  <div id="impact" class="block-margin">
+    <div id="impact-left">
+      <p class="section-title">OUR IMPACT</p>
+      <h2>EkoLinq has diverted over</h2>
+      <h2 class="number-h2">778,550</h2>
+      <h2>pounds of textile waste away from landfill and contributed over</h2>
+      <h2 class="number-h2">$45,250</h2>
+      <h2>to schools, non-profits, and climate initiatives throughout the Tri-Valley.</h2>
+      <p>Since 2021, we’ve been making it easy to do the right thing with your unused textiles, and giving back to the
+        community in the process. We’re striving for an entirely circular textile economy and taking all the steps we
+        can to bring this reality to the Tri-Valley. We’d love for you to be a part of this mission.</p>
+      <button id="about-us-btn" class="action-btn-wbg">
+        <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn more about us
+      </button>
+    </div>
+    <div class="fade-overlay">
+      <h3>What we offer.</h3>
+      <div class="carousel">
+        <div class="group">
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon"
+                aria-hidden="true" height="100">
             </div>
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}" alt="Collect icon" aria-hidden="true" height="70">
-              </div>
-              <p class="impact-square-text">Local dropboxes.</p>
-              <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
-            </div>
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
-              </div>
-              <p class="impact-square-text">Fundraising collection events.</p>
-              <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
-            </div>
+            <p class="impact-square-text">Residential and business pickups.</p>
+            <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
           </div>
-          <!-- Add `aria-hidden` to hide the duplicated cards from screen readers. -->
-          <div aria-hidden class="group">
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
-              </div>
-              <p class="impact-square-text">Residential and business pickups.</p>
-              <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}"
+                alt="Collect icon" aria-hidden="true" height="70">
             </div>
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}" alt="Collect icon" aria-hidden="true" height="70">
-              </div>
-              <p class="impact-square-text">Local dropboxes.</p>
-              <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+            <p class="impact-square-text">Local dropboxes.</p>
+            <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+          </div>
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon"
+                aria-hidden="true" height="100">
             </div>
-            <div class="card">
-              <div class="impact-square align-center highlight-square">
-                <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon" aria-hidden="true" height="100">
-              </div>
-              <p class="impact-square-text">Fundraising collection events.</p>
-              <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
-            </div>
+            <p class="impact-square-text">Fundraising collection events.</p>
+            <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
           </div>
         </div>
-      </div>
-    </div>
-    <div id="problem" class="block-margin">
-      <p class="section-title" id="mobile-section-title">THE PROBLEM</p>
-      <div id="problem-left">
-        <p>Ziga Plahutar via Getty Images</p>
-      </div>
-      <div id="problem-right">
-        <p class="section-title" id="desktop-section-title">THE PROBLEM</p>
-        <h2>Every year, the U.S. produces over 100 pounds of textile waste <b>per person</b>.</h2>
-        <p id="problem-right-text">When textiles decompose in landfills, they release methane, a greenhouse gas 28
-          times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
-          largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
-          disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
-          into the soil and groundwater, potentially harming aquatic ecosystems and human health.
-          <br><br>By donating your unwanted textiles, you can help break this cycle of waste and
-          environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
-          significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
-          future.</p>
-          <button id="nav-textile-waste" class="action-btn-wbg">
-            <i class="bi bi-arrow-up-right btn-icon align-center"></i>What's textile waste?
-          </button>
-          
-      </div>
-    </div>
-  </div>
-  <div id="image-belt" class="align-center block-margin">
-    <div id="items">
-      <div id="items-header">
-        <div>
-          <p class="section-title">ABOUT US</p>
-          <h2>What kinds of items does EkoLinq accept?</h2>
-          <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
-            list below for any specific items you’re curious about. Want to drop off your textiles yourself? <a class="a-yel" href="/drop-boxes">Check out our dropboxes.</a></p>
-        </div>
-      </div>
-      <div id="items-info">
-        <div>
-          <h3>Accepted Items</h3>
-          <ul>
-            <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
-            <li>Coats, jackets, gloves, hats, scarves</li>
-            <li>Shoes, boots, heels, sneakers, sandals, socks</li>
-            <li>Bras, underwear, slips, camisoles, tights</li>
-            <li>Handbags, belts, ties, headbands</li>
-            <li>Towels, sheets, comforters, blankets, tablecloths</li>
-            <li>Wallets, totes, backpacks, stuffed animals</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Unaccepted Items</h3>
-          <ul>
-            <li>Textiles that are wet, moldy, or contaminated with chemicals</li>
-            <li>Bio-hazardous waste</li>
-            <li>Pillows and cushions</li>
-            <li>Mattresses, furniture, or other similar oversized items</li>
-          </ul>
+        <!-- Add `aria-hidden` to hide the duplicated cards from screen readers. -->
+        <div aria-hidden class="group">
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img src="{{ url_for('static', filename='images/ekolinq-icon-collect.svg') }}" alt="Collect icon"
+                aria-hidden="true" height="100">
+            </div>
+            <p class="impact-square-text">Residential and business pickups.</p>
+            <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+          </div>
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img class="bin-png" src="{{ url_for('static', filename='images/ekolinq-icon-bin.png') }}"
+                alt="Collect icon" aria-hidden="true" height="70">
+            </div>
+            <p class="impact-square-text">Local dropboxes.</p>
+            <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+          </div>
+          <div class="card">
+            <div class="impact-square align-center highlight-square">
+              <img src="{{ url_for('static', filename='images/ekolinq-icon-fundraise.svg') }}" alt="Collect icon"
+                aria-hidden="true" height="100">
+            </div>
+            <p class="impact-square-text">Fundraising collection events.</p>
+            <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="content-width">
-    <div id="collection-event" class="align-center block-margin box-shadow">
-      <div class="align-center">
-        <img src="{{ url_for('static', filename='images/Group 26.png') }}" height="80" alt="" aria-hidden="true">
+  <div id="problem" class="block-margin">
+    <p class="section-title" id="mobile-section-title">THE PROBLEM</p>
+    <div id="problem-left">
+      <p>Ziga Plahutar via Getty Images</p>
+    </div>
+    <div id="problem-right">
+      <p class="section-title" id="desktop-section-title">THE PROBLEM</p>
+      <h2>Every year, the U.S. produces over 100 pounds of textile waste <b>per person</b>.</h2>
+      <p id="problem-right-text">When textiles decompose in landfills, they release methane, a greenhouse gas 28
+        times more potent than carbon dioxide in warming the planet. Moreover, the textile industry is one of the
+        largest water consumers globally, with a single cotton shirt requiring 2,700 liters of water to produce. The
+        disposal of textile waste in landfills also leads to water pollution, as dangerous chemicals and dyes leach
+        into the soil and groundwater, potentially harming aquatic ecosystems and human health.
+        <br><br>By donating your unwanted textiles, you can help break this cycle of waste and
+        environmental damage. Your used materials can be repurposed, recycled, or even transformed into new products,
+        significantly reducing the industry's environmental footprint and moving us closer to a more sustainable
+        future.
+      </p>
+      <button id="nav-textile-waste" class="action-btn-wbg">
+        <i class="bi bi-arrow-up-right btn-icon align-center"></i>What's textile waste?
+      </button>
+
+    </div>
+  </div>
+</div>
+<div id="image-belt" class="align-center block-margin">
+  <div id="items">
+    <div id="items-header">
+      <div>
+        <p class="section-title">ABOUT US</p>
+        <h2>What kinds of items does EkoLinq accept?</h2>
+        <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
+          list below for any specific items you’re curious about. Want to drop off your textiles yourself? <a
+            class="a-yel" href="/drop-boxes">Check out our dropboxes.</a></p>
+      </div>
+    </div>
+    <div id="items-info">
+      <div>
+        <h3>Accepted Items</h3>
+        <ul>
+          <li>Pants, jeans, skirts, dresses, suits, shorts, shirts</li>
+          <li>Coats, jackets, gloves, hats, scarves</li>
+          <li>Shoes, boots, heels, sneakers, sandals, socks</li>
+          <li>Bras, underwear, slips, camisoles, tights</li>
+          <li>Handbags, belts, ties, headbands</li>
+          <li>Towels, sheets, comforters, blankets, tablecloths</li>
+          <li>Wallets, totes, backpacks, stuffed animals</li>
+        </ul>
       </div>
       <div>
-        <h2>Want to host a fundraiser or collection event?</h2>
-        <p>You bring the people, we take the clothes. Collection events are a great way to engage your community toward a sustainable future.</p>
-        <button id="get-in-touch" class="action-btn-wbg"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Get in touch</button>
-      </div>
-      <div class="align-center" id="mobile-image-removed">
-        <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="" aria-hidden="true">
+        <h3>Unaccepted Items</h3>
+        <ul>
+          <li>Textiles that are wet, moldy, or contaminated with chemicals</li>
+          <li>Bio-hazardous waste</li>
+          <li>Pillows and cushions</li>
+          <li>Mattresses, furniture, or other similar oversized items</li>
+        </ul>
       </div>
     </div>
-    <div id="shared-vision" class="align-center block-margin">
-      <hr>
-      <h2>Sharing a vision</h2>
-      <p>EkoLinq contributes at least 5% of profits to eco-friendly, carbon capture initiatives such as:</p>
-      <div id="shared-vision-orgs" class="align-center">
-        <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" aria-hidden="true" class="box-shadow">
-          <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
-        </div>
-        <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/onetree.jpg') }}" height="160" aria-hidden="true" class="box-shadow">
-          <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
-        </div>
-        <div class="initiatives" class="align-center">
-          <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" aria-hidden="true" class="box-shadow">
-          <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
-        </div>
-      </div>
-    </div> 
   </div>
-  {% endblock %}
+</div>
+<div class="content-width">
+  <div id="collection-event" class="align-center block-margin box-shadow">
+    <div class="align-center">
+      <img src="{{ url_for('static', filename='images/Group 26.png') }}" height="80" alt="" aria-hidden="true">
+    </div>
+    <div>
+      <h2>Want to host a fundraiser or collection event?</h2>
+      <p>You bring the people, we take the clothes. Collection events are a great way to engage your community toward a
+        sustainable future.</p>
+      <button id="get-in-touch" class="action-btn-wbg"><i class="bi bi-arrow-up-right btn-icon align-center"></i>Get in
+        touch</button>
+    </div>
+    <div class="align-center" id="mobile-image-removed">
+      <img src="{{ url_for('static', filename='images/Group 30.png') }}" height="60" alt="" aria-hidden="true">
+    </div>
+  </div>
+  <div id="shared-vision" class="align-center block-margin">
+    <hr>
+    <h2>Sharing a vision</h2>
+    <p>EkoLinq contributes at least 5% of profits to eco-friendly, carbon capture initiatives such as:</p>
+    <div id="shared-vision-orgs" class="align-center">
+      <div class="initiatives" class="align-center">
+        <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" aria-hidden="true"
+          class="box-shadow">
+        <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
+      </div>
+      <div class="initiatives" class="align-center">
+        <img src="{{ url_for('static', filename='images/onetree.jpg') }}" height="160" aria-hidden="true"
+          class="box-shadow">
+        <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
+      </div>
+      <div class="initiatives" class="align-center">
+        <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" aria-hidden="true"
+          class="box-shadow">
+        <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
 
-  {% block scripts %}
-    {{ super() }}
-    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/landing.js') }}"></script>
-  {% endblock %}
+{% block scripts %}
+{{ super() }}
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/landing.js') }}"></script>
+{% endblock %}

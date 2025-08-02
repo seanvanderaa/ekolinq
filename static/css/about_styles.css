@@ -1,23 +1,23 @@
 .navbar {
-    background-color: var(--d-green);
+  background-color: var(--d-green);
 }
 
 main {
-    background-color: var(--off-white);
-    color: black;
-    padding-bottom: 80px;
-    overflow-x: hidden;
-    width: 100%;
-    padding-top: 60px;
+  background-color: var(--off-white);
+  color: black;
+  padding-bottom: 80px;
+  overflow-x: hidden;
+  width: 100%;
+  padding-top: 60px;
 }
 
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #333;
-    background-color: #FAFAFA;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background-color: #FAFAFA;
 }
 
 strong {
@@ -29,7 +29,8 @@ h4 {
 }
 
 #header-wrapper {
-  position: relative; /* Create a positioning context for the pseudo-element */
+  position: relative;
+  /* Create a positioning context for the pseudo-element */
   padding: 160px 0px;
   padding-top: 20px;
   /* You can set a background gradient or color as a base layer */
@@ -49,45 +50,52 @@ h4 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  opacity: .6; /* Set the texture to 20% opacity */
-  z-index: -1; /* Place it behind the content */
+  opacity: .6;
+  /* Set the texture to 20% opacity */
+  z-index: -1;
+  /* Place it behind the content */
 }
 
 
 #header {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    column-gap: 100px;
-    margin-bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  column-gap: 100px;
+  margin-bottom: 0px;
 }
 
 #header-left {
-    flex: 1;
+  flex: 1;
 }
 
 #header-left h1 {
-    font-size: 56px; 
-    margin-top: 0px; 
-    margin-bottom: 36px;
+  font-size: 56px;
+  margin-top: 0px;
+  margin-bottom: 36px;
 }
 
 #header-left p {
-    font-size: 12px; color: rgb(60, 60, 60); max-width: 300px; margin-top: 16px;
-    transition: color .2s ease, font-weight .2s ease;
+  font-size: 12px;
+  color: rgb(60, 60, 60);
+  max-width: 300px;
+  margin-top: 16px;
+  transition: color .2s ease, font-weight .2s ease;
 }
 
 #header-left p:hover {
-    color: black;
-    font-weight: 500;
+  color: black;
+  font-weight: 500;
 }
 
 #header-a {
-    text-decoration: underline; color: var(--m-green);
+  text-decoration: underline;
+  color: var(--m-green);
 }
 
 #mobile-header-a {
-  text-decoration: underline; color: var(--m-green);
+  text-decoration: underline;
+  color: var(--m-green);
 }
 
 #header h4 {
@@ -109,7 +117,10 @@ h4 {
 }
 
 #mobile-icons p {
-  font-size: 12px; color: grey; max-width: 300px; margin-top: 16px;
+  font-size: 12px;
+  color: grey;
+  max-width: 300px;
+  margin-top: 16px;
 }
 
 #header-icons {
@@ -148,8 +159,10 @@ h4 {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left;
-  opacity: .5; /* Set the texture to 20% opacity */
-  z-index: -1; /* Place it behind the content */
+  opacity: .5;
+  /* Set the texture to 20% opacity */
+  z-index: -1;
+  /* Place it behind the content */
 }
 
 #block-text-center {
@@ -180,7 +193,8 @@ h4 {
 }
 
 #final-left h1 {
-  margin-top: 0px; margin-bottom: 24px;
+  margin-top: 0px;
+  margin-bottom: 24px;
 }
 
 #pleasanton {
@@ -199,6 +213,7 @@ h4 {
   position: relative;
   box-sizing: border-box;
 }
+
 .testimonial-slider {
   position: relative;
   overflow: hidden;
@@ -210,7 +225,8 @@ h4 {
 
 .testimonial-slide {
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   opacity: 0;
   transition: opacity 0.6s ease;
@@ -218,6 +234,7 @@ h4 {
   box-sizing: border-box;
   padding: 20px;
 }
+
 .testimonial-slide.active {
   opacity: 1;
   position: relative;
@@ -228,6 +245,7 @@ h4 {
   font-size: 30px;
   margin: 0 0 10px;
 }
+
 .testimonial-slide h4 {
   margin: 24px;
   margin-bottom: 0px;
@@ -240,6 +258,7 @@ h4 {
   align-items: center;
   margin-top: 15px;
 }
+
 .testimonial-nav button {
   background: none;
   border: none;
@@ -247,10 +266,12 @@ h4 {
   cursor: pointer;
   padding: 0 15px;
 }
+
 .testimonial-nav .dots {
   display: flex;
   gap: 8px;
 }
+
 .testimonial-nav .dot {
   width: 10px;
   height: 10px;
@@ -258,6 +279,7 @@ h4 {
   background: #ccc;
   cursor: pointer;
 }
+
 .testimonial-nav .dot.active {
   background: #333;
 }
@@ -287,7 +309,8 @@ h4 {
 }
 
 #request-form h2 {
-  margin: 0px; margin-bottom: 10px;
+  margin: 0px;
+  margin-bottom: 10px;
 }
 
 #request-form-input {
@@ -300,7 +323,10 @@ h4 {
 }
 
 #request-form-input-inner {
-  position: relative; display: inline-block; margin: 0px; width: 100%;
+  position: relative;
+  display: inline-block;
+  margin: 0px;
+  width: 100%;
 }
 
 #request-form-input input {
@@ -316,7 +342,8 @@ h4 {
 }
 
 #zipcode {
-  font-weight: 500; box-sizing: border-box;
+  font-weight: 500;
+  box-sizing: border-box;
 }
 
 .info-text {
@@ -348,15 +375,18 @@ h4 {
   color: white;
 }
 
-.info-icon:hover + .info-text,
+.info-icon:hover+.info-text,
 .info-text:hover {
-  visibility: visible; /* Use visibility instead of display */
+  visibility: visible;
+  /* Use visibility instead of display */
   opacity: 1;
-  pointer-events: auto; /* Enables interaction when visible */
+  pointer-events: auto;
+  /* Enables interaction when visible */
 }
 
 .main-btn {
-  position: relative; /* Allows pseudo-element positioning */
+  position: relative;
+  /* Allows pseudo-element positioning */
   border-radius: 100px;
   background-color: var(--m-green);
   color: white;
@@ -366,28 +396,36 @@ h4 {
   border: none;
   font-weight: 600;
   font-size: 16px;
-  overflow: hidden; /* Prevents content overflow during animation */
-  transition: color 0.4s ease, transform .2s ease; /* Smooth transition for text color */
+  overflow: hidden;
+  /* Prevents content overflow during animation */
+  transition: color 0.4s ease, transform .2s ease;
+  /* Smooth transition for text color */
 }
 
 .main-btn::before {
   content: "";
   position: absolute;
   top: 0;
-  left: -100%; /* Start position off-screen */
+  left: -100%;
+  /* Start position off-screen */
   width: 100%;
   height: 100%;
-  background-color: var(--yel); /* Color for wipe effect */
-  transition: left 0.4s ease; /* Transition for wipe effect */
-  z-index: 0; /* Behind the text */
+  background-color: var(--yel);
+  /* Color for wipe effect */
+  transition: left 0.4s ease;
+  /* Transition for wipe effect */
+  z-index: 0;
+  /* Behind the text */
 }
 
 .main-btn:hover::before {
-  left: 0; /* Move the wipe effect to cover the button */
+  left: 0;
+  /* Move the wipe effect to cover the button */
 }
 
 .main-btn:hover {
-  color: black; /* Change text color */
+  color: black;
+  /* Change text color */
   cursor: pointer;
   transform: scale(1.04);
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.15);
@@ -402,84 +440,84 @@ h4 {
 
 @media (max-width: 980px) {
   .content-width {
-      width: calc(95% - 2em);
+    width: calc(95% - 2em);
   }
 }
 
 @media only screen and (max-width: 768px) {
 
-main {
-  padding-top:60px;
-}
+  main {
+    padding-top: 60px;
+  }
 
-.content-width {
-  margin-top: 120px !important;
-}
+  .content-width {
+    margin-top: 120px !important;
+  }
 
-#header {
-  flex-direction: column;
-}
+  #header {
+    flex-direction: column;
+  }
 
-#header-icons {
-margin-top: 24px;
-column-gap: 20px;
-}
+  #header-icons {
+    margin-top: 24px;
+    column-gap: 20px;
+  }
 
-#desk-icons {
-  display: none;
-}
+  #desk-icons {
+    display: none;
+  }
 
-#mobile-icons {
-  display: block;
-}
+  #mobile-icons {
+    display: block;
+  }
 
-#testimonials {
-  margin-top: 90px !important;
-}
+  #testimonials {
+    margin-top: 90px !important;
+  }
 
-.testimonial-slide {
-  padding: 16px 0px;
-}
+  .testimonial-slide {
+    padding: 16px 0px;
+  }
 
-.testimonial-slider {
-  padding: 12px 0px;
-}
+  .testimonial-slider {
+    padding: 12px 0px;
+  }
 
-.testimonial-slide h3 {
-  font-size: 24px;
-}
+  .testimonial-slide h3 {
+    font-size: 24px;
+  }
 
-.testimonial-slide h4 {
-  font-size: 20px;
-}
+  .testimonial-slide h4 {
+    font-size: 20px;
+  }
 
-#block-text {
-  background-color: var(--l-green);
-  padding: 0px;
-  box-sizing: border-box;
-  border-radius: 20px;
-}
+  #block-text {
+    background-color: var(--l-green);
+    padding: 0px;
+    box-sizing: border-box;
+    border-radius: 20px;
+  }
 
-#final {
-flex-direction: column-reverse;
-row-gap: 48px;
-}
+  #final {
+    flex-direction: column-reverse;
+    row-gap: 48px;
+  }
 
-#pleasanton {
-height: 500px;
-width: 100%;
-}
+  #pleasanton {
+    height: 500px;
+    width: 100%;
+  }
 
-#request-form-input input {
-  width: 100%;
-}
+  #request-form-input input {
+    width: 100%;
+  }
 
-.info-text {
-  right: -60px;
-}
+  .info-text {
+    right: -60px;
+  }
 
-.content-width {
-margin-top: 160px;
-}
+  .content-width {
+    margin-top: 160px;
+  }
 
 }
