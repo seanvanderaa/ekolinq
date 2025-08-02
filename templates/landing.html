@@ -59,12 +59,12 @@ landfills!{% endblock %}
       <p>Since 2021, we’ve been making it easy to do the right thing with your unused textiles, and giving back to the
         community in the process. We’re striving for an entirely circular textile economy and taking all the steps we
         can to bring this reality to the Tri-Valley. We’d love for you to be a part of this mission.</p>
-      <button id="about-us-btn" class="action-btn-wbg">
+      <button id="about-us-btn-desktop" class="action-btn-wbg about-us-btn">
         <i class="bi bi-arrow-up-right btn-icon align-center"></i>Learn more about us
       </button>
     </div>
     <div class="fade-overlay">
-      <h3>What we offer.</h3>
+      <h3>How we do it.</h3>
       <div class="carousel">
         <div class="group">
           <div class="card">
@@ -73,7 +73,7 @@ landfills!{% endblock %}
                 aria-hidden="true" height="100">
             </div>
             <p class="impact-square-text">Residential and business pickups.</p>
-            <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+            <p class="impact-square-link"><a href="/request_init">Schedule</a> a free, contactless pickup.</p>
           </div>
           <div class="card">
             <div class="impact-square align-center highlight-square">
@@ -81,7 +81,7 @@ landfills!{% endblock %}
                 alt="Collect icon" aria-hidden="true" height="70">
             </div>
             <p class="impact-square-text">Local dropboxes.</p>
-            <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+            <p class="impact-square-link"><a href="/drop-boxes">Learn more</a> about them.</p>
           </div>
           <div class="card">
             <div class="impact-square align-center highlight-square">
@@ -89,7 +89,7 @@ landfills!{% endblock %}
                 aria-hidden="true" height="100">
             </div>
             <p class="impact-square-text">Fundraising collection events.</p>
-            <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
+            <p class="impact-square-link"><a href="/contact">Get in touch</a> and schedule an event.</p>
           </div>
         </div>
         <!-- Add `aria-hidden` to hide the duplicated cards from screen readers. -->
@@ -100,7 +100,7 @@ landfills!{% endblock %}
                 aria-hidden="true" height="100">
             </div>
             <p class="impact-square-text">Residential and business pickups.</p>
-            <p class="impact-square-link"><a href="/request-init">Schedule a free, contactless pickup.</a></p>
+            <p class="impact-square-link"><a href="/request_init">Schedule</a> a free, contactless pickup.</p>
           </div>
           <div class="card">
             <div class="impact-square align-center highlight-square">
@@ -108,7 +108,7 @@ landfills!{% endblock %}
                 alt="Collect icon" aria-hidden="true" height="70">
             </div>
             <p class="impact-square-text">Local dropboxes.</p>
-            <p class="impact-square-link"><a href="/drop-boxes">Learn more about them.</a></p>
+            <p class="impact-square-link"><a href="/drop-boxes">Learn more</a> about them.</p>
           </div>
           <div class="card">
             <div class="impact-square align-center highlight-square">
@@ -116,10 +116,12 @@ landfills!{% endblock %}
                 aria-hidden="true" height="100">
             </div>
             <p class="impact-square-text">Fundraising collection events.</p>
-            <p class="impact-square-link"><a href="/contact">Get in touch and schedule an event.</a></p>
+            <p class="impact-square-link"><a href="/contact">Get in touch</a> and schedule an event.</p>
           </div>
         </div>
       </div>
+            <p id="about-us-text-mobile">Still have questions?<br> <a href="/about">Learn more </a>about us.</p>
+
     </div>
   </div>
   <div id="problem" class="block-margin">
@@ -151,7 +153,7 @@ landfills!{% endblock %}
   <div id="items">
     <div id="items-header">
       <div>
-        <p class="section-title">ABOUT US</p>
+        <p class="section-title">ABOUT OUR SERVICE</p>
         <h2>What kinds of items does EkoLinq accept?</h2>
         <p>We accept almost every type of textile, whether old jeans, blankets, t-shirts, towels, or socks. See the
           list below for any specific items you’re curious about. Want to drop off your textiles yourself? <a

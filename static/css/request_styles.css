@@ -71,16 +71,83 @@ main {
     top: -96px !important;
 }
 
-#gateCodeInput {
-    padding: 12px;
-    font-size: 16px;
-    margin-left: 8px;
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) “Next Step” submit button & loader
+─────────────────────────────────────────────────────────────────────────*/
+
+#submit-btn-loader-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-top: 36px;
+  column-gap: 24px;
+  margin-bottom: 48px;
 }
 
-#qrCodeInput {
-    border-radius: 5px;
-    background-color: var(--l-grey);
-    padding: 12px;
+#init-submit-btn {
+
+  margin-bottom: 24px;
+}
+
+#loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+}
+
+#loader {
+  margin-top: 0px;
+    width: 48px;
+    height: 48px;
+    border: 3px solid #ececec;
+    border-bottom-color: var(--m-green);
+    border-radius: 50%;
+    display: none;
+    box-sizing: border-box;
+    animation: rotation .7s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
+#loading-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--off-white);
+    padding: 48px;
+    border-radius: 20px;
+    text-align: center;
+    display: none;
+    z-index: 1001;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--m-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+    margin-top: 48px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .faq-container {
@@ -225,6 +292,7 @@ main {
     padding: 12px 48px;
     max-width: 320px;
     margin: 0px auto;
+    margin-top: 24px;
 }
 
 #timeframe-submit-btn:disabled {
@@ -267,30 +335,6 @@ main {
     font-size: 16px;
 }
 
-#loading-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--off-white);
-    padding: 48px;
-    border-radius: 20px;
-    text-align: center;
-    display: none;
-    z-index: 1001;
-}
-
-.loader {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(0, 0, 0, 0.1);
-    border-top-color: var(--m-green);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: auto;
-    margin-top: 48px;
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -314,6 +358,10 @@ main {
     body {
         padding-top: 120px;
         background-color: var(--off-white);
+    }
+
+    .navbar {
+      background-color: var(--d-green);
     }
 
     .form-group-div {
@@ -346,6 +394,14 @@ main {
         padding: 12px 16px;
         font-size: 16px;
         border-radius: 5px;
+    }
+
+    #submit-btn-loader-wrapper {
+      display: flex;
+      flex-direction: column;
+      margin-top: 36px;
+      column-gap: 24px;
+      margin-bottom: 24px;
     }
     
     .submit-btn {
@@ -483,6 +539,7 @@ main {
         padding: 12px 48px;
         max-width: 320px;
         margin: 0px auto;
+        margin-top: 24px;
     }
     
     #timeframe-submit-btn:disabled {
@@ -515,6 +572,11 @@ main {
         -webkit-backdrop-filter: blur(2px);
         display: none;
         z-index: 1000;
+    }
+
+    #loading-popup {
+      width: 90%;
+      box-sizing: border-box;
     }
     
     .faq-popup {
@@ -551,7 +613,13 @@ main {
     #footer {
       box-shadow: 0px -40px 50px 0px #D4DECA;
     }
+    #init-submit-btn {
+      width: 100%;
+      height: 54px;
+    }
 }
+
+
 
 /*─────────────────────────────────────────────────────────────────────────
   1) “Request a Pickup” header and intro text
@@ -659,16 +727,6 @@ hr {
 .user-notice-warn {
   max-width: 460px;
   box-sizing: border-box;
-}
-
-
-/*─────────────────────────────────────────────────────────────────────────
-  7) “Next Step” submit button
-─────────────────────────────────────────────────────────────────────────*/
-
-#init-submit-btn {
-  margin-top: 36px;
-  margin-bottom: 48px;
 }
 
 

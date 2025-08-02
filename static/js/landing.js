@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    const aboutUs = document.getElementById('about-us-btn');
+    const aboutUs = document.getElementById('about-us-btn-desktop');
     if (aboutUs) {
       aboutUs.addEventListener('click', () => {
         window.location.href = '/about';

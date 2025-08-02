@@ -493,6 +493,10 @@ main {
     #footer {
         box-shadow: 0px -40px 50px 0px #D4DECA;
     }
+
+    .save-and-exit-btn {
+        width: 100%;
+    }
 }
 
 /* ----------------------------------------- */

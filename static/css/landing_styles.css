@@ -442,6 +442,16 @@ strong {
     }
 }
 
+@keyframes scrollingX {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 .impact-square-text {
     width: 100%;
     font-size: 20px;
@@ -454,7 +464,6 @@ strong {
 .impact-square-link {
     font-size: 16px;
     text-align: center;
-    color: var(--m-green) !important;
     margin: 0px;
     width: 100%;
     font-family: var(--mont);
@@ -462,6 +471,7 @@ strong {
 
 .impact-square-link a {
     color: var(--m-green) !important;
+    font-weight: 500;
 }
 
 .bin-png {
@@ -834,7 +844,7 @@ strong {
     }
 
     #impact {
-        margin-top: 60px;
+        margin-top: 40px !important;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -846,7 +856,47 @@ strong {
     }
 
     .fade-overlay {
+        width:100%;
+        max-width: 100%;
+        padding-left: 0px;
+        align-items: center;
+        margin-top: 12px;
+    }
+
+    .fade-overlay h3 {
+        margin-bottom: 8px;
+        padding-bottom: 24px;
+    }
+    .carousel {
+        &:hover .group {
+            animation-play-state:running;
+        }
+    }
+
+    .card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .group {
+        animation: scrolling 20s linear infinite;
+    }
+
+    #about-us-btn-desktop {
         display: none;
+    }
+
+    #about-us-text-mobile {
+        display: inline !important;
+        width: fit-content;
+        text-align: center;
+        margin-top: 16px;
+        padding-top: 24px;
+    }
+
+    #about-us-text-mobile a {
+        color: var(--m-green);
+        font-weight: 600;
     }
 
     #problem {
@@ -1012,8 +1062,12 @@ strong {
 }
 
 /* About Us button */
-#about-us-btn {
+.about-us-btn {
     margin-top: 48px;
+}
+
+#about-us-text-mobile {
+    display: none;
 }
 
 /* Collection Event layout */

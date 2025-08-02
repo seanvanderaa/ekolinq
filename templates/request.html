@@ -139,10 +139,14 @@
 
           {% endfor %}
         </div>
-
-        <button type="submit" id="init-submit-btn" class="submit-btn">
-          <span>Next Step: <span>Select a Timeframe</span></span>
-        </button>
+        <div id="submit-btn-loader-wrapper">
+          <button type="submit" id="init-submit-btn" class="submit-btn">
+            <span>Next Step: <span>Select a Timeframe</span></span>
+          </button>
+          <div id="loader-wrapper">
+            <div id="loader" class="loader"></div>
+          </div>
+        </div>
       </form>
 
       <h2>Frequently Asked Questions</h2>

@@ -134,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    const loader = document.getElementById('loader');
+    loader.style.display = "inline-block";
+
     // 2️⃣ Address existence check (new POST endpoint)
     const addr   = document.getElementById('address').value.trim();
     const city   = document.getElementById('city').value.trim();
