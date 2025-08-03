@@ -377,7 +377,7 @@ strong {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 140px;
+    height: 100px;
     /* adjust this to control fade distance */
     pointer-events: none;
     /* so underlying items are still clickable */
@@ -788,18 +788,6 @@ strong {
         width: 100%;
     }
 
-    .impact-square {
-        width: 100px;
-        /* Fixed width for each square */
-        height: 100px;
-        /* Fixed height for each square */
-    }
-
-    .highlight-square {
-        width: 100px;
-        height: 100px;
-    }
-
     #problem {
         flex-direction: column;
         row-gap: 24px;
@@ -872,6 +860,27 @@ strong {
 
     .hidden-item-desc {
         text-align: center;
+    }
+
+    .item-wrapper:hover img {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    .item-wrapper:hover .item-header {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    .item-wrapper:hover {
+        cursor: pointer;
+        transform: scale(1.02);
+        background-color: var(--m-blue);
+    }
+
+    .item-wrapper:hover .hidden-item-desc {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
     }
 
 
@@ -1082,6 +1091,27 @@ strong {
 
     #items-info ul {
         padding-left: 24px;
+    }
+
+    .item-wrapper:hover img {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    .item-wrapper:hover .item-header {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    .item-wrapper:hover {
+        cursor: pointer;
+        transform: scale(1.02);
+        background-color: var(--m-blue);
+    }
+
+    .item-wrapper:hover .hidden-item-desc {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
     }
 
     #collection-event {
