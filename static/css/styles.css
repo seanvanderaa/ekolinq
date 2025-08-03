@@ -76,12 +76,12 @@ li {
 }
 
 .a-green {
-    text-decoration: underline;
+    text-decoration: none;
     color: var(--m-green);
 }
 
 .a-yel {
-    text-decoration: underline;
+    text-decoration: none;
     color: var(--yel);
 }
 
