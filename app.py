@@ -909,7 +909,7 @@ def create_app():
         form = EditRequestInitForm()
 
         if not form.validate_on_submit():
-            flash("Invalid form submission. Verify that you clicked the 'I'm not a robot' box.", 'danger')
+            flash("Form submission failed. Please verify that you clicked the 'I'm not a robot' box.", 'danger')
             current_app.logger.warning("Invalid form submission at edit_request")
             return redirect(url_for('edit_request_init'))
 
