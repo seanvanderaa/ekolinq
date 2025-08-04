@@ -242,10 +242,10 @@ def create_app():
     migrate = Migrate(app, db)
 
     # Create tables once if needed
-    #with app.app_context():
-        #db.drop_all()
-        #db.create_all()
-        #seed_schedule_if_necessary()
+    # with app.app_context():
+    #     db.drop_all()
+    #     db.create_all()
+    #     seed_schedule_if_necessary()
 
     # --------------------------------------------------
     # RATE-LIMIT SCOPES (shared limits)
@@ -1766,46 +1766,63 @@ def create_app():
     @app.route('/view-route-info')
     @login_required
     def view_route_info():
-        selected_date = request.args.get('date')
-        current_app.logger.info("GET /view-route-info - user requested route info for date=%s", selected_date)
+        # 1) Grab the raw string
+        date_str = request.args.get('date')
+        current_app.logger.info("GET /view-route-info - user requested route info for date=%s", date_str)
 
-        if not selected_date:
+        if not date_str:
             current_app.logger.warning("No 'date' parameter provided to /view-route-info.")
-
             return "Date parameter is required", 400
 
-        formatted_date = format_date(selected_date)
-
-        # Query "Requested" pickups
-        all_pickups = PickupRequest.query.filter_by(
-            request_date=selected_date,
-        ).all()
-        current_app.logger.debug("Found %d 'Requested' pickups for date=%s", len(all_pickups), selected_date)
-
-
-        requested_addresses = [p.address + ", " + p.city + " CA" for p in all_pickups]
-
-        # Now call our route-optimization function
-        admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
-        depot     = admin_cfg.value
-
+        # 2) Parse & validate
         try:
-            sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
-                requested_addresses,
-                start_location=depot,           # identical start/end rules as live view
-                end_location=depot
-            )
-        except Exception:
-            current_app.logger.exception("Distance-matrix/TSP error")
-            sorted_addresses, total_time_seconds, leg_times = requested_addresses, 0, []
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            current_app.logger.error("Invalid date format: %s", date_str)
+            return "Invalid date format, expected YYYY-MM-DD", 400
 
-        total_time_str = seconds_to_pretty(total_time_seconds)
+        # 3) For display only
+        formatted_date = format_date(date_str)
+
+        # 4) Query by the actual date object, not the raw string
+        all_pickups = PickupRequest.query.filter_by(
+            request_date=selected_date
+        ).all()
+        current_app.logger.debug(
+            "Found %d 'Requested' pickups for date=%s",
+            len(all_pickups),
+            selected_date
+        )
+
+        requested_addresses = [
+            f"{p.address}, {p.city} CA"
+            for p in all_pickups
+        ]
+
+        admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
+        depot = admin_cfg.value
+
+        # 5) Compare properly against today()
+        if selected_date >= date.today():
+            try:
+                sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
+                    requested_addresses,
+                    start_location=depot,
+                    end_location=depot
+                )
+            except Exception:
+                current_app.logger.exception("Distance-matrix/TSP error")
+                sorted_addresses, total_time_seconds, leg_times = requested_addresses, 0, []
+
+            total_time_str = seconds_to_pretty(total_time_seconds)
+        else:
+            total_time_str = "Old Route, No Estimate."
 
         return render_template(
             'admin/view_route_info.html',
             date=formatted_date,
-            all_pickups = all_pickups,
-            total_time_str = total_time_str,
+            all_pickups=all_pickups,
+            total_time_str=total_time_str,
         )
     
     def _clean_coord(s: str | None) -> str | None:
