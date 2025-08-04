@@ -588,7 +588,7 @@ strong {
     display: flex;
     flex-direction: row;
     column-gap: 16px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--m-green);
     border-radius: 5px;
     padding: 16px 24px;
     align-items: center;
@@ -662,7 +662,7 @@ strong {
     display: flex;
     flex-direction: row;
     column-gap: 16px;
-    background-color: #7810108d;
+    background-color: #fc000034;
     border-radius: 5px;
     padding: 16px 24px;
     align-items: center;
@@ -692,6 +692,10 @@ strong {
 .initiatives {
     flex-direction: column;
     flex: 1;
+}
+
+.initiatives a {
+    font-weight: 600;
 }
 
 #error-message {

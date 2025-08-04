@@ -75,17 +75,9 @@
     </div>
   </section>
   <div id="request-form" class="content-width">
-    <h2>Can we help get rid of your unwanted clothes?</h2>
-    <p>Enter your zipcode below to schedule a pickup.</p>
-    <form action="/find-time" method="GET" id="request-form-input">
-      <div id="request-form-input-inner">
-        <input type="text" id="zipcode" name="zipcode" placeholder="Enter ZIP Code"
-          class="align-center" required>
-        <span class="info-icon">i</span>
-        <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently only serves the Tri-Valley.</div>
-      </div>
-      <button class="main-btn" type="submit"><span>Find a Time</span></button>
-    </form>
+    <h2>Can we help pick up your textile waste?</h2>
+    <p>Keep your clothing out of landfill and in the loop.</p>
+    <button class="main-btn main-btn2" id="request-a-pickup"><span>Schedule a free pickup</span></button>
   </div>
 </main>
 {% endblock %}
@@ -95,6 +87,10 @@
   <script nonce="{{ csp_nonce() }}">
     // carousel.js
     document.addEventListener("DOMContentLoaded", () => {
+      navForward = document.getElementById('request-a-pickup');
+      navForward.addEventListener('click', function() {
+        window.location.href = `/request_init`;
+      });
       const slides = Array.from(document.querySelectorAll(".testimonial-slide"));
       const prevBtn = document.querySelector(".testimonial-nav .prev");
       const nextBtn = document.querySelector(".testimonial-nav .next");
@@ -142,24 +138,6 @@
 
       // kick it off
       startInterval();
-      
-      document.getElementById('request-form-input').addEventListener('submit', async function (event) {
-          event.preventDefault(); // Prevent default form submission
-      
-          const zipcode = document.getElementById('zipcode').value;
-      
-          // Make an AJAX request to the Flask endpoint
-          const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-          const data = await response.json();
-      
-          if (data.valid) {
-            // Redirect to /request_pickup if ZIP code is valid
-            window.location.href = `/request_pickup?zipcode=${zipcode}`;
-          } else {
-            // Display an alert with the invalid reason
-            alert(`${data.reason}`);
-          }
-        });
     });
   </script>
 {% endblock %}

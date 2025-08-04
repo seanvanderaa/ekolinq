@@ -295,51 +295,119 @@ h4 {
 
 
 #request-form {
-  background: linear-gradient(to bottom right, var(--m-green), var(--m-blue));
-  height: 100%;
-  border-radius: 50px;
-  padding: 80px 40px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
+    background: linear-gradient(to bottom right, var(--m-green), var(--m-blue));
+    height: 100%;
+    border-radius: 50px;
+    padding: 80px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
 }
 
 #request-form h2 {
-  margin: 0px;
-  margin-bottom: 10px;
+  margin-top: 0px;
 }
 
-#request-form-input {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--crim);
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
+#request-form p {
+  margin-top: 0px;
 }
 
-#request-form-input-inner {
-  position: relative;
-  display: inline-block;
-  margin: 0px;
-  width: 100%;
+
+/* Keyframes for the slow-moving conic gradient --------------------------- */
+@keyframes spin-ring {
+    from {
+        transform: rotate(-180deg);
+    }
+
+    to {
+        transform: rotate(180deg);
+    }
 }
 
-#request-form-input input {
-  height: 60px;
-  width: 360px;
-  border: 1px solid var(--border-grey);
-  border-radius: 5px;
-  font-family: var(--mont);
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 36px;
-  margin-top: 16px;
+.main-btn {
+    /* layout */
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 32px;
+    /* tweak to taste */
+    font-weight: 300;
+
+    /* look & feel */
+    background: var(--yel);
+    color: black;
+    border: none;
+    border-radius: 100px;
+    font: 600 16px/1 var(--mont);
+    overflow: hidden;
+    /* keep the glow inside the pill */
+    cursor: pointer;
+
+    /* motion */
+    transition: color .1s ease, transform .2s ease, font-weight .2s ease;
+    z-index: 0;
+    width: 360px;
+    height: 80px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 24px;
 }
+
+.main-btn:hover {
+    transform: scale(1.02);
+    color: black;
+    background: var(--yel);
+    font-weight: 600;
+}
+
+/* ----------------------------------------------------------------------- */
+/*  VIBRANT GRADIENT RING  ( ::before )                                    */
+/* ----------------------------------------------------------------------- */
+.main-btn::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    /* make it much larger than btn   */
+    background: conic-gradient(white 0%,
+            var(--l-green) 20%,
+            rgba(255, 255, 255, 0) 25% 360deg);
+    /* seamless loop                  */
+    border-radius: 50%;
+    /* full circle so rotation is smooth */
+    animation: spin-ring 8s linear infinite;
+    filter: blur(15px);
+    /* soft glow                      */
+    z-index: -1;
+    transition: opacity .4s ease;
+    /* lets us “dissipate” on hover   */
+}
+
+/* Fade the ring away on hover */
+.main-btn:hover::before {
+    opacity: 0;
+}
+
+/* ----------------------------------------------------------------------- */
+/*  INNER MASK  ( ::after )                                                */
+/*  Creates a solid fill so only the 2-3 px rim shows the gradient         */
+/* ----------------------------------------------------------------------- */
+.main-btn::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    /* width of the rim               */
+    background-color: var(--yel);
+    border-radius: inherit;
+    z-index: -1;
+    transition: background-color .4 ease;
+}
+
 
 #zipcode {
   font-weight: 500;
@@ -382,59 +450,6 @@ h4 {
   opacity: 1;
   pointer-events: auto;
   /* Enables interaction when visible */
-}
-
-.main-btn {
-  position: relative;
-  /* Allows pseudo-element positioning */
-  border-radius: 100px;
-  background-color: var(--m-green);
-  color: white;
-  height: 48px;
-  width: 200px;
-  font-family: var(--mont);
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  overflow: hidden;
-  /* Prevents content overflow during animation */
-  transition: color 0.4s ease, transform .2s ease;
-  /* Smooth transition for text color */
-}
-
-.main-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  /* Start position off-screen */
-  width: 100%;
-  height: 100%;
-  background-color: var(--yel);
-  /* Color for wipe effect */
-  transition: left 0.4s ease;
-  /* Transition for wipe effect */
-  z-index: 0;
-  /* Behind the text */
-}
-
-.main-btn:hover::before {
-  left: 0;
-  /* Move the wipe effect to cover the button */
-}
-
-.main-btn:hover {
-  color: black;
-  /* Change text color */
-  cursor: pointer;
-  transform: scale(1.04);
-  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.15);
-}
-
-/* Ensure text stays above the wipe */
-.main-btn span {
-  position: relative;
-  z-index: 1;
 }
 
 
@@ -518,6 +533,10 @@ h4 {
 
   .content-width {
     margin-top: 160px;
+  }
+
+  .main-btn {
+    width: 100%;
   }
 
 }

@@ -29,23 +29,6 @@ landfills!{% endblock %}
       <p><a href="/about">Learn more</a> about what we do.</p>
     </div>
   </div>
-  <div id="request-form" class="box-shadow">
-    <p id="req-form-top-p">Have textiles
-      you need to get rid of?</p>
-    <h1>Schedule a
-      free pick-up.</h1>
-    <p id="req-form-mid-p">EkoLinq is helping move California's Tri-Valley
-      region toward a more sustainable future. <b>Enter your zip code below to see if we pickup in your area.</b></p>
-    <form action="/find-time" method="GET" id="request-form-input">
-      <div>
-        <input type="text" id="zipcode" name="zipcode" placeholder="Enter ZIP Code" class="align-center" required>
-        <span class="info-icon">i</span>
-        <div class="info-text">We only use this ZIP code to determine pick-up dates and eligibility. EkoLinq currently
-          only serves the Tri-Valley.</div>
-      </div>
-      <button class="main-btn" type="submit"><span>Find a Time</span></button>
-    </form>
-  </div>
 </div>
 <div id="ekolinq-info" class="content-width">
   <div id="impact" class="block-margin">
@@ -244,17 +227,17 @@ landfills!{% endblock %}
       <div class="initiatives" class="align-center">
         <img src="{{ url_for('static', filename='images/tradewater.png') }}" height="160" aria-hidden="true"
           class="box-shadow">
-        <p>Tradewater: Working to eliminate CFC emissions from harming the atmosphere.</p>
+        <p><a href="https://tradewater.co/" target="_blank" class="a-green">Tradewater:</a> Working to eliminate CFC emissions from harming the atmosphere.</p>
       </div>
       <div class="initiatives" class="align-center">
         <img src="{{ url_for('static', filename='images/onetree.jpg') }}" height="160" aria-hidden="true"
           class="box-shadow">
-        <p>One Tree Planted: Helping increase atmospheric carbon absorption through reforestation.</p>
+        <p><a href="https://onetreeplanted.org/" target="_blank" class="a-green">One Tree Planted:</a> Helping increase atmospheric carbon absorption through reforestation.</p>
       </div>
       <div class="initiatives" class="align-center">
         <img src="{{ url_for('static', filename='images/climeworks.png') }}" height="160" aria-hidden="true"
           class="box-shadow">
-        <p>Climeworks: Working toward direct air carbon capture technology and sequestration.</p>
+        <p><a href="https://climeworks.com/" target="_blank" class="a-green">Climeworks:</a> Working toward direct air carbon capture technology and sequestration.</p>
       </div>
     </div>
   </div>

@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    navForward = document.getElementById('request-a-pickup');
+    navForward.addEventListener('click', function() {
+      window.location.href = `/request_init`;
+    });
     // 1) Highlight squares hover logic
     const highlightSquares = document.querySelectorAll('.highlight-square');
   
@@ -43,23 +47,5 @@ document.addEventListener("DOMContentLoaded", function () {
       appearOnScroll.observe(fader);
     });
   
-    // 3) Form submission logic
-    document.getElementById('request-form-input').addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent default form submission
-  
-      const zipcode = document.getElementById('zipcode').value;
-  
-      // Make an AJAX request to the Flask endpoint
-      const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-      const data = await response.json();
-  
-      if (data.valid) {
-        // Redirect to /request_pickup if ZIP code is valid
-        window.location.href = `/request_pickup?zipcode=${zipcode}`;
-      } else {
-        // Display an alert with the invalid reason
-        alert(`${data.reason}`);
-      }
-    });
   });
   

@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
           alert(`${data.reason}`);
       }
   });
-      navForward = document.getElementById('request-a-pickup');
+    navForward = document.getElementById('request-a-pickup');
     navForward.addEventListener('click', function() {
       window.location.href = `/request_init`;
     });
