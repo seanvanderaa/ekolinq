@@ -48,23 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  document.getElementById('request-form-input').addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent default form submission behavior
-
-      const zipcode = document.getElementById('zipcode').value;
-
-      // Make an AJAX request to the Flask endpoint
-      const response = await fetch(`/verify_zip?zipcode=${zipcode}`);
-      const data = await response.json();
-
-      if (data.valid) {
-          // Redirect to the /request endpoint if the ZIP code is valid
-          window.location.href = `/request_pickup?zipcode=${zipcode}`
-      } else {
-          // Display an alert or popup with the invalid ZIP code reason
-          alert(`${data.reason}`);
-      }
-  });
     navForward = document.getElementById('request-a-pickup');
     navForward.addEventListener('click', function() {
       window.location.href = `/request_init`;
