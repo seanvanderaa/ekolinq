@@ -2254,7 +2254,3 @@ def seed_schedule_if_necessary():
                                      slot2_start=None, slot2_end=None)
             db.session.add(record)
         db.session.commit()
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(host="localhost", port=3000, debug=True)
