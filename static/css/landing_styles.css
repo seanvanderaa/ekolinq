@@ -541,25 +541,36 @@ strong {
 } */
 
 #image-belt {
-    background-color: var(--d-green);
+    background-color: rgb(234, 234, 234);
+}
+
+#image-belt .section-title {
+    color: black !important;
+}
+
+#image-belt h3 {
+    color: black !important;
 }
 
 
 #items {
     position: relative;
     z-index: 2;
-    max-width: 860px;
-    border-radius: 50px;
-    background-color: #142602;
+    max-width: 960px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 50px;
-    padding-bottom: 70px;
-    color: white;
+    padding: 100px 0px;
+    padding-bottom: 120px;
+
 }
 
 #items-header {
     max-width: 60%;
+    color: black !important;
+}
+
+#items-header .a-green {
+    font-weight: 600;
 }
 
 #items-info {
@@ -569,6 +580,7 @@ strong {
     justify-content: center;
     row-gap: 36px;
     margin-top: 24px;
+    color: white;
 }
 
 #accepted-items-wrapper, #unaccepted-items-wrapper {
@@ -590,10 +602,11 @@ strong {
     column-gap: 16px;
     background-color: var(--m-green);
     border-radius: 5px;
-    padding: 16px 24px;
+    padding: 12px 16px;
+    cursor: pointer;
     align-items: center;
     box-sizing: border-box;
-    transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+    transition: transform .4s ease-in-out, background-color .2s ease, box-shadow .2s ease;
 }
 
 
@@ -619,7 +632,7 @@ strong {
   position: absolute;
   top: 50%;
   left: 0px;                  /* same horizontal inset as your padding */
-  transform: translateY(-100%);
+  transform: translateY(200px);
   opacity: 0;
   margin: 0;                   /* reset any default margins */
   white-space: normal;               /* allow wrapping */
@@ -632,29 +645,29 @@ strong {
 
 /* on hover: hide front‐face, show back‐face */
 .item-wrapper:hover img {
-  opacity: 0;
-  transform: translateX(-100%);
+  /* opacity: 0; */
+  transform: translateY(-200px);
 }
 
 .item-wrapper:hover .item-header {
-  opacity: 0;
-  transform: translateX(100%);
+  /* opacity: 0; */
+  transform: translateY(-200px);
 }
 
 .item-wrapper:hover {
     cursor: pointer;
     transform: scale(1.02);
-    background-color: var(--m-blue);
 }
 
 .item-wrapper:hover .hidden-item-desc {
   opacity: 1;
-  transform: translateY(-50%) translateX(0);
+  transform: translateY(-50%);
 }
 
 .unaccepted-item {
     position: relative;
-    overflow: hidden;    
+    overflow: hidden;   
+    cursor:not-allowed; 
     flex: 1;
     min-width: 48%;
     max-width: 48%;
@@ -662,7 +675,7 @@ strong {
     display: flex;
     flex-direction: row;
     column-gap: 16px;
-    background-color: #fc000034;
+    background-color: var(--m-blue);
     border-radius: 5px;
     padding: 16px 24px;
     align-items: center;
