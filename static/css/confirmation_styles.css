@@ -66,16 +66,13 @@ main {
     margin: 0px;
 }
 
-#items-h3 {
-    font-family: var(--crim);
-}
-
 #items-info {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
     column-gap: 36px;
+    color: black;
 }
 
 .items {
