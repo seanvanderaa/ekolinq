@@ -564,7 +564,7 @@ def create_app():
 
     @app.route('/request_init', methods=['GET', 'POST'])
     @no_cache
-    @limiter.limit("10 per hour")
+    @limiter.limit("50 per hour")
     def request_init():
         form = RequestForm()
         if form.validate_on_submit():
@@ -644,7 +644,7 @@ def create_app():
 
     @app.route('/date', methods=['GET', 'POST'])
     @no_cache
-    @limiter.limit("30 per hour")
+    @limiter.limit("50 per hour")
     @pickup_flow_required
     def select_date():
         request_id = request.args.get('request_id')
@@ -715,7 +715,7 @@ def create_app():
                             base_date_str=base_date_str)
     
     @app.route('/confirmation')
-    @limiter.limit("30 per hour")
+    @limiter.limit("50 per hour")
     @pickup_flow_required  
     def confirmation():
         request_id = request.args.get('request_id')
