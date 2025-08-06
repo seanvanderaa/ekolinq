@@ -1761,20 +1761,23 @@ def create_app():
             past_dates=past_dates_final
         )
 
-    
-
     @app.route('/view-route-info')
     @login_required
     def view_route_info():
         # 1) Grab the raw string
         date_str = request.args.get('date')
-        current_app.logger.info("GET /view-route-info - user requested route info for date=%s", date_str)
+        current_app.logger.info(
+            "GET /view-route-info - user requested route info for date=%s",
+            date_str
+        )
 
         if not date_str:
-            current_app.logger.warning("No 'date' parameter provided to /view-route-info.")
+            current_app.logger.warning(
+                "No 'date' parameter provided to /view-route-info."
+            )
             return "Date parameter is required", 400
 
-        # 2) Parse & validate
+        # 2) Parse & validate format (keep date_str for querying)
         try:
             selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         except ValueError:
@@ -1784,14 +1787,14 @@ def create_app():
         # 3) For display only
         formatted_date = format_date(date_str)
 
-        # 4) Query by the actual date object, not the raw string
+        # 4) Query by the raw string to match your VARCHAR column
         all_pickups = PickupRequest.query.filter_by(
-            request_date=selected_date
+            request_date=date_str
         ).all()
         current_app.logger.debug(
             "Found %d 'Requested' pickups for date=%s",
             len(all_pickups),
-            selected_date
+            date_str
         )
 
         requested_addresses = [
@@ -1802,7 +1805,7 @@ def create_app():
         admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
         depot = admin_cfg.value
 
-        # 5) Compare properly against today()
+        # 5) If today or in the future, compute route; otherwise skip
         if selected_date >= date.today():
             try:
                 sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
