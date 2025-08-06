@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const aData = await aRes.json();
       if (!aData.valid) {
         showFormError('address', aData.message);
+        loader.style.display = "none";
         return;
       }
     } catch (err) {
