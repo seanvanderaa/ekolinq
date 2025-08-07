@@ -283,6 +283,17 @@ def create_app():
     def _monitor_start():
         g._start_time = time.time()
 
+    SUSPECT_PATHS = (
+        "/wp-", ".env", ".git", "/admin.php", "/xmlrpc.php",
+        ".php",  # generic PHP probe
+    )
+
+    @app.before_request
+    def drop_bot_probes():
+        p = request.path.lower()
+        if any(s in p for s in SUSPECT_PATHS):
+            abort(404)  
+
     @app.after_request
     def set_coop(response):
         response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
@@ -2199,9 +2210,14 @@ def create_app():
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
-        current_app.logger.warning(f"CSRF failure at {request.path}: {e.description}")
-        # Redirect to our custom “session expired” page
-        raise SessionExpired()
+        current_app.logger.info(
+            "CSRF blocked at %s – %s – UA=%s – IP=%s",
+            request.path, e.description,
+            request.headers.get("User-Agent", ""),
+            request.remote_addr,
+        )
+        record_440()                          # keep the sliding-window stats
+        return render_template("440.html"), 440
 
     # --------------------------------------------------
 

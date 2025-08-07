@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => {
         if (menu.classList.contains('active')) {
           icon.classList.remove('bi-list');
-          icon.classList.add('bi-x');
+          icon.classList.add('bi-x-lg');
+          icon.style.color = "white";
         } else {
-          icon.classList.remove('bi-x');
+          icon.classList.remove('bi-x-lg');
           icon.classList.add('bi-list');
         }
         icon.style.opacity = 1;

@@ -892,7 +892,6 @@ strong {
     .item-wrapper:hover {
         cursor: pointer;
         transform: scale(1.02);
-        background-color: var(--m-blue);
     }
 
     .item-wrapper:hover .hidden-item-desc {
@@ -1123,7 +1122,6 @@ strong {
     .item-wrapper:hover {
         cursor: pointer;
         transform: scale(1.02);
-        background-color: var(--m-blue);
     }
 
     .item-wrapper:hover .hidden-item-desc {

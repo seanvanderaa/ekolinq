@@ -509,7 +509,7 @@ li {
         z-index: 100;
         flex-direction: column;
         position: absolute;
-        top: 64px;
+        top: 58px;
         right: 0;
         background-color: rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(5px);         /* applies the blur */
@@ -518,7 +518,6 @@ li {
         max-height: 0;
         overflow: hidden;
         row-gap: 24px;
-
         transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
     }
     
@@ -536,6 +535,10 @@ li {
 @media only screen and (max-width: 768px) {
     #home-button {
         display: none;
+    }
+
+    .navbar{
+        background-color: var(--d-green);
     }
 
     .flash-container {
