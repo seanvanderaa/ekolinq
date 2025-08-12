@@ -12,8 +12,17 @@ def send_contact_email(name, email, message):
     """
     try:
         # Subject and recipients can be customized as needed
-        subject = "Testing Contact Form Submission"
-        recipients = [current_app.config["MAIL_USERNAME"], "seanpvanderaa@gmail.com"]
+        CONFIG_NAME = os.getenv("FLASK_CONFIG", "development")   # default “development”
+        if CONFIG_NAME == "development":
+            subject = "[TESTING] New Contact Form Entry"
+        else:
+            subject = "New Contact Form Entry"
+        
+        admin_email = os.getenv("MAIL_ERROR_ADDRESS", "")
+        if admin_email != "":
+            recipients = [current_app.config["MAIL_USERNAME"], admin_email]
+        else:
+            recipients = [current_app.config["MAIL_USERNAME"]]
         cc = []
 
         msg = Message(

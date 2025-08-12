@@ -37,9 +37,9 @@
       {{ edit_request_form.requester_email(id=edit_request_form.requester_email.id, placeholder="name@example.com") }}
     </div>
     <div class="form-group">
-      {{ contact_form.recaptcha }}
-        {% if contact_form.recaptcha.errors %}
-          <div class="error">{{ contact_form.recaptcha.errors[0] }}</div>
+      {{ edit_request_form.recaptcha }}
+        {% if edit_request_form.recaptcha.errors %}
+          <div class="error">{{ edit_request_form.recaptcha.errors[0] }}</div>
         {% endif %}
     </div>
     <button type="submit" class="large-submit-btn align-center">Submit</button>

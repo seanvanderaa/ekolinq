@@ -207,3 +207,7 @@ class RatingForm(FlaskForm):
         validators=[DataRequired(), Length(max=2000)]
     )
     submit = SubmitField("Save Review")
+
+class DebugAdminRoutes(FlaskForm):
+    date = HiddenField("date", validators=[DataRequired()])
+    submit = SubmitField("Create and Send Debug Report")

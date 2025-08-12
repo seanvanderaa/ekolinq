@@ -1,5 +1,6 @@
 # app.py
 import os
+import re
 import csv
 import io
 import json
@@ -69,11 +70,12 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
                            DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
-                           updateCustomerNotes, RatingForm)
+                           updateCustomerNotes, RatingForm, DebugAdminRoutes)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
                     get_service_schedule, get_address)
+
 from extensions import mail
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -311,10 +313,6 @@ def create_app():
         record_slow(duration)
 
         return response
-
-    @app.context_processor
-    def inject_contact_form():
-        return {"contact_form": ContactForm()}
     
     def no_cache(view):
         @wraps(view)
@@ -326,6 +324,40 @@ def create_app():
             return resp
         wrapped.__name__ = view.__name__
         return wrapped
+    
+    PROTECTED_POST_PATHS = {"/contact-form-entry", "/edit-request-approval", "/request_init"}
+    MIN_FORM_DWELL_SECONDS = 2  # time-trap threshold
+
+    def mark_form_start():
+        # Call this on GET when you render a form page
+        session["form_started_at"] = datetime.now().isoformat()
+
+    @app.before_request
+    def harden_forms():
+        # Only gate our three hot paths on POST
+        if request.method == "POST" and request.path in PROTECTED_POST_PATHS:
+            # Only accept classic browser form posts (your JS uses FormData -> multipart/form-data)
+            if request.mimetype not in ("application/x-www-form-urlencoded", "multipart/form-data"):
+                current_app.logger.info("Dropped non-form POST on %s (mimetype=%s)", request.path, request.mimetype)
+                return ("", 204)
+
+            # Honeypot: if the hidden 'website' or 'hp' field is filled, treat as bot
+            if request.form.get("website") or request.form.get("hp"):
+                current_app.logger.info("Honeypot tripped on %s", request.path)
+                return ("", 204)
+
+            # Time-trap: require minimal dwell time between GET render and POST submit
+            started = session.get("form_started_at")
+            if not started:
+                current_app.logger.info("Missing form_started_at on %s", request.path)
+                return ("", 204)
+            try:
+                started_dt = datetime.fromisoformat(started)
+            except Exception:
+                return ("", 204)
+            if datetime.now() - started_dt < timedelta(seconds=MIN_FORM_DWELL_SECONDS):
+                current_app.logger.info("Too-fast submit on %s", request.path)
+                return ("", 204)
 
     # --------------------------------------------------
     # LOGIN SECURITY (verify Cognito JWT)
@@ -474,12 +506,15 @@ def create_app():
     def about():
         current_app.logger.info("GET /about - Rendering about page.")
         return render_template('about.html')
-    
+        
     @app.route('/contact', methods=['GET'])
     @no_cache
     def contact():
         current_app.logger.info("GET /contact - Rendering contact page.")
-        return render_template('contact.html')
+        mark_form_start()
+        form = ContactForm()
+        return render_template('contact.html', contact_form=form)
+
 
     @app.route('/drop-boxes', methods=['GET'])
     def dropBoxes():
@@ -553,6 +588,7 @@ def create_app():
     def request_pickup():
         current_app.logger.info("GET /request_pickup - User accessed request_pickup page.")
         form = RequestForm()
+        mark_form_start()
         zipcode = request.args.get('zipcode')
         ZIP_TO_CITY = {
             "94566": "Pleasanton",
@@ -577,10 +613,17 @@ def create_app():
     @no_cache
     @limiter.limit("50 per hour")
     def request_init():
-        form = RequestForm()
+        if request.method == 'GET':
+            mark_form_start()
+            current_app.logger.info("GET /request_init - Rendering request form.")
+            form = RequestForm()
+            return render_template('request.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
+
+        # POST
+        form = RequestForm(formdata=request.form)  # explicit formdata
+
         if form.validate_on_submit():
             current_app.logger.info("POST /request_init - Form validated successfully. Creating new request.")
-            # Extract form data
             fname   = form.firstName.data
             lname   = form.lastName.data
             email   = form.email.data
@@ -592,36 +635,33 @@ def create_app():
             notes   = form.notes.data
             awareness = form.awarenessOptions.data
             date_filed = date.today()
-
             gated = form.gated.data
 
             token = os.getenv("MAPBOX_ACCESS_TOKEN")
             if not token:
-                raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
+                current_app.logger.error("Missing MAPBOX_ACCESS_TOKEN")
+                return render_template('request.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY), 500
 
-            # build one full address string
             full_address = ", ".join(filter(None, [address, city, "CA", zip_]))
             try:
                 geocoded_addr = _maybe_geocode(full_address, token)
             except Exception as e:
                 current_app.logger.error("Geocoding failed for %r: %s", full_address, e)
-                # fallback to raw address string (or handle as you prefer)
                 geocoded_addr = None
-            
+
             current_app.logger.debug("New request created.")
-            
-            # Insert into DB (assuming add_request is defined elsewhere)
+
             new_id = add_request(
-                date_filed = date_filed,
+                date_filed=date_filed,
                 fname=fname,
                 lname=lname,
                 email=email,
                 phone_number=phone,
                 address=address,
-                address2 = address2,
+                address2=address2,
                 city=city,
                 zipcode=zip_,
-                geocoded_addr = geocoded_addr,
+                geocoded_addr=geocoded_addr,
                 notes=notes,
                 gated=gated,
                 awareness=awareness,
@@ -630,27 +670,27 @@ def create_app():
             pickup = db.session.get(PickupRequest, new_id)
             pickup_code = pickup.request_id
             current_app.logger.info("New pickup request created.")
-            session.clear()                               # blow away any old pickup flow
+
+            session.clear()
             token = new_confirm_token(pickup_code)
             session.update({
                 "pickup_request_id": pickup_code,
-                "confirm_token":    token,
-                "confirm_expires":  time.time() + 300     # 5 minute page-refresh window
+                "confirm_token":     token,
+                "confirm_expires":   time.time() + 300
             })
             return redirect(url_for('select_date', request_id=pickup_code))
-        
-        if request.method == 'POST':
-            for field_name, error_list in form.errors.items():
-                label = getattr(form, field_name).label.text
-                for err in error_list:
-                    if err == "The response parameter is missing.":
-                        flash(f"Please make sure to click the reCAPTCHA form to verify you're not a robot.")
-                    else:
-                        flash(f"{err}")
-            current_app.logger.warning("POST /request_init - Form validation failed. Errors: %s", form.errors)
 
-        current_app.logger.info("GET /request_init - Rendering request form.")
-        return render_template('request.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
+        # POST but not valid
+        for field_name, error_list in form.errors.items():
+            label = getattr(form, field_name).label.text
+            for err in error_list:
+                if err == "The response parameter is missing.":
+                    flash("Please make sure to click the reCAPTCHA form to verify you're not a robot.")
+                else:
+                    flash(f"{err}")
+        current_app.logger.warning("POST /request_init - Form validation failed. Errors: %s", form.errors)
+        return render_template('request.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY), 400
+
 
 
     @app.route('/date', methods=['GET', 'POST'])
@@ -839,6 +879,7 @@ def create_app():
     def edit_request_init():
         current_app.logger.info("GET /edit-request-init - User accessing the edit request initialization page.")
         edit_request_form = EditRequestInitForm()
+        mark_form_start()
         return render_template(
             'edit_request.html',
             edit_request_form=edit_request_form,
@@ -913,11 +954,9 @@ def create_app():
     @approval_scope
     @code_email_scope
     def edit_request_approval():
-        """Receives the code+email form, validates via can_edit(), and
-        either shows the edit screen or bounces back with a flash alert."""
         current_app.logger.info("POST /edit-request-approval - User accessing the edit request page.")
 
-        form = EditRequestInitForm()
+        form = EditRequestInitForm(formdata=request.form)  # explicit formdata
 
         if not form.validate_on_submit():
             flash("Form submission failed. Please verify that you clicked the 'I'm not a robot' box.", 'danger')
@@ -926,13 +965,14 @@ def create_app():
 
         ok, result = can_edit(form.request_id.data, form.requester_email.data)
         if not ok:
-            current_app.logger.warning("edit_request endpoint hit, email and request ID don't match. Request ID = %s", form.request_id.data)
+            current_app.logger.warning(
+                "edit_request endpoint hit, email and request ID don't match. Request ID = %s",
+                form.request_id.data
+            )
             flash(result, 'warning')
             return redirect(url_for('edit_request_init'))
 
-        # ── All checks passed ────────────────────────────────────────────
         current_app.logger.info("Request to edit valid, rendering edit request page.")
-
         pickup = result
 
         token = new_edit_token(pickup.request_id)
@@ -941,7 +981,7 @@ def create_app():
             "edit_expires": time.time() + EDIT_WINDOW_SECS,
         })
 
-        return redirect(url_for('edit_request', request_id = pickup.request_id))
+        return redirect(url_for('edit_request', request_id=pickup.request_id))
     
     @app.route('/edit-request', methods=['GET'])
     @in_window_scope
@@ -1865,13 +1905,14 @@ def create_app():
         • the cache is >15 min old, or
         • RouteSolution.needs_refresh is True.
         """
-        current_app.logger.info("GET /live-route")
-
         CACHE_MAX_AGE_MINUTES = 15
         pickup_status_form    = PickupStatusForm()
+        debug_form            = DebugAdminRoutes()
         selected_date         = request.args.get('date')
         if not selected_date:
             return "Date parameter is required", 400
+        
+        current_app.logger.info("GET /live-route for day: %s", selected_date)
 
         # ------------------------------------------------------------------ #
         # 1) Build today's waypoint list
@@ -1931,6 +1972,8 @@ def create_app():
 
                 addresses     = old_route
                 display_str   = seconds_to_pretty(remaining_sec)
+                current_app.logger.info("Used cached route, total time: %s", display_str)
+
 
         # ------------------------------------------------------------------ #
         # 3) Re‑optimise if required
@@ -1961,6 +2004,7 @@ def create_app():
             db.session.commit()
             addresses   = final_route
             display_str = seconds_to_pretty(total_seconds)
+            current_app.logger.info("Computed new route, total time: %s", display_str)
 
         # ------------------------------------------------------------------ #
         # 4) Sort pickups by live route order
@@ -1982,8 +2026,213 @@ def create_app():
             pickups_completed=pickups_completed,
             route=addresses,
             pickup_status_form=pickup_status_form,
+            debug_form = debug_form,
             total_time_str=display_str,
         )
+
+    @app.route('/live-route-debug', methods=['GET'])
+    @login_required
+    def live_route_debug():
+        """
+        Cache-only debug snapshot for a given date.
+        - DOES NOT re-optimize.
+        - Mirrors the 'cached reuse + peel' view your /live-route shows when not refreshing.
+        - Adds Mapbox Directions distances/durations for the *displayed* legs.
+        - Logs both addresses and lon/lat for each leg.
+        On success: flashes a message and redirects back to /live-route.
+        """
+        CACHE_MAX_AGE_MINUTES = 15
+
+        selected_date = request.args.get('date')
+        if not selected_date:
+            flash("Missing date parameter", "warning")
+            return redirect(url_for('live_route', date=datetime.now().date().isoformat()))
+
+        profile = request.args.get('profile', 'mapbox/driving')
+        token   = os.getenv("MAPBOX_ACCESS_TOKEN")
+        if not token:
+            flash("MAPBOX token missing on server", "danger")
+            return redirect(url_for('live_route', date=selected_date))
+
+        def _norm_addr(s: str) -> str:
+            return re.sub(r"\s+", " ", (s or "")).strip().lower()
+
+        def _coords_like(s: str) -> bool:
+            try:
+                lon, lat, *_ = (s or "").split(",")
+                float(lon); float(lat)
+                return True
+            except Exception:
+                return False
+
+        def _reverse_geocode(lonlat: str) -> str:
+            # Best-effort: if reverse geocode fails, return the lonlat
+            try:
+                url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{lonlat}.json"
+                params = {"limit": 1, "access_token": token}
+                r = requests.get(url, params=params, timeout=8)
+                r.raise_for_status()
+                feats = r.json().get("features") or []
+                return feats[0].get("place_name") if feats else lonlat
+            except Exception:
+                return lonlat
+
+        current_app.logger.info("GET /live-route-debug for day: %s", selected_date)
+
+        # ------------------------------------------------------------------ #
+        # 1) Build today's waypoint list (same as /live-route)               #
+        # ------------------------------------------------------------------ #
+        pickups_requested = PickupRequest.query.filter_by(
+            request_date=selected_date, status='Requested'
+        ).all()
+
+        driver_loc = DriverLocation.query.first()
+        if driver_loc and driver_loc.full_address():
+            driver_current_location = _clean_coord(driver_loc.full_address())
+        else:
+            admin_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+            driver_current_location = _clean_coord(
+                admin_cfg.value if admin_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
+            )
+
+        depot_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+        depot_address = _clean_coord(
+            depot_cfg.value if depot_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
+        )
+
+        today_waypoints = [_pickup_addr(p) for p in pickups_requested]
+        addresses_expected = [driver_current_location] + today_waypoints + [depot_address]
+
+        # ------------------------------------------------------------------ #
+        # 2) Fetch cache only                                                #
+        # ------------------------------------------------------------------ #
+        cached = RouteSolution.query.filter_by(date=selected_date).first()
+        if not cached:
+            flash("No cached route found for that date", "warning")
+            return redirect(url_for('live_route', date=selected_date))
+
+        age = datetime.now() - cached.last_updated
+        would_refresh = (age >= timedelta(minutes=CACHE_MAX_AGE_MINUTES)) or bool(cached.needs_refresh)
+
+        # Snapshot raw cached payloads (do not mutate DB)
+        raw_route = json.loads(cached.route_json or "[]")
+        raw_legs  = json.loads(cached.legs_json  or "[]")
+        raw_total_time_hms = cached.total_time_str or "00:00:00"
+
+        # ------------------------------------------------------------------ #
+        # 3) Derive the 'display' view your page would show when not refresh #
+        #     (peel already-visited legs; update start to driver's location) #
+        # ------------------------------------------------------------------ #
+        peeled_route = list(raw_route)
+        peeled_legs  = list(raw_legs)
+        travelled_sec = 0
+
+        removed_count = max(0, len(raw_route) - len(addresses_expected))
+        for _ in range(removed_count):
+            if len(peeled_route) > 2 and peeled_legs:
+                travelled_sec += peeled_legs.pop(0)
+                peeled_route.pop(1)
+
+        if peeled_route:
+            peeled_route[0] = driver_current_location
+
+        remaining_sec = max(0, hms_to_seconds(raw_total_time_hms) - travelled_sec)
+        display_str = seconds_to_pretty(remaining_sec)
+
+        # ------------------------------------------------------------------ #
+        # 4) Directions metrics for the *peeled display* route               #
+        #     + address labels derived from cached values                    #
+        # ------------------------------------------------------------------ #
+        def _dir(a_lonlat: str, b_lonlat: str) -> tuple[float, float]:
+            base = "https://api.mapbox.com/directions/v5"
+            url  = f"{base}/{profile}/{a_lonlat};{b_lonlat}"
+            params = {
+                "alternatives": "false",
+                "overview": "false",
+                "annotations": "distance,duration",
+                "geometries": "geojson",
+                "access_token": token,
+            }
+            r = requests.get(url, params=params, timeout=15)
+            r.raise_for_status()
+            data = r.json()
+            route = (data.get("routes") or [{}])[0]
+            return float(route.get("distance", 0.0)), float(route.get("duration", 0.0))
+
+        # Normalize to lon,lat for Directions; also build human labels
+        try:
+            coords = [_maybe_geocode(a, token) for a in peeled_route]
+        except Exception as e:
+            current_app.logger.exception("Geocoding failed in debug snapshot: %s", e)
+            flash("Debug failed while geocoding", "danger")
+            return redirect(url_for('live_route', date=selected_date))
+
+        # Address labels: if cached value looked like lon,lat, reverse geocode it
+        rev_cache: dict[str, str] = {}
+        def label_for(entry: str, lonlat: str) -> str:
+            if not _coords_like(entry):
+                return entry  # already an address string
+            if lonlat in rev_cache:
+                return rev_cache[lonlat]
+            addr = _reverse_geocode(lonlat)
+            rev_cache[lonlat] = addr
+            return addr
+
+        labels = [label_for(peeled_route[i], coords[i]) for i in range(len(peeled_route))]
+
+        directions_total_m = 0.0
+        directions_total_s = 0.0
+        per_leg_summary = []
+
+        for i in range(len(coords) - 1):
+            try:
+                d_m, t_s = _dir(coords[i], coords[i + 1])
+            except Exception as e:
+                current_app.logger.exception("Directions error for leg %d: %s", i, e)
+                d_m, t_s = 0.0, 0.0
+
+            directions_total_m += d_m
+            directions_total_s += t_s
+
+            per_leg_summary.append({
+                "from_addr": labels[i],
+                "to_addr": labels[i + 1],
+                "from_raw": peeled_route[i],
+                "to_raw": peeled_route[i + 1],
+                "from_lonlat": coords[i],
+                "to_lonlat": coords[i + 1],
+                "matrix_s": peeled_legs[i] if i < len(peeled_legs) else None,
+                "dir_miles": round(d_m / 1609.344, 2),
+                "dir_s": int(t_s),
+            })
+
+        # Concise summary + detailed per-leg log (addresses included)
+        current_app.logger.info(
+            "DEBUG ADMIN ROUTE %s: cached=%s, would_refresh=%s, nodes=%d, dir_miles=%.2f, dir_time=%s, remaining=%s",
+            selected_date, True, would_refresh, len(peeled_route),
+            directions_total_m / 1609.344,
+            seconds_to_hms(int(directions_total_s)),
+            display_str,
+        )
+        for i, leg in enumerate(per_leg_summary):
+            current_app.logger.info(
+                "LEG %02d: %s  ->  %s | matrix=%ss, directions=%ss (%.2f mi)",
+                i,
+                leg["from_addr"],
+                leg["to_addr"],
+                leg["matrix_s"],
+                leg["dir_s"],
+                leg["dir_miles"],
+            )
+        # Also dump the structured list if you want to copy/paste
+        current_app.logger.info("DEBUG %s per_leg_struct=%s", selected_date, per_leg_summary)
+
+        # Optional: warn if penalty legs present
+        if any((s or 0) >= 900_000 for s in peeled_legs):
+            current_app.logger.warning("Cached route contains unreachable/penalty legs (>=900k s).")
+
+        flash("Debug logs saved", "success")
+        return redirect(url_for('live_route', date=selected_date), code=303)
 
 
 
@@ -2100,31 +2349,29 @@ def create_app():
     @app.route('/contact-form-entry', methods=['POST'])
     @limiter.limit("10 per hour")
     def contact_form_entry():
-        form = ContactForm()
+        form = ContactForm(formdata=request.form)  # explicit formdata
+
         if form.validate_on_submit():
             name    = form.name.data
             email   = form.email.data
             message = form.message.data
 
-            current_app.logger.info(
-                "Contact form validated."
-            )
+            current_app.logger.info("Contact form validated.")
 
             sent = send_contact_email(name, email, message)
             if sent:
                 current_app.logger.info("Contact email sent successfully.")
-                return jsonify(valid=True,  reason=""), 200
+                return jsonify(valid=True, reason=""), 200
             else:
                 current_app.logger.warning("Contact email failed to send.")
                 return jsonify(valid=False, reason="Email sending failed."), 500
 
-        # validation failed
         current_app.logger.warning("Contact form invalid: %s", form.errors)
-        # flatten the first error from each field
         messages = []
-        for field, errs in form.errors.items():
+        for _, errs in form.errors.items():
             messages += errs
         return jsonify(valid=False, reason=" ".join(messages)), 400
+
 
 
 
@@ -2188,7 +2435,7 @@ def create_app():
     @app.errorhandler(500)
     def handle_500(e):
         current_app.logger.error("500 error occurred.")
-        record_5xx
+        record_5xx()
         return redirect(url_for('error'))
 
     @app.errorhandler(Exception)
@@ -2216,7 +2463,14 @@ def create_app():
             request.headers.get("User-Agent", ""),
             request.remote_addr,
         )
-        record_440()                          # keep the sliding-window stats
+        record_440()
+
+        # If the client prefers JSON (likely scripts/bots), return no-noise empty 204
+        if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
+            return ("", 204)
+
+        # Otherwise show the friendly page for humans
+        flash("Your session expired or the security check failed. Please reload the form and try again.", "warning")
         return render_template("440.html"), 440
 
     # --------------------------------------------------

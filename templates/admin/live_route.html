@@ -8,6 +8,12 @@
 
 {% block content %}
 <main class="content-width">
+  <form action="{{ url_for('live_route_debug') }}"
+      method="GET" id="live-route-debug">
+      <input type="hidden" name="date" value="{{ request.args.get('date') }}">
+      {{ debug_form.csrf_token }}
+      {{ debug_form.submit(class="download-btn") }}
+  </form>
   <h2 class="col-green header">
     Live Pick Ups  |  {{ date }}
   </h2>

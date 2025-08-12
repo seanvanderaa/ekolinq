@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('here');
     const form  = document.getElementById('contactForm');
     const wrap  = document.getElementById('contact-form-wrapper');
     const done  = document.getElementById('contact-form-confirmation');

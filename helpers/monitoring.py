@@ -116,7 +116,7 @@ def _monitor_login_failures(interval_min=5, threshold=5):
 _WINDOW = timedelta(minutes=5)
 _ALERT_RESET_GRACE = timedelta(minutes=10)
 
-_404_THRESHOLD = 75
+_404_THRESHOLD = 200
 _5XX_THRESHOLD = 5
 _SLOW_COUNT_THRESHOLD = 20
 _SLOW_DURATION_THRESHOLD = 0.5  # seconds
@@ -165,7 +165,7 @@ def record_404():
             remote_addr=request.remote_addr,
         )
 
-_440_THRESHOLD = 50
+_440_THRESHOLD = 200
 _440_WINDOW    = timedelta(hours=1)
 _440_state     = {'count': 0, 'window_start': datetime.now(), 'alerted': False}
 
