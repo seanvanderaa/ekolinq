@@ -7,7 +7,9 @@ import json
 import uuid
 import time
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
 from functools import wraps
 from urllib.parse import urlencode, urlparse, quote_plus
 
@@ -88,6 +90,20 @@ from config import DevelopmentConfig, ProductionConfig
 
 CONFIG_NAME = os.getenv("FLASK_CONFIG", "development")   # default “development”
 ConfigClass = ProductionConfig if CONFIG_NAME == "production" else DevelopmentConfig
+
+# ──────────────────────────────────────────────────────────────────────────
+# Timezone helpers
+# ──────────────────────────────────────────────────────────────────────────
+
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
+
+def now_pacific() -> datetime:
+    """Timezone-aware 'now' in America/Los_Angeles."""
+    return datetime.now(tz=PACIFIC_TZ)
+
+def today_pacific() -> date:
+    """Today's calendar date in America/Los_Angeles."""
+    return now_pacific().date()
 
 # ──────────────────────────────────────────────────────────────────────────
 # Extension singletons
@@ -329,33 +345,24 @@ def create_app():
     MIN_FORM_DWELL_SECONDS = 2  # time-trap threshold
 
     def mark_form_start():
-        # Call this on GET when you render a form page
-        session["form_started_at"] = datetime.now().isoformat()
+        session["form_started_at"] = time.time()
 
     @app.before_request
     def harden_forms():
-        # Only gate our three hot paths on POST
         if request.method == "POST" and request.path in PROTECTED_POST_PATHS:
-            # Only accept classic browser form posts (your JS uses FormData -> multipart/form-data)
             if request.mimetype not in ("application/x-www-form-urlencoded", "multipart/form-data"):
                 current_app.logger.info("Dropped non-form POST on %s (mimetype=%s)", request.path, request.mimetype)
                 return ("", 204)
-
-            # Honeypot: if the hidden 'website' or 'hp' field is filled, treat as bot
             if request.form.get("website") or request.form.get("hp"):
                 current_app.logger.info("Honeypot tripped on %s", request.path)
                 return ("", 204)
 
-            # Time-trap: require minimal dwell time between GET render and POST submit
             started = session.get("form_started_at")
-            if not started:
-                current_app.logger.info("Missing form_started_at on %s", request.path)
+            if not isinstance(started, (int, float)):
+                current_app.logger.info("Missing/invalid form_started_at on %s", request.path)
                 return ("", 204)
-            try:
-                started_dt = datetime.fromisoformat(started)
-            except Exception:
-                return ("", 204)
-            if datetime.now() - started_dt < timedelta(seconds=MIN_FORM_DWELL_SECONDS):
+
+            if (time.time() - float(started)) < MIN_FORM_DWELL_SECONDS:
                 current_app.logger.info("Too-fast submit on %s", request.path)
                 return ("", 204)
 
@@ -634,7 +641,8 @@ def create_app():
             zip_    = form.zip.data
             notes   = form.notes.data
             awareness = form.awarenessOptions.data
-            date_filed = date.today()
+            date_filed = today_pacific().isoformat()
+
             gated = form.gated.data
 
             token = os.getenv("MAPBOX_ACCESS_TOKEN")
@@ -724,7 +732,7 @@ def create_app():
             pickup.request_date = chosen_date
             pickup.request_time = chosen_time
             pickup.status = "Requested"
-            pickup.date_filed = date.today()
+            pickup.date_filed = today_pacific().isoformat()
             db.session.commit()
             current_app.logger.info(
                 "Pickup request %s updated with chosen_date=%s, chosen_time=%s. Redirecting to confirmation.",
@@ -782,7 +790,7 @@ def create_app():
 
         if not session.get('confirmation_email_sent'):
             current_app.logger.info("Sending pickup request email for request_id=%s", request_id)
-            send_request_email(pickup)
+            #send_request_email(pickup)
             session['confirmation_email_sent'] = True
             current_app.logger.debug("Pickup request email sent for request_id=%s", request_id)
         else:
@@ -923,7 +931,7 @@ def create_app():
         if pickup.request_date:
             try:
                 req_date = datetime.strptime(pickup.request_date, '%Y-%m-%d').date()
-                today = datetime.now().date()
+                today = today_pacific()
 
                 #no same-day edits
                 if req_date == today:
@@ -1098,7 +1106,7 @@ def create_app():
             pickup.request_date = chosen_date
             pickup.request_time = chosen_time
             pickup.status = "Requested"
-            pickup.date_filed = date.today()
+            pickup.date_filed = today_pacific().isoformat()
             db.session.commit()
 
             current_app.logger.info(
@@ -1285,9 +1293,8 @@ def create_app():
     def admin_console():
         current_app.logger.info("Accessing /admin-console.")
 
-        today = datetime.today().date()
         # Default to the current week: from Monday to today.
-        today = date.today()
+        today = today_pacific()
         default_start_date = today - timedelta(days=7)
         default_end_date   = today
 
@@ -1695,7 +1702,7 @@ def create_app():
     def route_overview():
         current_app.logger.info("GET /route-overview - displaying route overview page.")
 
-        today = date.today().strftime("%Y-%m-%d")
+        today = today_pacific().isoformat()
 
         # --- Upcoming Pickups ---
         current_app.logger.debug("Querying upcoming pickups on or after %s.", today)
@@ -1872,6 +1879,11 @@ def create_app():
         else:
             total_time_str = "Old Route, No Estimate."
 
+        route_map = {addr: idx for idx, addr in enumerate(sorted_addresses)}
+        all_pickups.sort(
+            key=lambda pr: route_map.get(f"{pr.address}, {pr.city} CA", 999_999)
+        )
+
         return render_template(
             'admin/view_route_info.html',
             date=formatted_date,
@@ -2046,7 +2058,7 @@ def create_app():
         selected_date = request.args.get('date')
         if not selected_date:
             flash("Missing date parameter", "warning")
-            return redirect(url_for('live_route', date=datetime.now().date().isoformat()))
+            return redirect(url_for('live_route', date=today_pacific().isoformat()))
 
         profile = request.args.get('profile', 'mapbox/driving')
         token   = os.getenv("MAPBOX_ACCESS_TOKEN")
@@ -2273,7 +2285,7 @@ def create_app():
         else:
             new_status = "Complete"
             pickup.status = new_status
-            pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
+            pickup.pickup_complete_info = now_pacific().strftime("%Y-%m-%d %-I:%M%p").lower()
             update_driver_location(pickup.address, pickup.city)
 
         # ------------------------------------------------------------------ #
@@ -2312,7 +2324,7 @@ def create_app():
             return "Error: Pickup not found", 404
 
         pickup.status = "Incomplete"
-        pickup.pickup_complete_info = datetime.now().strftime("%Y-%m-%d %-I:%M%p").lower()
+        pickup.pickup_complete_info = now_pacific().strftime("%Y-%m-%d %-I:%M%p").lower()
 
         cached = RouteSolution.query.filter_by(date=pickup.request_date).first()
         if cached:
@@ -2372,8 +2384,15 @@ def create_app():
             messages += errs
         return jsonify(valid=False, reason=" ".join(messages)), 400
 
+    # --------------------------------------------------
 
+    # ROBOTS.TXT
+    
+    # --------------------------------------------------
 
+    @app.route("/robots.txt")
+    def robots_txt():
+        return app.send_static_file("robots.txt")
 
     # --------------------------------------------------
 

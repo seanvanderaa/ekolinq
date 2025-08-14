@@ -62,11 +62,11 @@ def new_customer_percentages(start_date: date, end_date: date) -> Dict[str, floa
 
     *Only* “real” requests (rows whose `admin_notes` do **not** equal
     "Imported via import-backfill CLI") count toward the denominators.
-    Imported rows are used **only** to establish whether an address was
-    already a customer before the window.
+    Imported rows are used **only** to establish whether an address existed
+    before the first real request (i.e., to disqualify it from being “new”).
 
-    Numerator = first-ever request(s) for each unique address **that has at
-    least one real request**.
+    Numerator = count of addresses whose **first real** request is within the
+    scope and there is **no imported** row dated before that first real request.
     Denominator = total number of real requests in scope.
     """
     sess = db.session
@@ -84,8 +84,8 @@ def new_customer_percentages(start_date: date, end_date: date) -> Dict[str, floa
     if not rows:
         return {"percent_window": 0.0, "percent_all": 0.0}
 
-    earliest: dict[str, date] = {}
-    has_real: set[str] = set()
+    earliest_any: dict[str, date] = {}
+    first_real: dict[str, date] = {}
     total_requests_window = 0
     total_requests_all = 0
 
@@ -94,30 +94,39 @@ def new_customer_percentages(start_date: date, end_date: date) -> Dict[str, floa
         if addr is None or d is None:
             continue
 
-        # track the earliest request (imported *or* real) for each address
-        if addr not in earliest or d < earliest[addr]:
-            earliest[addr] = d
+        # Track earliest of *all* rows (imported or real)
+        if addr not in earliest_any or d < earliest_any[addr]:
+            earliest_any[addr] = d
 
         is_imported = notes == "Imported via import-backfill CLI"
 
-        if not is_imported:            # only “real” rows count as requests
+        # Only real rows count as requests; also track the first real date
+        if not is_imported:
             total_requests_all += 1
             if start_date <= d <= end_date:
                 total_requests_window += 1
-            has_real.add(addr)
+            if addr not in first_real or d < first_real[addr]:
+                first_real[addr] = d
 
-    # --- numerators --------------------------------------------------------
-    firsts_in_window = sum(
+    # --- numerators: first-ever *real* requests only -------------------------
+    # Address is "new" if its first real request is the earliest row for that
+    # address (i.e., no imported rows exist before the first real).
+    first_real_all = sum(
         1
-        for addr, first_seen in earliest.items()
-        if addr in has_real and start_date <= first_seen <= end_date
+        for addr, fr in first_real.items()
+        if earliest_any.get(addr) == fr
     )
-    firsts_all_time = len(has_real)    # every address with ≥1 real request
+    first_real_in_window = sum(
+        1
+        for addr, fr in first_real.items()
+        if start_date <= fr <= end_date and earliest_any.get(addr) == fr
+    )
 
     return {
-        "percent_window": _pct(firsts_in_window, total_requests_window),
-        "percent_all":    _pct(firsts_all_time,  total_requests_all),
+        "percent_window": _pct(first_real_in_window, total_requests_window),
+        "percent_all":    _pct(first_real_all,      total_requests_all),
     }
+
 
 
 def returning_customer_average_days(
@@ -128,19 +137,17 @@ def returning_customer_average_days(
 
     Rules
     -----
-    • Requests whose `admin_notes` contain *exactly*
-      'Imported via import-backfill CLI' are ignored **unless** the same
-      address also has at least one non-import request.
+    • Imported rows are ignored **unless** the same address also has at least
+      one non-import request.
     • If both imported **and** real requests exist, we calculate the gap
       between the imported request that is closest (<=) to the first real
       request and that first real request.
-    • If no imported requests exist, we calculate the gap between the first
-      and second real requests, as before.
+    • If no imported requests precede the first real request, we calculate
+      the gap between the first and second real requests.
     • Addresses with fewer than two qualifying requests are skipped.
     """
     sess = db.session
 
-    # Pull address, date, and admin_notes in one query, ordered for easier grouping
     rows: list[tuple[str, str, str | None]] = (
         sess.query(
             PickupRequest.address,
@@ -152,7 +159,6 @@ def returning_customer_average_days(
         .all()
     )
 
-    # Group by address: list of (date, is_imported) tuples
     recs_by_addr: dict[str, list[tuple[date, bool]]] = {}
     for addr, datestr, notes in rows:
         d = _parse_iso(datestr)
@@ -165,27 +171,26 @@ def returning_customer_average_days(
     gaps_window: list[int] = []
 
     for recs in recs_by_addr.values():
-        # split into imported / real lists, each already in chronological order
         imported = [d for d, imp in recs if imp]
         real     = [d for d, imp in recs if not imp]
 
-        # ---- choose the two dates that define the gap ----
+        if not real:
+            continue
+
+        first_real = real[0]
         first, second = None, None
 
-        if real:
-            if imported:
-                # use the imported date closest *before* the first real date
-                first_real = real[0]
-                first_import = max(
-                    (d for d in imported if d <= first_real),
-                    default=imported[0],           # none precede → earliest import
-                )
-                first, second = first_import, first_real
-            elif len(real) >= 2:
-                first, second = real[0], real[1]
-        # else: only imported requests → ignore
+        if imported:
+            imports_before = [d for d in imported if d <= first_real]
+            if imports_before:
+                first = max(imports_before)
+                second = first_real
 
-        if first and second:
+        # If no valid import precedes, fall back to first two real requests
+        if first is None and len(real) >= 2:
+            first, second = real[0], real[1]
+
+        if first and second and second >= first:
             gap_days = (second - first).days
             gaps_all.append(gap_days)
             if start_date <= second <= end_date:

@@ -2,8 +2,23 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 import random
-from datetime import datetime
+from datetime import datetime, timedelta, timezone, date
+from zoneinfo import ZoneInfo
 import json
+
+# ──────────────────────────────────────────────────────────────────────────
+# Timezone helpers
+# ──────────────────────────────────────────────────────────────────────────
+
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
+
+def now_pacific() -> datetime:
+    """Timezone-aware 'now' in America/Los_Angeles."""
+    return datetime.now(tz=PACIFIC_TZ)
+
+def today_pacific() -> date:
+    """Today's calendar date in America/Los_Angeles."""
+    return now_pacific().date()
 
 db = SQLAlchemy()
 

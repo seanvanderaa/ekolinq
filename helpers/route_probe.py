@@ -17,18 +17,16 @@ from mapbox_routing import compute_optimized_route
 DEPOT = "5389 Mallard Dr., Pleasanton, CA 94566"  # start == end
 
 ADDRESSES = [
-    "536 Sonoma Avenue, Livermore, CA",
-    "4326 Quail Run Lane, Danville, CA",
-    "627 Hardcastle Court, San Ramon, CA",
-    "233 Rutherford Drive, Danville, CA",
-    "4415 Sandalwood Drive, Pleasanton, CA",
-    "2063 Alexander Ct, Pleasanton, CA",
-    "169 Arvada Ct., San Ramon, CA",
-    "450 Live Oak Drive, Danville, CA",
-    "10089 Foxboro Circle, San Ramon, CA",
+    "3103 Belmont Court, Livermore, CA",
+    "1346 Aster Lane, Livermore, CA",
+    "123 Enchanted Way, San Ramon, CA",
+    "5489 Blackbird Drive, Pleasanton, CA",
+    "2678 Willowren Way, Pleasanton, CA",
+    "5786 Shadow Ridge Court, Pleasanton, CA",
+    "333 Andora Lane, San Ramon, CA",
 ]
 
-PROFILE = "mapbox/driving"
+PROFILE = "mapbox/driving-traffic"
 TIME_LIMIT_SEC = 25
 
 # ----------------------------------------------------------------------
