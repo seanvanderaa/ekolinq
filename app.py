@@ -544,7 +544,7 @@ def create_app():
         zip_code = request.args.get('zipcode')
         current_app.logger.debug("Zip code provided: %s", zip_code)
 
-        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551", "94582", "94583", "94506", "94526"] 
+        approved_zips = ["94566", "94568", "94588", "94568", "94550", "94551", "94582", "94583", "94506", "94526", "94507"] 
         result = verifyZip(approved_zips, zip_code)
         current_app.logger.debug("verifyZip result: %s", result)
 
