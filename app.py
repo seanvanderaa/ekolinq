@@ -790,7 +790,7 @@ def create_app():
 
         if not session.get('confirmation_email_sent'):
             current_app.logger.info("Sending pickup request email for request_id=%s", request_id)
-            #send_request_email(pickup)
+            send_request_email(pickup)
             session['confirmation_email_sent'] = True
             current_app.logger.debug("Pickup request email sent for request_id=%s", request_id)
         else:
