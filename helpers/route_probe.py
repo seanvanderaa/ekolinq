@@ -16,17 +16,41 @@ from mapbox_routing import compute_optimized_route
 # ----------------------------------------------------------------------
 DEPOT = "5389 Mallard Dr., Pleasanton, CA 94566"  # start == end
 
+# ADDRESSES = [
+#     "2436 Rivers Bend Circle, Livermore CA",
+#     "3103 Belmont Court, Livermore, California 94550, United States",
+#     "3531 Germaine Way, Livermore, California 94550, United States",
+#     "4057 Sherry Court, Pleasanton, California 94566, United States",
+#     "227 Mission Drive, Pleasanton, California 94566, United States",
+#     "5786 Shadow Ridge Court, Pleasanton, California 94566, United States",
+#     "31 Castledown Road, Pleasanton, California 94566, United States",
+#     "3341 Medallion Court, Pleasanton, California 94588, United States",
+#     "4639 Sandalwood Drive, Pleasanton, California 94588, United States",
+#     "8401 Tiger Lily Drive, San Ramon, California 94582, United States",
+#     "704 Brookside Drive, Danville, California 94526, United States",
+#     "333 Andora Lane, San Ramon, California 94583, United States",
+#     "123 Enchanted Way, San Ramon, California 94583, United States",
+#     "627 Hardcastle Court, San Ramon, California 94583, United States",
+#     "3580 Ballantyne Drive, Pleasanton, California 94588, United States",
+#     "4007 Suffolk Way, Pleasanton, California 94588, United States",
+#     "3545 Dickens Court, Pleasanton, California 94588, United States",
+#     "2130 Camino Brazos, Pleasanton, California 94566, United States",
+#     "5489 Blackbird Drive, Pleasanton, California 94566, United States",
+# ]
+
 ADDRESSES = [
-    "3103 Belmont Court, Livermore, CA",
-    "1346 Aster Lane, Livermore, CA",
-    "123 Enchanted Way, San Ramon, CA",
-    "5489 Blackbird Drive, Pleasanton, CA",
+    "4326 Quail Run Lane, Danville, CA",
+    "536 Sonoma Ave, Livermore, CA",
     "2678 Willowren Way, Pleasanton, CA",
+    "5489 Blackbird Drive, Pleasanton, CA",
     "5786 Shadow Ridge Court, Pleasanton, CA",
+    "151 Bolla Avenue, Alamo, CA",
+    "123 Enchanted Way, San Ramon, CA",
     "333 Andora Lane, San Ramon, CA",
+    "1346 Aster Lane, Livermore, CA"
 ]
 
-PROFILE = "mapbox/driving-traffic"
+PROFILE = "mapbox/driving"
 TIME_LIMIT_SEC = 25
 
 # ----------------------------------------------------------------------

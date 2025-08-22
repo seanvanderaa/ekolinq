@@ -5,6 +5,7 @@
 __pycache__/
 
 helpers/__pycache__/
+helpers/route_distance_probe.py
 
 credentials/*.json
 credentials/

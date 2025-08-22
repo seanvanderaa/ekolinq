@@ -1913,26 +1913,36 @@ def create_app():
     def live_route():
         """
         Serve the live route.
-        Re‑optimise only if:
-        • the cache is >15 min old, or
-        • RouteSolution.needs_refresh is True.
+
+        Behavior:
+        - The route does NOT change unless:
+            • there is no cache yet, or
+            • the admin explicitly requests a refresh via ?refresh=1.
+        - Recompute uses a true round trip: depot → requested stops → depot.
+        - As pickups are completed/marked-not-possible, we "roll forward" the
+        cached route by trimming finished stops from the FRONT only and
+        decrement the remaining time accordingly.
         """
-        CACHE_MAX_AGE_MINUTES = 15
+        CACHE_MAX_AGE_MINUTES = 15  # informational only; no auto-refresh by age
         pickup_status_form    = PickupStatusForm()
         debug_form            = DebugAdminRoutes()
         selected_date         = request.args.get('date')
         if not selected_date:
             return "Date parameter is required", 400
-        
-        current_app.logger.info("GET /live-route for day: %s", selected_date)
+
+        # explicit, admin-triggered refresh (e.g., button adds ?refresh=1 to the URL)
+        explicit_refresh = str(request.args.get('refresh', '0')).lower() in ('1', 'true', 'yes')
+
+        current_app.logger.info("GET /live-route for day: %s (refresh=%s)", selected_date, explicit_refresh)
 
         # ------------------------------------------------------------------ #
-        # 1) Build today's waypoint list
+        # 1) Build today's waypoint list (requested stops, depot)
         # ------------------------------------------------------------------ #
         pickups_requested = PickupRequest.query.filter_by(
             request_date=selected_date, status='Requested'
         ).all()
 
+        # current driver location is NOT used to compute the plan now (round trip)
         driver_loc = DriverLocation.query.first()
         if driver_loc and driver_loc.full_address():
             driver_current_location = _clean_coord(driver_loc.full_address())
@@ -1947,61 +1957,94 @@ def create_app():
             depot_cfg.value if depot_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
         )
 
-        addresses = [driver_current_location] + [_pickup_addr(p) for p in pickups_requested] + [depot_address]
+        # Use the SAME formatter here and later when mapping positions
+        def _pickup_addr_fmt(p: PickupRequest) -> str:
+            return _pickup_addr(p)
+
+        requested_keys = [_pickup_addr_fmt(p) for p in pickups_requested]
+
+        # Initial list only for display/fallback; recompute will overwrite.
+        addresses = [depot_address] + requested_keys + [depot_address]
 
         # ------------------------------------------------------------------ #
         # 2) Cache handling
         # ------------------------------------------------------------------ #
         cached = RouteSolution.query.filter_by(date=selected_date).first()
-        should_refresh = cached is None
+        should_refresh = (cached is None) or explicit_refresh
         display_str    = ""
 
-        if cached:
-            age = datetime.now() - cached.last_updated
-            if age >= timedelta(minutes=CACHE_MAX_AGE_MINUTES) or cached.needs_refresh:
-                should_refresh = True
-                cached.needs_refresh = False      # we'll satisfy it right now
-            else:
-                old_route = json.loads(cached.route_json)
-                old_legs  = json.loads(cached.legs_json or "[]")
+        # Helper: roll the cached route forward by removing only head stops
+        # that are no longer in "Requested".
+        def _roll_forward_cached_route(cached_obj: RouteSolution) -> tuple[list[str], int]:
+            old_route = json.loads(cached_obj.route_json or "[]")
+            old_legs  = json.loads(cached_obj.legs_json or "[]")  # seconds per edge
+            if not old_route:
+                return addresses, 0
 
-                # Peel off already‑visited legs (difference in list lengths)
-                removed_count = max(0, len(old_route) - len(addresses))
-                travelled_sec = 0
-                for _ in range(removed_count):
-                    if len(old_route) > 2:
-                        travelled_sec += old_legs.pop(0)
-                        old_route.pop(1)
+            # Always ensure depot is last
+            if not old_route or old_route[-1] != depot_address:
+                if depot_address in old_route:
+                    old_route = [a for a in old_route if a != depot_address] + [depot_address]
+                else:
+                    old_route.append(depot_address)
 
+            # (Existing behavior retained for now) Replace dynamic start with current driver location
+            if old_route:
                 old_route[0] = driver_current_location
-                remaining_sec = max(0, hms_to_seconds(cached.total_time_str) - travelled_sec)
 
-                cached.route_json     = json.dumps(old_route)
-                cached.legs_json      = json.dumps(old_legs)
-                cached.total_time_str = seconds_to_hms(remaining_sec)
-                cached.last_updated   = datetime.now()
-                db.session.commit()
+            # Trim completed/not-possible stops ONLY from the front.
+            travelled_sec = 0
+            while len(old_route) > 2 and old_route[1] not in requested_keys:
+                if old_legs:
+                    travelled_sec += int(old_legs.pop(0))
+                old_route.pop(1)
 
-                addresses     = old_route
-                display_str   = seconds_to_pretty(remaining_sec)
-                current_app.logger.info("Used cached route, total time: %s", display_str)
+            remaining_sec = max(0, hms_to_seconds(cached_obj.total_time_str) - travelled_sec)
 
+            cached_obj.route_json     = json.dumps(old_route)
+            cached_obj.legs_json      = json.dumps(old_legs)
+            cached_obj.total_time_str = seconds_to_hms(remaining_sec)
+            cached_obj.last_updated   = datetime.now()
+            db.session.commit()
+
+            return old_route, remaining_sec
+
+        if cached and not should_refresh:
+            # Do NOT auto-refresh just because of age or cached.needs_refresh.
+            # Keep the existing route plan stable and roll it forward.
+            addresses, remaining_sec = _roll_forward_cached_route(cached)
+            display_str = seconds_to_pretty(remaining_sec)
+            current_app.logger.info("Used cached route (stable), remaining time: %s", display_str)
 
         # ------------------------------------------------------------------ #
-        # 3) Re‑optimise if required
+        # 3) Recompute ONLY when explicitly requested (or first time)
+        #     → round trip: depot → requested stops → depot
         # ------------------------------------------------------------------ #
         if should_refresh:
-            final_route, total_seconds, legs_seconds = compute_optimized_route(
-                waypoints=addresses[1:-1],
-                start_location=addresses[0],
-                end_location=addresses[-1],
-            )
+            if len(requested_keys) == 0:
+                # No stops today: trivial round trip
+                final_route   = [depot_address, depot_address]
+                legs_seconds  = [0]
+                total_seconds = 0
+                current_app.logger.info("Computed NEW route (explicit): no pickups; depot-only loop.")
+            else:
+                # True round trip: start=end=depot; only pass the stops as waypoints
+                final_route, total_seconds, legs_seconds = compute_optimized_route(
+                    waypoints=requested_keys,
+                    start_location=depot_address,
+                    end_location=depot_address,
+                )
+                current_app.logger.info(
+                    "Computed NEW route (explicit round trip), total time: %s",
+                    seconds_to_pretty(total_seconds)
+                )
 
             if cached:
                 cached.route_json     = json.dumps(final_route)
                 cached.legs_json      = json.dumps(legs_seconds)
                 cached.total_time_str = seconds_to_hms(total_seconds)
                 cached.last_updated   = datetime.now()
+                cached.needs_refresh  = False
             else:
                 cached = RouteSolution(
                     date=selected_date,
@@ -2016,14 +2059,13 @@ def create_app():
             db.session.commit()
             addresses   = final_route
             display_str = seconds_to_pretty(total_seconds)
-            current_app.logger.info("Computed new route, total time: %s", display_str)
 
         # ------------------------------------------------------------------ #
-        # 4) Sort pickups by live route order
+        # 4) Sort pickups by the current route order
         # ------------------------------------------------------------------ #
         route_map = {addr: idx for idx, addr in enumerate(addresses)}
         pickups_requested.sort(
-            key=lambda pr: route_map.get(f"{pr.address}, {pr.city} CA", 999_999)
+            key=lambda pr: route_map.get(_pickup_addr_fmt(pr), 999_999)
         )
 
         pickups_completed = PickupRequest.query.filter(
@@ -2038,9 +2080,11 @@ def create_app():
             pickups_completed=pickups_completed,
             route=addresses,
             pickup_status_form=pickup_status_form,
-            debug_form = debug_form,
+            debug_form=debug_form,
             total_time_str=display_str,
         )
+
+
 
     @app.route('/live-route-debug', methods=['GET'])
     @login_required

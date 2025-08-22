@@ -1,119 +1,125 @@
-"""routing_mapbox.py — Mapbox Matrix‑based TSP helper
-========================================================
+"""routing_mapbox.py — Mapbox Matrix-based TSP helper
+=====================================================
 Stable, minimal, and thoroughly linted version.
 
 * Automatic chunking for arbitrarily large waypoint lists.
-* Guarantees every Matrix call has **≥ 2 destinations** to avoid Mapbox 422.
+* Guarantees every Matrix call has **≥ 2 destinations** to avoid Mapbox 422.
 * Deduplicates identical coordinates (same address repeated).
+* Fetches BOTH durations (seconds) and distances (meters) in one pass.
+* Supports true round-trip when start and end depot are the same.
+* Applies a small 2-opt polish to remove residual crossovers.
 
-Public API matches the original Google helper, so your Flask endpoint
-continues to call `compute_optimized_route()` with raw address strings.
+Public API remains compatible with existing callers:
+- `compute_optimized_route(...)` still returns a (ordered_addresses,
+   total_duration_seconds, per_leg_seconds) 3-tuple.
+   NOTE: The route is now *optimized for distance* by default, but the
+   returned totals/legs are still in **seconds** for compatibility.
+- New: `compute_optimized_route_with_metrics(...)` returns both distance
+   and duration metrics.
 """
 from __future__ import annotations
 
-import logging
-
 import os
 import time
-from collections import defaultdict
-from typing import List, Tuple
-from urllib.parse import quote_plus
-from flask import current_app
 import re
+from collections import defaultdict
+from typing import List, Tuple, Dict
+from urllib.parse import quote_plus
 
 import requests
+from flask import current_app
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
 ###############################################################################
 # Constants & utilities
 ###############################################################################
 
-MB_PROFILE_DEFAULT = "mapbox/driving"  # 10 coords/call -traffic
+MB_PROFILE_DEFAULT = "mapbox/driving"  # 10 coords/call if using *-traffic profiles
 MB_ENDPOINT = "https://api.mapbox.com/directions-matrix/v1"
-FALLBACK_LARGE = 999_999  # penalty (seconds) for unreachable legs
-_REQ_WINDOW_SEC = 60      # coarse rate‑limit window
+FALLBACK_LARGE = 999_999  # penalty for unreachable legs (seconds or meters)
+_REQ_WINDOW_SEC = 60
 _req_ts: defaultdict[str, List[float]] = defaultdict(list)
+_MB_RPM = int(os.getenv("MAPBOX_MATRIX_RPM", "300"))  # Mapbox spec: 300 req/min
 
 
-def _t(label: str) -> callable:
+def _t(label: str):
     """Return a lambda that logs elapsed seconds when invoked."""
     logger = current_app.logger
     start = time.perf_counter()
-    return lambda: logger.debug("%s took %.3f s", label, time.perf_counter() - start)
+    return lambda: logger.debug("%s took %.3f s", label, time.perf_counter() - start)
 
-# helpers/mapbox_routing.py
-_MB_RPM = int(os.getenv("MAPBOX_MATRIX_RPM", "300"))   # Mapbox spec: 300 req/min
 
 def _ratelimit() -> None:
-    """
-    Sleep just enough to stay below the per‑minute cap.
-    Signature takes no args so callers don’t have to pass `profile`.
-    """
-    now   = time.time()
+    """Sleep just enough to stay below the per-minute cap."""
+    now = time.time()
     limit = _MB_RPM
-    window = _req_ts["global"]            # single shared window
+    window = _req_ts["global"]
     window[:] = [t for t in window if now - t < _REQ_WINDOW_SEC]
     if len(window) >= limit:
         sleep_for = _REQ_WINDOW_SEC - (now - window[0]) + 0.05
         current_app.logger.warning(
-            "Matrix rate‑limit hit: sleeping %.1f s to stay under %d rpm",
-            sleep_for, limit
+            "Matrix rate-limit hit: sleeping %.1f s to stay under %d rpm",
+            sleep_for,
+            limit,
         )
         time.sleep(sleep_for)
     window.append(now)
 
 
-
 def _coords_like(s: str) -> bool:
     try:
         lon, lat, *_ = s.split(",")
-        float(lon); float(lat)
+        float(lon)
+        float(lat)
         return True
     except Exception:
         return False
 
+
 def _maybe_geocode(addr: str, token: str) -> str:
     if _coords_like(addr):
         return addr  # already "lon,lat"
-    
     done = _t(f"Geocoding address '{addr[:40]}…'")
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{quote_plus(addr)}.json"
     params = {"limit": 1, "access_token": token}
     r = requests.get(url, params=params, timeout=10)
     r.raise_for_status()
     feat = r.json()["features"][0]
-    done()  
+    done()
     lon, lat = feat["center"]
     return f"{lon},{lat}"
 
 ###############################################################################
-# Matrix builder
+# Matrix builders
 ###############################################################################
-def fetch_distance_matrix_mapbox(
+
+
+def fetch_matrices_mapbox(
     locations: List[str],
     *,
     access_token: str | None = None,
     profile: str = MB_PROFILE_DEFAULT,
-) -> List[List[int]]:
-    """Return an *N×N* travel‑time matrix (seconds) via Mapbox Matrix API."""
-    logger = current_app.logger
+) -> Tuple[List[List[int]], List[List[int]]]:
+    """
+    Return TWO N×N matrices via Mapbox Matrix API:
+      - durations_matrix: seconds (int)
+      - distances_matrix: meters (int)
 
+    We request both annotations in one pass to keep calls minimal.
+    """
+    logger = current_app.logger
     token = access_token or os.getenv("MAPBOX_ACCESS_TOKEN")
     if not token:
         raise ValueError("MAPBOX_ACCESS_TOKEN env var not set")
 
-    timer_fetch = _t("fetch_distance_matrix_mapbox")      ##### NEW/CHANGED >>>
+    timer_fetch = _t("fetch_matrices_mapbox")
 
-    # ------------------------------------------------------------------ #
-    # 1. Geocode / normalise                                             #
-    # ------------------------------------------------------------------ #
-    t_geo = _t(f"– geocoding {len(locations)} address(es)")  ##### NEW/CHANGED >>>
+    # 1) Geocode / normalize
+    t_geo = _t(f"– geocoding {len(locations)} address(es)")
     coords_raw = [_maybe_geocode(addr, token) for addr in locations]
-    t_geo()                                                  ##### NEW/CHANGED >>>
+    t_geo()
 
-    # ------------------------------------------------------------------ #
-    # 2. Collapse duplicates (unchanged)                                 #
-    # ------------------------------------------------------------------ #
+    # 2) Deduplicate identical coordinates (exact string equality)
     uniq_coords: List[str] = []
     idx_map: List[int] = []  # original index -> unique index
     for c in coords_raw:
@@ -128,17 +134,14 @@ def fetch_distance_matrix_mapbox(
     if u < 2:
         raise ValueError("Need at least two distinct coordinates for a matrix")
 
+    # Mapbox per-call coordinate cap
     max_coords = 10 if profile.endswith("traffic") else 25
 
-    # Helpers for timing every Matrix HTTP call ------------------------ #
-    api_calls = 0                                           ##### NEW/CHANGED >>>
-    api_time  = 0.0                                         ##### NEW/CHANGED >>>
+    # Timings
+    api_calls = 0
+    api_time = 0.0
 
-    # ------------------------------------------------------------------ #
-    # Helper: timed HTTP wrapper                                         #
-    # ------------------------------------------------------------------ #
     def _matrix_get(url: str, params: dict) -> dict:
-        """requests.get() that counts calls and measures elapsed time."""
         nonlocal api_calls, api_time
         api_calls += 1
         t0 = time.perf_counter()
@@ -150,78 +153,268 @@ def fetch_distance_matrix_mapbox(
             raise RuntimeError(f"Matrix API error: {data.get('message')}")
         return data
 
-    # ------------------------------------------------------------------ #
-    # 3. Build the unique‑coords matrix                                  #
-    # ------------------------------------------------------------------ #
+    def _to_int_matrix(arr: List[List[float]]) -> List[List[int]]:
+        return [
+            [int(v) if (v is not None) else FALLBACK_LARGE for v in row]
+            for row in arr
+        ]
+
+    # 3) Build the unique-coords matrices
     if u <= max_coords:
-        # ---------- tiny set: one call ---------------------------------
+        # Single call
         coord_str = ";".join(uniq_coords)
-        params = {"annotations": "duration", "access_token": token}
+        params = {"annotations": "duration,distance", "access_token": token}
         _ratelimit()
         res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
-        u_matrix = [[int(v) if v else FALLBACK_LARGE for v in row]
-                    for row in res["durations"]]
-        
+        u_dur = _to_int_matrix(res["durations"])
+        u_dist = _to_int_matrix(res["distances"])
     else:
-        # ------------------------------------------------------------------ #
-        # 4. Half‑block tiling (union ≤ max_coords)                          #
-        # ------------------------------------------------------------------ #
-        M = max_coords // 2                  # 12 (driving) or 5 (traffic)
+        # Half-block tiling (union ≤ max_coords)
+        M = max_coords // 2
         if M == 0:
             raise RuntimeError("max_coords must be ≥ 2")
 
-        # Partition indices into chunks of size ≤ M
-        chunks: List[List[int]] = [list(range(i, min(i + M, u)))
-                                for i in range(0, u, M)]
+        chunks: List[List[int]] = [
+            list(range(i, min(i + M, u))) for i in range(0, u, M)
+        ]
+        u_dur = [[FALLBACK_LARGE] * u for _ in range(u)]
+        u_dist = [[FALLBACK_LARGE] * u for _ in range(u)]
 
-        u_matrix = [[FALLBACK_LARGE] * u for _ in range(u)]
-
-        def _fill(union_idx: List[int], sub: List[List[int]]) -> None:
-            """Place returned sub‑matrix into the big matrix."""
+        def _fill(union_idx: List[int], durations: List[List[float]], distances: List[List[float]]) -> None:
             for ii, si in enumerate(union_idx):
                 for jj, dj in enumerate(union_idx):
-                    u_matrix[si][dj] = int(sub[ii][jj]) if sub[ii][jj] else FALLBACK_LARGE
+                    dsec = durations[ii][jj]
+                    dmet = distances[ii][jj]
+                    u_dur[si][dj] = int(dsec) if dsec is not None else FALLBACK_LARGE
+                    u_dist[si][dj] = int(dmet) if dmet is not None else FALLBACK_LARGE
 
-        # Iterate over unordered pairs (i ≤ j) so we never exceed union ≤ max_coords
         for i, src_chunk in enumerate(chunks):
             for j, dst_chunk in enumerate(chunks[i:], start=i):
                 union_idx = sorted(set(src_chunk) | set(dst_chunk))  # ≤ max_coords
                 coord_str = ";".join(uniq_coords[k] for k in union_idx)
                 params = {
-                    "sources":      ";".join(str(idx) for idx in range(len(union_idx))),
+                    "sources": ";".join(str(idx) for idx in range(len(union_idx))),
                     "destinations": ";".join(str(idx) for idx in range(len(union_idx))),
-                    "annotations":  "duration",
+                    "annotations": "duration,distance",
                     "access_token": token,
                 }
                 _ratelimit()
                 res = _matrix_get(f"{MB_ENDPOINT}/{profile}/{coord_str}", params)
-                _fill(union_idx, res["durations"])
+                _fill(union_idx, res["durations"], res["distances"])
 
-    # ------------------------------------------------------------------ #
-    # 5. Expand to full N×N (existing code below remains unchanged)      #
-    # ------------------------------------------------------------------ #
-
+    # 4) Expand back to full N×N matrices
     n = len(locations)
-    matrix = [[0] * n for _ in range(n)]
+    durations_matrix = [[0] * n for _ in range(n)]
+    distances_matrix = [[0] * n for _ in range(n)]
     for i in range(n):
         ui = idx_map[i]
         for j in range(n):
             uj = idx_map[j]
-            matrix[i][j] = u_matrix[ui][uj]
+            durations_matrix[i][j] = u_dur[ui][uj]
+            distances_matrix[i][j] = u_dist[ui][uj]
 
-    # ------------------------------------------------------------------ #
-    # 6. Final timing summary                                            #
-    # ------------------------------------------------------------------ #
-    logger.info(                                             ##### NEW/CHANGED >>>
-        "Matrix summary: %d coords → %d call(s); matrix %.2f s",
-        len(locations), api_calls, api_time
+    # 5) Final timing
+    logger.info(
+        "Matrix summary: %d coords → %d call(s); matrix %.2f s",
+        len(locations),
+        api_calls,
+        api_time,
     )
-    timer_fetch()                                            ##### NEW/CHANGED >>>
-    return matrix
+    timer_fetch()
+    return durations_matrix, distances_matrix
+
+
+def fetch_distance_matrix_mapbox(
+    locations: List[str],
+    *,
+    access_token: str | None = None,
+    profile: str = MB_PROFILE_DEFAULT,
+    metric: str = "duration",  # "duration" | "distance"
+) -> List[List[int]]:
+    """
+    Backwards-compatible single-matrix fetcher.
+    Prefer `fetch_matrices_mapbox` in new code.
+    """
+    durs, dists = fetch_matrices_mapbox(
+        locations, access_token=access_token, profile=profile
+    )
+    return durs if metric == "duration" else dists
 
 ###############################################################################
-# OR‑Tools TSP wrapper (identical public signature)
+# OR-Tools TSP + 2-opt polish
 ###############################################################################
+
+
+def _solve_tsp_order(
+    cost_matrix: List[List[int]],
+    *,
+    start_index: int,
+    end_index: int | None,
+    time_limit_sec: int,
+    roundtrip: bool,
+) -> Tuple[List[int], pywrapcp.Assignment | None]:
+    """
+    Run OR-Tools routing on the provided COST matrix and return the visit order
+    as a list of node indices (in the matrix space).
+
+    - If roundtrip=True, treats start_index as a depot for a cycle (start=end).
+    - If roundtrip=False, solves a path from start_index to end_index.
+    """
+    n = len(cost_matrix)
+    if roundtrip:
+        manager = pywrapcp.RoutingIndexManager(n, 1, start_index)  # cycle with fixed depot
+    else:
+        assert end_index is not None, "end_index must be provided for path problems"
+        manager = pywrapcp.RoutingIndexManager(n, 1, [start_index], [end_index])
+    routing = pywrapcp.RoutingModel(manager)
+
+    def transit(i: int, j: int) -> int:
+        return cost_matrix[manager.IndexToNode(i)][manager.IndexToNode(j)]
+
+    transit_cb = routing.RegisterTransitCallback(transit)
+    routing.SetArcCostEvaluatorOfAllVehicles(transit_cb)
+
+    search = pywrapcp.DefaultRoutingSearchParameters()
+    # Better seed than purely greedy:
+    search.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.LOCAL_CHEAPEST_INSERTION
+    # Escape local minima & uncross paths:
+    search.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+    search.time_limit.seconds = max(1, int(time_limit_sec))
+    # search.log_search = True  # uncomment for solver logs
+
+    sol = routing.SolveWithParameters(search)
+    if not sol:
+        return [], None
+
+    # Extract order
+    index = routing.Start(0)
+    order: List[int] = []
+    while not routing.IsEnd(index):
+        order.append(manager.IndexToNode(index))
+        index = sol.Value(routing.NextVar(index))
+    order.append(manager.IndexToNode(index))  # end node; equals depot when roundtrip=True
+    return order, sol
+
+
+def _two_opt_polish(order: List[int], cost: List[List[int]], *, roundtrip: bool, passes: int = 2) -> List[int]:
+    """
+    Lightweight 2-opt polish:
+    - Preserves endpoints (for path).
+    - Preserves depot at both ends (for roundtrip).
+    - Uses `cost` (meters) to evaluate swaps.
+    """
+    n = len(order)
+    if n < 5:
+        return order
+
+    # For roundtrip, we expect order[0] == order[-1] (same depot)
+    start_fix = 1 if roundtrip else 1  # first mutable index
+    end_fix = (n - 2) if roundtrip else (n - 2)  # last mutable index
+
+    for _ in range(max(1, passes)):
+        improved = False
+        # i and k mark the segment [i:k] to be reversed
+        for i in range(start_fix, end_fix - 1):
+            a, b = order[i - 1], order[i]
+            for k in range(i + 1, end_fix + 1):
+                c, d = order[k], order[k + 1]
+                # current edges: a-b and c-d
+                # proposed edges: a-c and b-d
+                delta = (cost[a][c] + cost[b][d]) - (cost[a][b] + cost[c][d])
+                if delta < -1:  # improve by at least 1 meter
+                    order[i : k + 1] = reversed(order[i : k + 1])
+                    improved = True
+        if not improved:
+            break
+    return order
+
+###############################################################################
+# Public APIs
+###############################################################################
+
+
+def compute_optimized_route_with_metrics(
+    waypoints: List[str],
+    *,
+    start_location: str | None = None,
+    end_location: str | None = None,
+    access_token: str | None = None,
+    profile: str = MB_PROFILE_DEFAULT,
+    time_limit_sec: int = 30,
+    optimize_for: str = "distance",  # "distance" (default) | "duration"
+) -> Dict[str, object]:
+    """
+    Compute an optimized route and return BOTH distance and duration metrics.
+
+    Returns dict with keys:
+      - ordered_addresses: List[str]
+      - per_leg_seconds: List[int]
+      - per_leg_meters: List[int]
+      - total_duration_seconds: int
+      - total_distance_meters: int
+      - order_indices: List[int]  # indices into the addresses list
+    """
+    addresses = waypoints.copy()
+
+    # ----- Round-trip detection (no duplicate depot node) -----
+    is_same_depot = (
+        bool(start_location)
+        and bool(end_location)
+        and start_location.strip().lower() == end_location.strip().lower()
+    )
+    if start_location:
+        addresses.insert(0, start_location)
+    if end_location and not is_same_depot:
+        addresses.append(end_location)
+    # ----------------------------------------------------------
+
+    # Fetch both matrices once
+    durations, distances = fetch_matrices_mapbox(
+        addresses, access_token=access_token, profile=profile
+    )
+
+    # Choose which matrix drives optimization
+    cost_matrix = distances if optimize_for == "distance" else durations
+
+    # Solve order (indices in [0..n-1])
+    order, sol = _solve_tsp_order(
+        cost_matrix,
+        start_index=0,
+        end_index=(len(addresses) - 1 if not is_same_depot else None),
+        time_limit_sec=time_limit_sec,
+        roundtrip=is_same_depot,
+    )
+    if not order:
+        raise RuntimeError("TSP solver could not find a route within time limit")
+
+    # Ensure explicit closure for roundtrip (depot appears at both ends)
+    if is_same_depot and order[0] != order[-1]:
+        order.append(order[0])
+
+    # 2-opt polish on the chosen objective (distance preferred)
+    order = _two_opt_polish(order, distances if optimize_for == "distance" else durations, roundtrip=is_same_depot)
+
+    # Collect leg metrics in route order
+    per_leg_seconds: List[int] = []
+    per_leg_meters: List[int] = []
+    for k in range(len(order) - 1):
+        i, j = order[k], order[k + 1]
+        per_leg_seconds.append(durations[i][j])
+        per_leg_meters.append(distances[i][j])
+
+    total_duration_seconds = sum(per_leg_seconds)
+    total_distance_meters = sum(per_leg_meters)
+
+    ordered_addresses = [addresses[k] for k in order]
+    return {
+        "ordered_addresses": ordered_addresses,
+        "per_leg_seconds": per_leg_seconds,
+        "per_leg_meters": per_leg_meters,
+        "total_duration_seconds": total_duration_seconds,
+        "total_distance_meters": total_distance_meters,
+        "order_indices": order,
+    }
+
 
 def compute_optimized_route(
     waypoints: List[str],
@@ -230,65 +423,56 @@ def compute_optimized_route(
     end_location: str | None = None,
     access_token: str | None = None,
     profile: str = MB_PROFILE_DEFAULT,
-    time_limit_sec: int = 10,
+    time_limit_sec: int = 30,
 ) -> Tuple[List[str], int, List[int]]:
-    """Return (ordered_addresses, total_duration_seconds, per_leg_seconds)."""
-    addresses = waypoints.copy()
-    if start_location:
-        addresses.insert(0, start_location)
-    if end_location:
-        addresses.append(end_location)
+    """
+    Backwards-compatible wrapper returning a 3-tuple:
+      (ordered_addresses, total_duration_seconds, per_leg_seconds)
 
-    matrix = fetch_distance_matrix_mapbox(addresses, access_token=access_token, profile=profile)
-
-    n = len(addresses)
-    manager = pywrapcp.RoutingIndexManager(n, 1, [0], [n - 1])
-    routing = pywrapcp.RoutingModel(manager)
-
-    transit_cb = routing.RegisterTransitCallback(
-        lambda i, j: matrix[manager.IndexToNode(i)][manager.IndexToNode(j)]
+    NOTE:
+    - The route is optimized for **distance** by default (better geometry/loop),
+      but we still *return time metrics* for compatibility with existing callers.
+    - Switch to `compute_optimized_route_with_metrics(...)` to access both
+      distance and duration directly.
+    """
+    res = compute_optimized_route_with_metrics(
+        waypoints,
+        start_location=start_location,
+        end_location=end_location,
+        access_token=access_token,
+        profile=profile,
+        time_limit_sec=time_limit_sec,
+        optimize_for="distance",
     )
-    routing.SetArcCostEvaluatorOfAllVehicles(transit_cb)
-
-    search = pywrapcp.DefaultRoutingSearchParameters()
-    search.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-    search.time_limit.seconds = time_limit_sec
-
-    sol = routing.SolveWithParameters(search)
-    if not sol:
-        raise RuntimeError("TSP solver could not find a route within time limit")
-
-    idx = routing.Start(0)
-    order: List[int] = []
-    while not routing.IsEnd(idx):
-        order.append(manager.IndexToNode(idx))
-        idx = sol.Value(routing.NextVar(idx))
-    order.append(manager.IndexToNode(idx))
-
-    ordered_addresses = [addresses[k] for k in order]
-    leg_secs = [matrix[order[k]][order[k + 1]] for k in range(len(order) - 1)]
-    return ordered_addresses, sum(leg_secs), leg_secs
+    return (
+        res["ordered_addresses"],  # type: ignore[return-value]
+        res["total_duration_seconds"],  # type: ignore[return-value]
+        res["per_leg_seconds"],  # type: ignore[return-value]
+    )
 
 ###############################################################################
 # Utility
 ###############################################################################
+
 
 def seconds_to_hms(sec: int) -> str:
     h, rem = divmod(sec, 3600)
     m, s = divmod(rem, 60)
     return f"{h:02}:{m:02}:{s:02}"
 
+
 def hms_to_seconds(hms: str) -> int:
-    """'02:13:45' -> 8025  |  returns 0 for blank / malformed strings."""
+    """'02:13:45' -> 8025 | returns 0 for blank / malformed strings."""
     m = re.match(r"^(\d+):(\d\d):(\d\d)$", hms or "")
     return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + int(m.group(3)) if m else 0
 
+
 def seconds_to_pretty(sec: int) -> str:
-    """3600 → '1 hr',  8025 → '2 hr 13 min'."""
+    """3600 → '1 hr', 8025 → '2 hr 13 min'."""
     h, rem = divmod(sec, 3600)
     m = rem // 60
     if h and m:
-        return f"{h} hr {m} min"
+        return f"{h} hr {m} min"
     if h:
-        return f"{h} hr"
-    return f"{m} min"
+        return f"{h} hr"
+    return f"{m} min"

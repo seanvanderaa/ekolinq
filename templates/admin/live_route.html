@@ -59,31 +59,29 @@
           <h4>{{ pickup.address }} <span class="span-text">{{ pickup.city }}, CA</span></h4>
         </div>        
         <div class="pickup-content">
-          {% if loop.index == 1 %}
-            {% if pickup.gated %}
-            <div class="pickup-gate-info">
-              <p class="text-flag">User Marked Address as Gated!</p>
+          {% if pickup.gated %}
+          <div class="pickup-gate-info">
+            <p class="text-flag">User Marked Address as Gated!</p>
+          </div>
+          {% endif %}
+          <div class="customer-info">
+            <div class="info-block">
+              <p><strong>Name: </strong>{{ pickup.fname }} {{ pickup.lname }}</p>
+              <p><strong>Phone Number: </strong><a href="tel:{{ pickup.phone_number }}">{{ pickup.phone_number }}</a></p>
+              <p><strong>Email: </strong><a href="mailto:{{ pickup.email }}">{{ pickup.email }}</a></p>
             </div>
-            {% endif %}
-            <div class="customer-info">
-              <div class="info-block">
-                <p><strong>Name: </strong>{{ pickup.fname }} {{ pickup.lname }}</p>
-                <p><strong>Phone Number: </strong><a href="tel:{{ pickup.phone_number }}">{{ pickup.phone_number }}</a></p>
-                <p><strong>Email: </strong><a href="mailto:{{ pickup.email }}">{{ pickup.email }}</a></p>
-              </div>
-            </div>
-            {% if pickup.address2 %}
-              <p class="mt0"><strong>Secondary Address:</strong></p>
-              <p>{{ pickup.address2 }}</p>
-            {% endif %}
-            {% if pickup.notes %}
-              <p class="mt0"><strong>Customer Notes:</strong></p>
-              <p>{{ pickup.notes }}</p>
-            {% endif %}
-            {% if pickup.admin_notes %}
-              <p class="mt0"><strong>Admin Notes:</strong></p>
-              <p>{{ pickup.admin_notes }}</p>
-            {% endif %}
+          </div>
+          {% if pickup.address2 %}
+            <p class="mt0"><strong>Secondary Address:</strong></p>
+            <p>{{ pickup.address2 }}</p>
+          {% endif %}
+          {% if pickup.notes %}
+            <p class="mt0"><strong>Customer Notes:</strong></p>
+            <p>{{ pickup.notes }}</p>
+          {% endif %}
+          {% if pickup.admin_notes %}
+            <p class="mt0"><strong>Admin Notes:</strong></p>
+            <p>{{ pickup.admin_notes }}</p>
           {% endif %}
           <div class="align-center button-wrapper">
             <button 
