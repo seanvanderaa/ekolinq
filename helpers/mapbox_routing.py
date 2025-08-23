@@ -422,7 +422,7 @@ def compute_optimized_route_with_metrics(
     end_location: str | None = None,
     access_token: str | None = None,
     profile: str = MB_PROFILE_DEFAULT,
-    time_limit_sec: int = 30,
+    time_limit_sec: int = 7,
     optimize_for: str = "distance",  # "distance" (default) | "duration"
 ) -> Dict[str, object]:
     """
@@ -548,7 +548,7 @@ def compute_optimized_route(
     end_location: str | None = None,
     access_token: str | None = None,
     profile: str = MB_PROFILE_DEFAULT,
-    time_limit_sec: int = 30,
+    time_limit_sec: int = 7,
 ) -> Tuple[List[str], int, List[int]]:
     """
     Backwards-compatible wrapper returning a 3-tuple:

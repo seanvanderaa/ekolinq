@@ -1844,7 +1844,7 @@ def create_app():
         formatted_date = format_date(date_str)
 
         # 4) Fetch pickups for the given day
-        all_pickups = PickupRequest.query.filter_by(request_date=date_str).all()
+        all_pickups = PickupRequest.query.filter_by(request_date=date_str, status='Requested').all()
         current_app.logger.debug(
             "Found %d 'Requested' pickups for date=%s",
             len(all_pickups),
