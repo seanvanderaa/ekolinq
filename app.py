@@ -1830,9 +1830,7 @@ def create_app():
         )
 
         if not date_str:
-            current_app.logger.warning(
-                "No 'date' parameter provided to /view-route-info."
-            )
+            current_app.logger.warning("No 'date' parameter provided to /view-route-info.")
             return "Date parameter is required", 400
 
         # 2) Parse & validate format (keep date_str for querying)
@@ -1845,40 +1843,52 @@ def create_app():
         # 3) For display only
         formatted_date = format_date(date_str)
 
-        # 4) Query by the raw string to match your VARCHAR column
-        all_pickups = PickupRequest.query.filter_by(
-            request_date=date_str
-        ).all()
+        # 4) Fetch pickups for the given day
+        all_pickups = PickupRequest.query.filter_by(request_date=date_str).all()
         current_app.logger.debug(
             "Found %d 'Requested' pickups for date=%s",
             len(all_pickups),
             date_str
         )
 
-        requested_addresses = [
-            f"{p.address}, {p.city} CA"
-            for p in all_pickups
-        ]
+        # Normalize pickup address strings the same way compute expects them
+        requested_addresses = [f"{p.address}, {p.city} CA" for p in all_pickups]
 
+        # Depot (TEXT) – compute will geocode as needed; UI will remain textual
         admin_cfg = DBConfig.query.filter_by(key='admin_address').first()
-        depot = admin_cfg.value
+        depot = admin_cfg.value if (admin_cfg and admin_cfg.value) else "5389 Mallard Dr., Pleasanton, CA 94566"
 
-        # 5) If today or in the future, compute route; otherwise skip
+        # Defaults so the template logic never breaks
+        sorted_addresses = requested_addresses[:]  # default to "as-entered" order
+        total_time_seconds = 0
+        total_time_str = "0 min"
+
+        # 5) Compute optimal order for today/future only
         if selected_date >= date.today():
-            try:
-                sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
-                    requested_addresses,
-                    start_location=depot,
-                    end_location=depot
-                )
-            except Exception:
-                current_app.logger.exception("Distance-matrix/TSP error")
-                sorted_addresses, total_time_seconds, leg_times = requested_addresses, 0, []
-
-            total_time_str = seconds_to_pretty(total_time_seconds)
+            if len(requested_addresses) == 0:
+                # Trivial route: depot → depot, no time estimate needed
+                total_time_seconds = 0
+                total_time_str = "0 min"
+                current_app.logger.info("No pickups for %s; skipping TSP.", date_str)
+            else:
+                try:
+                    sorted_addresses, total_time_seconds, leg_times = compute_optimized_route(
+                        requested_addresses,
+                        start_location=depot,
+                        end_location=depot
+                    )
+                    total_time_str = seconds_to_pretty(total_time_seconds)
+                except (ValueError, OverflowError, SystemError, RuntimeError) as e:
+                    # Hardening: matrix normalization/guards should prevent this,
+                    # but keep the endpoint resilient and log the stack.
+                    current_app.logger.exception("Distance-matrix/TSP error: %s", e)
+                    sorted_addresses = requested_addresses[:]  # fall back to input order
+                    total_time_seconds = 0
+                    total_time_str = "—"  # indicate unavailable
         else:
             total_time_str = "Old Route, No Estimate."
 
+        # 6) Sort pickups in the (possibly) optimized order
         route_map = {addr: idx for idx, addr in enumerate(sorted_addresses)}
         all_pickups.sort(
             key=lambda pr: route_map.get(f"{pr.address}, {pr.city} CA", 999_999)
@@ -1890,6 +1900,8 @@ def create_app():
             all_pickups=all_pickups,
             total_time_str=total_time_str,
         )
+
+
     
     def _clean_coord(s: str | None) -> str | None:
         """Tidy a 'lon,lat' string – Mapbox accepts it w/ no spaces."""

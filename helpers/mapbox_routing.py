@@ -42,6 +42,89 @@ _req_ts: defaultdict[str, List[float]] = defaultdict(list)
 _MB_RPM = int(os.getenv("MAPBOX_MATRIX_RPM", "300"))  # Mapbox spec: 300 req/min
 
 
+# helpers/mapbox_routing.py
+import logging, math
+from typing import List, Tuple
+
+try:
+    # current_app is only available inside a request/app context
+    from flask import current_app
+except Exception:  # pragma: no cover
+    current_app = None  # type: ignore
+
+BIG_COST = 10**9  # large but finite penalty for unreachable/invalid arcs
+logger = logging.getLogger("mapbox_routing")  # align with your existing module logs
+
+
+def _log(level: str, msg: str, *args) -> None:
+    """
+    Prefer Flask's app logger when available so logs match the rest of your output.
+    Fallback to this module logger outside app context (e.g., CLI).
+    """
+    if current_app and hasattr(current_app, "logger"):
+        getattr(current_app.logger, level)(msg, *args)
+    else:
+        getattr(logger, level)(msg, *args)
+
+
+def _matrix_stats(mx: list[list]) -> tuple[int, int, int, int, int, float, float]:
+    """
+    (rows, cols0, nulls, nans, infs, min_val, max_val) without mutating `mx`.
+    """
+    rows = len(mx)
+    cols0 = len(mx[0]) if rows else 0
+    nulls = nans = infs = 0
+    min_v = math.inf
+    max_v = -math.inf
+    for row in mx:
+        for v in row:
+            if v is None:
+                nulls += 1
+                continue
+            if isinstance(v, float):
+                if math.isnan(v):
+                    nans += 1
+                    continue
+                if math.isinf(v):
+                    infs += 1
+                    continue
+            try:
+                fv = float(v)
+                if fv < min_v: min_v = fv
+                if fv > max_v: max_v = fv
+            except Exception:
+                nulls += 1
+    if min_v is math.inf: min_v = float("nan")
+    if max_v == -math.inf: max_v = float("nan")
+    return rows, cols0, nulls, nans, infs, min_v, max_v
+
+
+def _normalize_square_matrix(mx: list[list], n: int, name: str) -> list[list[int]]:
+    if len(mx) != n:
+        raise ValueError(f"{name} rows={len(mx)} != n={n}")
+    out: list[list[int]] = []
+    for r, row in enumerate(mx):
+        if len(row) != n:
+            raise ValueError(f"{name}[{r}] cols={len(row)} != n={n}")
+        new_row: list[int] = []
+        for c, v in enumerate(row):
+            # Mapbox can return None for unreachable; treat as large finite cost
+            if v is None:
+                new_row.append(BIG_COST)
+                continue
+            # guard NaN/inf
+            if isinstance(v, float):
+                if v != v or v == float("inf") or v == float("-inf"):
+                    new_row.append(BIG_COST)
+                    continue
+            try:
+                new_row.append(int(round(v)))
+            except Exception:
+                new_row.append(BIG_COST)
+        out.append(new_row)
+    return out
+
+
 def _t(label: str):
     """Return a lambda that logs elapsed seconds when invoked."""
     logger = current_app.logger
@@ -244,7 +327,6 @@ def fetch_distance_matrix_mapbox(
 # OR-Tools TSP + 2-opt polish
 ###############################################################################
 
-
 def _solve_tsp_order(
     cost_matrix: List[List[int]],
     *,
@@ -253,46 +335,46 @@ def _solve_tsp_order(
     time_limit_sec: int,
     roundtrip: bool,
 ) -> Tuple[List[int], pywrapcp.Assignment | None]:
-    """
-    Run OR-Tools routing on the provided COST matrix and return the visit order
-    as a list of node indices (in the matrix space).
-
-    - If roundtrip=True, treats start_index as a depot for a cycle (start=end).
-    - If roundtrip=False, solves a path from start_index to end_index.
-    """
     n = len(cost_matrix)
     if roundtrip:
-        manager = pywrapcp.RoutingIndexManager(n, 1, start_index)  # cycle with fixed depot
+        manager = pywrapcp.RoutingIndexManager(n, 1, start_index)
     else:
         assert end_index is not None, "end_index must be provided for path problems"
         manager = pywrapcp.RoutingIndexManager(n, 1, [start_index], [end_index])
+
     routing = pywrapcp.RoutingModel(manager)
 
     def transit(i: int, j: int) -> int:
-        return cost_matrix[manager.IndexToNode(i)][manager.IndexToNode(j)]
+        # Defensive bounds: never throw into IndexToNode
+        size = routing.Size()
+        if i < 0 or j < 0 or i >= size or j >= size:
+            return BIG_COST
+        try:
+            ni = manager.IndexToNode(i)
+            nj = manager.IndexToNode(j)
+            return cost_matrix[ni][nj]
+        except Exception:
+            return BIG_COST
 
     transit_cb = routing.RegisterTransitCallback(transit)
     routing.SetArcCostEvaluatorOfAllVehicles(transit_cb)
 
     search = pywrapcp.DefaultRoutingSearchParameters()
-    # Better seed than purely greedy:
     search.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.LOCAL_CHEAPEST_INSERTION
-    # Escape local minima & uncross paths:
     search.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
     search.time_limit.seconds = max(1, int(time_limit_sec))
-    # search.log_search = True  # uncomment for solver logs
+    # search.log_search = True  # optional
 
     sol = routing.SolveWithParameters(search)
     if not sol:
         return [], None
 
-    # Extract order
     index = routing.Start(0)
     order: List[int] = []
     while not routing.IsEnd(index):
         order.append(manager.IndexToNode(index))
         index = sol.Value(routing.NextVar(index))
-    order.append(manager.IndexToNode(index))  # end node; equals depot when roundtrip=True
+    order.append(manager.IndexToNode(index))
     return order, sol
 
 
@@ -373,6 +455,44 @@ def compute_optimized_route_with_metrics(
         addresses, access_token=access_token, profile=profile
     )
 
+    n = len(addresses)
+    if n <= 1:
+        ordered_addresses = addresses[:]
+        return {
+            "ordered_addresses": ordered_addresses,
+            "per_leg_seconds": [],
+            "per_leg_meters": [],
+            "total_duration_seconds": 0,
+            "total_distance_meters": 0,
+            "order_indices": list(range(n)),
+        }
+
+    # Pre-normalization snapshot (to compare prod vs local)
+    dr, dc, d_nulls, d_nans, d_infs, d_min, d_max = _matrix_stats(durations)
+    sr, sc, s_nulls, s_nans, s_infs, s_min, s_max = _matrix_stats(distances)
+    _log(
+        "info",
+        "Matrix stats PRE: n=%d | dur r=%d c0=%d null=%d nan=%d inf=%d min=%.3f max=%.3f | "
+        "dist r=%d c0=%d null=%d nan=%d inf=%d min=%.3f max=%.3f",
+        n, dr, dc, d_nulls, d_nans, d_infs, d_min, d_max,
+        sr, sc, s_nulls, s_nans, s_infs, s_min, s_max,
+    )
+
+    # Normalize/validate (coerce to square int matrices; map None/NaN/inf → BIG_COST)
+    durations = _normalize_square_matrix(durations, n, "durations")
+    distances = _normalize_square_matrix(distances, n, "distances")
+
+    # Post-normalization snapshot (confirms coercions and shape)
+    dr, dc, d_nulls, d_nans, d_infs, d_min, d_max = _matrix_stats(durations)
+    sr, sc, s_nulls, s_nans, s_infs, s_min, s_max = _matrix_stats(distances)
+    _log(
+        "info",
+        "Matrix stats POST: n=%d | dur r=%d c0=%d null=%d nan=%d inf=%d min=%.0f max=%.0f | "
+        "dist r=%d c0=%d null=%d nan=%d inf=%d min=%.0f max=%.0f",
+        n, dr, dc, d_nulls, d_nans, d_infs, d_min, d_max,
+        sr, sc, s_nulls, s_nans, s_infs, s_min, s_max,
+    )
+
     # Choose which matrix drives optimization
     cost_matrix = distances if optimize_for == "distance" else durations
 
@@ -392,7 +512,11 @@ def compute_optimized_route_with_metrics(
         order.append(order[0])
 
     # 2-opt polish on the chosen objective (distance preferred)
-    order = _two_opt_polish(order, distances if optimize_for == "distance" else durations, roundtrip=is_same_depot)
+    order = _two_opt_polish(
+        order,
+        distances if optimize_for == "distance" else durations,
+        roundtrip=is_same_depot,
+    )
 
     # Collect leg metrics in route order
     per_leg_seconds: List[int] = []
@@ -414,6 +538,7 @@ def compute_optimized_route_with_metrics(
         "total_distance_meters": total_distance_meters,
         "order_indices": order,
     }
+
 
 
 def compute_optimized_route(
