@@ -61,7 +61,7 @@ from helpers.helpers import format_date
 from helpers.capture_ip import client_ip
 import helpers.import_backfill as backfill_mod
 # from helpers.routing import compute_optimized_route, seconds_to_hms
-from helpers.mapbox_routing import compute_optimized_route, seconds_to_hms, _maybe_geocode, _coords_like, hms_to_seconds, seconds_to_pretty
+from helpers.mapbox_routing import compute_optimized_route, compute_optimized_route_with_metrics, seconds_to_hms, _maybe_geocode, _coords_like, hms_to_seconds, seconds_to_pretty
 from helpers.scheduling import build_schedule
 from helpers.emailer import (send_contact_email, send_request_email,
                              send_error_report, send_edited_request_email, send_cancellation_email)
@@ -72,7 +72,7 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
                            DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
-                           updateCustomerNotes, RatingForm, DebugAdminRoutes)
+                           updateCustomerNotes, RatingForm, DebugAdminRoutes, RefreshRoute)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
@@ -1911,29 +1911,28 @@ def create_app():
     @app.route('/live-route', methods=['GET'])
     @login_required
     def live_route():
-        """
-        Serve the live route.
+        def meters_to_miles(m: int | float) -> float:
+            return float(m) / 1609.344
 
-        Behavior:
-        - The route does NOT change unless:
-            • there is no cache yet, or
-            • the admin explicitly requests a refresh via ?refresh=1.
-        - Recompute uses a true round trip: depot → requested stops → depot.
-        - As pickups are completed/marked-not-possible, we "roll forward" the
-        cached route by trimming finished stops from the FRONT only and
-        decrement the remaining time accordingly.
-        """
+        def miles_pretty(miles: float) -> str:
+            # 1 decimal for 10+ miles, 2 decimals for under 10 for a nicer read
+            return f"{miles:.1f} mi" if miles >= 10 else f"{miles:.2f} mi"
+
         CACHE_MAX_AGE_MINUTES = 15  # informational only; no auto-refresh by age
         pickup_status_form    = PickupStatusForm()
         debug_form            = DebugAdminRoutes()
-        selected_date         = request.args.get('date')
+        refresh_form          = RefreshRoute()
+
+        selected_date = request.args.get('date')
         if not selected_date:
             return "Date parameter is required", 400
 
-        # explicit, admin-triggered refresh (e.g., button adds ?refresh=1 to the URL)
         explicit_refresh = str(request.args.get('refresh', '0')).lower() in ('1', 'true', 'yes')
-
-        current_app.logger.info("GET /live-route for day: %s (refresh=%s)", selected_date, explicit_refresh)
+        mode = (request.args.get('mode') or "").strip().lower()  # "depot", "driver", or ""
+        current_app.logger.info(
+            "GET /live-route for day: %s (refresh=%s, mode=%s)",
+            selected_date, explicit_refresh, mode or "depot(default)"
+        )
 
         # ------------------------------------------------------------------ #
         # 1) Build today's waypoint list (requested stops, depot)
@@ -1942,126 +1941,180 @@ def create_app():
             request_date=selected_date, status='Requested'
         ).all()
 
-        # current driver location is NOT used to compute the plan now (round trip)
+        # DriverLocation is the ONLY source of truth for live position (Option A)
         driver_loc = DriverLocation.query.first()
-        if driver_loc and driver_loc.full_address():
-            driver_current_location = _clean_coord(driver_loc.full_address())
-        else:
-            admin_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
-            driver_current_location = _clean_coord(
-                admin_cfg.value if admin_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
-            )
+        driver_current_location = _clean_coord(driver_loc.full_address()) if (driver_loc and driver_loc.full_address()) else None
 
-        depot_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
-        depot_address = _clean_coord(
-            depot_cfg.value if depot_cfg else "5389 Mallard Dr., Pleasanton, CA 94566"
+        # Depot values from config: TEXT for UI, GEO for compute
+        admin_text_cfg = DBConfig.query.filter_by(key='admin_address').first()
+        admin_address_text = (admin_text_cfg.value if admin_text_cfg and admin_text_cfg.value
+                            else "5389 Mallard Dr., Pleasanton, CA 94566")
+
+        depot_geo_cfg = DBConfig.query.filter_by(key='geocoded_admin_addr').first()
+        depot_address_geo = _clean_coord(
+            depot_geo_cfg.value if depot_geo_cfg and depot_geo_cfg.value else "5389 Mallard Dr., Pleasanton, CA 94566"
         )
 
-        # Use the SAME formatter here and later when mapping positions
         def _pickup_addr_fmt(p: PickupRequest) -> str:
             return _pickup_addr(p)
 
         requested_keys = [_pickup_addr_fmt(p) for p in pickups_requested]
 
-        # Initial list only for display/fallback; recompute will overwrite.
-        addresses = [depot_address] + requested_keys + [depot_address]
+        # Initial/fallback; recompute will overwrite
+        addresses = [depot_address_geo] + requested_keys + [depot_address_geo]
 
         # ------------------------------------------------------------------ #
         # 2) Cache handling
         # ------------------------------------------------------------------ #
         cached = RouteSolution.query.filter_by(date=selected_date).first()
         should_refresh = (cached is None) or explicit_refresh
-        display_str    = ""
+        time_display_str     = ""
+        distance_display_str = ""
 
-        # Helper: roll the cached route forward by removing only head stops
-        # that are no longer in "Requested".
-        def _roll_forward_cached_route(cached_obj: RouteSolution) -> tuple[list[str], int]:
-            old_route = json.loads(cached_obj.route_json or "[]")
-            old_legs  = json.loads(cached_obj.legs_json or "[]")  # seconds per edge
+        def _roll_forward_cached_route(cached_obj: RouteSolution) -> tuple[list[str], int, int]:
+            """
+            Trim completed legs from the FRONT of the cached route and decrement both time and distance.
+            Returns: (remaining_route_addresses, remaining_seconds, remaining_meters)
+            """
+            old_route        = json.loads(cached_obj.route_json or "[]")
+            old_legs_seconds = json.loads(cached_obj.legs_json or "[]")              # seconds per leg
+            old_legs_meters  = json.loads(cached_obj.legs_meters_json or "[]")       # meters per leg
+
             if not old_route:
-                return addresses, 0
+                return addresses, 0, 0
 
-            # Always ensure depot is last
-            if not old_route or old_route[-1] != depot_address:
-                if depot_address in old_route:
-                    old_route = [a for a in old_route if a != depot_address] + [depot_address]
+            # Ensure depot (geo token) is last
+            if not old_route or old_route[-1] != depot_address_geo:
+                if depot_address_geo in old_route:
+                    old_route = [a for a in old_route if a != depot_address_geo] + [depot_address_geo]
                 else:
-                    old_route.append(depot_address)
+                    old_route.append(depot_address_geo)
 
-            # (Existing behavior retained for now) Replace dynamic start with current driver location
-            if old_route:
+            # Replace dynamic start with current driver location for display only
+            if old_route and driver_current_location:
                 old_route[0] = driver_current_location
 
             # Trim completed/not-possible stops ONLY from the front.
             travelled_sec = 0
+            travelled_m   = 0
             while len(old_route) > 2 and old_route[1] not in requested_keys:
-                if old_legs:
-                    travelled_sec += int(old_legs.pop(0))
+                if old_legs_seconds:
+                    travelled_sec += int(old_legs_seconds.pop(0))
+                if old_legs_meters:
+                    travelled_m += int(old_legs_meters.pop(0))
                 old_route.pop(1)
 
-            remaining_sec = max(0, hms_to_seconds(cached_obj.total_time_str) - travelled_sec)
+            total_seconds = hms_to_seconds(cached_obj.total_time_str)
+            remaining_sec = max(0, total_seconds - travelled_sec)
 
-            cached_obj.route_json     = json.dumps(old_route)
-            cached_obj.legs_json      = json.dumps(old_legs)
-            cached_obj.total_time_str = seconds_to_hms(remaining_sec)
-            cached_obj.last_updated   = datetime.now()
+            total_meters = int(cached_obj.total_distance_meters or 0)
+            remaining_m  = max(0, total_meters - travelled_m) if total_meters else sum(int(x) for x in old_legs_meters)
+
+            # Persist back
+            cached_obj.route_json            = json.dumps(old_route)
+            cached_obj.legs_json             = json.dumps(old_legs_seconds)
+            cached_obj.legs_meters_json      = json.dumps(old_legs_meters)
+            cached_obj.total_time_str        = seconds_to_hms(remaining_sec)
+            cached_obj.total_distance_meters = int(remaining_m)
+            cached_obj.last_updated          = datetime.now()
             db.session.commit()
 
-            return old_route, remaining_sec
+            return old_route, remaining_sec, remaining_m
 
         if cached and not should_refresh:
-            # Do NOT auto-refresh just because of age or cached.needs_refresh.
-            # Keep the existing route plan stable and roll it forward.
-            addresses, remaining_sec = _roll_forward_cached_route(cached)
-            display_str = seconds_to_pretty(remaining_sec)
-            current_app.logger.info("Used cached route (stable), remaining time: %s", display_str)
+            addresses, remaining_sec, remaining_m = _roll_forward_cached_route(cached)
+            time_display_str     = seconds_to_pretty(remaining_sec)
+            distance_display_str = miles_pretty(meters_to_miles(remaining_m))
+            current_app.logger.info(
+                "Used cached route (stable), remaining: %s, %s",
+                time_display_str,
+                distance_display_str
+            )
 
         # ------------------------------------------------------------------ #
         # 3) Recompute ONLY when explicitly requested (or first time)
-        #     → round trip: depot → requested stops → depot
+        #     Mode is FORM-DRIVEN ONLY:
+        #       - mode=depot  → start=depot_geo,  end=depot_geo,  optimize_for="distance"
+        #       - mode=driver → start=DriverLocation, end=depot_geo, optimize_for="duration"
+        #       - otherwise   → default to depot behavior
         # ------------------------------------------------------------------ #
         if should_refresh:
-            if len(requested_keys) == 0:
-                # No stops today: trivial round trip
-                final_route   = [depot_address, depot_address]
-                legs_seconds  = [0]
-                total_seconds = 0
-                current_app.logger.info("Computed NEW route (explicit): no pickups; depot-only loop.")
+            if mode == "driver" and driver_current_location:
+                start_loc = driver_current_location
+                end_loc   = depot_address_geo
+                objective = "duration"
+                chosen_mode = "driver"
             else:
-                # True round trip: start=end=depot; only pass the stops as waypoints
-                final_route, total_seconds, legs_seconds = compute_optimized_route(
-                    waypoints=requested_keys,
-                    start_location=depot_address,
-                    end_location=depot_address,
-                )
-                current_app.logger.info(
-                    "Computed NEW route (explicit round trip), total time: %s",
-                    seconds_to_pretty(total_seconds)
-                )
+                start_loc = depot_address_geo
+                end_loc   = depot_address_geo
+                objective = "distance"
+                chosen_mode = "depot"
 
+            if len(requested_keys) == 0:
+                if chosen_mode == "driver" and start_loc != end_loc:
+                    res = compute_optimized_route_with_metrics(
+                        waypoints=[],
+                        start_location=start_loc,
+                        end_location=end_loc,
+                        optimize_for=objective,
+                    )
+                    final_route       = res["ordered_addresses"]
+                    legs_seconds      = [int(s) for s in res["per_leg_seconds"]]
+                    legs_meters       = [int(m) for m in res["per_leg_meters"]]
+                    total_seconds     = int(res["total_duration_seconds"])
+                    total_distance_m  = int(res["total_distance_meters"])
+                else:
+                    final_route      = [depot_address_geo, depot_address_geo]
+                    legs_seconds     = [0]
+                    legs_meters      = [0]
+                    total_seconds    = 0
+                    total_distance_m = 0
+            else:
+                res = compute_optimized_route_with_metrics(
+                    waypoints=requested_keys,
+                    start_location=start_loc,
+                    end_location=end_loc,
+                    optimize_for=objective,
+                )
+                final_route       = res["ordered_addresses"]
+                legs_seconds      = [int(s) for s in res["per_leg_seconds"]]
+                legs_meters       = [int(m) for m in res["per_leg_meters"]]
+                total_seconds     = int(res["total_duration_seconds"])
+                total_distance_m  = int(res["total_distance_meters"])
+
+            # Save cache
             if cached:
-                cached.route_json     = json.dumps(final_route)
-                cached.legs_json      = json.dumps(legs_seconds)
-                cached.total_time_str = seconds_to_hms(total_seconds)
-                cached.last_updated   = datetime.now()
-                cached.needs_refresh  = False
+                cached.route_json            = json.dumps(final_route)
+                cached.legs_json             = json.dumps(legs_seconds)
+                cached.total_time_str        = seconds_to_hms(total_seconds)
+                cached.legs_meters_json      = json.dumps(legs_meters)
+                cached.total_distance_meters = int(total_distance_m)
+                cached.last_updated          = datetime.now()
+                cached.needs_refresh         = False
             else:
                 cached = RouteSolution(
                     date=selected_date,
                     route_json=json.dumps(final_route),
                     legs_json=json.dumps(legs_seconds),
                     total_time_str=seconds_to_hms(total_seconds),
+                    legs_meters_json=json.dumps(legs_meters),
+                    total_distance_meters=int(total_distance_m),
                     last_updated=datetime.now(),
                     needs_refresh=False,
                 )
                 db.session.add(cached)
 
             db.session.commit()
-            addresses   = final_route
-            display_str = seconds_to_pretty(total_seconds)
+            addresses            = final_route
+            time_display_str     = seconds_to_pretty(total_seconds)
+            distance_display_str = miles_pretty(meters_to_miles(total_distance_m))
+
+            # Strip flags immediately so they don't stick
+            if explicit_refresh:
+                return redirect(url_for('live_route', date=selected_date), code=303)
 
         # ------------------------------------------------------------------ #
-        # 4) Sort pickups by the current route order
+        # 4) Sort pickups by the current route order (use compute addresses)
         # ------------------------------------------------------------------ #
         route_map = {addr: idx for idx, addr in enumerate(addresses)}
         pickups_requested.sort(
@@ -2073,17 +2126,93 @@ def create_app():
             or_(PickupRequest.status == 'Complete', PickupRequest.status == 'Incomplete')
         ).all()
 
+        # ------------------------------------------------------------------ #
+        # 5) Presentation mapping: show text for depot, keep compute stable
+        # ------------------------------------------------------------------ #
+        route_for_display = [
+            (admin_address_text if a == depot_address_geo else a)
+            for a in addresses
+        ]
+        display_driver_loc = driver_current_location or admin_address_text
+
+        current_app.logger.debug("Calculated route (display): %s", route_for_display)
+
         return render_template(
             "admin/live_route.html",
             date=format_iso_to_pretty(selected_date),
             pickups_requested=pickups_requested,
             pickups_completed=pickups_completed,
-            route=addresses,
+            driver_location=display_driver_loc,
+            route=route_for_display,           # <-- display-friendly route
             pickup_status_form=pickup_status_form,
             debug_form=debug_form,
-            total_time_str=display_str,
+            refresh_form=refresh_form,
+            total_time_str=time_display_str,
+            total_distance_str=distance_display_str,
         )
+    
+    @app.route('/refresh-route', methods=['POST'])
+    @login_required
+    def refresh_route():
+        """
+        Option A (best practice): DriverLocation is the single source of truth.
+        - Depot mode: set DriverLocation to the TEXT admin address from config, then redirect with mode=depot.
+        - Driver mode: set DriverLocation to the submitted address (lon,lat or text), then redirect with mode=driver.
+        """
+        form = RefreshRoute()
 
+        if not form.validate_on_submit():
+            current_app.logger.warning("RefreshRoute validation failed: %s", getattr(form, "errors", {}))
+            return "Error: Form validation failed", 400
+
+        selected_date = (request.form.get('date') or "").strip()
+        if not selected_date:
+            return "Error: No date provided.", 400
+
+        from_depot = bool(form.recalc_from_depot.data)
+
+        try:
+            # Ensure we have a DriverLocation row
+            driver_loc = DriverLocation.query.first()
+            if not driver_loc:
+                driver_loc = DriverLocation()
+                db.session.add(driver_loc)
+
+            if from_depot:
+                # Read the TEXT admin address for display, and use it as the current driver location.
+                admin_text_cfg = DBConfig.query.filter_by(key='admin_address').first()
+                depot_text = (admin_text_cfg.value if admin_text_cfg and admin_text_cfg.value
+                            else "5389 Mallard Dr., Pleasanton, CA 94566")
+
+                # Write TEXT address so the frontend shows the human-readable string.
+                driver_loc.geocoded_addr = None
+                driver_loc.address = depot_text
+                db.session.commit()
+
+                current_app.logger.info("DriverLocation set to depot TEXT address for recompute: %s", depot_text)
+                return redirect(url_for('live_route', date=selected_date, refresh=1, mode="depot"), code=303)
+
+            # Driver mode requires an address
+            address = (form.address.data or "").strip()
+            if not address:
+                return "Error: Address is required unless 'Recalculate from depot' is checked.", 400
+
+            # If the submitted value looks like lon,lat store it in geocoded_addr; else store as text.
+            cleaned = _clean_coord(address)
+            if cleaned and _coords_like(cleaned):
+                driver_loc.geocoded_addr = cleaned
+                driver_loc.address = None
+            else:
+                driver_loc.geocoded_addr = None
+                driver_loc.address = address
+
+            db.session.commit()
+            current_app.logger.info("DriverLocation set from refresh form: %s", address)
+            return redirect(url_for('live_route', date=selected_date, refresh=1, mode="driver"), code=303)
+
+        except Exception as e:
+            current_app.logger.exception("Failed to update DriverLocation in refresh_route")
+            return f"Error updating driver location: {e}", 500
 
 
     @app.route('/live-route-debug', methods=['GET'])

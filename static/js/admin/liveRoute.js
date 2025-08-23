@@ -103,4 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
             window.open(url, '_blank');
         });
     });
+
+    const showActions = document.getElementById('show-actions');
+    const actionsWrapper = document.getElementById('actions-wrapper');
+    if (!showActions || !actionsWrapper) return;
+
+    function toggleActions() {
+      const isOpen = actionsWrapper.classList.toggle('is-open');
+      showActions.setAttribute('aria-expanded', String(isOpen));
+      showActions.innerHTML = isOpen
+        ? '<i class="bi bi-arrow-up-circle"></i>Hide Actions'
+        : '<i class="bi bi-arrow-down-circle"></i>Show Actions';
+    }
+
+    showActions.addEventListener('click', toggleActions);
   });

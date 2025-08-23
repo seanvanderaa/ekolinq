@@ -20,14 +20,20 @@ main {
     margin-top: 0px;
 }
 
-.time-remaining {
-    margin-bottom: 36px;
+.time-remaining, .distance-remaining {
     font-weight: 600;
-    margin-top: 24px;
+    margin: 0px;
 }
 
 .time {
     background-color: var(--m-blue);
+    padding: 8px 16px;
+    border-radius: 3px;
+    color: white;
+}
+
+.miles {
+    background-color: rgb(105, 105, 105);
     padding: 8px 16px;
     border-radius: 3px;
     color: white;
@@ -225,6 +231,16 @@ main {
     color: black;
 }
 
+
+#route-stats {
+    display: flex;
+    flex-direction: row;
+    margin-top: 24px;
+    row-gap: 24px;
+    column-gap: 8px;
+    margin-bottom: 36px;
+}
+
 @media only screen and (max-width: 768px) {
     body {
         background-color: var(--off-white);
@@ -234,8 +250,58 @@ main {
         padding: 0em;
         margin-top: 80px;
     }
+    #route-stats {
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
 }
 
 #live-route-debug {
-    margin-bottom: 16px; 
+    margin-top: 8px; 
+}
+
+#show-actions {
+    width:fit-content;
+    margin-bottom: 20px;
+}
+
+.bi-arrow-down-circle {
+    margin-right: 6px;
+}
+
+#actions-wrapper {
+    display: none;
+    flex-direction: column;
+    border: 1px solid rgb(186, 186, 186);
+    border-radius: 5px;
+    padding: 20px;
+    row-gap: 12px;
+    margin-bottom: 36px;
+    padding-top: 0px;
+}
+
+#actions-wrapper.is-open {
+  display: flex;
+}
+
+#refresh-form-btn {
+    background-color: var(--yel);
+}
+
+#refresh-form-btn:hover {
+    background-color: var(--m-green);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--mont);
+    margin-bottom: 12px;
+    row-gap: 6px;
+}
+
+#boolean-form-group {
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 16px;
 }

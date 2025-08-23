@@ -38,4 +38,10 @@ document.addEventListener("DOMContentLoaded", function() {
         toggleContent(pastContent, pastHeader, pastIcon);
       });
     }
+
+    const liveRouteBtn = document.getElementById('live-route-btn');
+    liveRouteBtn.addEventListener('click', function() {
+      document.getElementById('overlay').classList.add('show');
+    });
+
   });

@@ -148,6 +148,8 @@ class RouteSolution(db.Model):
     legs_json = db.Column(db.Text)
     needs_refresh = db.Column(db.Boolean, default=False, nullable=False)
 
+    legs_meters_json = db.Column(db.Text, nullable=True, default="[]")   # meters per leg
+    total_distance_meters = db.Column(db.Integer, nullable=True, default=0)
     
     def to_dict(self):
         return {

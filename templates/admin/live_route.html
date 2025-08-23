@@ -8,16 +8,42 @@
 
 {% block content %}
 <main class="content-width">
-  <form action="{{ url_for('live_route_debug') }}"
-      method="GET" id="live-route-debug">
-      <input type="hidden" name="date" value="{{ request.args.get('date') }}">
-      {{ debug_form.csrf_token }}
-      {{ debug_form.submit(class="download-btn") }}
-  </form>
+  <button class="download-btn" id="show-actions"><i class="bi bi-arrow-down-circle"></i>Show Actions</button>
+  <div id="actions-wrapper">
+    <p><strong>Actions</strong></p>
+    <form action="{{ url_for('refresh_route') }}"
+        method="POST" id="refresh-route-form">
+        <input type="hidden" name="date" value="{{ request.args.get('date') }}">
+        {{ refresh_form.csrf_token }}
+        <div class="form-group">
+          <label for="firstName">Address to Start From</label>
+          {{ refresh_form.address(id="refresh-address", value=driver_location) }}
+        </div>
+        <div class="form-group" id="boolean-form-group">
+          {{ refresh_form.recalc_from_depot(id="use-admin-addr") }}
+          <label for="firstName"> Use the Admin Address instead?</label>
+        </div>
+        <button type="submit" class="download-btn" id="refresh-form-btn">
+          <i class="bi bi-arrow-clockwise"></i> Recalculate Route
+        </button>
+    </form>
+    <form action="{{ url_for('live_route_debug') }}"
+        method="GET" id="live-route-debug">
+        <input type="hidden" name="date" value="{{ request.args.get('date') }}">
+        {{ debug_form.csrf_token }}
+        <button type="submit" class="download-btn">
+            <i class="bi bi-bug"></i> Capture a Debug Report
+        </button>
+    </form>
+  </div>
+
   <h2 class="col-green header">
     Live Pick Ups  |  {{ date }}
   </h2>
-  <p class="col-subtle fs-14 time-remaining"><i><span class="time">{{ total_time_str }} remaining</span></i></p>
+  <div id="route-stats">
+    <p class="col-subtle fs-14 time-remaining"><i><span class="time">{{ total_time_str }} remaining</span></i></p>
+    <p class="col-subtle fs-14 distance-remaining"><i><span class="miles">{{ total_distance_str }} left</span></i></p>
+  </div>
   <!-- Completed section -->
   <div id="completed-pickups">
     <div id="completed-header" class="dropdown-header align-left">

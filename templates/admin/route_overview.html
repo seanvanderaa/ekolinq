@@ -23,7 +23,7 @@
             </div>
           {% endfor %}
         </div>
-        <a href="{{ url_for('live_route') }}?date={{ next_pickup.date }}" ><div class="pickup-date-btn"><p class="mt0">Start Pick Ups</p></div></a>
+        <a href="{{ url_for('live_route') }}?date={{ next_pickup.date }}" id="live-route-btn"><div class="pickup-date-btn"><p class="mt0">Start Pick Ups</p></div></a>
       {% else %}
         <p>No upcoming pickups available.</p>
       {% endif %}

@@ -211,3 +211,12 @@ class RatingForm(FlaskForm):
 class DebugAdminRoutes(FlaskForm):
     date = HiddenField("date", validators=[DataRequired()])
     submit = SubmitField("Create and Send Debug Report")
+
+class RefreshRoute(FlaskForm):
+    date = HiddenField("date", validators=[DataRequired()])
+    address = StringField(
+        "Current Address",
+        validators=[DataRequired(), Length(max=300)]
+    )
+    recalc_from_depot = BooleanField("Recalculate from depot", default=False)
+    submit = SubmitField("Recalculate Route")
