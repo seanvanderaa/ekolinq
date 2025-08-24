@@ -48,17 +48,17 @@ def send_contact_email(name, email, message):
             bcc=bcc_recipients            # MAIL_ERROR_ADDRESS for visibility
         )
 
-        # Plain-text fallback
-        msg.body = (
-            f"Thanks for your message, {name}! We've received it and will follow up with you shortly.\n\n"
-            "Here's what you said:\n\n"
-            f"{message}"
-        )
-
         # Safely escape user-provided content for HTML
         name_html = escape(name)
         name_new = ", " + name_html
         message_html = escape(message)
+
+        # Plain-text fallback
+        msg.body = (
+            f"Thanks for your message{name_new}! We've received it and will follow up with you shortly.\n\n"
+            "Here's what you said:\n\n"
+            f"{message_html}"
+        )
 
         # HTML body (matches your house style)
         msg.html = f"""<!DOCTYPE html>
@@ -91,8 +91,7 @@ def send_contact_email(name, email, message):
     [data-ogsc] .stack-col,[data-ogsc] .stack-col > table{{display:block!important;width:100%!important;max-width:100%!important;}}
   </style>
 </head>
-<body bgcolor="#104378" class="bg-body" style="margin:0;padding:0;background-color:#104378;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Thanks for your message, {name_new}! We've received it and will follow up with you shortly.</div>
+<body bgcolor="#104378" class="bg-body" style="margin:0;padding:20px 0px;background-color:#104378;">
   <table role="presentation" width="100%" bgcolor="#104378" cellpadding="0" cellspacing="0">
     <tr>
       <td align="center" style="padding:24px 0;">
@@ -107,11 +106,11 @@ def send_contact_email(name, email, message):
                 </tr>
               </table>
               <h1 style="font-size:20px;line-height:1.4;margin:0 0 24px;font-weight:500;text-align:center;">We Received Your Message</h1>
-              <p style="font-size:18px;line-height:1.5;margin:0 0 16px;">Thanks for your message, {name_html}! We've received it and will follow up with you shortly.</p>
-              <h3 style="margin:24px 0 12px;font-size:18px;">Here's what you said:</h3>
+              <p style="font-size:18px;line-height:1.5;margin:0 0 16px;">Thanks for your message{name_new}! We've received it and will follow up with you shortly.</p>
+              <h3 style="margin:24px 0 12px;font-size:18px;">Your message:</h3>
               <table role="presentation" width="100%" style="border:none;border-radius:10px;background:#055d18;">
                 <tr>
-                  <td style="padding:14px;">
+                  <td style="padding:24px;">
                     <p style="margin:0;font-size:16px;line-height:1.6;white-space:pre-wrap;color:white;">{message_html}</p>
                   </td>
                 </tr>
