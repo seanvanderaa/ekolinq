@@ -295,12 +295,14 @@ main {
     margin-top: 24px;
 }
 
-#timeframe-submit-btn:disabled {
-    color: rgba(255, 255, 255, 0.797);
-    background-color: #098223bb;
+#timeframe-submit-btn.is-disabled {
+  color: rgba(255, 255, 255, 0.797);
+  background-color: #098223bb;
+  cursor: not-allowed;
 }
 
-#timeframe-submit-btn:disabled:hover {
+
+#timeframe-submit-btn.is-disabled:hover {
     cursor: not-allowed;
 }
 

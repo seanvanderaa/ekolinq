@@ -1682,7 +1682,7 @@ def create_app():
 
         else:
             current_app.logger.info("weekly_export() completed")
-            flash("Weekly export completed successfully.", "success")
+            flash("Weekly export completed successfully. 'Requests' holds current dump; 'Requests_Temp' holds previous backup.", "success")
 
 
         return redirect(url_for("admin_pickups"))

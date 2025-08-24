@@ -3,45 +3,138 @@ from flask_mail import Message
 from flask import current_app  # helpful if you’re using the application factory pattern
 from extensions import mail   # <--- no more "from app import mail"
 from datetime import datetime
+from markupsafe import escape
 import os
+
+def _unique_nonempty(sequence):
+    seen = set()
+    ordered = []
+    for item in sequence:
+        if item and item not in seen:
+            seen.add(item)
+            ordered.append(item)
+    return ordered
 
 def send_contact_email(name, email, message):
     """
-    Sends an email using your IONOS configuration (Flask-Mail).
-    Returns True if successful, False if an error occurred.
+    Sends a confirmation email to the customer and the admins (in the To line),
+    and BCCs MAIL_ERROR_ADDRESS for monitoring.
+    Returns True if successful, False otherwise.
     """
     try:
-        # Subject and recipients can be customized as needed
-        CONFIG_NAME = os.getenv("FLASK_CONFIG", "development")   # default “development”
-        if CONFIG_NAME == "development":
-            subject = "[TESTING] New Contact Form Entry"
-        else:
-            subject = "New Contact Form Entry"
-        
-        admin_email = os.getenv("MAIL_ERROR_ADDRESS", "")
-        if admin_email != "":
-            recipients = [current_app.config["MAIL_USERNAME"], admin_email]
-        else:
-            recipients = [current_app.config["MAIL_USERNAME"]]
-        cc = []
+        config_name = os.getenv("FLASK_CONFIG", "development")
+        subject = "[TESTING] EkoLinq: We received your message!" if config_name == "development" else "EkoLinq: We received your message!"
+
+        # Admin identities
+        admin_primary = current_app.config.get("MAIL_USERNAME", "")
+
+        # Silent monitor / catch-all (BCC only)
+        error_monitor = os.getenv("MAIL_ERROR_ADDRESS", "")
+
+        # Build recipient lists
+        to_recipients = _unique_nonempty([
+            email,            # customer
+            admin_primary,    # primary admin
+        ])
+
+        bcc_recipients = _unique_nonempty([
+            error_monitor
+        ])
 
         msg = Message(
-            subject,
-            sender=current_app.config["MAIL_USERNAME"],  # or a dedicated no-reply address
-            recipients=recipients
+            subject=subject,
+            sender=admin_primary,         # comes from admin
+            recipients=to_recipients,     # user + admins in-thread
+            bcc=bcc_recipients            # MAIL_ERROR_ADDRESS for visibility
         )
-        # Construct the body of the email
+
+        # Plain-text fallback
         msg.body = (
-            f"Name: {name}\n"
-            f"Email: {email}\n"
-            f"Message: \n{message}"
+            f"Thanks for your message, {name}! We've received it and will follow up with you shortly.\n\n"
+            "Here's what you said:\n\n"
+            f"{message}"
         )
+
+        # Safely escape user-provided content for HTML
+        name_html = escape(name)
+        name_new = ", " + name_html
+        message_html = escape(message)
+
+        # HTML body (matches your house style)
+        msg.html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>We Received Your Message</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body,p,h1,h2,h3,td,li,a{{font-family:'Public Sans',Arial,sans-serif!important;}}
+    @media (prefers-color-scheme: dark) {{
+      .bg-body{{background:#104378!important;}}
+      .bg-card{{background:#ffffff!important;}}
+      .bg-green{{background:#0c6a28!important;}}
+      .text-dark{{color:#ffffff!important;}}
+      a{{color:#8ac8ff!important;}}
+    }}
+    [data-ogsc] .bg-body{{background:#104378!important;}}
+    [data-ogsc] .bg-card{{background:#ffffff!important;}}
+    [data-ogsc] .bg-green{{background:#0c6a28!important;}}
+    [data-ogsc] .text-dark{{color:#ffffff!important;}}
+    [data-ogsc] a{{color:#8ac8ff!important;}}
+    @media only screen and (max-width:600px){{
+      .stack-col{{display:block!important;width:100%!important;max-width:100%!important;}}
+      .stack-col > table{{width:100%!important;}}
+    }}
+    [data-ogsc] .stack-col,[data-ogsc] .stack-col > table{{display:block!important;width:100%!important;max-width:100%!important;}}
+  </style>
+</head>
+<body bgcolor="#104378" class="bg-body" style="margin:0;padding:0;background-color:#104378;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Thanks for your message, {name_new}! We've received it and will follow up with you shortly.</div>
+  <table role="presentation" width="100%" bgcolor="#104378" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding:24px 0;">
+        <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
+          <tr>
+            <td bgcolor="#ffffff" class="bg-card" style="border:1px solid #ddd;border-radius:40px;padding:30px;">
+              <table role="presentation" width="100%">
+                <tr>
+                  <td align="center" style="padding:0 0 24px 0;">
+                    <img src="https://i.imgur.com/g6QpslJ.png" alt="EkoLinq Logo" width="140" style="display:block;height:auto;border:0;">
+                  </td>
+                </tr>
+              </table>
+              <h1 style="font-size:20px;line-height:1.4;margin:0 0 24px;font-weight:500;text-align:center;">We Received Your Message</h1>
+              <p style="font-size:18px;line-height:1.5;margin:0 0 16px;">Thanks for your message, {name_html}! We've received it and will follow up with you shortly.</p>
+              <h3 style="margin:24px 0 12px;font-size:18px;">Here's what you said:</h3>
+              <table role="presentation" width="100%" style="border:none;border-radius:10px;background:#055d18;">
+                <tr>
+                  <td style="padding:14px;">
+                    <p style="margin:0;font-size:16px;line-height:1.6;white-space:pre-wrap;color:white;">{message_html}</p>
+                  </td>
+                </tr>
+              </table>
+              <p style="font-size:16px;line-height:1.5;margin:32px 0 0;">If you have any additional details to share, simply reply to this email.</p>
+              <p style="font-size:16px;margin:24px 0 8px;">Thanks,</p>
+              <p style="font-size:16px;margin:8px 0;">EkoLinq Support Team</p>
+              <p style="font-size:16px;margin:8px 0;">(866)&nbsp;346-4765</p>
+              <p style="font-size:16px;margin:16px 0 8px;"><a href="mailto:contact@ekolinq.com" style="color:#007bff;text-decoration:none;">contact@ekolinq.com</a></p>
+              <p style="font-size:16px;margin:8px 0;"><a href="https://ekolinq.com" style="color:#007bff;text-decoration:none;">www.ekolinq.com</a></p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
 
         mail.send(msg)
         return True
     except Exception as e:
-        # For production, you might log the exception or handle differently
-        print(f"Error while sending email: {str(e)}")
+        print(f"Error while sending confirmation email: {str(e)}")
         return False
 
 def send_request_email(pickup):
