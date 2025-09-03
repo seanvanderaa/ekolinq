@@ -257,6 +257,7 @@ def create_app():
     db.init_app(app)
 
     from flask_migrate import Migrate
+    from langdetect import detect, DetectorFactory
     migrate = Migrate(app, db)
 
     # Create tables once if needed
@@ -2431,8 +2432,6 @@ def create_app():
         flash("Debug logs saved", "success")
         return redirect(url_for('live_route', date=selected_date), code=303)
 
-
-
     @app.route('/toggle_pickup_status', methods=['POST'])
     @login_required
     def toggle_pickup_status():
@@ -2546,6 +2545,8 @@ def create_app():
     @app.route('/contact-form-entry', methods=['POST'])
     @limiter.limit("10 per hour")
     def contact_form_entry():
+        DetectorFactory.seed = 0  # Ensure consistent results
+
         form = ContactForm(formdata=request.form)  # explicit formdata
 
         if form.validate_on_submit():
@@ -2554,6 +2555,15 @@ def create_app():
             message = form.message.data
 
             current_app.logger.info("Contact form validated.")
+
+            try:
+                detected_language = detect(message)
+                if detected_language not in ['en', 'es']:
+                    current_app.logger.warning("Message language not supported: %s", detected_language)
+                    return jsonify(valid=False, reason="This message is not in a supported language or is too short."), 400
+            except Exception as e:
+                current_app.logger.error("Language detection failed: %s", e)
+                return jsonify(valid=False, reason="Could not detect language. Please try again."), 400
 
             sent = send_contact_email(name, email, message)
             if sent:
