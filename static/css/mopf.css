@@ -1,0 +1,1122 @@
+body {
+    background: url('/static/images/mopf_background.webp');
+    padding-top: 150px;
+    overflow: hidden;
+}
+
+main {
+    height: 100vh;
+    overflow: scroll;
+    box-sizing: border-box;
+    padding-bottom: 10vh;
+}
+
+#mopf-hero {
+    padding: 3em 3em; 
+    border-radius: 50px;
+    background-color: #313131ab;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    margin-bottom: 48px;
+    margin-top: 10vh;
+    color: white;
+}
+
+h1 {
+    margin: 0px;
+}
+
+h3 {
+    font-family: var(--crim) !important;
+    font-size: 24px !important;
+    margin: 0px;
+}
+
+#mopf-hero-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 64px;
+    margin-top: 16px;
+}
+
+#scroll-to-form {
+    display: none;
+}
+
+#mopf-hero img {
+    height: 120px;
+    width: 120px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 16px;
+}
+
+#mopf-logo-mobile {
+    display: none;
+}
+
+#mopf-logo-desktop {
+    display: block;
+}
+
+#mopf-hero p {
+    margin: 0px;
+    margin-top: 16px;
+}
+
+#mopf-hero a {
+    color: white;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    transition: color .2s ease;
+}
+
+#mopf-hero a:hover {
+    color: var(--yel);
+    cursor: pointer;
+}
+
+.request-form {
+    background-color: var(--off-white);
+    border-radius: 50px;
+    padding: 3em 3em; 
+    box-sizing: border-box;
+    font-family: var(--mont);
+    margin-bottom: 10vh;
+}
+
+.request-form input, textarea {
+    font-family: var(--mont);
+}
+
+.form-group-div {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    column-gap: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: 36px;
+    box-sizing: border-box;
+    min-width: none;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.form-group input {
+    font-size: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-grey);
+    border-radius: 5px;
+    max-width: 100%;
+    min-width: 0px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.split-form-group {
+    display: flex;
+    flex-direction: row;
+    column-gap: 12px;
+}
+
+.split-form-group .form-group {
+    margin-top: 0px;
+}
+
+.info-icon {
+    top: 0px;
+    margin: 0px;
+}
+
+.info-text {
+    top: -96px !important;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) “Next Step” submit button & loader
+─────────────────────────────────────────────────────────────────────────*/
+
+#submit-btn-loader-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-top: 36px;
+  column-gap: 24px;
+  margin-bottom: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+#init-submit-btn {
+  margin-bottom: 24px;
+  width: 200px;
+  height: 54px;
+}
+
+#loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+#loader {
+    margin-top: 0px;
+    width: 48px;
+    height: 48px;
+    border: 3px solid #ececec;
+    border-bottom-color: var(--m-green);
+    border-radius: 50%;
+    display: none;
+    box-sizing: border-box;
+    animation: rotation .7s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
+#loading-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--off-white);
+    padding: 48px;
+    border-radius: 20px;
+    text-align: center;
+    display: none;
+    z-index: 1001;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--m-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+    margin-top: 48px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: row;
+    column-gap: 48px;
+    padding-bottom: 12px;
+    overflow-x: scroll;
+}
+
+.faq-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 220px;
+    min-width: 220px;
+    text-align: center;
+    padding: 16px;
+    border: 1px solid var(--border-grey);
+    border-radius: 10px;
+    transition: background-color .2s ease;
+}
+
+.faq-item:hover {
+    background-color: rgb(237, 237, 237);
+    cursor: pointer;
+}
+
+#gated-popup {
+    flex-direction: column;
+    max-width: 550px;
+    border-radius: 10px;
+    margin-left: 24px;
+}
+
+#gatedOptions {
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-family: var(--mont);
+}
+
+#timeframe-form {
+    flex-direction: column;
+    width: 100%;
+}
+
+#date-selection-scroll {
+    width: 100%;
+    overflow-x: scroll;
+}
+
+#date-selection-wrapper {
+    display: inline-flex;   
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    column-gap: 36px;
+    margin-top: 36px;
+    width: 100%;
+    padding-bottom: 12px;
+}
+
+.day-wrapper {
+    flex-direction: column;
+    flex: 1;
+    min-width: 160px;
+    border: 1px solid var(--border-grey);
+    padding: 16px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border .2s ease, background-color .2s ease;
+}
+
+.day-wrapper:hover {
+    border: 1px solid var(--yel);
+    background-color: var(--yel);
+    cursor: pointer;
+}
+
+.day-wrapper.active {
+    background-color: var(--yel);
+    color: black;
+    border: 1px solid rgba(0,0,0,0);
+}
+
+.timeframe-selector {
+    width: 100%;
+    height: 56px;
+    border: 1px solid var(--border-grey);
+    border-radius: 5px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: background-color .2s ease, border .2s ease, box-shadow .2s ease;
+}
+
+.timeframe-selector:hover {
+    background-color: #eab20838;
+    border: 1px solid var(--yel);
+}
+
+.timeframe-selector.active {
+    background-color: var(--yel);
+    color: black;
+    border: 1px solid rgba(0,0,0,0);
+}
+
+.timeframe-selector.active h4 {
+    transition: font-weight .2s ease;
+    font-weight: 600 !important;
+}
+
+.week-btn {
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: black;
+    background-color: #E7E7E7;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color .2s ease;
+}
+
+.week-btn:hover {
+    background-color: #c8c8c8;
+}
+
+.week-btn.disabled {
+  opacity: .4;
+}
+
+.week-btn.disabled:hover {
+  background-color: #E7E7E7;
+  cursor: not-allowed;
+}
+
+#timeframe-submit-btn {
+    height: auto;
+    padding: 12px 48px;
+    max-width: 320px;
+    margin: 0px auto;
+    margin-top: 24px;
+}
+
+#timeframe-submit-btn.is-disabled {
+  color: rgba(255, 255, 255, 0.797);
+  background-color: #098223bb;
+  cursor: not-allowed;
+}
+
+
+#timeframe-submit-btn.is-disabled:hover {
+    cursor: not-allowed;
+}
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    display: none;
+    z-index: 1000;
+}
+
+.faq-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1001;
+    max-width: 560px;
+    text-align: center;
+}
+
+.popup-close {
+    margin-top: 24px;
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#footer {
+    box-shadow: none;
+}
+
+@media (max-width: 980px) {
+    .form-group-div {
+        column-gap: 16px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        padding-top: 120px;
+        background: var(--off-white);
+    }
+
+    #mopf-logo-mobile {
+        display: block;
+    }
+
+    #mopf-logo-desktop {
+        display: none;
+    }
+
+    #mopf-hero {
+        background-color: var(--off-white);
+        color: black;
+        padding: 0px;
+        margin-top: 5vh;
+        text-align: left;
+        align-items: center;
+    }
+
+    #mopf-hero-content {
+        flex-direction: column;
+        row-gap: 24px;
+        margin-top: 0px;
+        align-items: center;
+        text-align: left;
+    }
+
+    #mopf-hero img {
+        background-color: transparent;
+        width: 140px;
+        height: 140px;
+        margin-top: 0px;
+        margin-bottom: 16px;
+    }
+
+    #scroll-to-form {
+        display: block;
+        margin-bottom: 36px;
+    }
+
+    #mopf-hero a {
+        color: var(--m-green);
+    }
+
+    .navbar {
+      background-color: var(--d-green);
+    }
+
+    .form-group-div {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        margin-top: 36px;
+        width: 100%;
+        max-width: 100% !important;
+    }
+    
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+    
+    .form-group input {
+        font-size: 16px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-grey);
+        border-radius: 5px;
+    }
+    
+    .form-group textarea {
+        padding: 12px 16px;
+        font-size: 16px;
+        border-radius: 5px;
+    }
+
+    #submit-btn-loader-wrapper {
+      display: flex;
+      flex-direction: column;
+      margin-top: 36px;
+      column-gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .submit-btn {
+        position: relative; /* Allows pseudo-element positioning */
+        border-radius: 100px;
+        background-color: var(--m-green);
+        color: white;
+        height: 48px;
+        padding: 0px 24px;
+        font-family: var(--mont);
+        border: none;
+        font-weight: 600;
+        font-size: 16px;
+        overflow: hidden; /* Prevents content overflow during animation */
+        transition: color 0.4s ease, transform .2s ease, background-color .2s ease; /* Smooth transition for text color */
+    }
+    
+    .submit-btn:hover {
+        color: black; /* Change text color */
+        cursor: pointer;
+        background-color: var(--yel);
+    }
+    
+    .faq-container {
+        display: flex;
+        flex-direction: row;
+        column-gap: 48px;
+        overflow-x: scroll;
+    }
+    
+    .faq-container h3 {
+        font-family: var(--crim);
+    }
+    
+    .faq-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 220px;
+        min-width: 220px;
+        text-align: center;
+        padding: 16px;
+        border: 1px solid var(--border-grey);
+        border-radius: 10px;
+        transition: background-color .2s ease;
+    }
+    
+    .faq-item:hover {
+        background-color: rgb(237, 237, 237);
+        cursor: pointer;
+    }
+    
+    #gated-popup {
+        flex-direction: column;
+        max-width: 350px;
+        margin-left: 0px;
+    }
+
+    #gatedOptions-wrapper {
+        max-width: 350px;
+    }
+    
+    #gatedOptions {
+        padding: 8px 12px;
+        border-radius: 5px;
+        max-width: 300px;
+        font-family: var(--mont);
+    }
+
+    .request-form {
+        border-radius: 20px;
+        padding: 2em 0em; 
+    }
+    
+    #timeframe-form {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #date-selection-wrapper {
+        flex-direction: column;
+        row-gap: 12px;
+    }
+
+    .day-wrapper {
+        flex-direction: column;
+        flex: 1;
+        width: 100%;
+        min-width: 160px;
+    }
+    
+    .timeframe-selector {
+        width: 100%;
+        height: 56px;
+        border: 1px solid var(--border-grey);
+        border-radius: 5px;
+        margin-bottom: 16px;
+        cursor: pointer;
+        transition: background-color .2s ease, border .2s ease, box-shadow .2s ease;
+    }
+    
+    .timeframe-selector:hover {
+        background-color: #eab20838;
+        border: 1px solid var(--yel);
+    }
+    
+    .timeframe-selector.active {
+        background-color: var(--yel);
+        color: black;
+        border: 1px solid rgba(0,0,0,0);
+    }
+    
+    .timeframe-selector.active h4 {
+        transition: font-weight .2s ease;
+        font-weight: 600 !important;
+    }
+    
+    .week-btn {
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        color: black;
+        background-color: #E7E7E7;
+        font-weight: 500;
+        font-size: 14px;
+        transition: background-color .2s ease;
+    }
+    
+    .week-btn:hover {
+        background-color: #c8c8c8;
+    }
+    
+    #timeframe-submit-btn {
+        height: auto;
+        padding: 12px 48px;
+        max-width: 320px;
+        margin: 0px auto;
+        margin-top: 24px;
+    }
+    
+    #timeframe-submit-btn:disabled {
+        color: rgba(255, 255, 255, 0.797);
+        background-color: #098223bb;
+    }
+    
+    #timeframe-submit-btn:disabled:hover {
+        cursor: not-allowed;
+    }
+
+    .info-icon {
+        top: 8px;
+        margin: 0px;
+        right: 6px;
+    }
+    
+    .info-text {
+        top: -70px !important;
+        right: 6px !important;
+    }
+    
+    .overlay {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        display: none;
+        z-index: 1000;
+    }
+
+    #loading-popup {
+      width: 90%;
+      box-sizing: border-box;
+    }
+    
+    .faq-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 2em;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 1001;
+        max-width: 560px;
+        min-width: 60%;
+        text-align: center;
+    }
+    
+    .popup-close {
+        margin-top: 24px;
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+
+    .gated-wrapper {
+      padding-right: 24px;
+    }
+
+    .user-notice-warn {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    #footer {
+      box-shadow: 0px -40px 50px 0px #D4DECA;
+    }
+    #init-submit-btn {
+      width: 100%;
+      height: 54px;
+    }
+}
+
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  1) “Request a Pickup” header and intro text
+─────────────────────────────────────────────────────────────────────────*/
+
+/* H1 at the top of #init-form: eliminate default margin */
+#init-form > h1 {
+  margin: 0;
+}
+
+/* The paragraph immediately under that H1: max-width and subtle color */
+#init-form > p {
+  max-width: 450px;
+  color: var(--subtle-text-wbg);
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  2) HR separators inside the form
+─────────────────────────────────────────────────────────────────────────*/
+
+/* First <hr> inside form#init-form-info: 24px top margin */
+#init-form-info hr:first-of-type {
+  margin-top: 24px;
+}
+
+/* Second <hr> inside form#init-form-info: 48px top margin */
+hr {
+  margin-top: 48px;
+  margin-bottom: 36px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  3) Section titles within the form
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Contact Info” H3 (first H3 in form#init-form-info) */
+#init-form-info > h3 {
+  margin-bottom: 0;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  4) Form-group width helpers
+   (requires adding .half-width, .full-width, .notes-width to your HTML)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All .form-group elements that need 50% width */
+.form-group.half-width {
+  max-width: 50%;
+}
+
+/* The one .form-group that needs 100% width */
+.form-group.full-width {
+  max-width: 100%;
+}
+
+/* The .form-group that needs 550px maximum width (notes textarea) */
+.form-group.notes-width {
+  max-width: 100%;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  5) Gated-access section wrapper
+   (requires adding .gated-wrapper to that <div>)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Do we need a gate code…” wrapper */
+.gated-wrapper {
+  margin-top: 48px;
+  position: relative;
+  display: inline-block;
+}
+
+.gated-wrapper label {
+  font-weight: 600;
+}
+
+#recaptcha-form {
+  margin-top: 36px !important;
+}
+
+/* Show/hide the “selected-gate” div */
+#selected-gate {
+  display: none;
+}
+
+#awarenessOptions {
+  padding: 12px;
+  font-family: var(--mont);
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  6) Recaptcha error container
+─────────────────────────────────────────────────────────────────────────*/
+
+.user-notice-warn {
+  max-width: 460px;
+  box-sizing: border-box;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  8) Frequently Asked Questions (FAQ) section
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Each FAQ item’s heading margin */
+.faq-container .faq-item h3 {
+  margin: 16px 0;
+}
+
+/* The first two FAQ images (opacity only) */
+#faq-items img,
+#faq-result img {
+  opacity: 0.8;
+}
+
+/* The third FAQ image has both margin-top and opacity */
+#faq-better img {
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  9) FAQ pop-up windows
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All pop-up boxes start hidden */
+.faq-popup {
+  display: none;
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+/* Headings inside any .faq-popup: same margin as above FAQs */
+.faq-popup h3 {
+  margin: 16px 0;
+}
+
+/*─────────────────────────────────────────────────────────────────────────
+  Helper resets
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Zero out margin */
+
+/* 24px top margin, zero bottom margin */
+.mt6-zero-mb {
+  margin: 0;
+  margin-top: 6px;
+}
+
+/* 36px top margin */
+.mt36 {
+  margin-top: 36px;
+}
+
+/* 56px top margin, 32px bottom margin */
+.mt56-mb32 {
+  margin-top: 56px;
+  margin-bottom: 32px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  1) “Select a Timeframe” header & intro text
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The <p> under the H1: max-width 450px, subtle-text color */
+.intro-text {
+  max-width: 450px;
+  color: var(--subtle-text-wbg);
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  2) Sub‐headings inside the form (all identical)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Any <h4> with class .subheading-h4: font-weight 500, size 20px, 12px bottom margin */
+.subheading-h4 {
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.subheading-h4-mt0 {
+  font-weight: 500;
+  font-size: 20px;
+  margin: 0px;
+}
+/* If you needed a zero‐margin override for those <h4>s, you can chain .mt0, but in our case
+   none of the <h4> elements other than the days themselves need “margin: 0” on top. */
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  3) “Prev/Next Week” button row
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Wraps the two week navigation links as a flex container */
+.week-nav {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 16px 0;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  4) Submit button inner text & hidden info
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Make “Schedule Pick-Up” bold (font-weight: 500) */
+.fw500 {
+  font-weight: 500;
+}
+
+/* The hidden info span under the button: display none, small font, lighter weight, 6px top margin */
+#submit-btn-info {
+  display: none;
+  font-size: 12px;
+  font-weight: 300;
+  margin-top: 6px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  5) FAQ heading
+─────────────────────────────────────────────────────────────────────────*/
+
+/* “Frequently Asked Questions” <h2> margins */
+.mt56-mb32 {
+  margin-top: 56px;
+  margin-bottom: 32px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  6) FAQ items (all three .faq-item children)
+─────────────────────────────────────────────────────────────────────────*/
+
+/* Each FAQ <h3>: 16px top/bottom margin */
+.faq-h3 {
+  margin: 16px 0;
+}
+
+/* First two FAQ images: 15px top, 15px bottom, 0.8 opacity */
+.faq-img {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+/* Third FAQ image: 10px top, 0.8 opacity, no bottom margin necessary */
+.faq-img-small {
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  7) FAQ pop-ups
+─────────────────────────────────────────────────────────────────────────*/
+
+/* All .faq-popup start hidden */
+.faq-popup {
+  display: none;
+}
+
+/* Any <img> inside a .faq-popup: 0.8 opacity */
+.faq-popup img {
+  opacity: 0.8;
+}
+
+/* Default <h3> style inside any .faq-popup: 16px top/bottom margin */
+.faq-popup h3 {
+  margin: 16px 0;
+}
+
+/* For #faq-items-popup & #faq-result-popup images: give 16px bottom margin */
+#faq-items-popup img,
+#faq-result-popup img {
+  margin-bottom: 16px;
+}
+
+#items-popup {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  text-align: left;
+}
+
+#items-popup ul {
+  padding-left: 20px;
+}
+
+#items-popup li {
+  margin-left: 0px;
+}
+
+/* For #faq-better-popup image: 10px top margin */
+#faq-better-popup img {
+  margin-top: 10px;
+}
+
+
+/*─────────────────────────────────────────────────────────────────────────
+  8) “Submitting Your Request” loading pop-up
+─────────────────────────────────────────────────────────────────────────*/
+
+/* The <h3> in #loading-popup: zero top, 8px bottom */
+#loading-popup h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.pac-container {
+  font-family: var(--mont);
+  padding: 4px 16px;
+  color: black;
+  font-size: 16px;
+  background-color: white;
+  box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.pac-item {
+  margin: 0px !important;
+  padding: 12px 4px;
+  color: rgba(0, 0, 0, 0.779);
+  border-bottom: 1px solid lightgrey;
+  transition: background-color .2s ease, color .2s ease;
+  border-radius: 0px;
+}
+
+.pac-item-query {
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.pac-item:hover {
+  background-color: lightgrey;
+  color: black;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pac-item:last-child {
+  border: none;
+}
+
+.d-none { display:none !important; }
+
+.explanatory-label {
+  font-size: 14px;
+  color: var(--subtle-text-wbg);
+  margin-top: 8px !important;
+  margin-bottom: 0px !important;
+}
+
+.btn-group        { display: flex; gap: .5rem; margin-top: 12px;}
+.btn-check        { display: none; }
+.btn              { padding: .5rem 1rem; background-color: var(--subtle-text);
+                    border-radius: .25rem; cursor: pointer; user-select: none; transition: border .2s ease, background-color .2s ease, color .2s ease;}
+.btn-check:checked + .btn,
+.btn:hover        { background: var(--m-green); color: #fff;}
+
+#awarenessOptions {
+  font-size: 16px;
+}
+
+#gated-error-info {
+  display: none;
+}

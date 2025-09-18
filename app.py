@@ -72,7 +72,8 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            ScheduleDayForm, DateRangeForm, EditRequestTimeForm,
                            CancelEditForm, CancelRequestForm, EditRequestInitForm,
                            DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
-                           updateCustomerNotes, RatingForm, DebugAdminRoutes, RefreshRoute)
+                           updateCustomerNotes, RatingForm, DebugAdminRoutes, RefreshRoute,
+                           taxReceiptForm)
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
                     RouteSolution, Config as DBConfig, add_request,
@@ -523,13 +524,27 @@ def create_app():
         form = ContactForm()
         return render_template('contact.html', contact_form=form)
 
-
     @app.route('/drop-boxes', methods=['GET'])
     def dropBoxes():
         current_app.logger.info("GET /drop-boxes - Rendering drop boxes page.")
         return render_template('drop_boxes.html')
     
-
+    @app.route('/mopf', methods=['GET'])
+    def mopf():
+        current_app.logger.info("GET /mopf - Rendering MOPF page.")
+        form = taxReceiptForm()
+        return render_template('mopf.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
+    
+    @app.route('/mopf-submit', methods=['POST'])
+    def mopf_submit():
+        current_app.logger.info("POST /mopf-submit - Submitting MOPF form.")
+        form = taxReceiptForm()
+        if form.validate_on_submit():
+            # Process the form data
+            current_app.logger.info("MOPF form submitted successfully.")
+            return redirect(url_for('mopf_success'))
+        current_app.logger.warning("MOPF form submission failed.")
+        return render_template('mopf.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
 
     # --------------------------------------------------
 

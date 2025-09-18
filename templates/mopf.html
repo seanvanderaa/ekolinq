@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Primary SEO tags -->
+    <title>Tax-Deductible Receipt</title>
+
+    <script nonce="{{ csp_nonce() }}" async src="https://www.googletagmanager.com/gtag/js?id=G-VMEB0NG3KZ"></script>
+    <script nonce="{{ csp_nonce() }}">
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0NCMTDXTHR');
+    </script>
+
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ request.url }}" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:image"
+        content="{% block og_image %}{{ url_for('static', filename='images/ekolinq_thumbnail.jpeg', _external=True) }}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image"
+        content="{{ url_for('static', filename='images/ekolinq_thumbnail.jpeg', _external=True) }}">
+
+    <!-- Favicon & CSS -->
+    <link rel="icon" href="{{ url_for('static', filename='images/EkoLinq_Square_Logo_GBG.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mopf.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <main>
+        <div id="mopf-hero" class="content-width">
+            <img id="mopf-logo-mobile" src="{{ url_for('static', filename='images/mopf_logo.webp', _external=True) }}" alt="The Muwekma Ohlone Preservation Foundation (MOPF) Logo">
+            <button id="scroll-to-form" class="submit-btn">Scroll to Form</button>
+            <h1>Get Your Tax-Deductible Receipt</h1>
+            <div id="mopf-hero-content">
+                <div>
+                    <p>The Muwekma Ohlone Preservation Foundation (MOPF) is a 501(c)(3) nonprofit dedicated to supporting
+                        the Muwekma Ohlone Tribe, Indigenous people native to the San Francisco Bay Area. Please fill out
+                        the form below to confirm your contribution and download your official tax-deductible receipt.</p>
+                    <p><a href="https://muwekmaohlone.org">Learn more</a> about the Muwekma Ohlone Preservation Foundation
+                        (MOPF).</p>
+                </div>
+                <img id="mopf-logo-desktop" src="{{ url_for('static', filename='images/mopf_logo.webp', _external=True) }}" alt="The Muwekma Ohlone Preservation Foundation (MOPF) Logo">
+            </div>
+
+        </div>
+        <section id="init-form" class="content-width request-form">
+            <h3>Please fill out the form below to confirm your contribution and receive your official tax-deductible
+                receipt via email.</h3>
+            {% with msgs = get_flashed_messages(with_categories=True) %}
+            {% if msgs %}
+            <div id="msgs">
+                {% for category, message in msgs %}
+                <div class="alert alert-{{ category }} flash-message">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('mopf_submit') }}" method="POST" id="init-form-info"
+                enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <input type="hidden" id="place_id" name="place_id">
+                <div id="form-group-1" class="form-group-div">
+                    <div class="form-group half-width">
+                        <label for="firstName">First Name</label>
+                        {{ form.firstName(id="firstName", placeholder="First Name") }}
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="lastName">Last Name</label>
+                        {{ form.lastName(id="lastName", placeholder="Last Name") }}
+                    </div>
+                </div>
+                <div id="form-group-1" class="form-group-div">
+                    <div class="form-group">
+                        <label for="email">Email<span class="col-red">*</span></label>
+                        {{ form.email(id="email", placeholder="name@example.com", required=True) }}
+                        <label for="email" class="explanatory-label">We use this to send you your receipt.</label>
+
+                    </div>
+                </div>
+                <div id="form-group-2" class="form-group-div">
+                    <div class="form-group full-width">
+                        <label for="address">Address<span class="col-red">*</span></label>
+                        {{ form.address(id="address", placeholder="100 Pleasanton Ave.", autocomplete="off") }}
+                    </div>
+                </div>
+                <div id="form-group-2" class="form-group-div">
+                    <div class="form-group full-width">
+                        <label for="secondaryAddress">Secondary Address </label>
+                        {{ form.secondaryAddress(id="secondaryAddress", placeholder="Apartment, suite, etc.",
+                        autocomplete="off") }}
+                    </div>
+                </div>
+                <div id="form-group-2" class="form-group-div">
+                    <div class="form-group half-width">
+                        <label for="city">City<span class="col-red">*</span></label>
+                        {{ form.city(id="city", placeholder="City", required=True, autocomplete="off") }}
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="zip">Zip Code<span class="col-red">*</span></label>
+                        {{ form.zip(id="zip", placeholder="Zip Code", required=True, autocomplete="off") }}
+                    </div>
+                </div>
+                <div id="form-group-1" class="form-group-div">
+                    <div class="form-group half-width split-form-group">
+                        <div class="form-group">
+                            <label for="donation_date">Date of Donation<span class="col-red">*</span></label>
+                            {{ form.donation_date(id="donation_date", placeholder="MM/DD/YYYY") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="route_number">Route Number<span class="col-red">*</span></label>
+                            {{ form.route_number(id="route_number") }}
+                            <label for="route_number" class="explanatory-label">Find this on the flyer you received in the mail.</label>
+                        </div>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="estimated_value">Estimated Value of Contribution<span class="col-red">*</span></label>
+                        {{ form.estimated_value(id="estimated_value", placeholder="$") }}
+                    </div>
+                </div>
+                <div class="form-group" id="recaptcha-form">
+                    {{ form.recaptcha }}
+                    {% for error in form.recaptcha.errors %}
+                    <div class="user-notice-warn">
+                        {{ error }}
+                    </div>
+
+                    {% endfor %}
+                </div>
+                <div id="submit-btn-loader-wrapper">
+                    <button type="submit" id="init-submit-btn" class="submit-btn">
+                        Submit
+                    </button>
+                    <div id="loader-wrapper">
+                        <div id="loader" class="loader"></div>
+                    </div>
+                </div>
+            </form>
+    </main>
+</body>
+
+
+<meta name="csp-nonce" content="{{ csp_nonce() }}">
+<!-- 1) Patch createElement so every future <style> gets the nonce -->
+<script nonce="{{ csp_nonce() }}">
+    (() => {
+        const NONCE = document.querySelector('meta[name="csp-nonce"]').content;
+        const orig = document.createElement;
+        document.createElement = function (tag, opts) {
+            const el = orig.call(this, tag, opts);
+            if (tag && tag.toLowerCase() === 'style') {
+                el.setAttribute('nonce', NONCE);
+            }
+            return el;
+        };
+    })();
+</script>
+
+<!-- Load Google reCAPTCHA so the {{ form.recaptcha }} widget can render -->
+<script src="https://www.google.com/recaptcha/api.js" async defer nonce="{{ csp_nonce() }}"></script>
+
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/mopf.js') }}"></script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY | urlencode }}&libraries=places&callback=initAutocomplete&loading=async"
+    nonce="{{ csp_nonce() }}" async></script>

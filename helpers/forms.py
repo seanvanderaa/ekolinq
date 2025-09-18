@@ -220,3 +220,43 @@ class RefreshRoute(FlaskForm):
     )
     recalc_from_depot = BooleanField("Recalculate from depot", default=False)
     submit = SubmitField("Recalculate Route")
+
+class taxReceiptForm(FlaskForm):
+    firstName = StringField("First Name", validators=[
+        Optional(), Length(max=50)
+    ])
+    lastName = StringField("Last Name", validators=[
+        Optional(), Length(max=50)
+    ])
+    email = EmailField("Email", validators=[
+        DataRequired(), Email(), Length(max=120)
+    ])
+    
+    # Address
+    address = StringField("Address", validators=[
+        DataRequired(), Length(max=200)
+    ])
+    secondaryAddress = StringField("Secondary Address", validators=[
+        Optional(), Length(max=200)
+    ])
+    city = StringField("City", validators=[
+        DataRequired(), Length(max=50)
+    ])
+    zip = StringField("Zip Code", validators=[
+        DataRequired(),
+        Regexp(r'^\d{5}(-\d{4})?$', message="Invalid zip code format")
+    ])
+
+    route_number = StringField("Route Number", validators=[
+        DataRequired(), Length(max=7)
+    ])
+
+    estimated_value = StringField("Estimated Value of Donation", validators=[
+        DataRequired(), Length(max=5)
+    ])
+
+    donation_date = DateField("Date of Donation", format='%m-%d-%Y', validators=[
+        DataRequired()
+    ])
+
+    recaptcha = RecaptchaField()
