@@ -2,6 +2,8 @@ body {
     background: url('/static/images/mopf_background.webp');
     padding-top: 150px;
     overflow: hidden;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 main {
@@ -13,17 +15,17 @@ main {
 
 #mopf-hero {
     padding: 3em 3em; 
-    border-radius: 50px;
-    background-color: #313131ab;
+    border-radius: 20px 20px 0px 0px;
+    background-color: #313131c6;
     backdrop-filter: blur(10px);
     box-sizing: border-box;
-    margin-bottom: 48px;
-    margin-top: 10vh;
+    margin-top: 7vh;
     color: white;
 }
 
 h1 {
     margin: 0px;
+    margin-bottom: 12px;
 }
 
 h3 {
@@ -37,8 +39,7 @@ h3 {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    column-gap: 64px;
-    margin-top: 16px;
+    column-gap: 48px;
 }
 
 #scroll-to-form {
@@ -46,11 +47,12 @@ h3 {
 }
 
 #mopf-hero img {
-    height: 120px;
-    width: 120px;
+    height: 190px;
+    width: 190px;
     background-color: white;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 1000px;
+    padding: 16px;
+    box-sizing: border-box;
     margin-top: 16px;
 }
 
@@ -81,8 +83,8 @@ h3 {
 
 .request-form {
     background-color: var(--off-white);
-    border-radius: 50px;
-    padding: 3em 3em; 
+    border-radius: 0px 0px 20px 20px;
+    padding: 3em; 
     box-sizing: border-box;
     font-family: var(--mont);
     margin-bottom: 10vh;
