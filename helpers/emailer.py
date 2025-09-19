@@ -847,3 +847,116 @@ def send_error_report(error_type, error_message, traceback_info, request_method,
 def error_report():
     return
 
+def send_mopf_email(email, value, date):
+    """
+    Sends a confirmation email to the customer and the admins (in the To line),
+    and BCCs MAIL_ERROR_ADDRESS for monitoring.
+    Returns True if successful, False otherwise.
+    """
+    try:
+        config_name = os.getenv("FLASK_CONFIG", "development")
+        subject = "[TESTING] Muwekma Ohlone Preservation Foundation Donation Tax Receipt" if config_name == "development" else "Muwekma Ohlone Preservation Foundation Donation Tax Receipt"
+
+        # Admin identities
+        admin_primary = current_app.config.get("MAIL_USERNAME", "")
+
+        # Silent monitor / catch-all (BCC only)
+        error_monitor = os.getenv("MAIL_ERROR_ADDRESS", "")
+
+        # Build recipient lists
+        to_recipients = _unique_nonempty([
+            email            # customer
+        ])
+
+        bcc_recipients = _unique_nonempty([
+            admin_primary,    # primary admin
+            error_monitor
+        ])
+
+        msg = Message(
+            subject=subject,
+            sender=admin_primary,         # comes from admin
+            recipients=to_recipients,     # user + admins in-thread
+            bcc=bcc_recipients            # MAIL_ERROR_ADDRESS for visibility
+        )
+
+        # HTML body (matches your house style)
+        msg.html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>We Received Your Message</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body,p,h1,h2,h3,td,li,a{{font-family:'Public Sans',Arial,sans-serif!important;color:black;}}
+    @media (prefers-color-scheme: dark) {{
+      .bg-body{{background:#104378!important;}}
+      .bg-card{{background:#ffffff!important;}}
+      .bg-green{{background:#0c6a28!important;}}
+      .text-dark{{color:#ffffff!important;}}
+      a{{color:#8ac8ff!important;}}
+    }}
+    [data-ogsc] .bg-body{{background:#104378!important;}}
+    [data-ogsc] .bg-card{{background:#ffffff!important;}}
+    [data-ogsc] .bg-green{{background:#0c6a28!important;}}
+    [data-ogsc] .text-dark{{color:#ffffff!important;}}
+    [data-ogsc] a{{color:#8ac8ff!important;}}
+    @media only screen and (max-width:600px){{
+      .stack-col{{display:block!important;width:100%!important;max-width:100%!important;}}
+      .stack-col > table{{width:100%!important;}}
+    }}
+    [data-ogsc] .stack-col,[data-ogsc] .stack-col > table{{display:block!important;width:100%!important;max-width:100%!important;}}
+  </style>
+</head>
+<body bgcolor="#D4DECA" class="bg-body" style="margin:0;padding:20px 0px;background-color:#D4DECA;">
+  <table role="presentation" width="100%" bgcolor="#D4DECA" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding:24px 0;">
+        <table role="presentation" width="100%" style="max-width:600px;" cellpadding="0" cellspacing="0">
+          <tr>
+            <td bgcolor="#ffffff" class="bg-card" style="border:1px solid #ddd;border-radius:40px;padding:30px;">
+              <table role="presentation" width="100%">
+                <tr>
+                  <td align="center" style="padding:0 0 24px 0;">
+                    <img src="https://www.ekolinq.com/static/images/mopf_logo.webp" alt="Muwekma Ohlone Preservation Foundation Logo" width="140" style="display:block;height:auto;border:0;background:white;">
+                  </td>
+                </tr>
+              </table>
+              <h3 style="font-size:18px;line-height:1.4;margin:0 0 12px;font-weight:300;text-align:center;color:black;">Thank you for your donation to the</h3>
+              <h1 style="font-size:24px;line-height:1.4;margin:0 0 36px;font-weight:700;text-align:center;color:black;">Muwekma Ohlone Preservation Foundation</h1>
+              <table role="presentation" width="100%" style="border:none;border-radius:10px;background:#055d18;">
+                <tr>
+                  <td style="padding:24px;">
+                    <p style="margin:0 0 16px;font-weight:700;font-size:16px;color: white;">Here is a record of your tax-deductible donations. You can print this email for your records.</p>
+
+                    <p style="margin:0 0 8px;font-size:14px;font-weight:200;color: white;">Date</p>
+                    <p style="margin:0 0 16px;font-weight:500;font-size:16px;color: white;">{date}</p>
+
+                    <p style="margin:0 0 8px;font-size:14px;font-weight:200;color: white;">Donated Items</p>
+                    <p style="margin:0 0 16px;font-weight:500;font-size:16px; color: white; text-decoration: none;">Clothes, shoes, accessories, or other textile goods.</p>
+
+                    <p style="margin:0 0 8px;font-size:14px;font-weight:200;color: white;">Estimated Value of Donated Items</p>
+                    <p style="margin:0;font-weight:500;font-size:16px;color: white;">${value}</p>
+                  </td>
+                </tr>
+              </table>
+              <p style="font-size:16px;line-height:1.5;margin:32px 0 0;color:black;">The Muwekma Ohlone Preservation Foundation is a registered 501©3 non-profit organization.</p>
+              <p style="font-size:16px;margin:8px 0;color:black;">Tax ID Number:<br>XXXXXX</p>
+              <p style="font-size:16px;margin:8px 0;color:black;">Please direct questions and comments to:<br><a href="mailto:muwekma@muwekma.org">muwekma@muwekma.org</a></p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Error while sending confirmation email: {str(e)}")
+        return False

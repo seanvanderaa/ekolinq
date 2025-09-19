@@ -244,18 +244,18 @@ class taxReceiptForm(FlaskForm):
     ])
     zip = StringField("Zip Code", validators=[
         DataRequired(),
-        Regexp(r'^\d{5}(-\d{4})?$', message="Invalid zip code format")
-    ])
-
-    route_number = StringField("Route Number", validators=[
-        DataRequired(), Length(max=7)
+        Regexp(r'^\d{5}(-\d{4})?$', message="Invalid zip code format"),
+        Length(max=5)
     ])
 
     estimated_value = StringField("Estimated Value of Donation", validators=[
-        DataRequired(), Length(max=5)
+        DataRequired(),
+        Regexp(r'^\d+$', message="Estimated value must be numbers only"),
+        Length(max=5)
     ])
 
-    donation_date = DateField("Date of Donation", format='%m-%d-%Y', validators=[
+    # HTML5 <input type="date"> posts YYYY-MM-DD; match that here
+    donation_date = DateField("Date of Donation", format='%Y-%m-%d', validators=[
         DataRequired()
     ])
 

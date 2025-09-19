@@ -63,7 +63,7 @@ import helpers.import_backfill as backfill_mod
 # from helpers.routing import compute_optimized_route, seconds_to_hms
 from helpers.mapbox_routing import compute_optimized_route, compute_optimized_route_with_metrics, seconds_to_hms, _maybe_geocode, _coords_like, hms_to_seconds, seconds_to_pretty
 from helpers.scheduling import build_schedule
-from helpers.emailer import (send_contact_email, send_request_email,
+from helpers.emailer import (send_contact_email, send_request_email, send_mopf_email,
                              send_error_report, send_edited_request_email, send_cancellation_email)
 from helpers.auth import verify_cognito_jwt, JoseError
 from helpers.export import weekly_export
@@ -74,9 +74,10 @@ from helpers.forms import (RequestForm, DateSelectionForm, UpdateAddressForm,
                            DeletePickupForm, ContactForm, CleanPickupsForm, AddPickupNotes,
                            updateCustomerNotes, RatingForm, DebugAdminRoutes, RefreshRoute,
                            taxReceiptForm)
+from helpers.mopf import save_donation_submission
 
 from models import (db, PickupRequest, ServiceSchedule, DriverLocation,
-                    RouteSolution, Config as DBConfig, add_request,
+                    RouteSolution, DonationRecord, Config as DBConfig, add_request,
                     get_service_schedule, get_address)
 
 from extensions import mail
@@ -533,18 +534,56 @@ def create_app():
     def mopf():
         current_app.logger.info("GET /mopf - Rendering MOPF page.")
         form = taxReceiptForm()
-        return render_template('mopf.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
+        today = date.today().isoformat()  # "YYYY-MM-DD"
+        return render_template('mopf.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY, today=today)
     
     @app.route('/mopf-submit', methods=['POST'])
     def mopf_submit():
         current_app.logger.info("POST /mopf-submit - Submitting MOPF form.")
         form = taxReceiptForm()
         if form.validate_on_submit():
-            # Process the form data
+            fname = form.firstName.data
+            lname = form.lastName.data
+            email = form.email.data
+            address = form.address.data
+            address2 = form.secondaryAddress.data
+            city = form.city.data
+            zip_ = form.zip.data
+            donation_date = form.donation_date.data
+            estimated_value = form.estimated_value.data
+
+            new_donation = DonationRecord(
+                firstName=fname,
+                lastName=lname,
+                email=email,
+                address=address,
+                secondaryAddress=address2,
+                city=city,
+                zip=zip_,
+                donation_date=donation_date,
+                estimated_value=estimated_value,
+                date_filed=today_pacific().isoformat()
+            )
+            db.session.add(new_donation)
+            db.session.commit()
+
+            save_donation_submission(
+                fname, lname, email, address, address2, city, zip_, donation_date, estimated_value
+            )
+
+            try:
+                send_mopf_email(email, estimated_value, donation_date)
+            except Exception as e:
+                current_app.logger.error("Failed to send MOPF email: %s", e)
+                return jsonify(success=False, errors={"email": ["Failed to send email. Please try again later."]}), 500
+
             current_app.logger.info("MOPF form submitted successfully.")
-            return redirect(url_for('mopf_success'))
-        current_app.logger.warning("MOPF form submission failed.")
-        return render_template('mopf.html', form=form, GOOGLE_API_KEY=GOOGLE_API_KEY)
+            return jsonify(success=True), 200
+
+        current_app.logger.warning("POST /mopf-submit - Form validation failed. Errors: %s", form.errors)
+        return jsonify(success=False, errors=form.errors), 400
+
+
 
     # --------------------------------------------------
 

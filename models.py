@@ -183,3 +183,23 @@ class SiteRating(db.Model):
     request_id = db.Column(db.String(8), nullable=False)
     rating = db.Column(db.String(255), nullable=False)
     notes = db.Column(db.String(400), nullable=True)
+
+class DonationRecord(db.Model):
+    __tablename__ = 'donation_records'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    firstName = db.Column(db.String(50), nullable=True)
+    lastName = db.Column(db.String(50), nullable=True)
+
+    email = db.Column(db.String(120), nullable=False)
+
+    address = db.Column(db.String(200), nullable=False)
+    secondaryAddress = db.Column(db.String(200), nullable=True)
+    
+    city = db.Column(db.String(50), nullable=False)
+    zip = db.Column(db.String(10), nullable=False)
+
+    estimated_value = db.Column(db.String(5), nullable=False)
+    donation_date = db.Column(db.String(20), nullable=False)
+
+    date_filed = db.Column(db.String(120), nullable=True)

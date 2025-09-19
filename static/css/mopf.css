@@ -524,6 +524,7 @@ h3 {
       margin-top: 36px;
       column-gap: 24px;
       margin-bottom: 24px;
+      align-items: center;
     }
     
     .submit-btn {
@@ -1119,4 +1120,15 @@ hr {
 
 #gated-error-info {
   display: none;
+}
+
+#msgs {
+  margin-bottom: 24px;
+}
+
+#success-wrapper {
+  display: none;
+  text-align: center;
+  flex-direction: column;
+  row-gap: 24px;
 }

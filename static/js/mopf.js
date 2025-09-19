@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const initForm   = document.getElementById('init-form-info');
   const csrfToken  = document.querySelector('input[name="csrf_token"]').value;
-  let alreadyPosted = false;                      // prevents an endless loop
 
   ['address', 'city', 'zip'].forEach(id => {
     const el = document.getElementById(id);
@@ -84,31 +83,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // reCAPTCHA client-side guard
     if (grecaptcha.getResponse().length === 0) {
-      showFormError('recaptcha-form', 'Please click the “I’m not a robot” box.');
+      showFormError('recaptcha-form', 'Please click the “I’m not a robot” box. Refreshing can resolve most issues.');
       return;
     }
-
-    // 1️⃣ ZIP code range check (existing endpoint is fine)
-    const zip = document.getElementById('zip').value.trim();
 
     const loader = document.getElementById('loader');
     loader.style.display = "inline-block";
 
-    // 2️⃣ Address existence check (new POST endpoint)
-    const addr   = document.getElementById('address').value.trim();
-    const city   = document.getElementById('city').value.trim();
-    const placeId = document.getElementById('place_id').value || null;
+    // Build FormData from the actual form so WTForms + CSRF + reCAPTCHA validate
+    const formData = new FormData(initForm);
+    try {
+      const response = await fetch(initForm.action || '/mopf-submit', {
+        method: 'POST',
+        body: formData // Let the browser set multipart/form-data with boundary
+      });
 
-    const body = JSON.stringify({
-      full_addr: `${addr}, ${city}, CA ${zip}`,
-      place_id : placeId,
-      city     : city,   // ← add both
-      zip      : zip
-    });
+      const result = await response.json();
 
-    // 3️⃣ All good → let the *real* POST go through
-    alreadyPosted = true;                         // flip the guard
-    initForm.submit();                            // triggers server-side checks
+      if (result && result.success === true) {
+        // Hide the form and show the success wrapper if present
+        initForm.style.display = 'none';
+        const successWrapper = document.getElementById('success-wrapper');
+        if (successWrapper) {
+          successWrapper.style.display = 'flex';
+        }
+      } else {
+        loader.style.display = "none";
+        // Try to surface field-specific errors if provided
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([field, msgs]) => {
+            const el = document.getElementById(field) || document.getElementById('init-form-info');
+            const msgText = Array.isArray(msgs) ? msgs.join(' ') : String(msgs);
+            showFormError(el.id, msgText);
+          });
+        } else {
+          showFormError('init-form-info', 'Submission failed. Please try again.');
+        }
+      }
+    } catch (error) {
+      loader.style.display = "none";
+      showFormError('init-form-info', error.message || 'An error occurred. Please try again.');
+    }
   });
 
   /* ───────────────────────────────────────────── */
