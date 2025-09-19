@@ -921,7 +921,7 @@ def send_mopf_email(email, value, date):
               <table role="presentation" width="100%">
                 <tr>
                   <td align="center" style="padding:0 0 24px 0;">
-                    <img src="https://www.ekolinq.com/static/images/mopf_logo.webp" alt="Muwekma Ohlone Preservation Foundation Logo" width="140" style="display:block;height:auto;border:0;background:white;">
+                    <img src="https://www.ekolinq.com/static/images/mopf_logo_highres.png" alt="Muwekma Ohlone Preservation Foundation Logo" width="140" style="display:block;height:auto;border:0;background:white;">
                   </td>
                 </tr>
               </table>
