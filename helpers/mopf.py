@@ -100,7 +100,7 @@ def save_donation_submission(
         ws.insert_row(row, index=2, value_input_option="RAW")
 
         if logger:
-            logger.debug("[mopf] Saved donation submission for %s %s to '%s'.", fname, lname, _MOPF_SHEET_TITLE)
+            logger.debug("[MOPF] Saved donation submission.")
 
         return {
             "ok": True,
@@ -111,7 +111,7 @@ def save_donation_submission(
 
     except Exception as e:
         if logger:
-            logger.exception("[mopf] Failed to save donation submission: %s", e)
+            logger.exception("[MOPF] Failed to save donation submission: %s", e)
         # Keep response shape consistent; callers can jsonify and choose status codes.
         return {
             "ok": False,

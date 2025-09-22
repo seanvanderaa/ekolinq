@@ -109,6 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } else {
         loader.style.display = "none";
+        // Reset reCAPTCHA so the user can reselect it after a failed submit
+        if (window.grecaptcha && typeof grecaptcha.reset === 'function') {
+          try { grecaptcha.reset(); } catch (_) { /* no-op */ }
+        }
         // Try to surface field-specific errors if provided
         if (result && result.errors) {
           Object.entries(result.errors).forEach(([field, msgs]) => {
@@ -122,6 +126,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } catch (error) {
       loader.style.display = "none";
+      // Reset reCAPTCHA on any error so the user can reselect it
+      if (window.grecaptcha && typeof grecaptcha.reset === 'function') {
+        try { grecaptcha.reset(); } catch (_) { /* no-op */ }
+      }
       showFormError('init-form-info', error.message || 'An error occurred. Please try again.');
     }
   });

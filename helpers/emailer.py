@@ -943,9 +943,9 @@ def send_mopf_email(email, value, date):
                   </td>
                 </tr>
               </table>
-              <p style="font-size:16px;line-height:1.5;margin:32px 0 0;color:black;">The Muwekma Ohlone Preservation Foundation is a registered 501©3 non-profit organization.</p>
-              <p style="font-size:16px;margin:8px 0;color:black;">Tax ID Number:<br>XXXXXX</p>
-              <p style="font-size:16px;margin:8px 0;color:black;">Please direct questions and comments to:<br><a href="mailto:muwekma@muwekma.org">muwekma@muwekma.org</a></p>
+              <p style="font-size:16px;line-height:1.5;margin:32px 0 0;color:black;">The Muwekma Ohlone Preservation Foundation is a registered 501(c)(3) non-profit organization.</p>
+              <p style="font-size:16px;margin:8px 0;color:black;">EIN Number:<br>88-0910186</p>
+              <p style="font-size:16px;margin:8px 0;color:black;">Please direct questions and comments to:<br><a href="mailto:info@muwekmafoundation.org">info@muwekmafoundation.org</a></p>
             </td>
           </tr>
         </table>
