@@ -244,13 +244,13 @@ class taxReceiptForm(FlaskForm):
     ])
     zip = StringField("Zip Code", validators=[
         DataRequired(),
-        Regexp(r'^\d{5}(-\d{4})?$', message="Invalid zip code format"),
+        Regexp(r'^\d{5}(-\d{4})?$', message="Invalid zip code format."),
         Length(max=5)
     ])
 
     estimated_value = StringField("Estimated Value of Donation", validators=[
         DataRequired(),
-        Regexp(r'^\d+$', message="Estimated value must be numbers only"),
+        Regexp(r'^\d+$', message="Estimated value must be whole numbers only."),
         Length(max=5)
     ])
 

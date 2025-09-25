@@ -70,15 +70,16 @@ h3 {
 }
 
 #mopf-hero a {
-    color: white;
+    color: var(--yel);
     text-decoration: underline;
     text-decoration-style: dotted;
-    transition: color .2s ease;
+    transition: color .2s ease, font-weight .2s ease;
 }
 
 #mopf-hero a:hover {
     color: var(--yel);
     cursor: pointer;
+    font-weight: 600;
 }
 
 .request-form {
